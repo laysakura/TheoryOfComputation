@@ -1,0 +1,15 @@
+\unitlength1cm
+\begin{picture}(5,3)(0.8,0.5)
+\def\A{(2,3)}%
+\def\B{(1,1)}%
+\def\C{(4,1)}%
+\Addvec\A\C\D
+\Subvec\D\B\D
+\Put\A{\makebox(0,0.4){A}}%
+\Put\B{\makebox(0,0)[r]{B }}%
+\Put\C{\makebox(0,0)[l]{ C}}%
+\Put\D{\makebox(0,0)[l]{ D}}%
+\thicklines
+\Drawline{\A\B\C\D\A}%
+\thinlines
+\end{picture}

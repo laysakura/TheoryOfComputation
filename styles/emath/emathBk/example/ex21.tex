@@ -1,0 +1,198 @@
+\documentclass[a4j,fleqn]{jarticle}
+\usepackage{emathBk}
+\usepackage{itembbox}
+
+\begin{document}
+\begin{itembox}{重複順列}
+次の4種類の数字を用いて，3桁以下の正の整数はいくつ作れるか。
+ただし，同じ数字を繰り返し用いてもよいものとする。
+\begin{edaenumerate}[(1)]
+  \item 1, 2, 3, 4
+  \item 0, 1, 2, 3
+\end{edaenumerate}
+\end{itembox}
+
+\begin{tyuukai}
+\abovedisplayskip=2pt\relax
+\belowdisplayskip=2pt\relax
+【解答】
+\begin{enumerate}[(1)]
+  \item 3桁，2桁，1桁の整数は，それぞれ$4^3$個，$4^2$個，$4$個
+    あるから，全部で
+    \[ 4^3+4^2+4=\bm{84}（個）\]
+  \item 3桁の整数は，\tyuu{数字に0を含むときは要注意！\\
+    最高位には0を置けない}
+    百の位には0以外の数字がくるから，百の位の数字の選びかたは3通り。
+    十，一の位は4種類の数字のどれでもよいから，その選びかたは$4^2$通り。
+    {\mathindent=0pt\relax
+      \begin{alignat*}{2}
+        &よって，3桁の整数は \qquad && 3\times4^2=48（個）\\
+        &同様にして，2桁の整数は && 3\times4=12（個）
+          \tyuu{十の位の数字の選びかたは0以外の3通りで，
+        一の位は4種類のどれでもよい。}\\
+        &1桁の正の整数は && 3（個）
+      \end{alignat*}
+    }%
+    ゆえに，3桁以下の正の整数は
+    \[ 48+12+3=\bm{63}（個）\]
+\end{enumerate}
+\end{tyuukai}
+
+\tyuuhaba=0.31\textwidth
+\begin{itembox}{三角方程式・不等式}
+$0\Deg\leqq \theta<360\Deg$のとき，次の方程式，不等式を解け。
+\vspace{2ex}
+\begin{enumerate}[(1)]
+  \item $\cos2\theta-3\cos\theta+2=0$
+  \item $\sin2\theta>\cos\theta$
+\end{enumerate}
+\end{itembox}
+
+\begin{tyuukai}
+\abovedisplayskip=2pt\relax
+\belowdisplayskip=2pt\relax
+【解答】
+\begin{enumerate}[(1)]
+  \item 
+    $\cos2\theta=2\cos^2\theta-1$
+      \tyuu{$\cos\theta$だけの式に変形する。}
+    を等式に代入して整理すると
+    {\mathindent=0pt\relax
+      \begin{alignat*}{2}
+        &&& 2\cos^2\theta-3\cos\theta+1=0\\
+        &ゆえに\qquad && (\cos\theta-1)(2\cos\theta-1)=0
+          \tyuu{\def\tasukikata{2}$\tasuki12{-1}{-1}$}
+        \\
+        &よって && \cos\theta=1~または~\cos\theta=\bunsuu{1}{2}
+      \end{alignat*}
+    }\vspace{-\baselineskip}
+
+    \begin{mawarikomi}(0,20pt){}{\small%
+      \begin{zahyou}[ul=11mm](-1.5,1.5)(-1.5,1.5)
+        \rtenretu*{A(1,60);B(1,-60)}
+        \Kakukigou[a]\XMAX\O\A<hankei=.4>{60\Deg}
+        \Kakukigou[a]\XMAX\O\B<hankei=.3>[nw]{300\Deg}
+        \Put{(0,1)}[nw]{1}
+          \Put{(1,0)}[se]{1}
+        \Put{(.5,0)}[se]{$\frac12$}
+        \En\O{1}
+        \Drawline{\A\O\B}
+        \Tyokusen\A\B{}{}
+      \end{zahyou}}
+      $0\Deg\leqq \theta<360\Deg$であるから\\
+      $\cos\theta=1$のとき\quad $\theta=0\Deg$%
+      \tyuu{$\cos\theta=\bunsuu{1}{2}$についての参考図}\\
+      $\cos\theta=\bunsuu{1}{2}$のとき \quad
+        $\theta=60\Deg$, $300\Deg$\\[1ex]
+      ゆえに $\bm{\theta=0\Deg}$, $\bm{60\Deg}$, $\bm{300\Deg}$
+    \end{mawarikomi}
+  \item 
+    \begin{mawarikomi}[-3]{}{\small%
+      \begin{zahyou}[ul=11mm,Ueyohaku=5mm]%
+            (-1.5,1.5)(-1.5,1.5)
+        \rtenretu*{A(1,30);B(1,150)}
+        \Put{(0,1)}[nw]{1}
+        \Put{(0,.5)}[nw]{$\frac12$}
+        \Put\O{\ougigata*{1}{30}{90}}
+        \Put\O{\ougigata*{1}{150}{270}}
+        \En\O{1}
+        \Drawline{\A\O\B}
+        \Tyokusen\A\B{}{}
+      \end{zahyou}}
+    $\sin2\theta>\cos\theta$から
+    {\mathindent=0pt\relax
+      \begin{alignat*}{2}
+        &&& 2\sin\theta\cos\theta>\cos\theta \\
+        &ゆえに \qquad && \cos\theta(2\sin\theta-1)>0 
+          \tyuu*{$AB>0$\\
+            \hspace*{2zw}$\iff A>0,~B>0$\\
+            または $A<0,~B<0$}%}
+          \\
+        &よって && \cos\theta>0,~\sin\theta>\bunsuu{1}{2} \\
+        &または && \cos\theta<0,~\sin\theta<\bunsuu{1}{2}
+      \end{alignat*}
+    }%
+    $0\Deg\leqq \theta < 360\Deg$であるから
+    
+    $\bm{30\Deg<\theta<90\Deg},~\bm{150\Deg<\theta<270\Deg}$
+    \end{mawarikomi}
+\end{enumerate}
+\end{tyuukai}
+
+\tyuumark{$\blacktriangleleft$~}
+\begin{itembox}{角の二等分線}
+\begin{caprm}
+\sankaku{ABC}において，$AB=5$, $AC=3$, $\kaku A=120\Deg$とする。
+\kaku Aの二等分線とBCとの交点をDとするとき，次の線分の長さを求めよ。
+\end{caprm}
+\begin{edaenumerate}<3>[(1)]
+  \item BC
+  \item BD
+  \item AD
+\end{edaenumerate}
+\end{itembox}\bigskip
+
+\noindent 【解法の手順】\vspace{1ex}
+
+\begin{small}
+\begin{breakDbox}
+\begin{enumerate}[\protect\expandafter\fbox1]
+  \item 余弦定理を用いて，BCを計算する。
+  \item 角の二等分線の性質より，BDを求める。
+  \item 面積を利用して，ADを求める。
+\end{enumerate}
+\end{breakDbox}
+\end{small}\bigskip
+
+\hidarityuukeisentrue
+\tyuuhaba=0.25\textwidth
+\begin{tyuukai}
+\begin{caprm}
+【解答】
+\begin{enumerate}[(1)]
+  \item 
+    \begin{mawarikomi}[-1]{}{%
+      \begin{zahyou*}[ul=5mm](0,7.5)(-.5,4)
+        \footnotesize
+        \tenretu{B(0,0)s;C(7,0)s}
+        \CandC\B5\C3\AA\A\Put\A[n]{A}
+        \Bunten\B\C53\D\Put\D[s]{D}
+        \Hen_ko[25]\A\B{5}
+        \Hen_ko[15]\C\A{3}
+        \Kakukigou<0>\B\A\D(0,0){$\bullet$}
+        \Kakukigou<0>\D\A\C(0,0){$\bullet$}
+        \Drawline{\A\B\C\A\D}
+      \end{zahyou*}}
+    \gyoutou{\small\fboxsep=3pt\fbox1}
+    余弦定理より
+    \mathindent=0pt\relax
+    \begin{align*}
+      BC^2&=AB^2+AC^2-2AB\cdot AC\cos120\Deg
+          \tyuu*{$\cos120\Deg=-\bunsuu12$}\\
+        &=5^2+3^2-2\cdot5\cdot3\cdot\left(-\bunsuu12\right)\\
+        &=49
+    \end{align*}
+    $BC>0$であるから $\bm{BC=7}$
+    \end{mawarikomi}
+
+  \item 
+    \gyoutou{\small\fboxsep=3pt\fbox2}
+    \tyuu{二等分線と比例の関係}
+    $AB:AC=BD:DC$であるから
+    \[ BD:DC=5:3 \]
+    よって $BD=\bunsuu{5}{8}BC=\bm{\bunsuu{35}{8}}$
+  \item 
+    \gyoutou{\small\fboxsep=3pt\fbox3}%
+    \tyuu{面積に関する等式}%
+    $\sankaku{ABC}=\sankaku{ABD}+\sankaku{ADC}$であるから，
+    $AD=x$とおくと
+    \[ \bunsuu{1}{2}\cdot5\cdot3\sin120\Deg
+      =\bunsuu{1}{2}\cdot5x\sin60\Deg+\bunsuu{1}{2}\cdot3x\sin60\Deg 
+       \tyuu{$\sin120\Deg=\bunsuu{\sqrt3}{2}$,\\
+        $\sin60\Deg=\bunsuu{\sqrt3}{2}$}
+    \]
+    よって $\bm{AD=\bunsuu{15}{8}}$
+\end{enumerate}
+\end{caprm}
+\end{tyuukai}
+\end{document}

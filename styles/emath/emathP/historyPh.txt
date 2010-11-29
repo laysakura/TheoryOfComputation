@@ -1,0 +1,898 @@
+v 0.57 2000/10/14
+  \Hen_ko $B$NJ8;z0LCV$K4X$7!$(B
+    <#8> $B$K<!$N%*%W%7%g%s$rDI2C(B
+      putoption= : $BJ8;z$r(B\Put $B$GG[CV$9$k$H$-$N%*%W%7%g%s(B
+      henkosep=  : \fboxsep $B$N6I=jE*$JCM(B
+      henkomozikaiten=1 : $BJ8;zNs$r@~J,$KJ?9T$H$J$k$h$&2sE>$9$k!#(B
+  \yumigata**, \ougigata** 
+    $B=*$j3Q(B < $B;O$a3Q(B $B$N$H$-$O!$=*$j3Q$K(B360$B$r2C;;$9$k!#(B
+  \Hatchpolygon $B<P@~72$,DL2a$9$Y$-(B1$BE@$r;XDj$9$k$?$a$N%3%^%s%I(B
+    syanurisiteiten=
+    syanurikankaku=
+  \Gaisin $B=$@5(B
+  \KinziEnko $B1_8L$r6a;w$9$k@^$l@~$rJV$9!#(B
+  \KTkukan $BITEy<0$N2r$r?^I=<((B
+
+v 0.58 2000/10/17
+  \zahyouMemori [#1] $B$K(B +, o, z $B%*%W%7%g%s$rDI2C(B
+  \Put#1[#2]... $B$N(B [#2] $B$K<!$N%*%W%7%g%s$rDI2C(B
+          syaei=x|y|xy
+          houi=n|nw|w|sw|s|se|e|ne
+          xlabel=..
+          ylabel=..
+v 0.59  2000/10/22
+  \?Tyokusen, \Gurafu $BD>@~$r(B \qbezier $B$G$O$J$/!$(B\drawline $B$r%G%U%)%k%H(B
+  \Put[#1] $B<!$N%*%W%7%g%s$r?7@_(B
+             background=white $BGX7J$rGr$/EI$k(B
+             kaiten    =ddd   $BJ8;z$r2sE>$9$k(B
+             houkou    =vvv   $B2sE>3Q$r4V@\E*$K;XDj(B
+             from      =PPP   $B2sE>3Q$r4V@\E*$K;XDj(B
+             to        =PPP   $B2sE>3Q$r4V@\E*$K;XDj(B
+v 0.60  2000/10/27
+  $BE@$+$iD>@~$K2<$m$7$??b@~$NB-$r5a$a$k%3%^%s%I$K(B
+    \mSuisen $BD>@~$r(B1$BE@$HJ}8~%Y%/%H%k$GM?$($?>l9g(B
+    \kSuisen $BD>@~$r(B1$BE@$HJ}8~3Q$GM?$($?>l9g(B
+  $B$rDI2C$9$k!#(B
+  $BH/E8$7$F!$D>@~$K4X$9$kBP>NE@$r5a$a$k%3%^%s%I$r?7@_$9$k!#(B
+    \Taisyouten, \mTaisyouten, \kTaisyouten
+  \zahyouMemori $B$N%P%0%U%#%C%/%9(B
+v 0.61  2000/11/01
+  \rGurafu $B=*C<$N7W;;$K%P%0(B
+v 0.62  2000/12/02-19
+  $B%m!<%I%*%W%7%g%s(B times
+  \@seisuu $B$NDj5A$r(B emath.sty $B$K0\$9!#(B
+v 0.63  2001/01/28-29
+  \YGurafu perl $B$r;HMQ$9$k!#(B
+v 0.64  2001/02/10
+  \XGurafu
+  \BGurafu
+  \RGurafu
+v 0.65  2001/02/15
+  \YTen, \BTen, \RTen
+v 0.66  2001/02/20
+  \Put $B$N(B syaei $B%*%W%7%g%s$K@~<o$r;XDj$9$k(B syaeisensyu= $B$rIm2C(B
+v 0.67  2001/03/03
+  shaeisensyu=... $B6uGr$N:.F~BP:v(B
+v 0.68  2001/03/29 - 04/07
+  perl $B$H$NO"7HMQJd=u%U%!%$%k:o=|$rN1J]$7!$(B
+    $B:o=|MQ$N%3%^%s%I(B \delGurafuFile
+  $B@~J,$KJ?9T5-9f$r$D$1$k(B \heikoukigou
+  zahyou $B4D6-$N(B [key=val] $B%*%W%7%g%s$K(B ul=dimen $B$rDI2C!#(B
+    (ul $B$O(B \unitlength $B$N>JN,7A(B)
+  zahyou* $B4D6-(B $B:BI8<4$rIA2h$7$J$$!#(B
+  arrowline $BJ#?t$NLp@~$r0z$/!#(B
+v 0.69  2001/04/08-10
+  zahyou$B4D6-Fb$G$O!$(B\def\O{(0,0)}$B$rDj5A:Q$_$H$9$k!#(B
+  \heikoukigou $B$N(B [heikoukigousize=...] $B%*%W%7%g%s$,L58z$G$"$C$?$N$r=$@5!#(B
+v 0.70  2001/04/11-14
+  $B;03Q4X?t$N7W;;$O(B trig.sty $B$rMQ$$$k!#(B
+  perl $B$+$i0z$-<h$kJ8;zNs$r(B \trim $B$G=hM}$9$k!#(B
+v 0.71 2001/04/28
+  \hasen, \Hasen : \unitlength $B$H$OFHN)$NGK@~(B
+v 0.72 2001/06/01
+   \hasen*, \Hasen* : $BC<E@$+$i(B gap $B$G;O$^$kGK@~(B
+   \ArrowLine [b]$B%*%W%7%g%s$G!$N>8~$-Lp0u(B
+   \rtenretu, \rtenretu* $B6K:BI87A<0$rA0Ds(B
+v 0.73 2001/06/02
+   \yenko, \Kakukigou : [b]$B%*%W%7%g%s$GN>8~$-Lp0u(B
+   \Toukokigou : $B1_8L$ND9$5$,Ey$7$$$3$H$rI=8=$9$k5-9f(B
+v 0.74 2001/06/07
+   \Gaisin : $B30@\1_$NH>7B$r<u$1<h$k%*%W%7%g%s0z?t$rDI2C(B
+   \Enko   : $B;O$a3Q!$=*$j3Q$r<u$1<h$k%*%W%7%g%s0z?t$rDI2C(B
+v 0.75 2001/06/09
+   \Enko   : $BLp0u$r$D$1$k$?$a$N%*%W%7%g%s!'(B<yazirusi=a|r|b>
+   \Hen_ko : $BLp0u$r$D$1$k$?$a$N%*%W%7%g%s!'(B<yazirusi=a|r|b>
+v 0.76 2001/06/17
+   \hyou   : *5{|C(3zw)}$B$r2DG=$H$9$k!#(B
+v 0.77 2001/07/08
+   \rotUbrace, \rotObrace $B79$$$?(B \underbrace, \overbrace
+   \yenko [#1]$B$,(B\empty $B$N>l9g(B
+   \zahyou [haiti=t] $B%*%W%7%g%s(B
+v 0.78 2001/07/20
+   \Enko \yenko $B$K0z$-EO$9Lp0u$N8~$-%*%W%7%g%s$r(B
+           \empty $B$+$i(B `n' $B$KJQ99$7!$Lp0u$r$D$1$J$$$3$H$rL@<($9$k!#(B
+v 0.79 2001/08/02
+    \vHasen[$B9b$5(B]{$B?<$5(B} $BGK@~$N=D7S@~(B
+v 0.80 2001/08/28
+    \kugirisi : $B%G%#%l%/%H%j$N6h@Z$jJ8;z$r(B \@currdir $B$+$iF@$k!#(B
+v 0.81 2001/08/29
+    Mac $B$N>l9g$K(B emathO.sty $B$,$"$l$PFI$_9~$`!#(B
+v 0.82 2001/08/31
+    Mac $B$N>l9g!$(B
+      step 1. tex $B$G(B perl $BMQ$N%9%/%j%W%H$r=q$-=P$9!#(B
+      step 2. $B>e5-%9%/%j%W%H$r(B perl $B$G=hM}$7!$(Btex $BMQ$N%0%i%U%G!<%?$r=q$-=P$9(B
+      step 3. tex $B$G!$>e5-%G!<%?%U%!%$%k$rFI$_9~$_%0%i%U$rIA2h$9$k!#(B
+     $B$N#3%9%F%C%W$G=hM}$9$kJ}K!$r<h$jF~$l$k!#(B
+v 0.83 2001/09/01
+      Windows $B$N>l9g$b(B emath.pl $B$O(B ..perl/lib $B$X(B
+                       $B$^$?!$(BGurafu.pl $B$OITMW$H$9$k!#(B
+v 0.84 2001/09/02
+    \Gurafu $BHO0O$r6u$K$7$?$H$-$OIA2hHO0O$$$C$Q$$$K=q$/!#(B
+v 0.85 2001/09/04
+    \yaziri \ArrowHeadType $B$rH?1G$5$;$k!#(B
+v 0.86 2001/09/05
+    $B>e5-=$@5$N:F=$@5(B
+v 0.87 2001/09/06
+    Windows $B$J$I$G$b!$(Bperl $B$N:n@.$7$?%G!<%?%U%!%$%k$rJ]B8$9$k$h$&$K$7!$(B
+        \skipCallPerl
+    $B$G!$(B
+        $B%G!<%?%U%!%$%k$,$"$k$H$-$O$=$l$rMxMQ!$(B
+        $B$J$$$H$-$O(B perl $B$r8F$s$G%G!<%?%U%!%$%k$r:n@.$9$k(B
+    $B$h$&$K$7$?!#%?%$%W%;%C%H=jMW;~4V$OH>J,0J2<$H$J$k!#(B
+v 0.88 2001/09/12
+    \XTen $BDI2C(B
+    \?Ten $B$K0z$-B3$$$F!$(B\Put $B$r9T$&(B \XPut, \YPut, \BPut, \RPut
+    \YGurafu* $BC<E@$r;XDj$;$:!$IA2hNN0h0lGU$KIA$/!#(B
+v 0.89 2001/09/15
+    \YGurafu* $BC<E@$r(B\migiT, \hidariT
+v 0.90 2001/09/16-11/11
+    \Tyokusen $B$KBP$7$F$b(B \migiT, \hidariT
+    \XGurafu*
+    \BGurafu*
+    \zKyori |x1-x2|+|y1-y2|
+    \sya[.5] $B$J$I$G(B1$B%+%i%`$rEI$j$D$V$95!G=$rIm2C(B
+    \Gurafu, \yGurafu $B%/%j%C%T%s%0$K$*$$$F!$$-$A$s$HJd4V$9$k!#(B
+    \hamidasisenbun $B@~J,$N:81&$r>/$7?-$P$9!#(B
+v 0.91 2001/11/15-17
+    $B%/%j%C%T%s%0$O(B \yclipDrawline $B$K$^$+$;$k!#(B
+    $B%0%i%U$NE@@~IA2h$b%/%j%C%T%s%0$rJd4V$9$k!#(B
+    zahyou $B4D6-Fb$K(B
+      \XMAX, \XMIN
+      \YMAX, \YMIN
+      \LB, \LT, \RB, \RT
+    $B$rDj5A$9$k!#(B
+v 0.92 2001/11/18-20
+    $BH>D>@~IA2h%3%^%s%I$K$*$$$F!$IA2hNN0hFb$NC<E@$r(B \HtyokuT $B$GJV$9!#(B
+    \CandL, \Candl 2$B8rE@$N(Bx$B:BI8$,Ey$7$$>l9g$N=hM}$,IT40A4$G$"$C$?!#(B
+v 0.93 2001/11/23
+    zahyou $B4D6-(B
+      key $B$K(B
+        ueyohaku, sitayohaku, migiyohaku, hidariyohaku
+        Ueyohaku, Sitayohaku, Migiyohaku, Hidariyohaku
+        zikusensyu
+        arrowheadsize
+      $B$rDI2C(B
+    \KinziOresen $B$J$I!$9o$_$,Ii$N>l9g$KBP1~(B
+    y=f(x), y=g(x)$B$N8rE@$r5a$a$k(B \YKouten $B$r?7@_(B
+v 0.94 2001/11/25
+    \heikousihenkei $BJ8;z%5%$%:$NJQ99$K1~$8$F@~$NB@$5$rJQ99(B
+    \Deruta $B-y5-9f(B
+    \Touhenkigou $BG[CV$9$k5-9f$,(B<2>$B$GH?1G$5$l$J$+$C$?%P%0=$@5(B
+v 0.95 2001/12/11-2002/01/16
+    \Absvec $B%*!<%P!<%U%m!<BP:v(B
+    $B%m!<%I%*%W%7%g%s(B dvips, dviout $B?7@_(B
+    $B7W;;ItJ,$r(B emathC.sty $B$KJ,N%(B
+    perl $B$H$NO"7HItJ,$r(B emathPp.sty $B$KJ,N%(B
+    hyou, Hyou $B$r(B emathT.sty $B$KJ,N%(B
+    \ArrowLine $B$K(B <sensyu=...> $B%*%W%7%g%s(B
+    \Yenko $Bo7$N$_IA2h(B
+    \Enko $B$K!$(B<yazirusi=..> $B$GLp0u$r$D$1$k$3$H$r2DG=$H$9$k!#(B
+    \Kakukigou $BLp@~$r$D$1$k$3$H$HGK@~IA2h$rN>N)(B
+    \kaitenkigou $B2sE>BN$N<4$N$^$o$j$KIUM?$9$k5-9f(B
+v 0.96 2002/02/24
+    \namisen $BGH@~(B ---> emathPp 02/09
+    \xmaxY, \xminY, \ymaxY, \yminY $BM>GrIU(Bzahyou$B4D6-(B
+v 0.97 2002/03/10
+    \rectbox $BD9J}7A$N0O$_$K$*$$$F!$(B
+               $B@~<o!$@~$NB@$5$J$I$rJQ99$G$-$k$h$&$K$9$k!#(B
+    \hasenkakomi $BK5Cm$r$D$1$i$l$k0O$_(B
+v 0.98 2002/04/04-13
+    \yasen, \Yasen $B@.J,$r;XDj$7$FLp@~$r0z$-!$J8;zNs$rG[CV$9$k!#(B
+    \ArrowLine $B$KJ8;zNsG[CV%*%W%7%g%s$r$D$1$k!#(B
+v 0.99 2002/04/25
+  txfonts, pxfonts $B%*%W%7%g%s$N=hM}$rJQ99(B
+v 1.00 2002/05/08
+  \ArrowLine : $B@~J,$Ho7$NIA2h=g$rF~$lBX$($k!#(B
+v 1.01 2002/06/29
+  \En* $B3Q$N%l%s%8$,O;==J,K!$K$J$C$F$$$?!#%i%8%"%s$K=$@5!#(B
+v 1.02 2002/07/05-06
+  dvipsk $B$N(B tpic specials $B=DAH$_BP1~$K$h$j(B
+        \usepackage{emathPh}           ---> dviout, dvipdfm $BMQ(B
+        \usepackage[EMdvipsk]{emathPh} ---> dvipsk $BMQ(B
+v 1.03 2002/07/19
+  (1) $B=DAH$_$N(B tpic specials $B$K$D$$$F!$(Bdviout $B$b(B dvipsk $B$HF1$8$H$J$C$?$N$G(B
+        \usepackage{emathPh}            ---> dviout, dvipsk $BMQ(B
+        \usepackage[EMdvipdfm]{emathPh} ---> dvipdfm $BMQ(B
+      $B$HJQ99(B
+  (2) $BEI$j$D$V$7$N%+%i!<;XDj$r(B dvipsk $B$G$bM-8z$H$9$k(B
+        \Nuritubusi[nuriiro=red] $B$J$I$H;XDj(B
+v 1.04 2002/07/23-24
+  eclarith $BFI$_9~$_$r(B emathC $B$+$i0\4I(B
+  dvipdfm $B%m!<%I%*%W%7%g%s(B
+v 1.05 2002/08/02 --- 09/27
+  $BGK@~$K$h$k0O$_OH(B \hasenframebox $B$r(B hako.sty $B$+$i0\4I(B
+    $B!J(B cf. $B$3$A$i$O%3%^%s%I$G!$(Brectbox $B$,4D6-;EN)$F!K(B
+  $BGK@~$K$h$k0O$_OH$G!$%Z!<%8$r$^$?$0(B breakDbox $B4D6-!J(Bbreakbox.sty $B$rA0Ds!K(B
+  eclbkbox $B$N=$@5$O(B ---> emathBk.sty $B$K0\$9!#(B
+  \darkgray, \lightgray $B$NDj5A$r4^$a$k!#(B
+  \tenretu : \aztenretu $B$r?7@_$7$?$3$H$K$h$k=$@5(B
+v 1.06 2002/10/04
+  \xmemori, \ymemori $B$N(B [...] $B%*%W%7%g%s$K(B
+      \Put $B$KM?$($k0LCVD4@0%*%W%7%g%s$r5-=R2DG=$H$9$k!#(B
+v 1.07 2002/10/09-11/01
+  \kakomi : \\, \par $B$r4^$`CJMn$r2#I}$r5a$a$F0O$`!#(B
+  $B<P@~EI$j$G!$<P@~$r6-3&@~$+$i>/$7N%$7$FEI$k$?$a$N%*%W%7%g%s(B
+      syasentanmatu=...
+v 1.08 2002/11/02
+  \Nuritubusi $BG;EY(B0$B$N$H$-$O!$2?$b$7$J$$!#(B
+v 1.09 2002/11/03
+  v 1.08 $B$NJQ99$O$^$:$$!#(B
+  \nuri@iro $B$N%G%U%)%k%H$r(B \nuri@iro@ $B$H$7!$(B
+  emathAe $B$N(B \maskAns... $B$HD4@0$9$k!#(B
+v 1.10 2002/11/18
+  \Put syaei=.. $B%*%W%7%g%s$G<M1F0LCV$K$D$1$kJ8;z0LCV$rD4@0$9$k%*%W%7%g%s(B
+           xpos=.., ypos=..
+       $B$r?7@_(B
+v 1.11 2002/11/21
+  \teisei $BBG$A>C$7@~$N0LCV$r=$@5$9$k%*%W%7%g%sIm2C(B
+v 1.12 2002/11/29
+  zahyou$B4D6-$K$*$$$F!$:BI8<4IA2h$N%?%$%_%s%0$r:G8e$K;}$C$F$$$/!#(B
+v 1.13 2002/12/03
+  henkomozikaiten=-1 $BJ8;z$r(B180$BEY2sE>(B
+v 1.14 2002/12/08
+  \Enko $B$G1_<~$rE@@~$GIA2h$9$k$?$a$N%*%W%7%g%s(B <ten=..>
+v 1.15 2002/12/12
+  \enko, \Daenko : (\arc, \@arc $B$K$h$k!K6uGr$N:.F~$rGS=|(B
+v 1.16 2002/12/18
+    (1) $B:BI8<4$rIA2h$9$k%3%^%s%I(B \drawXYaxis
+    (2) \kaitenkigou $B5!G=A}6/(B
+v 1.17 2002/12/19
+    \kaitenkigou $B$,(B xscale(yscale)$B$r;HMQ$7$?:]$KMp$l$k%P%0$N=$@5(B
+v 1.18 2003/01/06
+    \endzahyou : emathPs $B$H$N4X78$GD4@0(B
+v 1.19 2003/01/09-13
+    \Yaziri : \Put#1\yaziri#2 $B$r(B \Yaziri#1#2 $B$H$9$k!#(B
+    \Kakukigou : emathPs $B$KJ;$;$FD4@0(B
+v 1.20 2003/01/19
+    picture$B4D6-$G$b!$86E@(B\O $B$rDj5A$7$F$*$/!#(B
+    \Bousin \Bousetuen : $BK5?4$HK5@\1_(B
+v 1.21 2003/01/23
+    emathPs.sty $B$H$N4X78$G!$(B
+       zahyou $B4D6-$N%*%W%7%g%s%-!<$K(B
+           includeEPS, EPSfilename
+    $B$rDI2C(B
+v 1.22 2003/01/24
+    emathPs.sty $B$H$N4X78$G!$(B
+       zahyou $B4D6-$N%*%W%7%g%s%-!<$K(B
+           debug
+    $B$rDI2C(B
+v 1.23 2003/01/23
+    emathPs.sty $B$H$N4X78$G!$(B
+       zahyou $B4D6-$N%*%W%7%g%s%-!<$K(B
+           EPSclip
+    $B$rDI2C(B
+v 1.24 2003/01/30
+    \put \local@origin $B$ND4@0(B
+v 1.25 2003/02/09
+    emathPs.sty $B$H$N4X78$G!$(B
+       zahyou $B4D6-$N%*%W%7%g%s%-!<$K(B
+           borderwidth
+    $B$rDI2C(B
+v 1.26 2003/02/11
+    \Gaisetuen : emathPs $BBP1~(B
+v 1.27 2003/02/17
+    \sikakkei : $B0lHL$N;M3Q7A$rI=$95-9f(B
+v 1.28 2003/02/20
+    \rectbox : $B8+=P$7$r$D$1$k$?$a$N%*%W%7%g%s%-!<(B item=..,
+               $B=D0LCV$r;XDj$9$k$?$a$N%*%W%7%g%s%-!<(B pos=..
+               $B?eJ?J}8~$N7S@~$H$N6u$-(B hsep=..
+               $B?bD>J}8~$N7S@~$H$N6u$-(B vsep=..
+v 1.29 2003/02/27
+    \heikoukigou $B8D?t$,(B3$B$N>l9g$N%P%0$r=$@5(B
+                       4$B$N>l9g$rDI2C(B
+                       5$B0J>e$N>l9g$r%(%i!<$H$9$k!#(B
+    \zahyou : haiti=c $B$G!$(Bx$B<4$r(B baseline $B$K9g$o$;$k!#(B
+v 1.30 2003/03/09
+    zahyou$B4D6-(B haiti=t12pt $B$J$I$HJd@5NL$r;XDj2DG=$H$9$k!#(B
+v 1.31 2003/03/17
+    $B>e5-Jd@5$r(B b, c$B%*%W%7%g%s$G$bM-8z$H$9$k!#(B
+    \KAKUkigousize : | $B$NBg$-$5!J%G%U%)%k%H(B=1$B!K(B
+v 1.32 2003/03/23-30
+    \rectbox $B$N%*%W%7%g%s%-!<$K(B rectboxwidth=.. 
+    \Rectbox : $B%3%^%s%I7A<0$G!$2#I}$r<+A3D9$K@)8B(B
+    \kaiten : $BE@Ns$r2sE>$5$;$k(B
+v 1.33 2003/04/03-14
+    \ippankaku : $B0lHL3Q(B
+    tatezikukigou $B$J$I$N1&JUCM$K!$%^%/%m$r;HMQ2DG=(B
+    \PutStr $B$K(B addvec=.. $B$G!$=*E@$N0LCV$rHyD4@0$9$k%Y%/%H%k$r;XDj2DG=(B
+    \hasen $B$K$*$1$kIA2hH=Dj$r(B \Kyorii $B$+$i(B \Kyori $B$KJQ99(B
+v 1.34 2003/05/20
+    \emLarc
+v 1.35 2003/05/21
+    \DrawHatC(*) : 2$BG/A0$N$b$N$r<}O?(B
+    \emLarc $B$OGQ0F(B
+v 1.36 2003/05/25
+    \PutStr [#6]$B$K!$(Barrowheadsize= $B%*%W%7%g%s$r2DG=$H$9$k!#(B
+                    $B!JFC$K(B arrowheadsize=0 $B$H$9$l$P!$Lp0uL5$7!K(B
+    \Nitoubunsen : $B;03Q7A$N3Q$NFsEyJ,@~$HBPJU$N8rE@$r5a$a$k!#(B
+v 1.37 2003/06/13
+    \emPmaru : $BJ8;z%5%$%:$K9g$o$;$?4]0O$_(B
+    \zahyou : [key=val] $B$,$J$$>l9g$ND4@0(B
+v 1.38 2003/06/16
+    \EandL, \Eandl, \Eandk $BBJ1_$HD>@~$N8rE@(B
+v 1.39 2003/06/17
+    \DaennoSessen, \DaenniSessen
+    \Earg
+v 1.40 2003/06/18-07/12
+    \O@@ : $B86E@(B
+    $BLp0u$r4^$`D9J}7A$GGrEI$j$7$?8e!$Lp0u$rIA2h!J44$O(B1pt$BC;$/!K(B--- $BJ]N1(B
+    kutitukibox$B4D6-(B, \hukidasi
+v 1.41 2003/07/13
+    \hukidasi : $B<jD>$7!$H/E8(B
+v 1.43 2003/08/08
+    Zahyou$B4D6-$G!$(BMigiyohaku=..$B%*%W%7%g%s$J$I$rM-8z$H$9$k!#(B
+v 1.44 2003/09/01
+    \xmemori, \ymemori : xscale, yscale $B$r;XDj$7$?>l9g$KBP1~(B
+v 1.45 2003/10/07
+    \Heikoukigou : $BJ#?t$N5-9f$r$D$1$k>l9g$N4V3V$r@dBP;XDj$H$9$k!#(B
+    \Naisin      : \lr $B$NDj5A$r(B \Naisetuen $B$+$i0\$9!#(B
+v 1.46 2003/10/18
+    \Yenko : \arrow@headsize=0 $B$N>l9g$O!$2?$b$7$J$$!#(B
+    $B!!!!!!!!!J$3$3$GEI$j$D$V$7%3%^%s%I$rH/9T$9$k$H!$(B
+    $B!!!!!!!!!!8eB3$NJL$NJD6J@~$,EI$j$D$V$5$l$F$$$?!#!K(B
+v 1.47 2003/10/19
+    \def\arrow@headsize $B$r%m!<%I;~E@$GDj5A$7$F$*$/!#(B
+v 1.48 2003/10/26
+    \toukakukigou $B$N2<@A$1$r(B \KAKUkigou ---> \Kakukigou
+v 1.49 2003/10/29
+    \KAKUkigousize $B$r(B \toukakukigou $B$G$bM-8z$H$9$k!#(B
+v 1.50 2003/10/31
+    \Rdef@a : $BCf4VJQ?t$rFH<+L>$K(B
+v 1.51 2003/11/10
+    \tenretu $B$KBP$9$k(B <perl> $B%*%W%7%g%s(B
+v 1.52 2003/11/16
+    emathC.sty $B$N(B \For $B:FDj5A$KBP1~(B
+v 1.53 2003/11/29
+    \xmemori $B%i%Y%kDj5A$r(B \edef ---> \def
+v 1.54 2003/12/12
+    rectbox$B4D6-$N%*%W%7%g%s$K(B [rectboxWidth=..]$B$rDI2C(B
+        rectboxwidth=.. $B$OK\J8$NI}$r;XDj(B
+        rectboxWidth=.. $B$O%\%C%/%9$NI}$r;XDj(B
+v 1.55 2003/12/27
+    notMy $B%*%W%7%g%s2D(B
+    \tenretu $B$KBP$9$k(B <perl> $B%*%W%7%g%s$NITHw$r=$@5(B
+v 1.58 2004/01/12
+    rectbox$B4D6-$K(B [bitem=...,bitempos=..] $B$G!$2<8+=P$7$H$=$NG[CV;XDj%*%W%7%g%s(B
+v 1.59 2004/01/16
+    \Toukokigou : $B5-9f$r;XDj2DG=(B
+    \toukokigou : $BJ#?t$N8L$r;XDj$9$k(B
+v 1.60 2004/01/22
+    \Kakukigou : \@hankei ---> \Kakuki@hankei (\Enko $B$J$I$H>WFM(B)
+v 1.61 2004/01/23
+    \emDrawtpic $B?7@_(B $B%9%W%i%$%s6J@~IA2h(B
+v 1.62 2004/01/27
+    \HenKo : \Hen_ko $B8L$NItJ,$r1_8L$H$9$k!#(B
+v 1.63 2004/02/03
+    \ArrowLine : <arrowheadsize=..> $B%*%W%7%g%s$,L58z$H$J$C$F$$$?$N$r=$@5(B
+v 1.64 2004/02/19
+    zahyou$B4D6-$K(B skip $B%*%W%7%g%s$r?7@_(B
+        \skipCallPerl $B$NM-8z!?L58z$r!$(B1/0(default) $B$G@Z$jBX$($k!#(B
+v 1.65 2004/03/03
+    \Takakkei : $BJD$8$k$h$&$K$9$k!#(B
+v 1.68 2004/03/10
+    \Tyokusen, \Hantyokusen : \gsave(\bgroup) $B$H(B \grestore(\egroup) $B$G0O$`!#(B
+v 1.69 2004/03/13
+    \def@memori@nagasa $BF3F~(B
+v 1.70 2004/03/15
+    \EMunderline $BF3F~(B
+v 1.71 2004/03/17
+    zahyou$B4D6-$N(B [haiti=c]$B%*%W%7%g%s$r;EMMJQ99(B
+        $B%Y!<%9%i%$%s$K=E$M$k0LCV$r(B x$B<4(B ---> $B=D$NCf1{(B
+    $B=>Mh$N(B haiti=c $B%*%W%7%g%s$r(B haiti=x $B%*%W%7%g%s$H$9$k!#(B
+    v 1.68 $B$NJQ99$NI{:nMQ=$@5(B
+    \Kakukigou : <#6> $B$K(B Kakukigoukankaku=$B!JC10LIU?tCM!K%*%W%7%g%s$rDI2C(B
+v 1.72 2004/03/18
+    \heikoukigou : [heikoukigoukankaku=..] $B%*%W%7%g%s$,L58z$H$J$C$F$$$?$N$r=$@5(B
+v 1.73 $B>e5-$N=$@5(B
+v 1.74 2004/03/30
+    \rmemori : $BJ}8~%Y%/%H%k$r;XDj$7$?L\@9$j@~(B
+v 1.76 2004/05/05-06
+    \ovalTakakkei
+    \PutStr : emathPs $B$GIT6q9g(B
+              \def\ArrowArc $BFb$G(B \xmin, \xmax $B$b=$@5(B
+v 1.77 2004/05/08
+    \ovalTakakkei : <linewidth=..> $B$J$I$N%*%W%7%g%s$r2DG=$H$9$k!#(B
+v 1.78 2004/05/16
+    \PutStr : v1.76$B=$@5$NI{:nMQ$r=$@5(B
+              (picture$B4D6-Fb$GMQ$$$i$l$k$H$-$O!$(B\xmin $B$J$I$,L$Dj5A(B)
+v 1.79 2004/05/26
+    \EMoverline $BF3F~(B
+v 1.80 2004/06/01-06
+    \SuityokuNitoubunsen : $B?bD>FsEyJ,@~(B
+    \cPut@orgP : \cPut $BMQ$KD4@0A0$N:BI8$rJ]B8(B
+v 1.81 2004/06/16
+    \color : $BFbItJQ?t(B \nuri@iro@ $B$rJQ99$9$k$h$&$K%U%C%/(B
+v 1.82 2004/06/22
+    \color : $B=$@5(B
+v 1.83 2004/07/01
+    \itiziketugou
+v 1.84 2004/07/05
+    \LandL : overflow $BBP:v$H$7$F!$(B\LandLweight{.1}$B$J$I(B
+v 1.85 2004/07/14
+    \rtenretu $BG[CVJ8;zNs$K(B \sin $B$J$I$r;HMQ2D$H$9$k(B
+v 1.86 2004/07/18
+    \ippankaku : $BLp0u@)8f%*%W%7%g%s(B (#4)
+v 1.87 2004/07/18
+    \HenKo : HenKo $B$NCfE@$r(B \HenKoTyuuten, $BCf?4$r(B \HenKoTyuusin
+v 1.88 2004/08/15
+    \saikoro : ascmac.sty $B$N(B \keytop $B$+$i(B \EMkeytop $B$KJQ99(B
+v 1.89 2004/09/07-17
+    \phkasen : \EMunderline $B$rH/E8$5$;!$(B\pskasen $B$HF1Ey$N5!G=$r$b$?$;$k(B
+    \ArrowLine : $B44$ND9$5$,(B0$B$N$H$-$O!$$J$K$b$7$J$$!#(B
+v 1.90 2004/09/21
+    emathPs $B$K$*$1$k(B borderwidth=.. $B%*%W%7%g%sMQ$K(B \trueLT $B$J$I$rDj5A(B
+v 1.96 2004/11/11
+    rectbox$B4D6-$G8+=P$7$r$D$1$k:]!$$=$N7WB,$G%+%&%s%?$,?J$`$N$r2sHr(B
+v 1.97 2004/11/27
+    \DrawHatS, manDrawHatS$B4D6-(B
+v 1.98 2004/12/17
+    \color $B$K$h$k?';XDj$r(B pszahyou$B4D6-Fb$G$b;HMQ$G$-$k$h$&$K$9$k(B
+    \Nuritubusi : $B;OE@$rF@$kItJ,$rJd6/(B
+    \teisei : [S]$B%*%W%7%g%s$GFs=E<P@~(B
+v 1.99 2004/12/25
+    \HenKo <henkohi=..>
+v 2.00 2004/12/30
+    \Drawline <iro=..>
+    \En<iro=..>
+        $B%*%W%7%g%s$N@0Hw(B
+v 2.01 2005/01/09-11
+    $B%m!<%I%*%W%7%g%s(B papersize
+    \KTkukan : $B=q<0$rJd$&(B
+v 2.02 2005/01/28
+    HTML$B5,3J$N%+%i!<%M!<%`$N;HMQ(B
+v 2.03 2005/01/30
+    \En : \iro@ $B=i4|2=(B
+v 2.04 2005/02/04
+    \BousetuenHankei : $BK5@\1_$NH>7B(B
+v 2.05 2005/02/06
+    \rectbox $B$K(B [framecolor=..,background=..]$B%*%W%7%g%s(B
+v 2.06 2005/02/10
+    mekurebox$B4D6-(B
+v 2.07 2005/02/11
+    mekurebox$B4D6-(B $B$G!$$a$/$lItJ,$K?'$r$D$1$k(B [liningcolor=..] $B%*%W%7%g%s(B
+v 2.08 2005/02/18
+    \naikaku : $B;03Q7A$NFb3Q$r5a$a$k(B
+v 2.09 2005/03/07
+    \CandC*, \CandL* : $B8rE@$N=g=x$K$D$$$F!$;03Q7A(B#1#5#6$B$,(B
+                       $B@5$N8~$-$H$J$k$h$&$K(B#5,#6$B$r%;%C%H(B
+v 2.10 2005/03/08
+    mawarikomi$B4D6-2<$G!$(Brectbox$B4D6-$r;HMQ$9$k$5$$$K$D$$$F=$@5(B
+v 2.11 2005/03/20
+    \EnT : $BD>7B$NN>C<$rM?$($F!$1_$rIA2h(B
+v 2.12 2005/03/21
+    mawarikomi & rectbox $B4XO"$G=$@5(B ---> BBS No.2862
+v 2.13 2005/03/22
+    \En, \En*, \En** : tuukaten=.. $B$G!$4V@\E*$KH>7B$r;XDj(B
+v 2.14 2005/04/10
+    rectbox$B4D6-$K$*$$$F!$(B[rectboxoval]$B%*%W%7%g%s$G!$%3!<%J!<$r4]$/(B
+v 2.15 2005/04/11
+    2.14 $B$N=$@5$KH<$&%P%0%U%#%C%/%9(B ($BCLOC<<(B #18-20)
+v 2.16 2005/04/21
+    \Naisetuen : Ps$BBP1~(B \circle ---> \En
+v 2.17 2005/04/28
+    rectbox$B4D6-!'>e2<$N6u$-$r$H$k%?%$%_%s%0$r=$@5(B
+                 rectboxparindent=.. $B%*%W%7%g%s(B
+                 jquote ---> jquotation
+v 2.18 2005/05/20-28
+    Hidariyohaku=1zw+2pt $B$J$I$r2DG=(B
+    \rotateline : 2$BE@$r7k$V<P@~$r(B \rotatebox $B$rMxMQ$7$FIA2h$9$k(B
+v 2.19 2005/05/30
+    \HenKo : \ifsironuki $B$rM-8z$H$9$k(B
+v 2.20 2005/06/13
+    zahyou$B4D6-(B : [Yohaku=..]$B%*%W%7%g%s!J>e2<!&:81&M>GrF1;~;XDj!K(B
+v 2.21 2005/06/27
+    \endzahyou, \endzahyou* : $B6uGr$N:.F~$r=|5n(B
+v 2.22 2005/07/06
+    enumrectbox$B4D6-!'O"HV$r?6$k(B rectbox$B4D6-(B
+v 2.23 2005/07/08
+    \Yaziri : \rotatebox $B$N;HMQ$r$O$:$9(B
+v 2.24 2005/07/20
+    \longrightleftarrow
+v 2.25  2005/08/01-04
+    rectbox : mawarikomi $B$H$N4XO"$r=$@5(B
+    \arrowHeadPit :
+    \changeArrowHeadSize[#1]<#2> : #2
+         $BLp0u$N7A>u(B
+v 2.26 2005/08/09
+    \ArrowLine : \yaziri@@M$B$N=i4|2=(B
+v 2.27 2005/08/27
+    \xmemori, \ymemori : emathPs.sty $B$N>l9g$O(B cPut $B;HMQ(B
+v 2.28 2005/09/03
+    rectbox : emathMw.sty $B$NFHN)$KH<$&=$@5(B
+v 2.29 2005/09/05
+    rectbox$B4D6-$J$I!"(BemathPb.sty $B$K0\4I(B
+v 2.30 2005/09/09
+    $B@04X?t%0%i%UIA2h4XO"$r(B emathPg.sty $B$K0\4I(B
+    $B;CDjE*$K(B emathPb, emathPg $B$rFbIt$G%m!<%I$9$k(B
+    \HenKo : henkotype=4 $B$r?7@_(B
+      $B;XDj$7$?(B2$BE@$r(B1$BJU$H$9$kD9J}7A!J(Boval $B;XDj$G%3!<%J!<$r4]$/!K(B
+v 2.31 2005/09/10
+    emathPb $B$X$N0\4IDI2C(B
+v 2.32 2005/09/16
+    sikixypos$B4D6-(B : manDrawHatS$B4D6-$,!$(B
+      $BFs9`1i;;;RN>C<$N4V3V$rL5;k$7$F$$$?$N$r=$@5(B
+    \color $B;XDj$N>l9g!$(B
+      \Nuritubusi[0], \En*[0]$B$GGrEI$j$H$J$i$:!$?'$,$D$/$N$r=$@5(B
+v 2.33 2005/09/17
+    \HenKo $B$N@0Hw(B
+    $B%m!<%I%*%W%7%g%s(B dvipdfmx
+v 2.34 2005/09/25
+    \Addvecself, \Mulvecself
+    \Addvec* : $BBh(B2$B0z?t$OC10L$D$-(B
+    \ArrowLine : <heni=.., henii=..> : $B=$@5%Y%/%H%k!JC10L$D$-!K(B
+v 2.35 2005/09/28
+    \hasenLG
+v 2.36 2005/10/01
+    \LandLweight : $B:BI8@.J,$=$N$b$N$r(B weight$BG\$9$k$h$&$KJQ99(B
+v 2.37 2005/10/03
+    \nurinoudo : \Nuritubusi $B$K$*$1$k%G%U%)%k%H$NG;EY$r;XDj(B
+v 2.38 2005/10/04
+    \hasen : $BIA2h$9$k!&$7$J$$!$$NH=Dj$r(B \unitlength$B0MB8$+$i(B pt$BC10L$G$NHf3S$KJQ99(Bv 2.39 2005/10/07
+    dLT $B%*%W%7%g%s$KBP$7(B DLT $B!JC10L$D$-!K(B
+v 2.40 2005/10/09
+    \bekutorukata $B$ND4@0!J(B\ukansan $B$r;HMQ!K(B
+v 2.41 2005/10/11
+    \ArrowLine : [#2] $B$,L58z$H$J$C$F$$$?$N$r=$@5(B
+v 2.42 2005/10/15-18
+    \Daen* : $B6-3&$N?'(B
+    \emDottedline $B?7@_(B
+v 2.43 2005/10/19
+    \HenKo : <henkotype=bracket> $B$N>l9g$K$D$$$F!$(B<yazirusi=.>$B%*%W%7%g%s$N8+D>$7(B
+v 2.45 2005/10/30
+    \emcdottedline : \emdottedline $B$G!$=*E@$rIA2h$7$J$$!J7QB3$N$?$a!K(B
+v 2.46 2005/11/03
+    \Candl*, \Candk*
+v 2.47 2005/12/03
+    \Hatchpolygon[x30,-30] : 30$BEY$H(B-30$BEY$N%/%m%9EI$j(B
+v 2.49 2005/12/25
+    \Chainline ---> \ChainLine $B$H2~L>$7(B
+    \Chainline $B$O!$E@Ns$r0z?t$H$9$k!#(B
+    \def\ArrowHeadType#1 : t$B!J;03Q7A!K$rDI2C(B
+    \xmemori*,\ymemori* : $BL\@9$j@~$r0z$+$J$$(B
+    \Agezokov : \Agezokovi, \Agezokovii $B6&DL$N;XDj(B
+    \HenKoA,\HenKoVA,\HenKoVB,\HenKoB : henkotype=bracket $B$N>l9g$NC<E@!$@^$lE@(B
+v 2.50 2006/01/19
+    \mTyokusen, \GFunci : \xmin ---> \truexmin $B$J$I(B
+v 2.51 2006/01/21
+    \HenKo $B$KBP$7$F(B <dash=..> $B%*%W%7%g%s$rM-8z$K(B
+v 2.52 2006/01/26
+    \yaziriiti : $B1_8L$Ko7$rCV$/>l9g!$$=$N0LCV$r;XDj(B (0$B!A(B1)
+v 2.53 2006/01/29
+    dash=.. : emathPs.sty $B$+$i0\4I(B
+    emathPut : $BJ}0L%*%W%7%g%s$,ITE,@Z$J>l9g!$%(%i!<$H$9$k(B
+v 2.54 2006/02/26
+    \everyzahyou $B?7@_!'(Bzahyou$B4D6-Fb$G(B Kaiotu$B4D6-$r;HMQ$9$k>l9g$J$I$X$NBP1~(B
+v 2.55 2006/03/21
+    \yaziri : \ArrowHeadPit $B$r;XDj$7$?$H$-!$(Bxscale=, yscale= $B$KBP1~(B
+v 2.56 2006/03/30
+    \zahyou : x,y$B$N%l%s%8$K$D$$$F!$(Bsyntax check $B$rF~$l$k(B
+v 2.57 2006/04/16
+    \Argvec : xscale, yscale $B$KBP1~(B
+v 2.58 2006/04/16
+    \Drawtpic : [waku] $B%*%W%7%g%s$G@)8fE@$r7k$V@^$l@~IA2h(B
+v 2.59 2006/04/16
+    \Drawtpic : [yazirusi=a/r/b] $B$rM-8z$K(B
+    \@yaziri  : yscale $B$H$N4X78$G=$@5(B
+v 2.60 2006/04/22
+    \mybekutoru : $B%Y%/%H%k$N7A>u$rJQ99$9$k$?$a$N%3%^%s%I(B
+v 2.61 2006/05/14
+    \put : wallpaper.sty $B$H$N6&B8(B
+v 2.62 2006/05/30
+    \Hamidasisenbun : \hamidasisenbun $B$K$*$$$F!$$O$_=P$7NL$rC10LIU$N?tCM$G;XDj(B
+    \HenKo : <..> $B%*%W%7%g%s$K(B
+                Hamidasi=.., HamidasiA=.., HamidasiB=..
+v 2.63 2006/06/07
+    \Qbezier[#1]#2#3#4
+v 2.64 2006/06/08
+    \bekutorukata{fill} : xscale, yscale $B$N;XDj$KBP1~(B
+v 2.65 2006/06/26
+    picture$B4D6-!'(B\xmin, \ymin$B$rDj5A(B
+v 2.66 2006/07/01
+    prezahyou=.. : $BB(<B9T(B
+v 2.67 2006/07/23
+    \Tyokkakukigou : [#1] $B$G!$(B90,180,270$B$K$h$j5-9f0LCV$r2sE>(B
+    \KinziEnko : $B9o$_CM$,Ii$N>l9g!$(B\owarikaku $B$r=$@5(B
+v 2.68 2006/08/01
+    \Yogen, \yogen : overflow $BBP:v(B
+    \Pii : $BFbIt$G$O(B \Pii@
+    \ArrowLine : $B44$Ho7$N@\B3=$@5(B
+    \zahyou : prezahyou : $B%?%$%_%s%0=$@5(B
+    \Hamidasiten
+    \Mulvec : *$B$D$-(B
+    \PutStr* : $BJ8;zNs$rCV$/0LCV$r!$=*E@$+$i$NJQ0L%Y%/%H%k!JC10L$D$-!K$GM?$($k(B
+               $B1_8L$NH>7B$r;XDj$9$kBe$o$j$K!$8L9b$r;XDj$9$k%*%W%7%g%s(B[enkoH=..}
+v 2.69 2006/08/10
+    \Addvec* : \ukansan--->\uxkansan, \uykansan
+    henkotype=bezier $B$rLO:w(B
+    \Rotvec, \Rotdef [#1] $B$G!$C10L$D$-D9$5;XDj$b2DG=(B
+    \PutStr : [#6] arc=ellipse $BD9<4!&C;<4$,:BI8<4$KJ?9T$JBJ1_(B
+                       $B!JJ8;zNs$N>e2<$K$D$1$k>l9g$O(B Ellipse)
+    \yaziri, \Yaziri : $BJ}8~%Y%/%H%k$KBe$($FJ}8~3Q$G$b2D(B
+    \tenretu : $B6uGrJ8;z$G=*N;$9$k>l9g$KBP=h(B (BBS #4130,5031)
+    \Kakukigou : \Yenko --> \yenko (BBS #5081)
+v 2.70 2006/08/10
+    \yenko* : \yenko $B$K$*$$$F!$o7$N$_IA2h(B
+    \yenko : ArrowHeadPit $B$rM-8z$K(B (BBS #5087)
+v 2.71 2006/08/21
+    \ArrowLine : $B44$Ho7$N@\B3:F=$@5(B
+    \yenko : $Bo7$N@hC<$r1TMx$K(B
+    \enko ---> \EMenko : ceo.sty $B$H>WFM(B
+v 2.72 2006/08/23
+    \ArrowLine : $Bo7$H$ND4@0(B
+v 2.73 2006/08/25
+    \ippankaku : emathPg.sty $B$K0\4I$7!$(Bperl $B$H$NO"7HHG$r(B emathPp.sty $B$K?75,:n@.(B
+v 2.75 2006/09/22
+    \HenKo $B$K(B <putpos=..>$B%*%W%7%g%sIm2C(B
+              (henkotype=paren, triangle, parallel, bracket $B$N>l9g$N$_(B)
+v 2.76 2006/09/23
+    \Bunten : $B6uGr$N:.F~B`<#(B
+v 2.77 2006/10/15
+    \tenretu* : $B8DJL$NE@$KBP$9$k(B[.]$B%*%W%7%g%s$rL5;k(B (BBS #5273)
+v 2.78 2006/10/26-30
+    \Kakukigou : <hasen=..> $B$,L58z$K$J$C$F$$$?$N$r=$I|(B
+               : <bezier=..> $B%*%W%7%g%s(B
+    \Hasen : [allinethickness=..]
+    \HenKo : henkoH=0 $B$N>l9g!$(B\HenKo@r=1000 $B$H$7$F$*$/!J%*!<%P!<%U%m!<BP:v!K(B
+    \emathPut : $B%*%W%7%g%s(B (dx,dy)[..] $B$K$*$$$F!$(Bdx, dy $B$K(B 2mm+4pt $B$J$I$r5vMF(B
+    \Drawline : <yazirusi=.>$B$rM-8z(B
+v 2.79 2006/11/01
+    \Kakukigou : xscale, yscale $B$r;XDj$7$?$H$-$K@5$7$/5!G=$7$F$$$J$+$C$?(B
+v 2.80 2006/11/02-04
+    \oHasen : \Hasen $B$G(B\begingroup $B$rDI2C$7$?$3$H$N1F6A(B
+    \Kakukigou : [|] $B%*%W%7%g%s$ND4@0(B
+                 Kakukigoubounagasa=.. $B%*%W%7%g%s(B
+v 2.81 2006/11/08
+    \Drawline : <yazirusi=..> $B@hC<$r1TMx$K(B
+v 2.82 2006/11/11
+    \Drawline : <arrowheadsize=..> $B$rM-8z$K(B
+    \Hatchpolygon : <syanuriTanmatu=..> 
+v 2.83 2006/11/14
+    \Suisin : $B?b?4(B
+v 2.84 2006/11/17
+    \Tyokkakukigou, \tyokkakukigou : <key=val>$B$rM-8z$K(B
+    \Kakukigou : \gsave, \grestore $B$G$/$/$k!#(B
+v 2.85 2006/11/20
+    \tentotyokusen : $B%P%0%U%#%C%/%9(B
+    \suutyokusen : <#1>, zikusensyu, yokozikukigou $B$rM-8z$K(B
+v 2.86 2006/11/27
+    \Enko <arrowheadsize=..> $B$rM-8z$K(B
+v 2.87 2006/11/28
+    \Tyokusen : <...> $B$r6I=jE*$J%*%W%7%g%s$H$9$k(B
+v 2.88 2006/12/03
+    \setdash, dash=..: $BC10L$D$-$b2D(B
+v 2.89 2006/12/09
+    \byperl
+    oval=.., Oval=.. : $BF10l(B
+v 2.90 2006/12/18
+    \Kakukigou : bezier=.. $B;XDj;~$N(B \KakukigouP $B=$@5(B
+    \yenko : $Bo7$r1TMx$K(B
+    \HenKo : henkomoziH=.. $B$GJ8;z0LCV$ND4@0!J1_8L$NCf?4$+$i$N5wN%$rA}8:!K(B
+             sironuki=false/true
+            \HenKosideBi, \HenKosideBii
+            \HenKosideTi, \HenKosideTii
+    \Kuromaru : <nuriiro=..> $B%*%W%7%g%s$rM-8z$K(B
+v 2.92 2007/01/06
+    \Enko : <iro=..> $B%*%W%7%g%s$rM-8z$K(B
+    \ChainLine : $B6uGr$N:.F~BP:v(B
+v 2.93 2007/01/07
+    \Kakukigou : <$B1_8L$N8D?t(B> $B$H(B <bezier=..> $B$H$NJ;MQ(B
+v 2.94 2007/01/08
+    \Kakukigou : <bezier=..> $B$r(B pszahyou(*)$B4D6-2<$G$b;HMQ2DG=(B
+v 2.95 2007/02/01
+    \Suisen#1#2#3#4 : #2=#3 $B$N>l9g!$(B#4=#2 $B$H$9$k(B
+    \CandC* : $B%P%0%U%#%C%/%9(B
+v 2.96 2007/02/06
+    xymtex.sty $BBP:v(B
+v 2.97 2007/02/07
+    \syaeiX, \syaeiY
+    \Enko : <hamidasikaku=..> $B%*%W%7%g%s(B
+v 2.98 2007/02/17
+    \Nuritubusi[0] $B$r(B \Nuritubusi[nuriiro=white] $B$H$_$J$9(B
+v 2.99 2007/02/17
+    \En*[0], \Daen*[0] $B$K$D$$$F$bF1MM(B
+v 3.00 2007/02/20
+    beamer.sty $BBP:v(B
+v 3.01 2007/02/25
+    \kuromaru : \Kuromaru $B$KBP$9$k(B <..> $B%*%W%7%g%s$rM-8z(B
+v 3.02 2007/03/03
+    \Kakukigou : <kakukigou=.> $B%*%W%7%g%s(B
+v 3.03 2007/03/08
+    \emrrmoveto, \emrrlineto
+v 3.04 2007/03/20
+    henkoH=-, henkoH=.+dimen, henkoH=.-dimen
+v 3.05 2007/04/02
+    henkoH<0 $B$N>l9g$N1_8LIA2h$N=$@5(B
+    \hamidasisenbun, \Hamidasisenbun : \Drawline $B$KEO$9(B<#1>$B$r?7@_(B
+    v2.98 $B$K$*$1$kJQ99$K$D$$$F!$(B[dvipdfmx]$B%*%W%7%g%s$N>l9g$O85$KLa$9!#(B
+    \@ovalPolygon : iro=.. $B%*%W%7%g%s$rM-8z$K(B
+v 3.06 2007/04/23
+    eclarith.sty $B$N%m!<%I$r;_$a$k(B
+    \Drawline $B$K(B <idou=..> $B%*%W%7%g%s(B
+v 3.07 2007/04/23
+    idou=r(.,.) : $B6K7A<0(B
+v 3.08 2007/05/03
+    \drawborder
+    \Henko : [henkosideoption=..] (--> BBS #5993)
+v 3.09 2007/05/09
+    \@@emathPut@r#1(#2,#3):#2$B$,L5L>?t$G$b2D(B
+    ueyohaku: $B1&JUCM$,L5L>?t$G$b2D(B
+    \KTkukans: $BO"N)ITEy<0$N2rI=<(!$3FITEy<0$N2r$rJ#?t$NJ?9TD>@~>e$KI=<((B
+    \Siromaruhankei : $B$?$@$7!$(B\Kuromaruhankei $B$K=>B0(B
+v 3.10 2007/05/10
+    \Enban : dvipdfmx $BBP:v(B
+v 3.11 2007/05/29
+    [monochrome] : $B%m!<%I%*%W%7%g%s(B
+    \Nuritubusi[0] : dviout $B$N>l9g$b(B \color[0] $B$H$O$;$:!$(Btpic-specials 
+                      (---> BBS #6089)
+v 3.12 2007/06/11
+    \newif\ifEMpscontinue\EMpscontinuefalse
+    \Hatchpolygon : \EMpscontinuefalse $B$H$9$k!#(B
+    \Takakkei : EMpscontinue$B4D6-BP1~(B
+    \Addvec, \Subvec : \by@perl $B$rM-8z$K(B
+v 3.13 2007/06/12
+    \Addvec, \Subvec : <perl> $B%*%W%7%g%s7W;;$K%P%0!!(B\xi-(\xii) $B$H3g8L$,I,MW(B
+    \Menseki : $B;03Q7A$N!JId9fIU!KLL@Q(B
+v 3.14 2007/06/27
+    \Hantyokusen : \ymin --> \trueymin
+    \bekutorukata{fill} $B$N>l9g$K$D$$$F;YClD4@0(B (--> BBS #6208)
+v 3.15 2007/07/02
+    \bekutorukata $B$NDj5A$O(B bekutorukata.sty $B$G$N$_07$&(B
+    \Drawline : \iro@ $B$N07$$(B
+v 3.16 2007/07/27
+    \Put : [mathmode]$B%*%W%7%g%s(B
+    \Nuritubusi : $B%0%k!<%T%s%0$G0O$`(B
+    \Deruta : \DeclareRobustCommand
+v 3.17 2007/08/18-24
+    $B%0%i%U%#%C%/%9%I%i%$%P$r;XDj$7$J$$>l9g$O(B graphicx, color $B$r%m!<%I$7$J$$!#(B
+    \Henko <ellipse>$B%*%W%7%g%s;HMQ;~$K(B <hasen=..>$B$rM-8z$H$9$k!#(B(--> BBS #6383)
+v 3.18 2007/10/01
+    \Yaziri : $BFbIt$G(B\emathPut $B$r;HMQ$7$J$$!#(B
+    \Siromarulinewidth
+    \Enban : [border] $B%*%W%7%g%s$rM-8z$H$9$k(B
+    \@Qbezier : $B0z?t$K$"$C$?M>J,$N(B { } $B$r=|5n(B
+    \linethickness : \allinethickness $B$HF15A$K(B
+    \Yaziri : $BJQ?t6I=j2=(B (\@P ---> \Yaziri@P $B$J$I!K(B
+    zahyou, pszahyou $B$$$:$l$K$F$b!$@~$NB@$5$O(B
+$B!!!!!!!!(B\linethickness (linethickness=..) $B$G@)8f(B
+    Daen : <hasen=..>$B%*%W%7%g%s$rM-8z(B
+    Earg, Argvec : *$B$D$-$G!$%i%8%"%s$rJV$9!#(B
+    \phkasen : <iro=..> $B$O!$2<@~$KBP$7$F$N$_F/$/!#(B
+v 3.19 2007/10/14
+    \HenKo $B$KBP$9$k(B <henkomoziH=..> $B$N%-!<Dj5A$K0[>o$J2~9T(B (BBS #6584)
+v 3.20 2007/10/24
+    \Hasen : \gsave, \grestore $B$G0O$`(B
+    \Tyokkakukigou : <...>$B%*%W%7%g%s(B
+v 3.21 2007/11/23
+    \emathPut [background=..] $B$K!$(Belse$B@a$,$J$$$N$rJd$&!#(B
+    \heikoukigou, \Heikoukigou $B!'(B *$BIU$-$N>l9g!$J?9T5-9f$N$_$rIA2h(B (BBS #6711)
+    \KTkukan* : [$B%i%Y%kL>(B] $B$r$=$N$^$^=PNO(B (BBS #6764)
+v 3.22 2007/12/03
+    \Heikoukigou : heikoukigoukosuu $B$H(B heikioukigouiti $B$H$NJ;MQ(B (BBS #6786)
+v 3.23 2007/12/06
+    emathPut : $BJ}0L;XDjJ8;z$N%A%'%C%/(B (BBS #6792)
+v 3.30 2008/01/27
+    \Yaziri : xscale, yscale $B$r;XDj$7$?>l9g$N0LCV=$@5(B (BBS #7024)
+v 3.31 2008/02/02
+    \BuntenMark: $B3+@.Cf(B 08
+v 3.32 2008/02/04
+    \oHasens
+v 3.33 2008/02/18
+    \HenKo: yazirusi, hasen $B%*%W%7%g%s$NJ;MQ(B (BBS #7092)
+v 3.34 2008/02/23
+    \GFunci: iro=.. $B%*%W%7%g%s$rM-8z$K(B
+    \Hatchpolygon: $B%"%-9T$N:.F~(B (BBS #7112)
+v 3.35 2008/02/26
+    \HenKo: <yazirusi,hasen> $BJ;MQ;~$K$*$1$ko7$N@hC<$r1TMx$K(B
+v 3.36 2008/03/22
+    \ETen
+    \Hantyokusen: \Drawline $B$r8F$V(B
+    \Tyokusen*, \mTyokusen*, \kTyokusen*
+    \phLRarrow: 0021200802.tex
+v 3.37 2008/04/23
+    \Drawline: <hasenLG=..>$B%*%W%7%g%s(B
+    graphicx.sty, color.sty $B$,$9$G$K%m!<%I$5$l$F$$$k$+H]$+$r3NG'(B (beamer $BBP:v(B)
+    \Hatchpolygon: <background=white> $B$G(B Nuritubusi[0]$B$r9T$C$?8e!$<P@~EI$j(B
+v 3.38 2008/05/10
+    \HenKo: $B:G8e$K(B \ignorespaces $B!J6uGr$N:.F~BP:v!K(B BBS #7219
+            [..] $B%*%W%7%g%s$r$D$1$?>l9g$b!$(Bhenkocolor=.. $B$rM-8z$K(B BBS #7221
+v 3.39 2008/05/10
+    \HenKo: $BJ8;z$^$G?'$,$D$/$N$r=$@5(B
+v 3.40 2008/05/21
+    \Hatchpolygon: pszahyou$B4D6-Fb$G$O!$(Bclip $B$r<B9T$7$F$*$/!#(B
+v 3.41 2008/05/26
+    \iBunten: $B?tD>@~>e$NJ,E@(B
+    graphicx, color $B$N@h9T%m!<%I$G(B [dvipdfmx] $B$H$5$l$F$$$k>l9g$N=hM}(B
+v 3.42 2008/07/28
+    henkotype=trapezoid
+    \Kakukigou: <nuriiro=..>
+    \kousi $B@0Hw(B
+    \tenNahuda(\tenretu**)
+    \Hamidasiten*: $BN>B&(B
+    \toukakukigou: \toukaku@kigou $B$N6I=j2=(B
+v 3.43 2008/08/01
+    henkotype=paren, brace
+v 3.44 2008/08/05
+    \Hatchpolygon: <#1>$B0z?t=hM}$G!$(B\headchar-->\Headchar (BBS #7403)
+v 3.45 2008/08/07
+    \tenNahuda: \edef --> \EMedef
+v 3.46 2008/08/12
+    \emDottedline: $B%P%0=$@5(B (BBS #7406)
+v 3.47 2008/08/14
+    \Enban: noudo=.. $B%*%W%7%g%s@0Hw(B
+v 3.48 2008/08/18
+    \emNagamaru
+    \CandL: $B%*!<%P!<%U%m!<BP:v(B
+v 3.49 2008/09/16
+    $B6uGr$N:.F~BP:v(B
+    \emNagamaru: xscale, yscale $B$KBP1~(B
+    \KinziEnko: $B6I=j2=(B
+v 3.51 2008/11/16
+    \Rotdef*: $BE@Ns$r=hM}BP>](B
+    \zenheimen*, \zenheimenY
+    \showGgrid
+v 3.52 2008/12/13
+    \tenretu, \rtenretu: <kuromaru>$B%*%W%7%g%s(B (0049200803.tex)
+    \roresen (BBS #7712)
+    \Kuromaru: $B0z?t$rE@Ns$H$9$k$3$H$r2DG=(B
+    \KinziEnko: $B9o$_CM$,Ii$N>l9g(B (BBS #7752)
+v 3.52 2008/12/20
+    \tenretu* $B$K$b(B <kuromaru>
+v 3.54 2009/01/04
+    \tenretu: [$BI=<($9$k5-9f(B]$B%*%W%7%g%s$N%P%0(B (BBS #7836)
+v 3.55 2009/01/20
+    \Memorisen
+    \bnagamaru: $BB@;z$N(B \nagamaru
+v 3.56 2009/02/07
+    \rtenretu*: <kuromaru>$B%*%W%7%g%s$rM-8z$H$9$k(B (BBS #7955)
+v 3.57 2009/02/13
+    \Siromaru: pszahyou$B4D6-$G!$(B\Siromarulinewidth $B$,L58z$H$J$C$F$$$?$N$r=$I|(B
+    \Tyuuten: <perl>$B%*%W%7%g%s(B (BBS #7970)
+v 3.58 2009/02/18
+    \HenKo, \En, \Enko: hasenLG=.. $B%*%W%7%g%s(B
+v 3.59 2009/02/28
+    \HenKo: henkotype=parallel $B$K$*$$$F!$(B<moziretuH=..> $B$rM-8z$H$9$k(B
+v 3.60 2009/03/05
+    \ChainLine: \Kuromaru $B$G<~$,IA2h$5$l$J$/$J$C$?$3$H$KH<$&!$H>7BCM$N=$@5(B
+                                                 (BBS #8007)
+v 3.61 2009/03/12
+    \Phrightarrow
+v 3.62 2009/03/18
+    \Kakukigou: moziiti=
+v 3.63 2009/03/28
+    \Kurosikaku, \Sirosikaku
+v 3.66 2009/06/14
+    \gline $B$J$I!'(B<sensyu=..>$B%*%W%7%g%s$rM-8z$H$9$k(B (BBS #8193)
+v 3.67 2009/06/23
+    <moziiti=..> $B$K$*$$$F!$1&JUCM$K(B -... $B$r5vMF(B
+v 3.69 2009/07/26
+    \KTkukan: \KTkukanTatiage, KTpaintoption (BBS #8266)
+v 3.71 2009/07/30
+    \HenKo: $B8L$KBP$9$k=$>~$,J8;zNs$K1F6A$7$J$$$h$&$K$9$k(B (BBS #8275)
+v 3.73 2009/08/10
+    $B>e5-=$@5$NI{:nMQBP:v(B (BBS #8294)
+v 3.74 2009/08/28
+    \Hamidasisenbun: <hidariT=..,migiT=..> $B$rM-8z$H$9$k(B (BBS #8304)
+v 3.75 2009/10/02
+    \En**: \Hatchpolygon $B$G$O$J$/!$(B\emPaint* $B$r8F$S=P$9!#(B
+v 3.76 2009/10/30
+    \QandL, \Qandl: $BFs<!4X?t$N%0%i%U$HD>@~$H$N8rE@(B
+v 3.77 2009/12/23
+    \En**: v3.75 $B$N=$@5$,%"%C%Q%3%s%Q%A$K$J$C$F$$$J$+$C$?(B (BBS #8479)
+v 3.79 2010/01/11
+    \xclipDrawline: [iro=..] $B%*%W%7%g%s$rM-8z$K(B (BBS #8531)
+v 3.80 2010/02/05
+    \emathPut[syaei=..]: EMclip $B$rIU2C$9$k(B
+v 3.81 2010/03/25
+    \embNagamaru
+v 3.82 2010/04/01
+    \ArrowHeadType{f} $B0J30$N>l9g$N%P%0(B (BBS #8771)
+v 3.88 2010/06/18
+    \knagamaru (BBS #8916)
+v 3.90 2010/07/24
+    color $B4XO"$r(B EMcolor.sty $B$H$7$FFHN)(B
+v 3.91 2010/08/17
+    \DPkukan (BBS #9115)
+v 3.92 2010/08/21
+    \KTkukan: $B<P@~EI$j$r@h9T(B (BBS #9136)
+v 3.93 2010/08/22
+    \KTkukan: [auto=*] $BHV9f7QB3(B, [auto=..] $BHV9f;XDj(B

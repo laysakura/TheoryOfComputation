@@ -1,0 +1,78 @@
+\documentclass[landscape,a4j]{jarticle}
+\usepackage[papersize]{emath}
+\usepackage{emathKs}
+
+\def\sub#1{%
+    \ketakugiri{#1} & \ketakugiri<4>{#1} & \Kansuuzi{#1} & \Kansuuzi[a]{#1}
+    \\\hline}
+
+\begin{document}
+2000年度の一般会計予算額は 84987100000000 円 です。
+
+このように算用数字を書き並べる表現法は大きさをつかみ難いので
+いろいろな工夫があります。
+\begin{jquote}
+    84,987,100,000,000\\
+    84,9871,0000,0000
+\end{jquote}
+などと，3桁または4桁ごとにコンマで区切るのもその一つです。
+
+また，新聞などでは
+\begin{jquote}
+    八十四兆九千八百七十一億（縦書き）\\
+    84兆9,871億（横書き）
+\end{jquote}
+などと，漢数字の単位を用いる（併用する）表現法が使われています。
+
+こちらの方が見やすいですね。
+そこで，
+\begin{jquote}
+\begin{verbatim}
+(1)    84987100000000 ---> 84,987,100,000,000
+(2)    84987100000000 ---> 84,9871,0000,0000
+(3)    84987100000000 ---> 八十四兆九千八百七十一億
+(4)    84987100000000 ---> 84兆9,871億
+\end{verbatim}
+\end{jquote}
+
+と変換をするマクロを emathKs.sty としてまとめました。
+
+(1),(2)のようにコンマで区切るには，
+\begin{jquote}
+    numbersty.sty というマクロがありますが，\\
+        10億程度が上限のようです。\\
+    sumofmoney.sty の方は上限はありませんが，\\
+        区切る桁数が３と固定されています。\\
+\end{jquote}
+
+emathKs.sty では，
+\begin{jquote}
+\begin{verbatim}
+(1) は，\ketakugiri#1
+(2) は，\ketakugiri<4>#1
+(3) は，\Kansuuzi#1
+(4) は，\Kansuuzi[a]#1
+\end{verbatim}
+\end{jquote}
+という書式で実現しています。漢数字の単位としては，
+\begin{jquote}
+    一，十，百，千，萬，億，兆，京，垓
+\end{jquote}
+までサポートしています。この次の単位はちと「問題あり」なので敬遠です。
+
+\begin{tabular}{|r|r|p{13zw}|p{13zw}|}\hline
+    算用数字(3桁区切り) & 4桁区切り & 漢数字 & 混用 \\\hline
+    \sub{0}%
+    \sub{1}%
+    \sub{123}%
+    \sub{2000}%
+    \sub{20000}%
+    \sub{21000}%
+    \sub{20001}%
+    \sub{12000}%
+    \sub{100002345}%
+    \sub{84987100000000}%
+    \sub{32610000000000}%
+    \sub{1234567891234567891234}
+\end{tabular}
+\end{document}

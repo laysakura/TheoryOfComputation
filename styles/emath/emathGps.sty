@@ -1,0 +1,1062 @@
+% emathGps.sty by tDB(emath@nifty.com)
+%
+\@ifundefined{ifpapersize}{\newif\ifpapersize\papersizefalse}{}%
+%
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{emathGps}[2010/04/17 v 0.13α]%
+  \DeclareOption{debug}{\def\ps@debug{}}%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \DeclareOption{onlyG}{\def\G@nly{}}%
+  \DeclareOption{onlyP}{\def\P@nly{}}%
+  \DeclareOption{notMy}{\def\not@My{}}%
+  \DeclareOption{varg}{\def\@varg{}}%
+  \DeclareOption{times}{\def\em@fonts{1}}%
+  \DeclareOption{txfonts}{\def\em@fonts{2}}%
+  \DeclareOption{pxfonts}{\def\em@fonts{3}}%
+  \DeclareOption{mathabx}{\def\em@fonts{4}}%
+  \DeclareOption{dviout}{\def\em@grdrv{dviout}}%
+  \DeclareOption{dvips}{\def\em@grdrv{dvips}}%
+  \DeclareOption{dvipdfm}{\def\em@grdrv{dvipdfm}}%
+  \DeclareOption{dvipdfmx}{\def\em@grdrv{dvipdfmx}}%
+  \DeclareOption{papersize}{\papersizetrue}
+  \ProcessOptions\relax
+%
+\@ifundefined{G@nly}{%
+  \RequirePackage{emathPs}%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+}{%
+  \RequirePackage{trig}
+  \RequirePackage{keyval}
+  \RequirePackage{epic,eepic}
+  \RequirePackage{eclarith}
+  \RequirePackage{emathC}
+  \RequirePackage[onlyP]{emathPh}
+}%
+\RequirePackage{emathLb}%
+%
+\define@key{emG}{debug}[1]{\def\emG@debug{#1}}
+\define@key{emG}{Hankei}{\def\EnGurafuHankei{#1}}
+\define@key{emG}{EnGurafuLabelpos}{\def\EnGurafuLabelpos{#1}}
+\define@key{emG}{EnGurafuMemoriNagasa}[2mm]{\edef\EnG@memori@L{#1}}
+\define@key{emG}{EnGurafuMemoriKizami}[1]{\edef\EnG@memori@kizami{#1}}
+\define@key{emG}{EnGurafuMemoriLabel}[10]{\edef\EnG@memori@label{#1}}
+\edef\EnG@memori@L{0pt}%
+\define@key{emG}{fboxsep}{\setlength{\fboxsep}{#1}}
+\define@key{emG}{ObiTakasa}{\def\ObiTakasa{#1}}
+\define@key{emG}{ObiKankaku}{\def\ObiKankaku{#1}}
+\define@key{emG}{ObiMusubisen}{\def\ObiMusubisen{#1}}
+\define@key{emG}{ObiMemoriKankaku}{\def\ObiMemoriKankaku{#1}}
+\define@key{emG}{ObiMemorisen}{\def\ObiMemorisen{#1}}
+\define@key{emG}{ObiMemoriHaiti}{\def\ObiMemoriHaiti{#1}}
+%
+\def\NuriFi{}
+\def\NuriFii{*}
+\def\NuriFiii{[0]}
+\def\NuriFiv{*[-45,45]}
+%
+% 帯グラフ
+%
+\def\ObiTakasa{3zh}%
+\def\ObiKankaku{1zh}%
+\def\ObiMusubisen{\Hasen}
+\def\ObiMemoriKankaku{0}%
+\def\ObiMemoriHaiti{t}%
+%
+\def\ObiGurafu{\edef\ObiMemorisen{\empty}%
+  \@ifnextchar[{\ObiGurafu@}{\@ObiGurafu}}
+\def\ObiGurafu@[#1]{\setkeys{emG}{#1}\@ObiGurafu}
+\def\@ObiGurafu#1{%
+  \noindent
+  \edef\Obi@kosuu{0}%
+  \edef\Obi@namae{#1}%
+  \def\Obi@wtmp{3pt}%
+%
+  \def\Obi##1##2{%
+    \Incr\Obi@kosuu
+    \setbox0=\hbox{{##1}}%
+    \ifdim\wd0>\Obi@wtmp\edef\Obi@wtmp{\the\wd0}\fi
+    \ifnum\ObiKosuu>\z@
+      \ISub\ObiKosuu\Obi@kosuu\Obi@tmp
+      \@tempdima\ObiTakasa
+      \advance\@tempdima\ObiKankaku
+      \@tempdima=\Obi@tmp\@tempdima
+      \ukansan\@tempdima\yo
+      \@tempdima\ObiTakasa\advance\@tempdima\yo\unitlength
+      \ukansan\@tempdima\yi
+      \edef\xo{\ObiG@xo}%
+      \Add\yo\yi\y\Div\y{2}\yc
+      \Put{(0,\yc)}(0,0)[l]{\box0}%
+      \expandafter\edef\csname \romannumeral\Obi@kosuu B\endcsname{(\xo,\yo)}%
+      \expandafter\edef\csname \romannumeral\Obi@kosuu T\endcsname{(\xo,\yi)}%
+      \edef\Obi@sum{0}%
+      \expandafter\@for\expandafter\Obi@@c\expandafter:\expandafter=##2\do{%
+        \IAddself\Obi@sum{\Obi@@c}%
+      }%
+      \edef\Obi@i{0}%
+      \expandafter\@for\expandafter\Obi@@c\expandafter:\expandafter=##2\do{%
+        \Incr\Obi@i
+        \Div\Obi@@c\Obi@sum\Obi@tmp
+        \Mul\Obi@tmp\Obi@haba\Obi@dx
+        \Add\xo\Obi@dx\xi
+        \ifx\empty\ObiMemorisen\else\Nuritubusi[0]{(\xo,\yi)(\xo,\yo)(\xi,\yo)(\xi,\yi)}\fi
+        \edef\Obi@tmp{\csname NuriF\romannumeral\Obi@i\endcsname}%
+        \expandafter\Nuritubusi\Obi@tmp{(\xo,\yi)(\xo,\yo)(\xi,\yo)(\xi,\yi)}%
+        \Tyuuten{(\xo,\yi)}{(\xi,\yo)}\@P\Put\@P(0,0)[c]{\colorbox{white}{\Obi@@c}}%
+        \ifnum\Obi@i>\@ne
+          \Drawline{(\xo,\yo)(\xo,\yi)}%
+        \fi
+        \expandafter\edef\csname\romannumeral\Obi@kosuu B\romannumeral\Obi@i\endcsname{%
+          (\xi,\yo)}%
+        \expandafter\edef\csname\romannumeral\Obi@kosuu T\romannumeral\Obi@i\endcsname{%
+          (\xi,\yi)}%
+        \edef\xo{\xi}%
+      }%
+      \edef\Obiretusuu{\Obi@i}%
+      \Takakkei{\csname\romannumeral\Obi@kosuu B\endcsname\csname\romannumeral\Obi@kosuu T\endcsname%
+        (\truexmax,\yi)(\truexmax,\yo)}%
+    \fi
+  }%
+  \dimenref[3zw]{W#1}\Obi@w@mds
+    \@tempdima\Obi@w@mds\advance\@tempdima5pt\relax
+    \edef\Obi@w@mds{\the\@tempdima}%
+% \count255=0\ref{N#1}\relax
+  \expandafter\ref@chk\csname r@N#1\endcsname
+  \if 1\@miteigi
+      \count255=0\relax
+  \else
+      \strsep{\ltxref{N#1}}{\hbox}\tmp@a\tmp@b
+      \count255=0\tmp@a\relax
+  \fi
+  \edef\ObiKosuu{\the\count255}%
+%
+  \unitlength=10pt\relax
+  \@tempdima\ObiTakasa
+  \advance\@tempdima\ObiKankaku
+  \@tempdima=\ObiKosuu\@tempdima
+  \advance\@tempdima-\ObiKankaku
+  \ukansan\@tempdima\yymax
+%
+  \edef\Obi@width{\the\linewidth}%
+  \@ifundefined{EMWR@zuhaba}{}{%
+    \ifdim\EMWR@zuhaba>\z@
+      \ifnum\EMWR@gyousuu>\@ne
+        \edef\Obi@width{\the\EMWRlinewidth}%
+%        \advance\Obi@width-\EMWR@zuhaba
+%        \advance\Obi@width-\@mawarikomisep
+%        \advance\Obi@width-\@mawarikomisep
+%%       \advance\Obi@width-\@mawarikomisep
+%%       \advance\Obi@width-\@mawarikomisep
+      \fi
+    \fi
+  }%
+  \ukansan\Obi@width\xxmax
+  \@tempdima\Obi@width
+  \advance\@tempdima-\Obi@w@mds
+  \ukansan\@tempdima\Obi@haba
+%
+  \ifnum\ObiMemoriKankaku=\z@
+    \edef\yymin{0}%
+  \else
+    \ukansan{1zh}\ObiMemori@y\edef\ObiMemori@y{-\ObiMemori@y}%
+    \ukansan{1.5zh}\Obi@tmp
+    \Sub\ObiMemori@y\Obi@tmp\yymin
+  \fi
+% \noindent
+  \ukansan\Obi@w@mds\ObiG@xo
+\ifnum\ObiKosuu>\z@
+  \begin{pszahyou*}[ul=10pt,borderwidth=1pt](0,\xxmax)(\yymin,\yymax)
+%
+\if t\ObiMemoriHaiti
+    \ifnum\ObiMemoriKankaku>\z@
+      \Drawline{(\ObiG@xo,\ObiMemori@y)(\truexmax,\ObiMemori@y)}%
+      \ukansan{3pt}\ObiMemori@h
+      \ukansan{3pt}\ObiMemori@d
+      \Add\trueymax{0.5}\memoriymax
+      \Sub\truexmax\ObiG@xo\ObiMemori@l
+      \Cfor{\edef\ObiMemori@x{0}}{\ObiMemori@x<101}{\IAddself\ObiMemori@x\ObiMemoriKankaku}\do{%
+        \Div\ObiMemori@x{100}\Obi@tmp\Mul\ObiMemori@l\Obi@tmp\Obi@tmp\Add\ObiG@xo\Obi@tmp\Obi@x
+        \Put{(\Obi@x,\ObiMemori@y)}{\Drawline{(0,\ObiMemori@h)(0,-\ObiMemori@d)}}%
+          \ifx\empty\ObiMemorisen\else
+            \ObiMemorisen{(\Obi@x,\ObiMemori@y)(\Obi@x,\memoriymax)}%
+          \fi
+        \Put{(\Obi@x,\ObiMemori@y)}(0,-5pt)[t]{\ObiMemori@x}%
+      }%
+    \fi
+\fi
+%
+\fi
+}%
+\def\endObiGurafu{%
+%
+  \ifx\ObiMusubisen\empty\else
+    \Ifor\i{1}{\ObiKosuu}\Do{%
+      \IAdd\i{1}\ii
+      \Ifor\j{1}{\Obiretusuu}\Do{%
+        \ObiMusubisen{\csname \romannumeral\i B\romannumeral\j\endcsname
+         \csname\romannumeral\ii T\romannumeral\j\endcsname}%
+      }%
+    }%
+  \fi
+%
+  \@ifundefined{iT}{}{%
+      \Drawlines{\iT\csname\romannumeral\ObiKosuu B\endcsname;\trueRT(\truexmax,0)}%
+%
+\if b\ObiMemoriHaiti
+    \ifnum\ObiMemoriKankaku>\z@
+      \Drawline{(\ObiG@xo,\ObiMemori@y)(\truexmax,\ObiMemori@y)}%
+      \ukansan{3pt}\ObiMemori@h
+      \ukansan{3pt}\ObiMemori@d
+      \Add\trueymax{0.5}\memoriymax
+      \Sub\truexmax\ObiG@xo\ObiMemori@l
+      \Cfor{\edef\ObiMemori@x{0}}{\ObiMemori@x<101}{\IAddself\ObiMemori@x\ObiMemoriKankaku}\do{%
+        \Div\ObiMemori@x{100}\Obi@tmp\Mul\ObiMemori@l\Obi@tmp\Obi@tmp\Add\ObiG@xo\Obi@tmp\Obi@x
+        \Put{(\Obi@x,\ObiMemori@y)}{\Drawline{(0,\ObiMemori@h)(0,-\ObiMemori@d)}}%
+          \ifx\empty\ObiMemorisen\else
+            \ObiMemorisen{(\Obi@x,\ObiMemori@y)(\Obi@x,\memoriymax)}%
+          \fi
+        \Put{(\Obi@x,\ObiMemori@y)}(0,-5pt)[t]{\ObiMemori@x}%
+      }%
+    \fi
+\fi
+  }%
+%
+    \writeLabel{W\Obi@namae}{\Obi@wtmp}%
+    \writeLabel{N\Obi@namae}{\Obi@kosuu}%
+\ifnum\ObiKosuu>\z@
+  \end{pszahyou*}
+\fi
+}%
+%
+% 円グラフ
+%
+\def\EnGurafuHankei{20mm}%
+\def\EnGurafuLabelpos{.666667}%
+\def\EnGurafu{\@ifnextchar[{\EnGurafu@}{\@EnGurafu}}
+\def\EnGurafu@[#1]{\setkeys{emG}{#1}\@EnGurafu}
+\def\@EnGurafu#1{{%
+  \@ifundefined{EnG@memori@label}{%
+    \@ifundefined{emG@debug}{%
+      \begin{pszahyou*}[ul=\EnGurafuHankei,borderwidth=1pt](-1,1)(-1,1)
+    }{%
+      \begin{pszahyou*}[debug,ul=\EnGurafuHankei,borderwidth=1pt](-1,1)(-1,1)
+    }%
+  }{%
+    \setbox0=\hbox{90}\edef\EnG@yohaku{\the\wd0}%
+    \@ifundefined{emG@debug}{%
+      \begin{pszahyou*}[ul=\EnGurafuHankei,borderwidth=1pt,Yohaku=\EnG@yohaku](-1,1)(-1,1)
+    }{%
+      \begin{pszahyou*}[debug,ul=\EnGurafuHankei,borderwidth=1pt,Yohaku=\EnG@yohaku](-1,1)(-1,1)
+    }%
+  }%
+    \edef\EnG@sum{0}%
+    \expandafter\@for\expandafter\EnG@@c\expandafter:\expandafter=#1\do{%
+      \IAddself\EnG@sum{\EnG@@c}%
+    }%
+    \def\EnG@kaku{90}%
+    \def\EnG@oldkaku{90}%
+    \def\EnG@s{0}%
+    \def\EnG@n{0}%
+    \expandafter\@for\expandafter\EnG@@c\expandafter:\expandafter=#1\do{%
+      \Incr\EnG@n
+      \IAddself\EnG@s{\EnG@@c}%
+      \Div\EnG@s\EnG@sum\EnG@tmp\Mul{360}\EnG@tmp\EnG@t\Add{90}{-\EnG@t}\EnG@kaku
+      \edef\EnG@tmp{*\csname NuriF\romannumeral\EnG@n\endcsname}%
+      \Put\O{\expandafter\ougigata\EnG@tmp{1}{\EnG@kaku}{\EnG@oldkaku}}%
+      \ifdim\EnGurafuLabelpos\p@>\z@
+        \Add\EnG@kaku\EnG@oldkaku\EnG@k\Div\EnG@k{2}\EnG@k
+        \Rdef(\EnGurafuLabelpos,\EnG@k)\EnG@LP\Put\EnG@LP(0,0)[c]{\colorbox{white}{\EnG@@c}}%
+      \fi
+      \Put\O{\ougigata{1}{\EnG@kaku}{\EnG@oldkaku}}%
+      \edef\EnG@oldkaku{\EnG@kaku}%
+    }%
+    \ifdim\EnG@memori@L=\z@\else
+      \ukansan\EnG@memori@L\EnG@memori@L
+      \Sub{1}\EnG@memori@L\EnG@r
+      \Mul\EnG@memori@L{.6667}\EnG@memori@Lv
+      \Sub{1}\EnG@memori@Lv\EnG@rv
+      \Mul\EnG@memori@Lv{.6667}\EnG@memori@Lx
+      \Sub{1}\EnG@memori@Lx\EnG@rx
+      \Ifor\EnG@i{0}{100}\Do{%
+          \Mul\EnG@i{-3.6}\kaku
+          \Addself\kaku{90}
+          \IMod\EnG@i{5}\EnG@iv
+          \IMod\EnG@i{10}\EnG@ix
+          \Rdef(1,\kaku)\EnG@P
+          \ifnum\EnG@ix=0\relax
+            \Rdef(\EnG@r,\kaku)\EnG@Q
+            \@ifundefined{EnG@memori@label}{}{%
+              \Hamidasiten\O\EnG@Q{1.25zw}\EnG@R
+              \emathPut\EnG@R(0,0)[c]{\EnG@i}%
+            }%
+          \else\ifnum\EnG@iv=0\relax
+            \Rdef(\EnG@rv,\kaku)\EnG@Q
+          \else
+            \Rdef(\EnG@rx,\kaku)\EnG@Q
+          \fi\fi
+          \Drawline{\EnG@P\EnG@Q}
+      }%
+    \fi
+    \En\O{1}
+  \end{pszahyou*}
+}}
+%
+% 凡例
+%
+\def\hanrei#1{{%
+      \unitlength=\p@
+      \edef\hanrei@i{0}%
+      \expandafter\@for\expandafter\hanrei@@c\expandafter:\expandafter=#1\do{%
+        \ifnum\hanrei@i>\z@\quad\fi
+        \Incr\hanrei@i
+        \begin{pszahyou*}[ul=1pt,haiti=x,borderwidth=1pt](0,20)(-2,8)\relax
+          \edef\hanrei@waku{\trueLT\trueLB\trueRB\trueRT}%
+          \edef\hanrei@t{\csname NuriF\romannumeral\hanrei@i\endcsname}%
+          \expandafter\Nuritubusi\hanrei@t\hanrei@waku
+          \Takakkei\hanrei@waku
+        \end{pszahyou*}\ \hanrei@@c
+      }%
+}}
+%
+\def\Thanrei#1{{%
+      \unitlength=\p@
+      \edef\hanrei@i{0}%
+\expandafter\@for\expandafter\hanrei@@c\expandafter:\expandafter=#1\do{%
+  \Incr\hanrei@i
+  \expandafter\edef\csname hanrei@str@\romannumeral\hanrei@i\endcsname{\hanrei@@c}%
+}%
+      \edef\hanrei@n{\hanrei@i}%
+      \begin{tabular}{ll}
+        \Cfor{\xdef\hanrei@i{1}}{\hanrei@i<\hanrei@n}{\xIncr\hanrei@i}\do{%
+          \begin{pszahyou*}[ul=1pt,haiti=x,borderwidth=1pt](0,20)(-2,8)\relax
+            \edef\hanrei@waku{\trueLT\trueLB\trueRB\trueRT}%
+            \edef\hanrei@t{\csname NuriF\romannumeral\hanrei@i\endcsname}%
+            \expandafter\Nuritubusi\hanrei@t\hanrei@waku
+            \Takakkei\hanrei@waku
+          \end{pszahyou*}\relax
+          &
+            \csname hanrei@str@\romannumeral\hanrei@i\endcsname
+          \\
+        }%
+        \begin{pszahyou*}[ul=1pt,haiti=x,borderwidth=1pt](0,20)(-2,8)\relax
+          \edef\hanrei@waku{\trueLT\trueLB\trueRB\trueRT}%
+          \edef\hanrei@t{\csname NuriF\romannumeral\hanrei@i\endcsname}%
+          \expandafter\Nuritubusi\hanrei@t\hanrei@waku
+          \Takakkei\hanrei@waku
+        \end{pszahyou*}\relax
+        &
+        \csname hanrei@str@\romannumeral\hanrei@i\endcsname
+      \end{tabular}%
+}}
+%
+% 折れ線グラフ
+%
+\def\OreG#1#2#3{{%
+  \edef\Ore@x{0}%
+  \expandafter\@for\expandafter\Ore@@c\expandafter:\expandafter=#3\do{%
+    \edef\Ore@P{(\Ore@x,\Ore@@c)}%
+    \ifdim\Ore@x\p@=\z@\else
+      {\Put\O{#1{\Ore@oldP\Ore@P}}}%
+    \fi
+    \Put\Ore@P(0,0)[c]{#2}%
+    \edef\Ore@oldP{\Ore@P}\Addself\Ore@x{1}%
+  }%
+}}
+%
+\def\OreGmidasiF{\relax}
+\def\OreGmidasi#1{%
+  \edef\Ore@x{0}%
+  \expandafter\@for\expandafter\Ore@@c\expandafter:\expandafter=#1\do{%
+    \Put{(\Ore@x,0)}[s]{\OreGmidasiF{\Ore@@c}}%
+    \Addself\Ore@x{1}%
+  }%
+}
+%
+% 棒グラフ
+%
+\define@key{emG}{boukankaku}{\def\bou@kankaku{#1}}
+\define@key{emG}{bouDosuuiti}{\def\bou@Dosuuiti{#1}}
+\define@key{emG}{bouDosuuopt}{\def\bou@Dosuuopt{#1}}
+\define@key{emG}{bouxo}{\def\bou@xo{#1}}
+\define@key{emG}{bouyo}{\def\bou@xo{#1}}
+\define@key{emG}{prDosuu}{\def\pr@Dosuu{#1}}
+\define@key{emG}{shade}[L]{\edef\bou@shade{#1}}
+\define@key{emG}{okuyuki}{\headchar{#1}\okuyuki@a\okuyuki@b
+  \if r\okuyuki@a
+    \vecXY{\okuyuki@b}\okuyuki@r\okuyuki@arg
+    \DegCos{\okuyuki@arg}\okuyuki@tmp\Mul\okuyuki@tmp\okuyuki@r\okuyuki@x
+    \DegSin{\okuyuki@arg}\okuyuki@tmp\Mul\okuyuki@tmp\okuyuki@r\okuyuki@y
+    \edef\bou@okuyuki{(\okuyuki@x,\okuyuki@y)}%
+  \else
+    \edef\bou@okuyuki{#1}%
+  \fi
+}%
+\def\bouG{%
+  \edef\bou@okuyuki{\empty}%
+  \edef\bou@shade{\empty}%
+  \def\bou@kankaku{0}%
+  \def\bou@Dosuuiti{1}%
+  \def\bou@Dosuuopt{[n]}%
+  \def\pr@Dosuu{\relax}
+  \def\notpr##1{\relax}
+  \edef\NuriF{}%
+  \def\bou@xo{0}%
+%
+  \def\@nuribou{\@ifnextchar({\@@nuribou}{\@@nuribou(\empty)}}%
+  \def\@@nuribou(##1)##2##3{%
+    \def\bou@Option{\relax}%
+    \edef\top@item{##2}%
+    \ifx\empty##1\else\setkeys{emG}{##1}\fi
+    \Div\bou@haba{2}\boumozix
+    \def\bouhaba{\bou@haba}%
+    \Put{(\boux,0)}{%
+      \def\bou@A{(0,0)}%
+      \def\bou@B{(\bou@haba,0)}%
+      \def\bou@C{(\bou@haba,##2)}%
+      \def\bou@D{(0,##2)}%
+      \ifx\empty\bou@okuyuki
+        \ifx\empty\NuriF
+          \Takakkei{\bou@A\bou@B\bou@C\bou@D}%
+        \else
+          \ifx\empty\bou@shade
+            \expandafter\Nuritubusi\NuriF{\bou@A\bou@B\bou@C\bou@D}%
+            \Takakkei{\bou@A\bou@B\bou@C\bou@D}%
+          \else
+            \Strsep\NuriF{=}\nuri@tmp\bou@iro
+            \tailchar\bou@iro\bou@iro\bou@tmp
+%\typeout{bou@iro=\bou@iro}%
+            \Cfor{\edef\bou@ix{0}}{\bou@ix<100}{}\do{%
+              \Div\bou@ix{100}\bou@xi
+              \Sub\bou@ix{30}\bunsi
+              \ifnum\bou@ix<30
+                \Div\bunsi{30}\bou@xf
+              \else
+                \Div\bunsi{70}\bou@xf
+              \fi
+              \Abs\bou@xf\bou@xf
+%
+%%   \def\RC{X*X*(3-2*X)}
+%%   \funcval\RC\bou@xf\bou@xff
+%              \Mul\bou@xf{2}\tmp
+%              \Sub{3}\tmp\bou@xff
+%              \Mulself\bou@xff\bou@xf
+%              \Mulself\bou@xff\bou@xf
+%
+              \Sub{2}{\bou@xf}\bou@xff
+              \Mulself\bou@xff\bou@xf
+%
+              \EMdilutecolor{\bou@iro}{\bou@xff}{tmpColor}
+              \Incr\bou@ix
+              \Div\bou@ix{100}\bou@xii
+              \Mulself\bou@xi\bou@haba
+              \Mulself\bou@xii\bou@haba
+              \Nuritubusi[nuriiro=tmpColor]{(\bou@xi,0)(\bou@xi,##2)(\bou@xii,##2)(\bou@xii,0)}%
+            }%
+          \fi
+        \fi
+        \Mul\bou@Dosuuiti{##2}\bou@moziy
+        \edef\nuribou@tmp{{(\bou@mozix,\bou@moziy)}\bou@Dosuuopt}%
+        \expandafter\Put\nuribou@tmp{\pr@Dosuu{##2}}%
+        \Put{(\bou@mozix,0)}[s]{##3}%
+        \bou@Option
+      \else
+        \def\bou@A{(0,0)}%
+        \def\bou@B{(\bou@haba,0)}%
+        \def\bou@C{(\bou@haba,##2)}%
+        \def\bou@D{(0,##2)}%
+        \Addvec\bou@A\bou@okuyuki\bou@E
+        \Addvec\bou@B\bou@okuyuki\bou@F
+        \Addvec\bou@C\bou@okuyuki\bou@G
+        \Addvec\bou@D\bou@okuyuki\bou@H
+        \ifx\empty\NuriF
+        \else
+          \expandafter\Nuritubusi\NuriF{\bou@A\bou@B\bou@F\bou@G\bou@H\bou@D}%
+        \fi
+        \Takakkei{\bou@A\bou@B\bou@F\bou@G\bou@H\bou@D}%
+        \Drawlines{\bou@D\bou@C;\bou@C\bou@B;\bou@C\bou@G}%
+        \Put{(\boumozix,0)}[s]{##3}%
+        \bou@Option
+      \fi
+    }%
+    \Addself\boux{\bou@haba}%
+    \Addself\boux{\bou@kankaku}%
+    \xdef\boux{\boux}%
+    \egroup
+  }%
+%
+  \def\bou{\bgroup\@ifstar{\bou@}{\@bou}}
+  \def\@bou{%
+    \@nuribou
+  }
+  \def\bou@{\@ifstar{\bou@@}{\@bou@}}
+  \def\@bou@{\@ifnextchar[{\@@bou@}{\@@bou@[.5]}}
+  \def\@@bou@[##1]{%
+    \edef\NuriF{[##1]}
+    \@nuribou
+  }
+  \def\bou@@{\@ifnextchar[{\@bou@@}{\@bou@@[45]}}
+  \def\@bou@@[##1]{\@ifnextchar<{\@@bou@@[##1]}{\@@bou@@[##1]<.125>}}
+  \def\@@bou@@[##1]<##2>{%
+    \edef\NuriF{*[##1]<##2>}
+    \@nuribou
+  }
+%
+\@ifnextchar<{\bouG@}{\@bouG}}
+\def\bouG@<#1>{\setkeys{emG}{#1}\@bouG}
+\def\@bouG{%
+  \def\boux{\bou@xo}%
+  \Sub{1}\bou@kankaku\bou@haba
+  \Div\bou@haba{2}\bou@mozix
+  \csname pszahyou*\endcsname
+}
+\def\endbouG{%
+  \Drawline{(\truexmax,0)\O(0,\trueymax)}%
+  \csname endpszahyou*\endcsname}
+%
+%
+% 横棒グラフ
+%
+\def\yokobouG{%
+  \def\bou@kankaku{0}%
+  \def\bou@Dosuuiti{1}%
+  \def\bou@Dosuuopt{[e]}%
+  \def\pr@Dosuu{\relax}
+  \def\notpr##1{\relax}
+  \edef\NuriF{}%
+  \def\bou@xo{0}%
+%
+  \def\@nuribou##1##2{%
+    \Put{(0,\boux)}{%
+      \ifx\empty\NuriF
+      \else
+        \expandafter\Nuritubusi\NuriF{(0,0)(0,\bou@haba)(##1,\bou@haba)(##1,0)}%
+      \fi
+      \Takakkei{(0,0)(0,\bou@haba)(##1,\bou@haba)(##1,0)}%
+      \Mul\bou@Dosuuiti{##1}\bou@moziy
+      \edef\nuribou@tmp{{(\bou@moziy,\bou@mozix)}\bou@Dosuuopt}%
+      \expandafter\Put\nuribou@tmp{\pr@Dosuu{##1}}%
+      \Put{(0,\bou@mozix)}[w]{##2}%
+    }
+    \egroup
+    \Addself\boux{1}
+  }
+%
+  \def\bou{\bgroup\@ifstar{\bou@}{\@bou}}
+  \def\@bou{%
+    \@nuribou
+  }
+  \def\bou@{\@ifstar{\bou@@}{\@bou@}}
+  \def\@bou@{\@ifnextchar[{\@@bou@}{\@@bou@[.5]}}
+  \def\@@bou@[##1]{%
+    \edef\NuriF{[##1]}
+    \@nuribou
+  }
+  \def\bou@@{\@ifnextchar[{\@bou@@}{\@bou@@[45]}}
+  \def\@bou@@[##1]{\@ifnextchar<{\@@bou@@[##1]}{\@@bou@@[##1]<.125>}}
+  \def\@@bou@@[##1]<##2>{%
+    \edef\NuriF{*[##1]<##2>}
+    \@nuribou
+  }
+%
+\@ifnextchar<{\yokobouG@}{\@yokobouG}}
+\def\yokobouG@<#1>{\setkeys{emG}{#1}\@yokobouG}
+\def\@yokobouG{%
+  \def\boux{\bou@xo}%
+  \Sub{1}\bou@kankaku\bou@haba
+  \Div\bou@haba{2}\bou@mozix
+  \csname pszahyou*\endcsname
+}
+\def\endyokobouG{%
+  \Drawline{(\truexmax,0)\O(0,\trueymax)}%
+  \csname endpszahyou*\endcsname}
+%
+% 積み上げ棒グラフ
+%
+\def\TbouG{%
+  \define@key{emG}{Musubisen}{\def\Musubisen{##1}}
+%
+  \def\bou@kankaku{0}%
+  \def\bou@Dosuuiti{1}%
+  \def\bou@Dosuuopt{(0,0)[c]}%
+  \def\pr@Dosuu{\colorbox{white}}%
+  \def\notpr##1{\relax}%
+  \edef\NuriF{}%
+  \def\bou@xo{0}%
+  \def\bou@num{0}%
+  \edef\Musubisen{\empty}%
+%
+  \def\@Tnuribou##1##2{%
+    \Put{(\boux,0)}{%
+      \def\bouy{0}%
+      \def\nuribou@i{0}%
+      \expandafter\@for\expandafter\nuribou@c\expandafter:\expandafter=##1\do{%
+        \Add\bouy\nuribou@c\bouyy
+        \edef\nuribou@oldi{\nuribou@i}%
+        \Incr\nuribou@i
+        \edef\nuribou@tmp{\csname NuriF\romannumeral\nuribou@i\endcsname}%
+        \expandafter\Nuritubusi\nuribou@tmp{(0,\bouy)(\bou@haba,\bouy)(\bou@haba,\bouyy)(0,\bouyy)}%
+        \Takakkei{(0,\bouy)(\bou@haba,\bouy)(\bou@haba,\bouyy)(0,\bouyy)}%
+\ifnum\bou@num>\z@
+  \ifx\empty\Musubisen\else
+    \Musubisen{(0,\bouyy)(-\bou@kankaku,\csname nuribou@oldy@\romannumeral\nuribou@i\endcsname)}%
+  \fi
+\fi
+        \expandafter\xdef\csname nuribou@oldy@\romannumeral\nuribou@i\endcsname{\bouyy}%
+        \Tyuuten{(\bou@mozix,\bouy)}{(\bou@mozix,\bouyy)}\P
+        \edef\nuribou@tmp{{\P}\bou@Dosuuopt}%
+        \expandafter\Put\nuribou@tmp{\pr@Dosuu{\nuribou@c}}%
+        \Put{(\bou@mozix,0)}[s]{##2}%
+        \edef\bouy{\bouyy}%
+      }%
+    }%
+    \egroup
+    \Addself\boux{1}
+    \Incr\bou@num
+  }
+%
+  \def\Tbou{\bgroup\@ifstar{\Tbou@}{\@Tbou}}
+  \def\@Tbou{%
+    \@Tnuribou
+  }
+  \def\Tbou@{\@ifstar{\Tbou@@}{\@Tbou@}}
+  \def\@Tbou@{\@ifnextchar[{\@@Tbou@}{\@@Tbou@[.5]}}
+  \def\@@Tbou@[##1]{%
+    \edef\NuriF{[##1]}
+    \@Tnuribou
+  }
+  \def\Tbou@@{\@ifnextchar[{\@Tbou@@}{\@Tbou@@[45]}}
+  \def\@Tbou@@[##1]{\@ifnextchar<{\@@Tbou@@[##1]}{\@@Tbou@@[##1]<.125>}}
+  \def\@@Tbou@@[##1]<##2>{%
+    \edef\NuriF{*[##1]<##2>}
+    \@Tnuribou
+  }
+%
+\@ifnextchar<{\TbouG@}{\@TbouG}}
+\def\TbouG@<#1>{\setkeys{emG}{#1}\@TbouG}
+\def\@TbouG{%
+  \def\boux{\bou@xo}%
+  \Sub{1}\bou@kankaku\bou@haba
+  \Div\bou@haba{2}\bou@mozix
+  \csname pszahyou*\endcsname
+}
+\def\endTbouG{%
+  \Drawlines{(\truexmax,0)\O(0,\trueymax)}%
+  \csname endpszahyou*\endcsname}
+%
+% 積み上げ横棒グラフ
+%
+\def\TyokobouG{%
+  \define@key{emG}{Musubisen}{\def\Musubisen{##1}}
+%
+  \def\bou@kankaku{0}%
+  \def\bou@Dosuuiti{1}%
+  \def\bou@Dosuuopt{(0,0)[c]}%
+  \def\pr@Dosuu{\colorbox{white}}%
+  \def\notpr##1{\relax}%
+  \edef\NuriF{}%
+  \def\bou@xo{0}%
+  \def\bou@num{0}%
+  \edef\Musubisen{\empty}%
+%
+  \def\@Tnuribou##1##2{%
+    \Put{(0,\boux)}{%
+      \def\bouy{0}%
+      \def\nuribou@i{0}%
+      \expandafter\@for\expandafter\nuribou@c\expandafter:\expandafter=##1\do{%
+        \Add\bouy\nuribou@c\bouyy
+        \edef\nuribou@oldi{\nuribou@i}%
+        \Incr\nuribou@i
+        \edef\nuribou@tmp{\csname NuriF\romannumeral\nuribou@i\endcsname}%
+        \expandafter\Nuritubusi\nuribou@tmp{(\bouy,0)(\bouy,\bou@haba)(\bouyy,\bou@haba)(\bouyy,0)}%
+        \Takakkei{(\bouy,0)(\bouy,\bou@haba)(\bouyy,\bou@haba)(\bouyy,0)}%
+\ifnum\bou@num>\z@
+  \ifx\empty\Musubisen\else
+    \Musubisen{(\bouyy,0)(\csname nuribou@oldy@\romannumeral\nuribou@i\endcsname,-\bou@kankaku)}%
+  \fi
+\fi
+        \expandafter\xdef\csname nuribou@oldy@\romannumeral\nuribou@i\endcsname{\bouyy}%
+        \Tyuuten{(\bouy,\bou@mozix)}{(\bouyy,\bou@mozix)}\P
+        \edef\nuribou@tmp{{\P}\bou@Dosuuopt}%
+        \expandafter\Put\nuribou@tmp{\pr@Dosuu{\nuribou@c}}%
+        \Put{(0,\bou@mozix)}[w]{##2}%
+        \edef\bouy{\bouyy}%
+      }%
+    }%
+    \egroup
+    \Addself\boux{1}
+    \Incr\bou@num
+  }%
+%
+  \def\Tbou{\bgroup\@ifstar{\Tbou@}{\@Tbou}}
+  \def\@Tbou{%
+    \@Tnuribou
+  }
+  \def\Tbou@{\@ifstar{\Tbou@@}{\@Tbou@}}
+  \def\@Tbou@{\@ifnextchar[{\@@Tbou@}{\@@Tbou@[.5]}}
+  \def\@@Tbou@[##1]{%
+    \edef\NuriF{[##1]}
+    \@Tnuribou
+  }
+  \def\Tbou@@{\@ifnextchar[{\@Tbou@@}{\@Tbou@@[45]}}
+  \def\@Tbou@@[##1]{\@ifnextchar<{\@@Tbou@@[##1]}{\@@Tbou@@[##1]<.125>}}
+  \def\@@Tbou@@[##1]<##2>{%
+    \edef\NuriF{*[##1]<##2>}
+    \@Tnuribou
+  }%
+%
+\@ifnextchar<{\TyokobouG@}{\@TyokobouG}}
+\def\TyokobouG@<#1>{\setkeys{emG}{#1}\@TyokobouG}
+\def\@TyokobouG{%
+  \def\boux{\bou@xo}%
+  \Sub{1}\bou@kankaku\bou@haba
+  \Div\bou@haba{2}\bou@mozix
+  \csname pszahyou*\endcsname
+}
+\def\endTyokobouG{%
+  \Drawlines{(\truexmax,0)\O(0,\trueymax)}%
+  \csname endpszahyou*\endcsname}
+%
+% 散布図
+%
+\def\sanpuzu{\@ifnextchar[{\@sanpuzu}{\@sanpuzu[ul=1pt]}}
+\def\@sanpuzu[#1](#2,#3)(#4,#5){%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \edef\x@memoriiti{[s]}%
+  \edef\y@memoriiti{[w]}%
+    \define@key{emPzM}{xo}{\xdef\zM@xo{##1}}%
+    \define@key{emPzM}{yo}{\xdef\zM@yo{##1}}%
+    \define@key{emPzM}{dx}{\xdef\zM@dx{##1}}%
+    \define@key{emPzM}{dy}{\xdef\zM@dy{##1}}%
+    \define@key{emPzM}{memorinagasa}{%
+      \Strsep{##1}{,}\memori@nagasai\memori@nagasaii
+      \uxkansan\memori@nagasai\memori@nagasaxi
+      \uykansan\memori@nagasai\memori@nagasayi
+      \ifx\empty\memori@nagasaii
+        \let\memori@nagasaxii\memori@nagasaxi
+        \let\memori@nagasayii\memori@nagasayi
+        \edef\memori@nagasaxi{-\memori@nagasaxii}%
+        \edef\memori@nagasayi{-\memori@nagasayii}%
+      \else
+        \uxkansan\memori@nagasaii\memori@nagasaxii
+        \uykansan\memori@nagasaii\memori@nagasayii
+      \fi
+    }%
+    \define@key{emPzM}{xmemoriiti}{\edef\x@memoriiti{##1}}%
+    \define@key{emPzM}{ymemoriiti}{\edef\y@memoriiti{##1}}%
+    \define@key{emPzM}{allinethickness}{\xdef\zM@linethickness{##1}}%
+    \define@key{emPzM}{sensyu}{\def\zM@sensyu{##1}}%
+    \define@key{emPzM}{linewidth}{\setlinewidth{##1}}%
+  \def\zikuMemori{%
+      \Strsep{\def@memori@nagasa}{,}\memori@nagasai\memori@nagasaii
+      \uxkansan\memori@nagasai\memori@nagasaxi
+      \uykansan\memori@nagasai\memori@nagasayi
+      \ifx\empty\memori@nagasaii
+        \let\memori@nagasaxii\memori@nagasaxi
+        \let\memori@nagasayii\memori@nagasayi
+        \edef\memori@nagasaxi{-\memori@nagasaxii}%
+        \edef\memori@nagasayi{-\memori@nagasayii}%
+      \else
+        \uxkansan\memori@nagasaii\memori@nagasaxii
+        \uykansan\memori@nagasaii\memori@nagasayii
+      \fi
+    \@ifnextchar<{\@zikuMemori}{\@zikuMemori<\empty>}}%
+  \def\@zikuMemori<##1>{{%
+    \ifx\empty ##1\else\setkeys{emPzM}{##1}\fi
+    \ifdim\zM@dx\p@=\z@\else
+      \Strsep\zM@dx{.}\zM@dxi\zM@dxs
+      \Strlen\zM@dxs\zM@dx@syousuubu
+      \Cfor{\edef\zM@x{\zM@xo}}{%
+        \lengthtest{\zM@x\p@<\truexmax\p@}\or\lengthtest{\zM@x\p@=\truexmax\p@}}{%
+        \Addself\zM@x\zM@dx\EMround\zM@x\zM@dx@syousuubu\zM@x}\do{%
+        \Put{(\zM@x,\trueymin)}{%
+          \drawline(0,\memori@nagasayi)(0,\memori@nagasayii)\relax
+        }%
+        \edef\zM@tmp{{(\zM@x,\trueymin)}\x@memoriiti{$\zM@x$}}%
+        \expandafter\emathPut\zM@tmp
+      }%
+    \fi
+    \ifdim\zM@dy\p@=\z@\else
+      \Strsep\zM@dy{.}\zM@dyi\zM@dys
+      \Strlen\zM@dys\zM@dy@syousuubu
+      \Cfor{\edef\zM@y{\zM@yo}}{%
+        \lengthtest{\zM@y\p@<\trueymax\p@}\or\lengthtest{\zM@y\p@=\trueymax\p@}}{%
+        \Addself\zM@y\zM@dy\EMround\zM@y\zM@dy@syousuubu\zM@y}\do{%
+        \Put{(\truexmin,\zM@y)}{%
+          \drawline(\memori@nagasaxi,0)(\memori@nagasaxii,0)\relax
+        }%
+%\FPclip\zM@y\zM@y
+        \edef\zM@tmp{{(\truexmin,\zM@y)}\y@memoriiti{$\zM@y$}}%
+        \expandafter\emathPut\zM@tmp
+      }%
+    \fi
+  }}%
+\def\Putmarks{\@ifnextchar[{\@Putmarks}{\@Putmarks[$\bullet$]}}%
+\def\@Putmarks[##1]##2{%
+  \edef\Pmrk@tmp{##2}%
+  \expandafter\makeTenHairetu\Pmrk@tmp\relax
+  \Cfor{\edef\Pmrk@i{0}}{\Pmrk@i<\TH@N}{}\do{%
+    \Incr\Pmrk@i
+    \edef\Pmrk@A{\hairetu{TH@V}{\Pmrk@i}}%
+    \Put\Pmrk@A(0,0){##1}%
+  }%
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \begin{pszahyou*}[#1](#2,#3)(#4,#5)\relax
+    \def\zM@xo{\truexmin}%
+    \def\zM@dx{1}%
+    \def\zM@yo{\trueymin}%
+    \def\zM@dy{1}%
+    \put(0,\trueymin){\zikusensyu(\truexmin,0)(\truexmax,0)}%
+    \put(\truexmin,0){\zikusensyu(0,\trueymin)(0,\trueymax)}%
+    \edef\zahyou@tmp{{(\truexmax,\trueymin)}\yokozikuhaiti}%
+    \expandafter\emathPut\zahyou@tmp{\yokozikukigou}%
+    \edef\zahyou@tmp{{(\truexmin,\trueymax)}\tatezikuhaiti}%
+    \expandafter\emathPut\zahyou@tmp{\tatezikukigou}%
+    \edef\zahyou@tmp{{(\truexmin,\trueymin)}\gentenhaiti}%
+    \expandafter\emathPut\zahyou@tmp{\gentenkigou}
+}
+\def\endsanpuzu{\end{pszahyou*}}
+%
+% レーダーチャート
+%
+\def\radarchart{\@ifnextchar<{\@radarchart}{\@radarchart<\empty>}}
+\def\@radarchart<#1>{\@ifnextchar[{\@@radarchart<#1>}%
+    {\@@radarchart<#1>[\empty]}}%
+\def\@@radarchart<#1>[#2]#3{\begingroup
+  \edef\ziku@N{#3}%
+  \edef\plot@N{0}%
+%
+  \define@key{emG}{kizamisuu}{\def\t@kizamisuu{##1}}%
+  \define@key{emG}{max}{\def\t@max{##1}}%
+  \define@key{emG}{min}{\def\t@min{##1}}%
+%
+  \define@key{emP}{mark}{\def\RC@mark{##1}}%
+%
+\def\mPut@sub{\@ifnextchar[{\@mPut@sub}{\@mPut@sub[\empty]}}%
+\def\@mPut@sub[##1]##2\@nil{%
+  \Strsep{##2}{(}\mPut@sub@P\mPut@sub@opt
+  \ifx\empty\mPut@sub@opt
+    \Strsep{##2}{[}\mPut@sub@P\mPut@sub@opt
+\ifnum\by@perl@retu>\z@
+  \calcval{\mPut@sub@P}\mPut@y
+\else
+  \edef\mPut@y{\mPut@sub@P}%
+\fi
+%
+      \Sub\mPut@y\t@min\t@tmp
+      \Div\t@tmp\x@max\mPut@y@
+%
+    \ifx\empty\mPut@sub@opt
+      \ifx\empty ##1\relax
+        \EMedef\mPut@l{\mPut@y}%
+      \else
+        \EMedef\mPut@l{##1}%
+      \fi
+      \EMedef\mPut@tmp{%
+        {(0,\mPut@y@)}[w]{{\mPut@l}}}%
+    \else
+      \ifx\empty ##1\relax
+        \EMedef\mPut@l{\mPut@y}%
+      \else
+        \EMedef\mPut@l{##1}%
+      \fi
+      \EMedef\mPut@tmp{%
+        {(0,\mPut@y@)}[\mPut@sub@opt{{\mPut@l}}}%
+    \fi
+  \else
+\ifnum\by@perl@retu>\z@
+  \calcval{\mPut@sub@P}\mPut@y
+\else
+  \edef\mPut@y{\mPut@sub@P}%
+\fi
+      \Sub\mPut@y\t@min\t@tmp
+      \Div\t@tmp\x@max\mPut@y@
+    \ifx\empty ##1\relax
+      \EMedef\mPut@l{\mPut@y}%
+    \else
+      \EMedef\mPut@l{##1}%
+    \fi
+    \EMedef\mPut@tmp{%
+      {(0,\mPut@y@)}(\mPut@sub@opt{{\mPut@l}}}%
+  \fi
+  \ifnum\put@kuromaru>\z@\@nahudaKuromaru<linethickness=.3pt>{(0,\mPut@y@)}\fi
+\ifnum\put@memorisen>\z@
+  \Drawline<linethickness=.3pt>{(\memori@nagasaxi,\mPut@y)(\memori@nagasaxii,\mPut@y)}%
+\fi
+  \expandafter\@nahudaPut\mPut@tmp
+}%
+\def\mPut{\begingroup%
+    \define@key{emPzM}{memorinagasa}{%
+      \edef\put@memorisen{1}%
+      \Strsep{####1}{,}\memori@nagasai\memori@nagasaii
+      \uxkansan\memori@nagasai\memori@nagasaxi
+      \uykansan\memori@nagasai\memori@nagasayi
+      \ifx\empty\memori@nagasaii
+        \let\memori@nagasaxii\memori@nagasaxi
+        \let\memori@nagasayii\memori@nagasayi
+        \edef\memori@nagasaxi{-\memori@nagasaxii}%
+        \edef\memori@nagasayi{-\memori@nagasayii}%
+      \else
+        \uxkansan\memori@nagasaii\memori@nagasaxii
+        \uykansan\memori@nagasaii\memori@nagasayii
+      \fi
+    }%
+%
+  \edef\Put@math{1}%
+  \edef\put@kuromaru{0}%
+  \edef\put@memorisen{0}%
+  \edef\by@perl{\by@perl@}%
+  \edef\by@perl@retu{\by@perl@}%
+  \Strsep{\def@memori@nagasa}{,}\memori@nagasai\memori@nagasaii
+  \uxkansan\memori@nagasai\memori@nagasaxi
+  \uykansan\memori@nagasai\memori@nagasayi
+  \ifx\empty\memori@nagasaii
+    \let\memori@nagasaxii\memori@nagasaxi
+    \let\memori@nagasayii\memori@nagasayi
+    \edef\memori@nagasaxi{-\memori@nagasaxii}%
+    \edef\memori@nagasayi{-\memori@nagasayii}%
+  \else
+    \uxkansan\memori@nagasaii\memori@nagasaxii
+    \uykansan\memori@nagasaii\memori@nagasayii
+  \fi
+  \@ifnextchar<{\mPut@}{\@mPut}}%
+\def\mPut@<##1>{\setkeys{emPzM}{##1}%
+  \edef\by@perl@retu{\by@perl}\edef\by@perl{\by@perl@}%
+  \@mPut}%
+\def\@mPut##1{%
+  \ifnum\EMps@mode=\@ne
+    \let\@nahudaPut\cPut
+  \else
+    \let\@nahudaPut\emathPut
+  \fi
+  \let\@nahudaKuromaru\Kuromaru
+  \trim{##1}\to\mPut@b
+  \Cfor{\Strsep\mPut@b{;}\mPut@a\mPut@b}%
+       {\not\equal\mPut@a\empty}%
+       {\Strsep\mPut@b{;}\mPut@a\mPut@b}%
+    \do{%
+%\typeout{goto mPut@sub:arg=\mPut@a}%
+      \expandafter\mPut@sub\mPut@a\@nil
+    }%
+  \endgroup
+}%
+%
+  \def\plot{\Incr\plot@N\bgroup\edef\plot@nuri{0}%
+    \@ifstar{\plot@}{\@plot}}%
+  \def\plot@{\@ifstar{\edef\plot@nuri{2}\@plot}{\edef\plot@nuri{1}\@plot}}%
+  \def\@plot{\@ifnextchar<{\@@plot}{\@@plot<\empty>}}%
+  \def\@@plot<##1>##2{%
+    \gsave
+    \setlinejoin{2}%
+    \edef\hasenLG@opt{\empty}%
+    \ifx\empty ##1\else\setkeys{emP}{##1}\fi
+    \edef\i@val{0}%
+    \edef\hasenLG@opt@{\hasenLG@opt}%
+    \edef\RC@oresen{}%
+    \expandafter\@for\expandafter\d@i\expandafter:\expandafter=##2\do{%
+      \Incr\i@val
+      \Sub\d@i\t@min\t@tmp
+      \Div\t@tmp\x@max\t@val
+      \Rdef(\t@val,\@nameuse{kaku\romannumeral\i@val})\P@@
+      \edefappend\RC@oresen{\P@@}%
+      \@ifundefined{RC@mark}{}{\Put\P@@{\RC@mark}}%
+    }%
+%\typeout{RC@oresen=##2:\RC@oresen}%
+    \ifnum\plot@nuri=\z@
+      \ifx\empty\hasenLG@opt@
+        \Takakkei{\RC@oresen}%
+      \else
+        \Takakkei<hasenLG=\hasenLG@opt@>{\RC@oresen}%
+      \fi
+    \else\ifnum\plot@nuri=\@ne
+%\typeout{goto emPaint:\RC@oresen}%
+      \ifx\empty ##1
+        \emPaint{\RC@oresen}%
+      \else
+        \emPaint<##1>{\RC@oresen}%
+      \fi
+    \fi\fi
+    \grestore
+    \edef\temp@x{\def\noexpand\plot@seq{\RC@oresen}}%
+    \expandafter\egroup\temp@x
+    \expandafter\edef\csname plotL\romannumeral\plot@N\endcsname{\plot@seq}%
+  }%
+%
+  \edef\ziku@nagasa{1cm}%
+  \edef\ziku@linethickness{.3pt}%
+  \edef\t@min{0}%
+  \edef\t@max{1}%
+  \edef\t@kizamisuu{5}%
+%  \def\t@memori{0,\t@max}
+%
+  \ifx\empty #1\else\setkeys{emG}{#1}\fi
+\begin{pszahyou*}[#2](-1,1)(-1,1)\relax
+  \Sub\t@max\t@min\x@max
+  \Div\x@max\t@kizamisuu\t@dt
+  \Ifor*\i@val{1}{\ziku@N}\Do{%
+    \calcval{(\i@val-1)*360/(\ziku@N)+90}\tmp@a
+    \expandafter\edef\csname kaku\romannumeral \i@val\endcsname{\tmp@a}%
+    \Rdef(1,\tmp@a)\tmp@b
+    \expandafter\edef\csname XMAX\romannumeral \i@val\endcsname{\tmp@b}%
+  }%
+%
+}%
+\def\endradarchart{%
+  \linethickness{\ziku@linethickness}%
+  \Ifor*\i@val{1}{\ziku@N}\Do{%
+    \Rdef(1,\csname kaku\romannumeral\i@val\endcsname)\tmp@P
+    \Drawline{\O\tmp@P}%
+  }%
+%
+  \Strsep{\def@memori@nagasa}{,}\memori@nagasai\memori@nagasaii
+  \ukansan\memori@nagasai\memori@nagasaxi
+  \ifx\empty\memori@nagasaii
+    \let\memori@nagasaxii\memori@nagasaxi
+    \edef\memori@nagasaxi{-\memori@nagasaxii}%
+  \else
+    \uxkansan\memori@nagasaii\memori@nagasaxii
+  \fi
+  \Div\t@dt{2}\tmp@a
+  \calcval{\t@dt/(\t@max-\t@min)}\d@x
+  \Add\t@max\tmp@a\t@max@
+  \Cfor{\Add\t@min\t@dt\t@val\edef\x@val{0}}%
+        {\lengthtest\t@val\p@<\t@max@\p@}%
+        {\Addself\t@val\t@dt}%
+  \do{%
+    \Addself\x@val\d@x
+    \Ifor*\i@val{1}{\ziku@N}\Do{%
+      \edef\kaku@{\csname kaku\romannumeral\i@val\endcsname}%
+      \Sub\kaku@{90}\kaku@@
+      \Rdef(\x@val,\kaku@)\P@@
+      \rtenretu*[\P@@]{P@i(\memori@nagasaxi,\kaku@@);%
+                      P@ii(\memori@nagasaxii,\kaku@@)}%
+      \Drawline{\P@i\P@ii}%
+    }%
+  }%
+  \end{pszahyou*}\endgroup
+}%
+%
+\endinput
+
+v 0.00α 2005/12/01
+v 0.01α 2005/12/01
+    1st-run 時のエラー対策
+v 0.02α 2005/12/02
+    \hanrei, \Thanrei : 凡例
+v 0.03α 2005/12/03
+    \EnGurafu : 円グラフ
+    塗り形式の指定法を変更
+v 0.04α 2005/12/06
+    帯グラフに目盛り
+    [onlyG]ロードオプション
+    折れ線グラフ
+v 0.06α 2006/06/11
+    棒グラフ
+    積み上げ棒グラフ
+v 0.07α 2007/01/14
+    円グラフに目盛り
+v 0.10α 2007/08/20
+    棒グラフ : 3D
+v 0.11α 2008/05/27
+    \bou : 塗りのない場合，枠を描画
+v 0.12α 2008/09/19
+    ObiGurafu環境: hyperref.sty 対応 (saloon #675)
+v 0.13α 2010/04/17
+    レーダーチャート

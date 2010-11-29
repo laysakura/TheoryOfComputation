@@ -1,0 +1,56 @@
+\documentclass{jarticle}
+\usepackage{emathN}
+\usepackage{hako}
+
+
+\begin{document}
+\hakosyokika
+\begin{nagarezu}[.4](23zw,48zh)%
+\tansi[n]{始め}%
+\sitahe
+\nyuusyuturyoku{$N$の値を入力}%
+\sitahe
+\begin{handan}{\parbox{4zw}{$N$は2の倍数か？}}%
+	\begin{sitabunki}%
+		\sitahe"""NO"%
+		\syori{$M~\longleftarrow~3$}%
+		\sitahe[loop0]%
+		\begin{handan}{\parbox{5zw}{$N$は$M$の倍数か？}}%
+			\begin{migibunki}%
+				\migihe(4zw)"YES"%
+				\nahuda{\migityuuten}{notPrime}%
+			\end{migibunki}%
+			\begin{sitabunki}%
+				\sitahe(4zh)"""NO"%
+				\syori{$M~\longleftarrow~M+2$}%
+				\sitahe
+				\begin{handan}{$N\geqq M^2$}%
+					\begin{hidaribunki}%
+						\hidarihe<n>(4zw)"""YES"%
+						\uehe<n>`loop0'%
+						\migihe`loop0'%
+					\end{hidaribunki}%
+					\begin{sitabunki}%
+						\sitahe"""NO"%
+						\nahuda{\sitatyuuten}{keturon}%
+						\nyuusyuturyoku{$N$は素数である}%
+						\sitahe<n>%
+						\nahuda{\sitatyuuten}{matome}%
+					\end{sitabunki}%
+				\end{handan}%
+			\end{sitabunki}%
+		\end{handan}%
+	\end{sitabunki}%
+	\begin{migibunki}%
+		\migihe"YES"`notPrime'%
+		\sitahe`keturon'%
+		\nyuusyuturyoku{$N$は素数でない}%
+		\sitahe<n>`matome'%
+		\nahuda{\sitatyuuten}{matomeii}%
+		\hidarihe<n>`matome'%
+		\sitahe
+		\tansi{終わり}%
+	\end{migibunki}%
+\end{handan}%
+\end{nagarezu}
+\end{document}

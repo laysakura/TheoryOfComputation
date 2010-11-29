@@ -1,0 +1,47 @@
+\newcommand{\fmtln}[3]{\makebox[1em][l]{$#2$} $\longrightarrow$
+            $\makebox[2.6em][l]{$#1\cdot #2$}=\makebox[1.25em][r]{$#3$}$}
+
+\begin{itemsquarebox}{約数の個数}
+72 の正の約数は何個あるか．
+\end{itemsquarebox}
+
+\begin{mawarikomi}{}{%
+\begin{zyukeizu}%
+\eda{\makebox[1em][l]{$1$}%
+    \begin{zyukeizu}
+        \eda{\fmtln{1}{1}{1}}%
+        \eda{\fmtln{1}{3}{3}}%
+        \eda{\fmtln{1}{3^2}{9}}%
+    \end{zyukeizu}
+}%
+\eda{\makebox[1em][l]{$2$}%
+    \begin{zyukeizu}
+        \eda{\fmtln{2}{1}{2}}%
+        \eda{\fmtln{2}{3}{6}}%
+        \eda{\fmtln{2}{3^2}{18}}%
+    \end{zyukeizu}
+}%
+\eda{\makebox[1em][l]{$2^2$}%
+    \begin{zyukeizu}
+        \eda{\fmtln{2^2}{1}{4}}%
+        \eda{\fmtln{2^2}{3}{12}}%
+        \eda{\fmtln{2^2}{3^2}{36}}%
+    \end{zyukeizu}
+}%
+\eda{\makebox[1em][l]{$2^3$}%
+    \begin{zyukeizu}
+        \eda{\fmtln{2^3}{1}{8}}%
+        \eda{\fmtln{2^3}{3}{24}}%
+        \eda{\fmtln{2^3}{3^2}{72}}%
+    \end{zyukeizu}
+}%
+\end{zyukeizu}}%
+$72=2^3\times3^2$であるから，
+\[2^3 \text{ の約数 } 1,~2,~2^2,~2^3\]
+のおのおのに
+\[3^2 \text{ の約数 } 1,~3,~3^2\]
+のそれぞれを掛けると，72の正の約数がすべて得られる．
+したがって求める個数は，積の法則から
+\[ 4\times3=\bm{12} \text{（個）}\]
+\end{mawarikomi}
+\mawarikomiowari

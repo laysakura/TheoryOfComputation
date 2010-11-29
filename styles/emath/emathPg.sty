@@ -1,0 +1,693 @@
+% emathPg.sty by tDB(emath@nifty.com)
+%
+  \NeedsTeXFormat{LaTeX2e}
+  \ProvidesPackage{emathPg}[2010/08/19 v 0.05]%
+%
+\@ifundefined{zahyou}{%
+  \errmessage{emathPh がロードされていません。}%
+}{}%
+%
+% --------------------------------------------------------------------
+% 関数のグラフ
+%
+% Gurafu
+%
+\def\Gurafu{\@ifnextchar<{\Gurafu@}{\Gurafu@<0.05>}}%
+\def\Gurafu@<#1>{\@ifnextchar[{\@Gurafu<#1>}{\@Gurafu<#1>[\empty]}}%
+\def\@Gurafu<#1>[#2]#3{\@ifnextchar[{\@@Gurafu<#1>[#2]{#3}}{%
+  \@@Gurafu<#1>[#2]{#3}[x]}}%
+\def\@@Gurafu<#1>[#2]#3[#4]#5{\@ifnextchar[{\@@@Gurafu<#1>[#2]{#3}[#4]{#5}}{%
+  \@@@Gurafu<#1>[#2]{#3}[#4]{#5}[x]}}%
+\def\@@@Gurafu<#1>[#2]#3[#4]#5[#6]#7{%
+  \ifthenelse{\equal{#5}\empty}%
+  {%
+    \KinziOresen{#3}{\xmin}{\xmax}{#1}\@oresen
+    \yclipDrawline\@oresen\relax
+  }{%
+    \@tempcnta\@ne%
+   \@for\@c:=#3\do{\ifx\Gurafu@x\empty\def\@c{0}\fi%
+   \edef\@n{\romannumeral\@tempcnta}%
+    \expandafter\edef\csname F@\@n\endcsname{\@c}%
+    \advance\@tempcnta\@ne}%
+    \ifnum\@tempcnta=4\relax
+      \ifx \empty #2\relax
+        \@@@GFuncii[0]{\F@i}{\F@ii}{\F@iii}[#4]{#5}[#6]{#7}%
+      \else\ifx l#2\relax
+        \KinziOresen{#3}{#5}{#7}{#1}\@oresen
+        \yclipDrawline\@oresen\relax
+      \else
+        \@@@GFuncii[#2]{\F@i}{\F@ii}{\F@iii}[#4]{#5}[#6]{#7}%
+      \fi\fi
+    \else\ifnum\@tempcnta=3\relax
+      \ifx \empty #2\relax
+        \@@@GFunci[l]{\F@i}{\F@ii}[#4]{#5}[#6]{#7}%
+      \else
+        \@@@GFunci[#2]{\F@i}{\F@ii}[#4]{#5}[#6]{#7}%
+      \fi
+    \else
+      \KinziOresen{#3}{#5}{#7}{#1}\@oresen
+      \yclipDrawline\@oresen\relax
+    \fi\fi
+  }%
+}
+\def\GKouten#1#2#3#4{%
+  \@tempcnta\@ne%
+  \@for\@c:=#1\do{\ifx\GKouten@x\empty\def\@c{0}\fi%
+  \edef\@n{\romannumeral\@tempcnta}%
+  \expandafter\edef\csname F@\@n\endcsname{\@c}%
+  \advance\@tempcnta\@ne}%
+  \@tempcntb\@ne%
+  \@for\@c:=#2\do{\ifx\GKouten@x\empty\def\@c{0}\fi%
+  \edef\@n{\romannumeral\@tempcntb}%
+  \expandafter\edef\csname G@\@n\endcsname{\@c}%
+  \advance\@tempcntb\@ne}%
+  \ifnum\@tempcnta=3\relax
+    \ifnum\@tempcntb=4\relax
+      \FiandFii{\F@i}{\F@ii}{\G@i}{\G@ii}{\G@iii}{#3}{#4}%
+    \else\ifnum\@tempcntb=3\relax
+      \FiandFix{\F@i}{\F@ii}{\G@i}{\G@ii}{#3}%
+      \Kansuuti{#1}{#3}{\GKouten@y}\edef#4{\GKouten@y}%
+    \fi\fi
+  \else\ifnum\@tempcnta=4\relax
+    \ifnum\@tempcntb=3\relax
+      \FiandFii{\G@i}{\G@ii}{\F@i}{\F@ii}{\F@iii}{#3}{#4}%
+    \else\ifnum\@tempcntb=4\relax
+      \Sub\F@i\G@i\a@val
+      \Sub\F@ii\G@ii\b@val
+      \Sub\F@iii\G@iii\c@val
+      \Eqii\a@val\b@val\c@val{#3}{#4}%
+    \fi\fi
+  \fi\fi
+}%
+
+% 分数係数を許容
+\def\GurafuB{\@ifnextchar<{\GurafuB@}{\GurafuB@<0.05>}}%
+\def\GurafuB@<#1>{\@ifnextchar[{\@GurafuB<#1>}{\@GurafuB<#1>[0]}}%
+\def\@GurafuB<#1>[#2]#3{\edef\@tmp{\empty}%
+  \expandafter\@for\expandafter\GurafuB@@c\expandafter:\expandafter=#3\do{%
+    \strsep\GurafuB@@c{/}\GurafuB@a\GurafuB@b
+    \ifx\empty\GurafuB@b\edef\@GurafuB@@c{\GurafuB@@c}\else
+      \Div\GurafuB@a\GurafuB@b\@GurafuB@@c\fi
+    \ifx\@tmp\empty\edef\@tmp{\@GurafuB@@c}\else
+      \edef\@tmp{\@tmp,\@GurafuB@@c}\fi}%
+  \@Gurafu<#1>[#2]{\@tmp}}
+%
+% (1) 整関数
+% \KinziOresen#1#2#3#4#5
+% #1: 整関数
+% #2: x の初期値
+% #3: x の終値
+% #4: x の刻み
+% #5: 点列を受け取るコントロールシーケンス
+
+\def\KinziOresen#1#2#3#4#5{%
+  \def#5{}%
+  \ifdim #4 pt>\z@
+    \Cfor{\edef\KinziOresen@x{#2}}{%
+      \lengthtest{\KinziOresen@x pt<#3 pt}}{%
+      \Add\KinziOresen@x{#4}\KinziOresen@x}\do{%
+        \Kansuuti{#1}\KinziOresen@x\KinziOresen@y
+        \edefappend#5{(\KinziOresen@x,\KinziOresen@y)}%
+        }%
+  \else
+    \Cfor{\edef\KinziOresen@x{#2}}{%
+      \lengthtest{\KinziOresen@x pt>#3 pt}}{%
+      \Add\KinziOresen@x{#4}\KinziOresen@x}\do{%
+        \Kansuuti{#1}\KinziOresen@x\KinziOresen@y
+        \edefappend#5{(\KinziOresen@x,\KinziOresen@y)}%
+      }%
+  \fi
+  \Kansuuti{#1}{#3}\KinziOresen@y
+  \edefappend#5{(#3,\KinziOresen@y)}}
+
+% (2) 一般の関数
+\def\yKinziOresen#1#2#3#4#5{%
+  \def#5{}%\han@inaifalse
+  \ifdim #4 pt>\z@
+    \Cfor{\edef\KinziOresen@x{#2}}{%
+      \lengthtest{\KinziOresen@x pt<#3 pt}}{%
+      \Add\KinziOresen@x{#4}\KinziOresen@x}\do{%
+        #1\KinziOresen@x\KinziOresen@y
+        \edef#5{#5(\KinziOresen@x,\KinziOresen@y)}%
+    }%
+  \else
+    \Cfor{\edef\KinziOresen@x{#2}}{%
+      \lengthtest{\KinziOresen@x pt>#3 pt}}{%
+      \Add\KinziOresen@x{#4}\KinziOresen@x}\do{%
+        #1\KinziOresen@x\KinziOresen@y
+        \edef#5{#5(\KinziOresen@x,\KinziOresen@y)}%
+    }%
+  \fi
+  #1{#3}\KinziOresen@y
+  \edef#5{#5(#3,\KinziOresen@y)}}
+
+% (2)' 一般の関数 x=f(y)
+\def\xKinziOresen#1#2#3#4#5{%
+  \def#5{}%\han@inaifalse
+  \ifdim #4 pt>\z@
+    \Cfor{\edef\KinziOresen@x{#2}}{%
+      \lengthtest{\KinziOresen@x pt<#3 pt}}{%
+      \Add\KinziOresen@x{#4}\KinziOresen@x}\do{%
+        #1\KinziOresen@x\KinziOresen@y
+        \edef#5{#5(\KinziOresen@y,\KinziOresen@x)}%
+    }%
+  \else
+    \Cfor{\edef\KinziOresen@x{#2}}{%
+      \lengthtest{\KinziOresen@x pt>#3 pt}}{%
+      \Add\KinziOresen@x{#4}\KinziOresen@x}\do{%
+        #1\KinziOresen@x\KinziOresen@y
+        \edef#5{#5(\KinziOresen@y,\KinziOresen@x)}%
+    }%
+  \fi
+  #1{#3}\KinziOresen@y
+  \edef#5{#5(\KinziOresen@y,#3)}}
+
+% (3) 媒介変数
+\def\bKinziOresen#1#2#3#4#5#6{%
+  \def#6{}%
+  \For\bKinziOresen@t{#3}{#4}{#5}\Do{%
+    #1\bKinziOresen@t\bKinziOresen@x#2\bKinziOresen@t\bKinziOresen@y
+    \han@inaitrue
+    \ifdim \bKinziOresen@x pt<\xmin pt\relax\han@inaifalse \else%
+    \ifdim \bKinziOresen@x pt>\xmax pt\relax\han@inaifalse \fi\fi
+    \ifdim \bKinziOresen@y pt<\ymin pt\relax\han@inaifalse \else%
+    \ifdim \bKinziOresen@y pt>\ymax pt\relax\han@inaifalse \fi\fi
+    \ifhan@inai\edef#6{#6(\bKinziOresen@x,\bKinziOresen@y)}\fi}%
+    #1{#4}\bKinziOresen@x#2{#4}\bKinziOresen@y
+    \ifdim\bKinziOresen@x pt<\xmin pt\relax\else%
+      \ifdim\bKinziOresen@x pt>\xmax pt\relax\else%
+      \ifdim\bKinziOresen@y pt<\ymin pt\relax\else%
+      \ifdim\bKinziOresen@y pt>\ymax pt\relax\else%
+      \edef#6{#6(\bKinziOresen@x,\bKinziOresen@y)}\fi\fi\fi\fi}%
+
+
+% (4) 極座標
+\def\rKinziOresen#1#2#3#4#5{%
+  \def#5{}%
+  \For\rKinziOresen@t{#2}{#3}{#4}\Do{#1\rKinziOresen@t\rKinziOresen@r
+    \Cos\rKinziOresen@t\rKinziOresen@x%
+    \Mul\rKinziOresen@r\rKinziOresen@x\rKinziOresen@x
+    \Sin\rKinziOresen@t\rKinziOresen@y%
+    \Mul\rKinziOresen@r\rKinziOresen@y\rKinziOresen@y
+    \ifdim\rKinziOresen@x pt<\xmin pt\relax\else%
+      \ifdim\rKinziOresen@x pt>\xmax pt\relax\else%
+      \ifdim\rKinziOresen@y pt<\ymin pt\relax\else%
+      \ifdim\rKinziOresen@y pt>\ymax pt\relax\else%
+      \edef#5{#5(\rKinziOresen@x,\rKinziOresen@y)}\fi\fi\fi\fi}%
+    #1{#3}\rKinziOresen@r
+    \Cos\rKinziOresen@t\rKinziOresen@x%
+    \Mul\rKinziOresen@r\rKinziOresen@x\rKinziOresen@x
+    \Sin\rKinziOresen@t\rKinziOresen@y%
+    \Mul\rKinziOresen@r\rKinziOresen@y\rKinziOresen@y
+    \ifdim\rKinziOresen@x pt<\xmin pt\relax\else%
+      \ifdim\rKinziOresen@x pt>\xmax pt\relax\else%
+      \ifdim\rKinziOresen@y pt<\ymin pt\relax\else%
+      \ifdim\rKinziOresen@y pt>\ymax pt\relax\else
+    \edef#5{#5(\rKinziOresen@x,\rKinziOresen@y)}\fi\fi\fi\fi}%
+
+\def\Kansuuti#1#2#3{%
+\def\@tai{0}%
+\@for\@c:=#1\do{\ifx\@c\empty\def\@c{0}\fi
+\Mul\@tai{#2}\@tai
+\Add\@tai\@c\@tai
+}\edef#3{\@tai}}%
+
+
+% 二次方程式
+% ax^2+bx+c=0
+% #1 : a
+% #2 : b
+% #3 : c
+% #4,#5 : x1, x2 (x1≦x2)
+
+\def\Eqii#1#2#3#4#5{%
+  \Mul{#2}{#2}\@D\Mul{#1}{#3}\Eqii@t\Mul{4}\Eqii@t\Eqii@t\Sub\@D\Eqii@t\@D%
+  \ifdim\@D pt=\z@ \else\ifdim\@D pt>\z@ \Heihoukon\@D\@D\else%
+  \errmessage{虚数解}\fi\fi%
+  \Add{#2}\@D\@kai\Mul{-2}{#1}\Eqii@t\Div\@kai\Eqii@t\@kai\Mul{-1}{#2}\@@kai%
+  \Div\@@kai{#1}\@@kai\Sub\@@kai\@kai\@@kai%
+  \ifdim \@kai pt<\@@kai pt\relax\edef#4{\@kai}\edef#5{\@@kai}%
+  \else \edef#4{\@@kai}\edef#5{\@kai}\fi}%
+
+% 二次関数値
+\def\Funcii#1#2#3#4#5{%
+  \Mul{#1}{#4}\@f
+  \Add\@f{#2}\@f
+  \Mul\@f{#4}\@f
+  \Add\@f{#3}\@f
+  \edef#5{\@f}}%
+
+% 逆
+% ax^2+bx+c=y
+% #1 : a
+% #2 : b
+% #3 : c
+% #4 : y
+% #5,#6 : x1, x2 (x1≦x2)
+
+\def\InvFuncii#1#2#3#4#5#6{%
+  \Sub{#3}{#4}\InvFuncii@c
+  \Eqii{#1}{#2}{\InvFuncii@c}\InvFuncii@x\@@x\edef#5{\InvFuncii@x}\edef#6{\@@x}}%
+
+
+% 二次関数 y=ax^2+bx+c (x1<x<x2) のグラフ
+% #1 : 放物線上の点の個数（デフォルトは0(無数))
+%   #2 : a
+% #3 : b
+% #4 : c
+% #6 : x1 #5に y or Y オプションを与えたときは y1
+% #8 : x2 #7に y or Y オプションを与えたときは y2
+
+\def\GFuncii{\@ifnextchar[{\@GFuncii}{\@GFuncii[0]}}%
+\def\@GFuncii[#1]#2#3#4{\@ifnextchar[{\@@GFuncii[#1]{#2}{#3}{#4}}{%
+  \@@GFuncii[#1]{#2}{#3}{#4}[x]}}%
+\def\@@GFuncii[#1]#2#3#4[#5]#6{\@ifnextchar[{%
+  \@@@GFuncii[#1]{#2}{#3}{#4}[#5]{#6}}{%
+  \@@@GFuncii[#1]{#2}{#3}{#4}[#5]{#6}[x]}}%
+\def\@@@GFuncii[#1]#2#3#4[#5]#6[#7]#8{%
+  \ifx #5y\InvFuncii{#2}{#3}{#4}{#6}\GFunc@xi\@tmp\else
+    \ifx #5Y\InvFuncii{#2}{#3}{#4}{#6}\@tmp\GFunc@xi\else
+    \edef\GFunc@xi{#6}\fi\fi%
+  \ifx y#7\InvFuncii{#2}{#3}{#4}{#8}\GFunc@xii\@tmp\else
+    \ifx Y#7\InvFuncii{#2}{#3}{#4}{#8}\@tmp\GFunc@xii\else
+    \edef\GFunc@xii{#8}\fi\fi%
+  \Add{\GFunc@xi}{\GFunc@xii}\GFunc@x\Div\GFunc@x{2}\GFunc@x\Mul{#2}{\GFunc@xi}\GFunc@y%
+  \Mul\GFunc@y{\GFunc@xii}\GFunc@y\Mul\GFunc@x{#3}\@t\Add\GFunc@y\@t\GFunc@y\Add\GFunc@y{#4}\GFunc@y%
+  \Funcii{#2}{#3}{#4}{\GFunc@xi}\GFunc@yi\Funcii{#2}{#3}{#4}{\GFunc@xii}\GFunc@yii%
+  \qbezier[#1](\GFunc@xi,\GFunc@yi)(\GFunc@x,\GFunc@y)(\GFunc@xii,\GFunc@yii)}%
+
+% 放物線と直線の交点
+% y=ax+b と y=px^2+qx+r の交点
+%   a=#1, b=#2
+%   p=#3, q=#4, r=#5
+%   x1=#6, x2=#7 (x1≦x2)
+\def\FiandFii#1#2#3#4#5#6#7{%
+  \Sub{#4}{#1}\@q
+  \Sub{#5}{#2}\@r
+  \Eqii{#3}\@q\@r\@xi\@xii
+  \edef#6{\@xi}\edef#7{\@xii}}%
+
+% 直線と直線の交点
+% y=ax+b, y=mx+n
+% a=#1, b=#2
+% m=#3, n=#4
+% x=#5
+\def\FiandFix#1#2#3#4#5{%
+  \Sub{#4}{#2}\FiandFi@y
+  \Sub{#1}{#3}\FiandFi@x
+  \Div\FiandFi@y\FiandFi@x\FiandFi@x
+  \edef#5{\FiandFi@x}%
+}%
+
+\def\FiandFi#1#2#3#4#5{%
+  \Sub{#4}{#2}\FiandFi@y
+  \Sub{#1}{#3}\FiandFi@x
+  \Div\FiandFi@y\FiandFi@x\FiandFi@x
+  \Mul{#1}\FiandFi@x\FiandFi@y
+  \Add{#2}\FiandFi@y\FiandFi@y
+  \edef#5{(\FiandFi@x,\FiandFi@y)}%
+}%
+
+% 整関数以外，一般のグラフ描画
+%   \yGurafu(#1)(#2)#3#4#5
+%       #1 : xの刻み値 デフォルト=0.05
+%       #2 : 点線で描画するときの描画する部分の x のレンジ
+%       #3 : 関数式
+%       #4 : xの始め値
+%       #5 : xの終り値
+
+\def\yGurafu{\@ifnextchar({\y@Gurafu}{\y@Gurafu(.05)}}%
+\def\y@Gurafu(#1){\@ifnextchar({\@y@Gurafu(#1)}{\@y@Gurafu(#1)(\empty)}}%
+\def\@y@Gurafu(#1)(#2)#3#4#5{{%
+  \ifthenelse{\equal{#4}\empty}{\edef\yG@xmin{\xmin}}{\edef\yG@xmin{#4}}%
+  \ifthenelse{\equal{#5}\empty}{\edef\yG@xmax{\xmax}}{\edef\yG@xmax{#5}}%
+  \ifx\empty#2\def\@resen{}%
+    \yKinziOresen{#3}\yG@xmin\yG@xmax{#1}\@oresen
+    \yclipDrawline\@oresen\relax
+  \else
+    \For\yGurafu@x\yG@xmin\yG@xmax{#1}\Do{%
+      #3\yGurafu@x\yGurafu@y
+      \Add\yGurafu@x{#2}\yGurafu@@x#3\yGurafu@@x\yGurafu@@y
+      \yclipDrawline{(\yGurafu@x,\yGurafu@y)(\yGurafu@@x,\yGurafu@@y)}%
+    }%
+  \fi}}
+
+
+%  x=f(y) の場合
+%   \xGurafu(#1)(#2)#3#4#5
+%       #1 : xの刻み値 デフォルト=0.05
+%       #2 : 点線で描画するときの描画する部分の x のレンジ
+%       #3 : 関数式
+%       #4 : xの始め値
+%       #5 : xの終り値
+
+\def\xGurafu{\@ifnextchar({\x@Gurafu}{\x@Gurafu(.05)}}%
+\def\x@Gurafu(#1){\@ifnextchar({\@x@Gurafu(#1)}{\@x@Gurafu(#1)(\empty)}}%
+\def\@x@Gurafu(#1)(#2)#3#4#5{{%
+  \ifthenelse{\equal{#4}\empty}{\edef\yG@xmin{\ymin}}{\edef\yG@xmin{#4}}%
+  \ifthenelse{\equal{#5}\empty}{\edef\yG@xmax{\ymax}}{\edef\yG@xmax{#5}}%
+  \ifx\empty#2\def\@resen{}%
+    \xKinziOresen{#3}\yG@xmin\yG@xmax{#1}\@oresen
+    \xclipDrawline\@oresen\relax
+  \else
+    \For\yGurafu@x\yG@xmin\yG@xmax{#1}\Do{%
+      #3\yGurafu@x\yGurafu@y
+      \Add\yGurafu@x{#2}\yGurafu@@x#3\yGurafu@@x\yGurafu@@y
+      \xclipDrawline{(\yGurafu@y,\yGurafu@x)(\yGurafu@@y,\yGurafu@@x)}%
+    }%
+  \fi}}
+
+
+% 媒介変数表示の曲線描画
+% \bGurafu(#1)(#2)#3#4#5#6
+%   #1 : t の刻み値（デフォルト値は 0.05 ）
+%   #2 : 点線で描画するときの描画する部分の t のレンジ
+%   #3 : x=f(t)
+%   #4 : y=g(t)
+%   #5 : t の始め値
+%   #6 :     終り値
+
+\def\bGurafu{\@ifnextchar({\b@Gurafu}{\b@Gurafu(.05)}}%
+\def\b@Gurafu(#1){\@ifnextchar({\@b@Gurafu(#1)}{\@b@Gurafu(#1)(\empty)}}%
+\def\@b@Gurafu(#1)(#2)#3#4#5#6{{%
+  \ifx\empty#2\def\@resen{}%
+    \For\@t{#5}{#6}{#1}\Do{#3\@t\@x#4\@t\@y
+        \setlength{\@tempdima}{\@x pt}\setlength{\@tempdimb}{\@y pt}%
+        \ifdim\@tempdima<\xmin pt\relax\else\ifdim\@tempdima>\xmax pt\relax\else
+        \ifdim\@tempdimb<\ymin pt\relax\else\ifdim\@tempdimb>\ymax pt\relax\else
+        \edef\@resen{\@resen(\@x,\@y)}\fi\fi\fi\fi}%
+        #3{#6}\@x#4{#6}\@y
+        \setlength{\@tempdima}{\@x pt}\setlength{\@tempdimb}{\@y pt}%
+        \ifdim\@tempdima<\xmin pt\relax\else\ifdim\@tempdima>\xmax pt\relax\else
+        \ifdim\@tempdimb<\ymin pt\relax\else\ifdim\@tempdimb>\ymax pt\relax\else
+        \edef\@resen{\@resen(\@x,\@y)}\fi\fi\fi\fi%
+    \Drawline\@resen%
+  \else%
+    \For\@t{#5}{#6}{#1}\Do{#3\@t\g@x#4\@t\g@y
+        \setlength{\@tempdima}{\g@x pt}\setlength{\@tempdimb}{\g@y pt}%
+        \ifdim\@tempdima<\xmin pt\relax\else\ifdim\@tempdima>\xmax pt\relax\else
+        \ifdim\@tempdimb<\ymin pt\relax\else\ifdim\@tempdimb>\ymax pt\relax\else
+        \Add\@t{#2}\@@t #3\@@t\@@x #4\@@t\@@y%
+        \drawline(\g@x,\g@y)(\@@x,\@@y)\fi\fi\fi\fi}%
+  \fi}}%
+
+
+% 極方程式のグラフ描画
+%   \rGurafu(#1)(#2)#3#4#5
+%       #1 : θの刻み値（デフォルトは 0.05）
+%       #2 : 点線で描画するときの描画する部分の θ のレンジ
+%       #3 : 関数 r=f(θ)
+%       #4 : θの初期値
+%       #5 : θの終値
+
+\def\rGurafu{\@ifnextchar({\r@Gurafu}{\r@Gurafu(0.05)}}%
+\def\r@Gurafu(#1){\@ifnextchar({\@r@Gurafu(#1)}{\@r@Gurafu(#1)(\empty)}}%
+\def\@r@Gurafu(#1)(#2)#3#4#5{{%
+\ifx\empty#2\def\@resen{}%
+  \Cfor{\edef\@t{#4}}{\lengthtest{\@t pt<#5pt}}{\Add\@t{#1}\@t}\do{%
+    #3\@t\@r\Cos\@t\r@x\Mul\r@x\@r\r@x\Sin\@t\@y\Mul\@y\@r\@y
+    \setlength{\@tempdima}{\r@x pt}\setlength{\@tempdimb}{\@y pt}%
+    \ifdim\@tempdima<\xmin pt\relax\else\ifdim\@tempdima>\xmax pt\relax\else
+    \ifdim\@tempdimb<\ymin pt\relax\else\ifdim\@tempdimb>\ymax pt\relax\else
+    \edef\@resen{\@resen(\r@x,\@y)}\fi\fi\fi\fi}%
+    #3{#5}\@r\Cos{#5}\r@x\Mul\r@x\@r\r@x\Sin{#5}\@y\Mul\@y\@r\@y
+    \setlength{\@tempdima}{\r@x pt}\setlength{\@tempdimb}{\@y pt}%
+    \ifdim\@tempdima<\xmin pt\relax\else\ifdim\@tempdima>\xmax pt\relax\else
+    \ifdim\@tempdimb<\ymin pt\relax\else\ifdim\@tempdimb>\ymax pt\relax\else
+    \edef\@resen{\@resen(\r@x,\@y)}\fi\fi\fi\fi%
+    \edef\@resen{\@resen(\r@x,\@y)}\Drawline\@resen
+\else
+  \For\@t{#4}{#5}{#1}\Do{%
+    #3\@t\@r\Cos\@t\r@x\Mul\r@x\@r\r@x\Sin\@t\r@y\Mul\r@y\@r\r@y
+    \setlength{\@tempdima}{\r@x pt}\setlength{\@tempdimb}{\r@y pt}%
+    \ifdim\@tempdima<\xmin pt\relax\else\ifdim\@tempdima>\xmax pt\relax\else
+    \ifdim\@tempdimb<\ymin pt\relax\else\ifdim\@tempdimb>\ymax pt\relax\else
+    \Add\@t{#2}\@@t%
+    #3\@@t\@@r\Cos\@@t\r@@x\Mul\r@@x\@@r\r@@x\Sin\@@t\r@@y\Mul\r@@y\@@r\r@@y%
+    \drawline(\r@x,\r@y)(\r@@x,\r@@y)\fi\fi\fi\fi}%
+\fi}}%
+
+
+% 塗りつぶし
+% (1) 整関数
+%   \Nuri[濃さ](xの刻み値){整関数}{x1}{x2}
+%
+\def\Nuri{\@ifstar{\@hNuri}{\@sNuri}}%
+\def\@sNuri{\@ifnextchar[{\s@Nuri}{\s@Nuri[.5]}}%
+\def\s@Nuri[#1]{\@ifnextchar<{\s@@Nuri[#1]}{\s@@Nuri[#1]<0.05>}}%
+\def\s@@Nuri[#1]<#2>#3#4#5{\KinziOresen{#3}{#4}{#5}{#2}\@resen
+\Kansuuti{#3}{#4}\@@y\edef\@resen{\@resen(#4,\@@y)}\Nuritubusi[#1]\@resen}%
+
+% (1)' ２つの関数の間
+%   \Nurii[濃さ]<xの刻み値>{整関数1}{整関数2}{x1}{x2}
+%
+\def\Nurii{\@ifstar{\@hNurii}{\@sNurii}}%
+\def\@sNurii{\@ifnextchar[{\s@Nurii}{\s@Nurii[.5]}}%
+\def\s@Nurii[#1]{\@ifnextchar<{\s@@Nurii[#1]}{\s@@Nurii[#1]<0.05>}}%
+\def\s@@Nurii[#1]<#2>#3#4#5#6{\KinziOresen{#3}{#5}{#6}{#2}\@resen
+%\Kansuuti{#3}{#6}\@@y\edef\@resen{\@resen(#6,\@@y)}%
+\KinziOresen{#4}{#6}{#5}{-#2}\@@resen\edef\@resen{\@resen\@@resen}%
+\Kansuuti{#3}{#5}\@@y\edef\@resen{\@resen(#5,\@@y)}\Nuritubusi[#1]\@resen}%
+
+% (2) 一般の関数
+%   \yNuri[濃さ]<xの刻み値>{関数}{x1}{x2}
+
+\def\yNuri{\@ifstar{\@yhNuri}{\@ysNuri}}%
+\def\@ysNuri{\@ifnextchar[{\y@Nuri}{\y@Nuri[.5]}}%
+\def\y@Nuri[#1]{\@ifnextchar<{\y@@Nuri[#1]}{\y@@Nuri[#1]<0.05>}}%
+\def\y@@Nuri[#1]<#2>#3#4#5{\yKinziOresen{#3}{#4}{#5}{#2}\@resen
+#3{#4}\@@y\edef\@resen{\@resen(#4,\@@y)}\Nuritubusi[#1]\@resen}%
+
+
+% (2)' ２つの関数の間
+%   \yNurii[濃さ]<xの刻み値>{関数1}{関数2}{x1}{x2}
+%
+\def\yNurii{\@ifstar{\@yhNurii}{\@ysNurii}}%
+\def\@ysNurii{\@ifnextchar[{\s@yNurii}{\s@yNurii[.5]}}%
+\def\s@yNurii[#1]{\@ifnextchar<{\s@@yNurii[#1]}{\s@@yNurii[#1]<0.05>}}%
+\def\s@@yNurii[#1]<#2>#3#4#5#6{\yKinziOresen{#3}{#5}{#6}{#2}\@resen
+\yKinziOresen{#4}{#6}{#5}{-#2}\@@resen\edef\@resen{\@resen\@@resen}%
+#3{#5}\@@y\edef\@resen{\@resen(#5,\@@y)}% added 99/06/14
+\Nuritubusi[#1]\@resen}%
+
+
+% (3) 一般の関数 x=f(y)
+%   \xNuri[濃さ]<yの刻み値>{関数}{x1}{x2}
+%
+\def\xNuri{\@ifstar{\@xhNuri}{\@xsNuri}}%
+\def\@xsNuri{\@ifnextchar[{\x@Nuri}{\x@Nuri[.5]}}%
+\def\x@Nuri[#1]{\@ifnextchar<{\x@@Nuri[#1]}{\x@@Nuri[#1]<0.05>}}%
+\def\x@@Nuri[#1]<#2>#3#4#5{\xKinziOresen{#3}{#4}{#5}{#2}\@resen
+  #3{#4}\@@x\edef\@resen{\@resen(\@@x,#4)}\Nuritubusi[#1]\@resen}%
+
+
+% (2)' ２つの関数の間
+%   \xNurii[濃さ](xの刻み値){関数1}{関数2}{x1}{x2}
+%
+\def\xNurii{\@ifstar{\@xhNurii}{\@xsNurii}}%
+\def\@xsNurii{\@ifnextchar[{\s@xNurii}{\s@xNurii[.5]}}%
+\def\s@xNurii[#1]{\@ifnextchar<{\s@@xNurii[#1]}{\s@@xNurii[#1]<0.05>}}%
+\def\s@@xNurii[#1]<#2>#3#4#5#6{\xKinziOresen{#3}{#5}{#6}{#2}\@resen
+\xKinziOresen{#4}{#6}{#5}{-#2}\@@resen\edef\@resen{\@resen\@@resen}%
+#3{#5}\@@x\edef\@resen{\@resen(\@@x,#5)}% added 99/06/14
+\Nuritubusi[#1]\@resen}%
+
+
+% (4) 媒介変数
+%   \bNuri[濃さ](tの刻み値){x=F(t)}{y=G(t)}{t1}{t2}
+
+\def\bNuri{\@ifstar{\@bhNuri}{\@bsNuri}}%
+\def\@bsNuri{\@ifnextchar[{\b@Nuri}{\b@Nuri[.5]}}%
+\def\b@Nuri[#1]{\@ifnextchar<{\b@@Nuri[#1]}{\b@@Nuri[#1]<0.05>}}%
+\def\b@@Nuri[#1]<#2>#3#4#5#6{\bKinziOresen{#3}{#4}{#5}{#6}{#2}\@resen
+#3{#5}\@@x#4{#5}\@@y\edef\@resen{\@resen(\@@x,\@@y)}\Nuritubusi[#1]\@resen}%
+
+
+% (5) 極方程式
+%   \rNuri[濃さ](θの刻み値){r=f(θ)}{θ1}{θ2}
+
+\def\rNuri{\@ifnextchar[{\r@Nuri}{\r@Nuri[.5]}}%
+\def\r@Nuri[#1]{\@ifnextchar<{\r@@Nuri[#1]}{\r@@Nuri[#1]<0.05>}}%
+\def\r@@Nuri[#1]<#2>#3#4#5{\rKinziOresen{#3}{#4}{#5}{#2}\@resen
+#3{#4}\@@r\Cos{#4}\@@x\Mul\@@r\@@x\@@x\Sin{#4}\@@y\Mul\@@r\@@y\@@y
+\edef\@resen{\@resen(\@@x,\@@y)}\Nuritubusi[#1]\@resen}%
+
+
+% ハッチング
+% (1) 整関数
+%   \Nuri*[斜線角度]<kの刻み値>(xの刻み値){整関数}{x1}{x2}
+%
+\def\@hNuri{\@ifnextchar[{\s@hNuri}{\s@hNuri[45]}}%
+\def\s@hNuri[#1]{\@ifnextchar<{\s@@hNuri[#1]}{\s@@hNuri[#1]<\empty>}}%
+\def\s@@hNuri[#1]<#2>{\@ifnextchar<{\@s@@hNuri[#1]<#2>}{%
+  \@s@@hNuri[#1]<#2>(.1)}}%
+\def\@s@@hNuri[#1]<#2>(#3)#4#5#6{\KinziOresen{#4}{#5}{#6}{#3}\@resen
+\Kansuuti{#4}{#5}\@@y\edef\@resen{\@resen(#5,\@@y)}%
+\Hatchpolygon[#1]<#2>\@resen}%
+
+% (1)' ２つの関数の間
+%   \Nurii*[斜線角度]<kの刻み値>(xの刻み値){整関数1}{整関数2}{x1}{x2}
+%
+\def\@hNurii{\@ifnextchar[{\s@hNurii}{\s@hNurii[45]}}%
+\def\s@hNurii[#1]{\@ifnextchar<{\s@@hNurii[#1]}{\s@@hNurii[#1]<\empty>}}%
+\def\s@@hNurii[#1]<#2>{\@ifnextchar({\@s@@hNurii[#1]<#2>}{%
+  \@s@@hNurii[#1]<#2>(.1)}}%
+\def\@s@@hNurii[#1]<#2>(#3)#4#5#6#7{\KinziOresen{#4}{#6}{#7}{#3}\@resen
+\KinziOresen{#5}{#7}{#6}{-#3}\@@resen\edef\@resen{\@resen\@@resen}%
+\Kansuuti{#4}{#6}\@@y\edef\@resen{\@resen(#6,\@@y)}%
+\Hatchpolygon[#1]<#2>\@resen}%
+
+% (2) 一般の関数
+%   \yNuri*[斜線方向角]<斜線間隔>(xの刻み値){関数}{x1}{x2}
+
+\def\@yhNuri{\@ifnextchar[{\y@hNuri}{\y@hNuri[45]}}%
+\def\y@hNuri[#1]{\@ifnextchar<{\y@@hNuri[#1]}{\y@@hNuri[#1]<\empty>}}%
+\def\y@@hNuri[#1]<#2>{\@ifnextchar({\@y@@hNuri[#1]<#2>}{%
+  \@y@@hNuri[#1]<#2>(0.1)}}%
+\def\@y@@hNuri[#1]<#2>(#3)#4#5#6{\yKinziOresen{#4}{#5}{#6}{#3}\@resen%
+  #4{#5}\@@y\edef\@resen{\@resen(#5,\@@y)}\Hatchpolygon[#1]<#2>\@resen}%
+
+
+% (2)' ２つの関数の間
+%   \yNurii*[斜線方向角]<斜線間隔>(xの刻み値){関数1}{関数2}{x1}{x2}
+%
+\def\@yhNurii{\@ifnextchar[{\y@hNurii}{\y@hNurii[45]}}%
+\def\y@hNurii[#1]{\@ifnextchar<{\y@@hNurii[#1]}{\y@@hNurii[#1]<\empty>}}%
+\def\y@@hNurii[#1]<#2>{\@ifnextchar({\@y@@hNurii[#1]<#2>}{%
+  \@y@@hNurii[#1]<#2>(0.1)}}%
+\def\@y@@hNurii[#1]<#2>(#3)#4#5#6#7{\yKinziOresen{#4}{#6}{#7}{#3}\@resen
+  \yKinziOresen{#5}{#7}{#6}{-#3}\@@resen\edef\@resen{\@resen\@@resen}%
+  #4{#6}\@@y\edef\@resen{\@resen(#6,\@@y)}%
+  \Hatchpolygon[#1]<#2>\@resen}%
+
+
+% (3) 一般の関数 x=f(y)
+%   \xNuri*[斜線方向角]<斜線間隔>(xの刻み値){関数}{x1}{x2}
+
+\def\@xhNuri{\@ifnextchar[{\x@hNuri}{\x@hNuri[45]}}%
+\def\x@hNuri[#1]{\@ifnextchar<{\x@@hNuri[#1]}{\x@@hNuri[#1]<\empty>}}%
+\def\x@@hNuri[#1]<#2>{\@ifnextchar({\@x@@hNuri[#1]<#2>}{%
+  \@x@@hNuri[#1]<#2>(0.1)}}%
+\def\@x@@hNuri[#1]<#2>(#3)#4#5#6{\xKinziOresen{#4}{#5}{#6}{#3}\@resen%
+  #4{#5}\@@x\edef\@resen{\@resen(\@@x,#5)}\Hatchpolygon[#1]<#2>\@resen}%
+
+
+% (3)' ２つの関数の間
+%   \xNurii*[斜線方向角]<斜線間隔>(xの刻み値){関数1}{関数2}{x1}{x2}
+%
+\def\@xhNurii{\@ifnextchar[{\x@hNurii}{\x@hNurii[45]}}%
+\def\x@hNurii[#1]{\@ifnextchar<{\x@@hNurii[#1]}{\x@@hNurii[#1]<\empty>}}%
+\def\x@@hNurii[#1]<#2>{\@ifnextchar({\@x@@hNurii[#1]<#2>}{%
+  \@x@@hNurii[#1]<#2>(0.1)}}%
+\def\@x@@hNurii[#1]<#2>(#3)#4#5#6#7{\xKinziOresen{#4}{#6}{#7}{#3}\@resen
+  \xKinziOresen{#5}{#7}{#6}{-#3}\@@resen\edef\@resen{\@resen\@@resen}%
+  #4{#6}\@@x\edef\@resen{\@resen(\@@x,#6)}%
+  \Hatchpolygon[#1]<#2>\@resen}%
+
+
+% (4) 媒介変数
+%   \bNuri*[斜線方向角]<斜線間隔>(tの刻み値){x=F(t)}{y=G(t)}{t1}{t2}
+
+\def\@bhNuri{\@ifnextchar[{\b@hNuri}{\b@hNuri[45]}}%
+\def\b@hNuri[#1]{\@ifnextchar<{\b@@hNuri[#1]}{\b@@hNuri[#1]<\empty>}}%
+\def\b@@hNuri[#1]<#2>{\@ifnextchar({\b@@@hNuri[#1]<#2>}{%
+  \b@@@hNuri[#1]<#2>(0.05)}}%
+\def\b@@@hNuri[#1]<#2>(#3)#4#5#6#7{\bKinziOresen{#4}{#5}{#6}{#7}{#3}\@resen
+#4{#6}\@@x#5{#6}\@@y\edef\@resen{\@resen(\@@x,\@@y)}\Hatchpolygon[#1]<#2>\@resen}%
+
+
+% (5) 極方程式
+%   \rNuri*[斜線方向角]<斜線間隔>(θの刻み値){r=f(θ)}{θ1}{θ2}
+
+\def\@rhNuri{\@ifnextchar[{\r@hNuri}{\r@hNuri[45]}}%
+\def\r@hNuri[#1]{\@ifnextchar<{\r@@hNuri[#1]}{\r@@hNuri[#1]<0.1>}}%
+\def\r@@hNuri[#1]<#2>{\@ifnextchar({\r@@@hNuri[#1]<#2>}{%
+  \r@@@hNuri[#1]<#2>(0.05)}}%
+\def\r@@@hNuri[#1]<#2>(#3)#4#5#6{\rKinziOresen{#4}{#5}{#6}{#3}\@resen
+#4{#5}\@@r\Cos{#5}\@@x\Mul\@@r\@@x\@@x\Sin{#5}\@@y\Mul\@@r\@@y\@@y
+\edef\@resen{\@resen(\@@x,\@@y)}\Hatchpolygon[#1]<#2>\@resen}%
+%
+%
+% 一般角
+%
+%\ippankaku<#1><#2>[#3](#4)#5
+%        #1 : a の倍率
+%        #2 : b の倍率
+%        #3 : 始め角（六十分法）
+%        #4 : 矢印の配置
+%          e = 終端（デフォルト）
+%          s = 始端
+%          b = 両端
+%          n = なし
+%        #5 : 終り角（六十分法）
+%
+\@ifundefined{ippankaku}{%
+  \def\rasenP#1#2{%
+      \DegRad{#1}\@kaku
+      \Mul\@kaku\@rasen@a\@rasen@r
+      \Add\@rasen@r\@rasen@b\@r
+      \Cos\@kaku\owariP@x\Mul\@r\owariP@x\owariP@x
+      \Sin\@kaku\owariP@y\Mul\@r\owariP@y\owariP@y
+      \edef#2{(\owariP@x,\owariP@y)}}%
+  \def\rasenR#1#2{\Mul{#1}\@rasen@a\@rasen@r\Add\@rasen@r\@rasen@b#2}%
+  \def\ippankaku{\@ifnextchar<{\@ippankaku}{\@ippankaku<\empty>}}%
+  \def\@ippankaku<#1>{\@ifnextchar<{\@@ippankaku<#1>}{\@@ippankaku<#1><\empty>}}%
+  \def\@@ippankaku<#1><#2>{\@ifnextchar[{\@@@ippankaku<#1><#2>}{%
+    \@@@ippankaku<#1><#2>[0]}}%
+  \def\@@@ippankaku<#1><#2>[#3]{\@ifnextchar({\@@@@ippankaku<#1><#2>[#3]}{%
+    \@@@@ippankaku<#1><#2>[#3](e)}}%
+  \def\@@@@ippankaku<#1><#2>[#3](#4)#5{%
+    \ifx#1\empty\def\@rasen@a{0.02}\else\Mul{#1}{0.02}\@rasen@a\fi%
+    \ifx#2\empty\def\@rasen@b{0.2}\else\Mul{#2}{0.2}\@rasen@b\fi%
+    \DegRad{#3}\@kaku@s
+    \DegRad{#5}\@kaku@e
+    \ifdim\@kaku@e pt>\@kaku@s pt\relax
+      \rGurafu\rasenR{\@kaku@s}{\@kaku@e}%
+    \else
+      \ifdim\@rasen@a pt>\z@\Mul{-1}\@rasen@a\@rasen@a\fi
+      \rGurafu\rasenR{\@kaku@e}{\@kaku@s}%
+    \fi
+    \ifthenelse{\equal{#4}{s}\or\equal{#4}{b}}{%
+      \rasenR\@kaku@s\@r
+      \Cos\@kaku@s\owariP@x\Mul\@r\owariP@x\owariP@x
+      \Sin\@kaku@s\owariP@y\Mul\@r\owariP@y\owariP@y
+      \Div\ArrowHeadSize\@r\kaku@d
+      \ifdim\@kaku@e pt>\z@
+        \Add\@kaku@s\kaku@d\@kaku@rr
+      \else
+        \Sub\@kaku@s\kaku@d\@kaku@rr
+      \fi
+      \rasenR\@kaku@rr\@rr
+      \Cos\@kaku@rr\owariP@xx\Mul\@rr\owariP@xx\owariP@xx
+      \Sin\@kaku@rr\owariP@yy\Mul\@rr\owariP@yy\owariP@yy
+      \Sub\owariP@x\owariP@xx\owariP@xx
+      \Sub\owariP@y\owariP@yy\owariP@yy
+      \Put{(\owariP@x,\owariP@y)}{\yaziri{(\owariP@xx,\owariP@yy)}}%
+    }{}%
+    \ifthenelse{\equal{#4}{e}\or\equal{#4}{b}}{%
+      \rasenR\@kaku@e\@r
+      \Cos\@kaku@e\owariP@x\Mul\@r\owariP@x\owariP@x
+      \Sin\@kaku@e\owariP@y\Mul\@r\owariP@y\owariP@y
+      \Div\ArrowHeadSize\@r\kaku@d
+      \ifdim\@kaku@e pt>\z@
+        \Sub\@kaku@e\kaku@d\@kaku@rr
+      \else
+        \Add\@kaku@e\kaku@d\@kaku@rr
+      \fi
+      \rasenR\@kaku@rr\@rr
+      \Cos\@kaku@rr\owariP@xx\Mul\@rr\owariP@xx\owariP@xx
+      \Sin\@kaku@rr\owariP@yy\Mul\@rr\owariP@yy\owariP@yy
+      \Sub\owariP@x\owariP@xx\owariP@xx
+      \Sub\owariP@y\owariP@yy\owariP@yy
+      \Put{(\owariP@x,\owariP@y)}{\yaziri{(\owariP@xx,\owariP@yy)}}%
+    }{}%
+  }%
+}{}%
+%
+\endinput
+
+v 0.00 2005/09/07 emathPh から，整関数グラフ描画関連を独立
+v 0.01 2006/07/31 \Gurafu : 二次関数の場合，[l]オプションで折れ線近似（xscale, yscale 対応）
+v 0.03 2006/08/25 \ippankaku : emathPh.sty より移管
+v 0.04 2006/08/26 \ippankaku : emathPp.sty をロード済みのときは定義しない。
+v 0.05 2010/08/19 \GKouten : 二次と二次も許容

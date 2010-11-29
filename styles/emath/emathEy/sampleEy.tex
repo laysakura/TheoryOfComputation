@@ -1,0 +1,420 @@
+\documentclass[a4j]{jarticle}
+\usepackage{emath}
+\usepackage[dvips]{graphicx}% 必須ではありません。当文書で図を取り込むため
+\usepackage{emathEy}
+\usepackage{jquote}%          これも，当文書のためにのみ必要です。
+\usepackage{showexample}%     これも，当文書のためにのみ必要です。
+
+\title{\textsf{emathEy.sty} \\{\normalsize v 0.00}\\
+使用例}
+\author{tDB}
+\date{2005/09/03}
+
+%\graphicspath{{c:/gs/gs8.62/examples/}}
+
+\begin{document}
+\maketitle\thispagestyle{empty}
+\begin{abstract}%
+\parindent1zw%
+\textsf{enumerate}環境で、項目を横に並べるための環境を
+いくつか用意したものです。
+
+このマクロ集のマクロについてのご質問，バグ報告，修正・追加の提案等は
+\begin{center}
+http://emath.s40.xrea.com/
+\end{center}
+の掲示板へどうぞ。
+\end{abstract}
+
+\tableofcontents
+
+\pagebreak
+\pagenumbering{arabic}
+\pagebreak
+
+\def\bunsuu{\displaystyle\frac}%
+
+\def\labelenumii{(\arabic{enumii})}
+\section{概略}
+\begin{enumerate}
+\item 横に2個並べる\textsf{edaenumerate}環境
+\begin{edaenumerate}
+  \item ああ
+  \item いい
+  \item ううう
+  \item えええ
+  \item えええええ
+  \item お
+  \item お
+  \item ええええ
+  \item えええ
+\end{edaenumerate}
+
+\item 横に3個並べる\textsf{edaenumerate}環境
+
+  \textsf{edaenumerate}環境は，デフォルトでは横に2問ずつ並べます。
+  この個数を変更するのが\verb+<..>+オプションで，この問題では，
+  \begin{quote}
+  \verb+\begin{enumerate}<3>+
+  \end{quote}
+  としています。
+\begin{edaenumerate}<3>
+  \item ああ
+  \item いい
+  \item ううう
+  \item えええ
+  \item えええええ
+  \item お
+  \item お
+  \item ええええ
+  \item えええ
+\end{edaenumerate}
+
+\item 横に並べる個数を自動的に決める\textsf{yokoenumerate}環境
+
+  \textsf{edaenumerate}が横に並べる小問数を指定する方式なのに対して，
+  \textsf{yokoenumerate}は，小問の横幅を計量し最長のもので版面を均等割して
+  横に並べる個数を求めます。
+\begin{yokoenumerate}
+  \item ああ
+  \item いい
+  \item ううう
+  \item えええ
+  \item えええええ
+  \item お
+  \item お
+  \item ええええ
+  \item えええ
+\end{yokoenumerate}
+
+\item 横にベタ詰で並べる\textsf{betaenumerate}環境
+
+  \textsf{edaenumerate}, \textsf{yokoenumerate}はいずれも，
+  小問の横幅は均一です。それに対し，\textsf{betaenumerate}は，
+  小問をベタ詰していきます。したがって複数行になるとき，
+  小問番号が縦に揃いません。
+\begin{betaenumerate}
+  \item ああ
+  \item いい
+  \item ううう
+  \item えええ
+  \item えええええ
+  \item お
+  \item お
+  \item ええええ
+  \item えええ
+\end{betaenumerate}
+
+\clearpage
+
+% 以下で使用している図
+%           golfer.eps, tiger.eps
+% は Ghostscript に含まれるものです。
+
+\item \textsf{edaenumerate}環境で図版を並べてみます。
+
+以下で使用している図
+\begin{verbatim}
+  golfer.eps, tiger.eps
+\end{verbatim}
+は Ghostscript に含まれるものです。
+
+  \begin{edaenumerate}
+    \item \mbox{}\par\includegraphics[width=30mm,clip]{golfer.eps}
+    \item \mbox{}\par\includegraphics[width=30mm,clip]{tiger.eps}
+    \item \mbox{}\par\includegraphics[width=30mm,clip]{tiger.eps}
+    \item \mbox{}\par\includegraphics[width=30mm,clip]{golfer.eps}
+  \end{edaenumerate}
+
+\makeatletter
+\def\fgcaption{\def\@captype{figure}\caption}
+\makeatother
+
+\item 項目番号を取り去り，図番号を付けて見ます。\bigskip
+  \begin{edaenumerate}
+    \item[] 
+      \hfill\includegraphics[width=30mm,clip]{golfer.eps}\hfill\null
+            \fgcaption{golfer}
+    \item[] 
+      \hfill\includegraphics[width=30mm,clip]{tiger.eps}\hfill\null
+            \fgcaption{tiger}
+\edakaigyou\bigskip
+
+    \item[] 
+      \hfill\reflectbox{\includegraphics[width=30mm,clip]{tiger.eps}}\hfill\null
+            \fgcaption{tiger}
+    \item[] 
+      \hfill\reflectbox{\includegraphics[width=30mm,clip]{golfer.eps}}\hfill\null
+            \fgcaption{golfer}
+  \end{edaenumerate}
+\end{enumerate}
+\clearpage
+
+\section{小問を横に並べる。}
+\subsection{横に並べる個数指定}
+小問を横に並べる環境 \textsf{edaenumerate} です。
+
+{
+\renewcommand{\labelenumi}{\Alph{enumi}.}%
+\renewcommand{\labelenumii}{【\arabic{enumii}】}%
+\renewcommand{\labelenumiii}{(\arabic{enumiii})}%
+
+\begin{enumerate}
+\item 一番多いのは，横に2問ずつ並べるタイプでしょうか。
+
+\showexample[\textsf{edaenumerate}環境](.95)(0.9){example/eda01}
+\clearpage
+
+\item 横に3問ずつ並べたいときは \texttt{<..>} オプションを使います。
+
+\showexample[\texttt{edaenumerate<3>}](.95)(0.9){example/eda02}
+
+なお，\LaTeXe で \textsf{enumerate} に [...] オプションを併用する場合は
+\begin{quote}\begin{verbatim}
+      \begin{edaenumerate}<3>[(1)]
+\end{verbatim}
+\end{quote}
+のように，\verb/<..>/ オプションを先に付けてください。
+
+\pagebreak
+
+\item 小問の一部は2問ずつ，一部は3問ずつ並べたい，という例です。
+
+\showexample[\texttt{変則}](.95)(0.9){example/eda05}
+\pagebreak
+
+\item 小問の位置（左インデント）を変更するには (...) オプションを用います。
+
+\showexample[edaenumerate(...)](.95)(0.9){example/eda06}
+
+%\pagebreak
+
+\pagebreak
+
+\item テスト問題などでは，縦方向に空白を作りたいことがあります。
+\verb+<...>+ オプションに
+\begin{jquote}
+\texttt{gyoukan=2cm}
+\end{jquote}
+などと行間の長さを指定します。
+
+\begin{showEx}{\texttt{<gyoukan=..>}}
+\begin{enumerate}[1.~]
+  \item 次の問いに答えよ。
+    \begin{edaenumerate}%
+    <gyoukan=2cm>[(1)]
+      \item aaa
+      \item bbb
+      \item ccc
+      \item ddd
+    \end{edaenumerate}
+\end{enumerate}
+\end{showEx}
+
+横に並べる小問数も指定したければ，オプションを
+\begin{jquote}
+\begin{verbatim}
+<retusuu=3,gyoukan=2cm>
+\end{verbatim}
+\end{jquote}
+などと記述します。
+\index{retusuu=}\index{gyoukan=}
+\pagebreak
+
+均等割りなら，
+\verb+\vfill+ も使えますし，
+\begin{jquote}
+\begin{verbatim}
+<gyoukan=\vfill>
+\end{verbatim}
+\end{jquote}
+と指定するのもありです。
+
+%\showexample[\cmd{vfill} で縦方向の空白](.95)(.9){example/eda07}
+\begin{itembox}{\cmd{vfill} で縦方向の空白}
+\verbatiminput{example/eda07}
+\end{itembox}
+
+をタイプセットすると，下のようになります。
+
+\input{example/eda07}
+\clearpage
+
+また，横に並べた小問の間に縦罫線を入れたいことがあります。
+解答の余白を縦 \texttt{2cm} として，縦罫線を入れる例です。
+
+\showexample[小問の間に縦罫線](.95)(.9){example/eda04}
+
+\item eda... の書式です。
+    \begin{enumerate}
+    \item 環境
+        \begin{verbatim}
+edaenumerate<横に並べる小問の個数(デフォルトは2）>
+            (小問の左インデント)
+            [enumerate のオプションと同じ(LaTeX2eのみ)]
+        \end{verbatim}
+    \item コマンド
+        \begin{verbatim}
+\item<横に並べる小問の個数
+    （デフォルトは \begin{edaenumerate}の指定値）>
+     (小問の横幅)
+     [\item のオプションと同じ]
+        \end{verbatim}
+    \end{enumerate}
+\end{enumerate}
+}
+
+\subsection{ベタ並べ}
+\textsf{edaenumerate}環境は，横に並べる個数を指定しますが，
+個数は指定せず，ベタに並べるのが\textsf{betaenumerate}環境です。
+
+\showexample[betaenumerate](.6)(.99){example/enumb01}
+
+余白量はデフォルトで
+\begin{jquote}
+\begin{verbatim}
+\def\betalabelwidth{3em}
+\end{verbatim}
+\end{jquote}
+としてあります。
+これを再定義して小さくすれば更に詰め込むことができます。
+\clearpage
+
+\subsection{\textsf{yokoenumerate}}
+\textsf{betaenumerate}環境は追い込み式の横並べですが，
+項目幅は項目ごとに異なります。
+長さが最大の項目幅で横並べするのが \textsf{yokoenumerate} 環境です。
+
+\begin{showEx}(1,1){\textsf{yokoenumerate}環境}
+\begin{enumerate}[1.~]
+\item \textsf{betaenumerate}環境
+\begin{betaenumerate}
+  \item aaa
+  \item b
+  \item ccccc
+  \item ddddddddddd
+  \item ee
+  \item ffff
+  \item ggggg
+  \item hhhhhh
+\end{betaenumerate}
+
+\item \textsf{yokoenumerate}環境
+\begin{yokoenumerate}
+  \item aaa
+  \item b
+  \item ccccc
+  \item ddddddddddd
+  \item ee
+  \item ffff
+  \item ggggg
+  \item hhhhhh
+\end{yokoenumerate}
+\end{enumerate}
+\end{showEx}
+
+この環境と\textsf{edaenumerate}環境との違いは，
+\textsf{edaenumerate}環境は横に並べる項目数をこちらが指定するのに対して，
+\textsf{yokoenumerate}環境は項目幅と版面との兼ね合いで\TeX が決めてくれる
+という違いです。
+
+\section{指定した項目番号に\texttt{*}などを附加}
+問題集などで，一部の問題に\texttt{*}印などをつけようという話です。
+
+\begin{showEx}{\cmd{item*}}
+\begin{enumerate}[1.~]
+  \item 次の問いに答えよ。
+  \begin{edaenumerate}[%
+    \protect\preitem(1)]
+    \item* aaa
+    \item bbb
+    \item ccc
+    \item* ddd
+  \end{edaenumerate}
+\end{enumerate}
+\end{showEx}
+
+すなわち，書式指定に\cmd{preitem}を置き，
+\texttt{*}を付けたい項目をアスタリスク付の \cmd{item*}
+で記述します。
+
+\texttt{*}を番号の後ろにおきたければ
+
+\begin{showpEx}{\cmd{item**}}
+!\begin{enumerate}[1.~]
+! \item 次の問いに答えよ。
+  \begin{edaenumerate}[(1){%
+  \makebox[0pt][l]\postitem}~]
+    \item** aaa
+    \item bbb
+    \item ccc
+    \item** ddd
+  \end{edaenumerate}
+!\end{enumerate}
+!\end{showpEx}
+書式指定に\cmd{postitem}を加え，アスタリスクを2個つけた\cmd{item**}を
+用います。
+
+また，後置記号のありなしで番号部分の横幅が揃うように
+\begin{jquote}
+\begin{verbatim}
+  \begin{edaenumerate}[(1){\makebox[0pt][l]\postitem}~]
+\end{verbatim}
+\end{jquote}
+と，細工をしています。
+
+\texttt{*}以外の記号を使いたいときは，\cmd{item*}, \cmd{item**} に
+\verb+[..]+オプションをつけます。
+
+\begin{showpEx}{\cmd{item*[..]}}
+!\begin{enumerate}[1.~]
+! \item 次の問いに答えよ。
+  \begin{edaenumerate}[%
+    \protect\preitem(1)]
+    \item*[\dag] aaa
+    \item bbb
+    \item ccc
+    \item* ddd
+  \end{edaenumerate}
+!\end{enumerate}
+!\end{showpEx}
+
+後置する場合です。
+
+\begin{showpEx}{\cmd{item**[..]}}
+!\begin{enumerate}[1.~]
+! \item 次の問いに答えよ。
+  \begin{edaenumerate}[(1){%
+  \makebox[0pt][l]\postitem}~]
+    \item**[\dag] aaa
+    \item bbb
+    \item ccc
+    \item** ddd
+  \end{edaenumerate}
+!\end{enumerate}
+!\end{showpEx}
+
+前と後ろの両方に記号をつけたい，ということは起こりそうもありませんが，
+可能ではあります。
+
+\begin{showpEx}{前後置}
+!\begin{enumerate}[1.~]
+! \item 次の問いに答えよ。
+  \begin{edaenumerate}[%
+  \protect\preitem(1){%
+  \makebox[0pt][l]\postitem}~]
+    \item*[*][\dag] aaa
+    \item* bbb
+    \item**[\dag] ccc
+    \item*[][\ddag] ddd
+  \end{edaenumerate}
+!\end{enumerate}
+!\end{showpEx}
+と，\cmd{item*}に\verb+[前置記号][後置記号]+と2つのオプションをつけます。
+この場合，前置記号が`\texttt{*}'であっても，明示する必要があります。
+
+以上の例はすべて\textsf{edaenumerate}環境で示しましたが，
+一般の\textsf{enumerate}環境，各種の横並び\textsf{enumerate}環境でも
+有効です。
+
+\end{document}

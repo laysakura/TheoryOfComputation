@@ -1,0 +1,1697 @@
+\textsf{Perl}を用いたコマンドの紹介をします。
+\subsection{関数値の計算}
+\subsubsection{\cmd{calcval}}
+計算式を与えて計算結果を受け取るためのコマンドです。書式は
+
+\begin{boxnote}
+\begin{verbatim}
+\calcval#1#2
+  #1 : 計算式（文法は Perl に従います。）
+  #2 : 計算結果を受け取る制御綴。
+\end{verbatim}
+\end{boxnote}
+
+一例です。
+
+\begin{showEx}{\cmd{calcval}}
+\calcval{exp(-1)}\x
+$\bunsuu1e$の近似値は\x です。
+\end{showEx}
+
+\subsubsection{\cmd{funcval}}
+関数式，独立変数の値を与えて関数値を受け取るコマンドです。
+
+\begin{boxnote}
+\begin{verbatim}
+\funcval#1#2#3
+  #1 : 関数式 y=f(x)（文法は Perl に従います。）
+  #2 : x の値
+  #2 : y の値を受け取る制御綴。
+\end{verbatim}
+\end{boxnote}
+
+一例です。
+
+\begin{showEx}{\cmd{funcval}}
+\def\Fx{log2(10,X)}
+\funcval\Fx{2}\xii
+\funcval\Fx{3}\xiii
+2, 3 の常用対数の近似値はそれぞれ\xii, \xiii です。
+\end{showEx}
+
+なお，\texttt{log2} は \textsf{Perl} にはありませんが，
+\textsf{emath.pl} で追加してあります。このスクリプトファイルで
+追加している機能は次のとおりです。
+
+\begin{boxnote}
+\begin{verbatim}
+定数：円周率 $pi
+関数：正接  tan(X)
+      対数 log2(a,X) : aを底とする対数
+\end{verbatim}
+\end{boxnote}
+
+\subsubsection{戻り値の書式}
+\cmd{calcval}, \cmd{funcval}の戻り値の書式を制御するオプションです。
+まずは，現状の確認です。
+
+\begin{showEx}(.64,.3){\cmd{calcval}}
+\calcval{68/2}\y
+\y
+\end{showEx}
+
+すなわち結果が整数でも，小数点を伴った文字列が戻ってきます。
+これは
+\begin{jquote}
+\begin{verbatim}
+printf"%f",....
+\end{verbatim}
+\end{jquote}
+と，\textsf{Perl}の出力フォーマットが`\texttt{f}'指定になっているからです。
+
+そこで，\cmd{calcval}, \cmd{funcval}に\verb+[#1]+オプションをつけたときは
+\begin{jquote}
+\begin{verbatim}
+printf"%#1",....
+\end{verbatim}
+\end{jquote}
+の書式で出力することが出来るようにしました。
+先ほどの出力を整数に指定してみます。
+
+\begin{showEx}(.64,.3){\texttt{[d]}オプション}
+\calcval[d]{68/2}\y
+\y
+\end{showEx}
+
+\subsubsection{\cmd{tenretu}への応用}
+この機能を利用して，\cmd{tenretu}などの座標に計算式を入れ，
+\textsf{perl}と連携させることができます。
+
+\begin{showEx}(.5,.44){正七角形}
+\begin{zahyou*}[ul=25mm]%
+      (-1.1,1.1)(-1.1,1.2)
+  \rtenretu<perl>{%
+    A(1,90)n;
+    B(1,90+360/7)nw;
+    C(1,90+2*360/7)sw;
+    D(1,90+3*360/7)sw;
+    E(1,90+4*360/7)se;
+    F(1,90+5*360/7)se;
+    G(1,90+6*360/7)ne}
+  \Drawline{\A\B\C\D\E\F\G\A}
+  \En\O{1}%
+\end{zahyou*}
+\end{showEx}
+
+\begin{showEx}(.5,.44){二次関数のグラフと$x$軸}
+\begin{zahyou}[ul=8mm]%
+      (-2.5,4.5)(-4,4)
+  \def\Fx{2+2*X-X*X}
+  \tenretu*{C(1,3)}
+  \Put\C[syaei=xy]{}
+  \tenretu*<perl>{%
+    A(1-sqrt(3),0);B(1+sqrt(3),0)}
+  \Put\A[nw]{$1-\sqrt{3}$}
+  \Put\B[ne]{$1+\sqrt{3}$}
+  \YGurafu*\Fx
+  \kuromaru{\A;\B;\C}
+\end{zahyou}
+\end{showEx}
+
+
+\subsection{グラフ描画}
+\subsubsection{\cmd{YGurafu}}
+最初に触れた $y=f(x)$ のグラフを描画します。
+書式は \cmd{yGurafu} とほとんど同じです。
+
+関数式の記述において，独立変数$x$は`X'を用います。
+
+\begin{boxnote}
+\begin{verbatim}
+\YGurafu(#1)(#2)#3#4#5
+      #1 : xの刻み値 デフォルト=0.05
+      #2 : 点線で描画するときの描画する部分の x のレンジ
+      #3 : 関数式 y=f(X) 独立変数は `X' を使用します。
+      #4 : xの始め値
+      #5 : xの終り値
+\end{verbatim}
+\end{boxnote}
+
+まずは，簡単な2次関数のグラフを描画する例です。
+
+\begin{showEx}{\cmd{YGurafu}}
+\unitlength3mm\small
+\begin{zahyou}(-2,4)(-2,6)
+\YGurafu{X*(X-2)}{\xmin}{\xmax}
+\end{zahyou}
+\end{showEx}
+
+この場合，\textsf{zahyou}環境における$y$の範囲が不十分ですから，
+範囲外の曲線はクリップされてしまいます。
+
+続いて$y=x^2(4-x)$ のグラフを一部分点線で描画する例です。
+
+\begin{showEx}{\cmd{YGurafu}}
+\unitlength2mm\small
+\begin{zahyou}(-2,6)(-4,12)
+\def\Fx{X**2*(4-X)}
+\YGurafu\Fx{0}{4}
+\YGurafu(.05)(.02)\Fx{4.05}\xmax
+\YGurafu(.1)(.02)\Fx\xmin{0}
+\end{zahyou}
+\end{showEx}
+
+なお，整関数のグラフを描画するには \cmd{Gurafu} コマンドがありますが，
+\cmd{YGurafu} の場合は描画範囲外を自動的にクリップしてくれる点が便利です。
+
+\verb+\YGurafu+において，デフォルトの$x$の刻み値は
+\verb+0.05\unitlength+となっています。
+これは\verb+\unitlength=10mm+を想定していますから，
+\verb+[ul=30mm]+に対しては0.15mmとなり，少し荒くなります。
+
+\begin{showEx}(.4,.54){デフォルト}
+\begin{zahyou}[ul=30mm]
+  (-1.1,1.2)(-1,1)%
+\def\Fx{X**2*sqrt(1-X**2)}%
+\def\Gx{-X**2*sqrt(1-X**2)}%
+\YGurafu\Fx{-1}{1}
+\YGurafu\Gx{-1}{1}
+\end{zahyou}
+\end{showEx}
+
+そこで，\verb+(0.01667)+オプションを附加してみますと
+
+\begin{showEx}(.4,.54){$x$の刻み値を小さく}
+\begin{zahyou}[ul=30mm]
+  (-1.1,1.2)(-1,1)%
+\def\Fx{X**2*sqrt(1-X**2)}%
+\def\Gx{-X**2*sqrt(1-X**2)}%
+\YGurafu(0.01667)\Fx{-1}{1}
+\YGurafu(0.01667)\Gx{-1}{1}
+\end{zahyou}
+\end{showEx}
+
+少しは改善されましたが，\retu(\pm1,0)のところで折れている感じは残ります。
+そこで，
+\begin{jquote}
+\begin{verbatim}
+emathPp.sty ver. 0.21 2003/11/07
+\end{verbatim}
+\end{jquote}
+において，\verb+\YGurafu+ に\verb+(*)+オプションを新設しました。
+このオプションは，$y$の変化の大きいところでは，
+自動的に$x$の刻みを小さくする機能を実現しています。
+
+\begin{showEx}(.4,.54){新設\texttt{(*)}オプション}
+\begin{zahyou}[ul=30mm]
+  (-1.1,1.2)(-1,1)%
+\def\Fx{X**2*sqrt(1-X**2)}%
+\def\Gx{-X**2*sqrt(1-X**2)}%
+\YGurafu(*)\Fx{-1}{1}
+\YGurafu(*)\Gx{-1}{1}
+\end{zahyou}
+\end{showEx}
+
+この場面における最善の対応法は，
+媒介変数表示を用いることであることは論を待ちません。\\
+媒介変数表示がうまく見つからない，\\
+極座標表示も駄目，\\
+というような場合の力技を用意した，ということです。
+
+\begin{showEx}(.4,.54){媒介変数表示}
+\begin{zahyou}[ul=30mm]
+  (-1.1,1.2)(-1,1)%
+\def\Fx{cos(T)}%
+\def\Fy{cos(T)**2*sin(T)}%
+\BGurafu\Fx\Fy{-$pi}{$pi}
+\end{zahyou}
+\end{showEx}
+
+\subsubsection{\cmd{YGurafu*}}
+グラフを描画する$x$の範囲が \verb+{\xmin}{\xmax}+ であるとき，
+これをいちいち記述するのは面倒だから省略しようというのが
+\cmd{YGurafu*}です。前節最初の例を\cmd{YGurafu*}を用いると
+
+\begin{showEx}{\cmd{YGurafu*}}
+\unitlength3mm\small
+\begin{zahyou}(-2,4)(-2,6)
+\YGurafu*{X*(X-2)}
+\end{zahyou}
+\end{showEx}
+
+\cmd{YGurafu*}の書式です。
+
+\begin{boxnote}
+\begin{verbatim}
+\YGurafu*[#1](#2)(#3)#4
+      #1 : key=val の形式で
+              hidarix=... 描画区間の左端のxの値を指定します。
+              migix=...   描画区間の右端のxの値を指定します。
+      #2 : xの刻み値 デフォルト=0.05
+      #3 : 点線で描画するときの描画する部分の x のレンジ
+      #4 : 関数式 y=f(X) 独立変数は `X' を使用します。
+      備考 このコマンドが実行されると，描画したグラフの
+               左端点が \hidariT
+               右端点が \migiT
+           と定義される。
+\end{verbatim}
+\end{boxnote}
+
+独立変数の範囲を指定する引数がなくなりましたが，
+\verb+[#1]+オプションが附加されています。これを利用する例です。
+
+右は描画領域一杯に描きたいが，左は制限したい，などというときは
+\cmd{YGurafu*}の\texttt{[hidarix=...]}オプションを与えます。
+
+\begin{showEx}(.59,.35){\texttt{[hidarix=...]}オプション}
+\begin{zahyou}[ul=5mm](-3,3)(-1,6)
+\zahyouMemori[g]
+\YGurafu*[hidarix=-1]{X*X}
+\Put\migiT[se]{$y=x^2$}
+\end{zahyou}
+\end{showEx}
+
+これは，$y=\log x$ などの場合に特に有効です。
+
+\begin{showEx}(.59,.35){$y=\log x$}
+\begin{zahyou}[ul=5mm](-1,8)(-3,3)
+\zahyouMemori[g]
+\YGurafu*[hidarix=0]{log(X)}
+\Put\migiT[nw]{$y=\log x$}
+\end{zahyou}
+\end{showEx}
+
+\verb/hidarix=0/と与えた値は$y=\log x$の定義域に入りません。
+マクロ処理では，与えられた区間の中点における関数値が
+描画領域に入るか否かを調べる2分法で描画すべき左右の端点
+\cmd{hidariT}, \cmd{migiT}を求めています。
+\cmd{YGurafu*}コマンドを実行すると，グラフの左右の端点が
+定義されていますから，これを利用して式を表示したりすることができます。
+
+右端を制限する\verb/[migix=...]/オプションも使えます。
+
+\begin{showEx}(.59,.35){$y=\bunsuu{1}{x^2}$}
+\begin{zahyou}[ul=5mm](-4,4)(-1,8)
+\zahyouMemori[g]
+\YGurafu*[migix=0]{1/(X*X)}
+\YGurafu*[hidarix=0]{1/(X*X)}
+\Put\hidariT[se]{$y=\bunsuu{1}{x^2}$}
+\end{zahyou}
+\end{showEx}
+
+『注意』
+
+\cmd{YGurafu*}で描画する関数が描画領域の一部にしか現れない場合，
+グラフがまったく描画されない場合があります。一例です。
+
+\begin{showEx}(.6,.34){\cmd{YGurafu*}が無効な場合}
+\begin{zahyou}[ul=5mm](-4,4)(-1,4)
+  \def\Fx{(X+2)**2+1}
+  \YGurafu*\Fx
+\end{zahyou}
+\end{showEx}
+
+\cmd{YGurafu*}は\cmd{YGurafu}の手抜き版ですが，
+次の条件を満たさなければなりません。
+
+\begin{jquote}
+\begin{verbatim}
+描画区間の中点において，グラフは描画領域に属している。
+\end{verbatim}
+\end{jquote}
+上の例では，描画区間$-4\leqq x\leqq 4$の中点$x=0$における関数値
+$y=5$は$y$の描画区間$-1\leqq y\leqq 4$に属していません。
+
+今回の改定で，このような場合，ログファイルに Warning を出すことにしました。
+\begin{jquote}
+\begin{verbatim}
+LaTeX Warning: YGurafu* : 描画範囲を求めることが出来ませんでした。
+  hidarix=, migix= オプションで描画範囲を狭めて下さい。 on input line ***.
+\end{verbatim}
+\end{jquote}
+Warning にあるように，上の条件が満たされるように描画領域を狭めてやります。
+
+\begin{showEx}(.6,.34){修正1}
+\begin{zahyou}[ul=5mm](-4,4)(-1,4)
+  \def\Fx{(X+2)**2+1}
+  \YGurafu*[migix=0]\Fx
+\end{zahyou}
+\end{showEx}
+
+すなわち，オプション\verb+[migix=0]+で，$x$の描画区間を$-4\leqq x\leqq 0$と
+狭めてやれば，その中点$x=-2$における関数値$y=1$は$y$の描画領域に属しますから，
+グラフが描画されることとなりました。
+
+描画区間を狭めるのが面倒なら，\cmd{YGurafu}を用いるのもあります。
+
+\begin{showEx}(.6,.34){修正2}
+\begin{zahyou}[ul=5mm](-4,4)(-1,4)
+  \def\Fx{(X+2)**2+1}
+  \YGurafu\Fx{}{}
+\end{zahyou}
+\end{showEx}
+
+
+\subsubsection{\cmd{XGurafu}}
+$x=f(y)$ で与えられた曲線を描画します。
+独立変数は `Y' または `X' を用います。
+
+下の例は，$y=\sqrt x$を$x=y^2$として描画する例です。
+
+\begin{showEx}(.55,.39){\cmd{XGurafu}}
+\begin{zahyou}[ul=8mm](-1,5)(-1,3)
+  \small\zahyouMemori[g]
+  \XGurafu{Y*Y}{0}{\ymax}
+\end{zahyou}
+\end{showEx}
+
+これを $y=\sqrt x$ として \cmd{YGurafu}を用いると
+
+\begin{showEx}(.55,.39){$y=\sqrt x$}
+\begin{zahyou}[ul=8mm](-1,5)(-1,3)
+  \small\zahyouMemori[g]
+  \YGurafu{sqrt(X)}{0}{\xmax}
+\end{zahyou}
+\end{showEx}
+原点の付近がぎごちなくなります。
+
+同様に，双曲線 $x^2-y^2=1$も$x=\sqrt{1+y^2}$とする方が滑らかに描けます。
+\cmd{XGurafu*}を用いてみます。
+
+\begin{showEx}(.55,.39){$x^2-y^2=1$}
+\begin{zahyou}[ul=8mm](-3,3)(-3,3)
+  \small\zahyouMemori[g]
+  \def\Fx{sqrt(1+Y*Y)}
+  \XGurafu*{\Fx}
+  \XGurafu*{-\Fx}
+\end{zahyou}
+\end{showEx}
+
+なお，\cmd{XGurafu}において，
+$y$の範囲の上限，下限を指定する \verb+key+ は \verb+uey, sitay+ です。
+またグラフの上端，下端が \verb+\ueT, \sitaT+ に定義されています。
+
+\begin{showEx}(.55,.39){\cmd{XGurafu*}}
+\begin{zahyou}[ul=8mm](-1,5)(-1,3)
+  \small\zahyouMemori[g]
+  \XGurafu*[sitay=0]{Y*Y}
+  \Put\ueT[nw]{$y=\sqrt x$}
+\end{zahyou}
+\end{showEx}
+
+
+\subsubsection{\cmd{BGurafu}}
+媒介変数表示された曲線を描画するコマンド \cmd{bGurafu} に対しても
+\textsf{Perl} を使用するコマンド \cmd{BGurafu} を用意しました。
+媒介変数は `T' で表します。
+
+\begin{boxnote}
+\begin{verbatim}
+\BGurafu(#1)(#2)#3#4#5#6
+   #1 : t の刻み値（デフォルト値は 0.05 ）
+   #2 : 点線で描画するときの描画する部分の t のレンジ
+   #3 : x=f(t) 媒介変数は T と表記する。（X, Y も可）
+   #4 : y=g(t)
+   #5 : t の始め値
+   #6 :     終り値
+\end{verbatim}
+\end{boxnote}
+
+リサージュ曲線の一つです。
+\begin{showEx}(0.51,0.43){\cmd{BGurafu}}
+\unitlength20mm\small
+\begin{zahyou}(-1.2,1.2)(-1.2,1.2)
+\BGurafu{sin(2*T)}{sin(3*T)}0{2*$pi}
+\end{zahyou}
+\end{showEx}
+
+\subsubsection{\cmd{RGurafu}}
+極座標平面で極方程式 $r=f(\theta)$ で表される曲線を
+描画するコマンド \cmd{rGurafu} に対しても
+\textsf{Perl} を使用するコマンド \cmd{RGurafu} を用意しました。
+
+\begin{boxnote}
+\begin{verbatim}
+\RGurafu(#1)(#2)#3#4#5
+   #1 : t の刻み値（デフォルト値は 0.05 ）
+   #2 : 点線で描画するときの描画する部分の t のレンジ
+   #3 : r=f(Θ) : Θも T で記述する。
+   #4 : Θ の始め値
+   #5 :      終り値
+\end{verbatim}
+\end{boxnote}
+
+$r=1+\cos\theta$ を描画します。
+
+\begin{showEx}(0.51,0.43){\cmd{RGurafu}}
+\unitlength10mm\small
+\begin{zahyou}(-.5,2.5)(-1.5,1.5)
+\RGurafu{1+cos(T)}0{2*$pi}
+\end{zahyou}
+\end{showEx}
+
+\subsubsection{\cmd{iiiBGurafu}}
+空間座標で媒介変数を用いて表された曲線を描画する
+\cmd{iiibGurafu}に対しても，\textsf{Perl}と連携する
+\cmd{iiiBGurafu}を用意しました。
+
+\begin{showEx}(0.61,0.33){\cmd{iiiBGurafu}}
+\unitlength16mm\footnotesize
+\Drawaxisfalse
+\begin{Zahyou}[(-1,0)][(0,-.5)][(0,.2)]%
+(-1.2,1.2)(-1,2)(-1,18)
+\def\Fx{cos(T)}
+\def\Fy{sin(T)}
+\def\Fz{T}
+\Mul4\Pie\tmax
+{\thicklines
+\iiiBGurafu\Fx\Fy\Fz{0}{$pi}
+\iiiBGurafu\Fx\Fy\Fz{2*$pi}{3*$pi}
+\iiiBGurafu(.09)(.02)\Fx\Fy\Fz{$pi}{2*$pi}
+\iiiBGurafu(.09)(.02)\Fx\Fy\Fz{3*$pi}{4*$pi}}
+\iiiBGurafu\Fx\Fy{0}{0}{$pi}
+\iiiBGurafu(.09)(.02)\Fx\Fy{0}{$pi}{2*$pi}
+\iiiBGurafu\Fx\Fy{\tmax}{0}{2*$pi}
+\iiiDrawline{(1,0,0)(1,0,\tmax)}
+\iiiDrawline{(-1,0,0)(-1,0,\tmax)}
+\end{Zahyou}
+\end{showEx}
+
+\subsection{波線}
+\subsubsection{\cmd{namisen}}
+指定した2点を正弦曲線で結ぶコマンドが\cmd{namisen}です。
+
+\begin{showEx}(.6,.34){\cmd{namisen}}
+\begin{zahyou}[ul=5mm](-4,4)(-2,2)
+\zahyouMemori[g][n]
+\namisen{(-3,1)}{(3,-1)}
+\end{zahyou}
+\end{showEx}
+
+\subsubsection{波の数}
+デフォルトでは，指定した2点の間を5周期分の正弦曲線を描きます。
+これを変更するには
+
+\begin{showEx}(.6,.34){\texttt{namisuu=...}}
+\begin{zahyou}[ul=5mm](-4,4)(-2,2)
+\zahyouMemori[g][n]
+\namisen[namisuu=3]{(-3,1)}{(3,-1)}
+\end{zahyou}
+\end{showEx}
+
+\subsubsection{波の高さ}
+波の高さを変更するオプションは
+
+\begin{showEx}(.6,.34){\texttt{namitakasa=..}}
+\begin{zahyou}[ul=5mm](-4,4)(-2,2)
+\zahyouMemori[g][n]
+\namisen[namitakasa=.5]{(-3,1)}{(3,-1)}
+\end{zahyou}
+\end{showEx}
+
+デフォルト値は0.25です。
+
+\subsubsection{\cmd{namisen*}}
+アスタリスク付のコマンド\cmd{namisen*}は，
+2本の平行な波線を描画し，それによって挟まれた部分を白塗りします。
+
+\begin{showEx}(.6,.34){\cmd{namisen*}}
+\begin{zahyou}[ul=5mm](-4,4)(-2,2)
+\zahyouMemori[g][n]
+\namisen*{(-3,1)}{(3,-1)}
+\end{zahyou}
+\end{showEx}
+
+\subsubsection{波線の間隔}
+波線の間隔はデフォルトでは0.1となっていますが，
+これを変更するオプションです。
+
+\begin{showEx}(.6,.34){\texttt{namikankaku=..}}
+\begin{zahyou}[ul=5mm](-4,4)(-2,2)
+\zahyouMemori[g][n]
+\namisen*[namikankaku=.3]{(-3,1)}{(3,-1)}
+\end{zahyou}
+\end{showEx}
+
+\subsubsection{\textsf{hyou}環境・縦罫線に波線}
+表の縦罫線に二重の波線を描いてみましょう。
+
+\begin{showEx}(.64,.3){出発点}
+$
+\begin{hyou}{*4{|C{1zw}}C{1zw}|} \hline
+    & A & B & C & \text{残} \\\hline
+  1 & R & B & R & R \\\hline
+  2 & R & R & B & R \\\hline
+  3 & R & R & R & B \\\hline
+\end{hyou}
+$
+\end{showEx}
+
+\noindent
+この表で，第4列と第5列の間に波線を入れることを目的とします。
+
+結果を先にご覧頂きましょう。
+%\fi
+
+\begin{showEx}(.64,.3){結果}
+$
+\begin{hyou}{*4{|C{1zw}}C{1zw}|} \hline
+    & A & B & C & \text{残} \\\hline
+  1 & R & B & R & R \\\hline
+  2 & R & R & B & R \\\hline
+  3 & R & R & R &
+     \sya(S=B)[o]<%
+      \getrowHD*{}\rowH\rowD
+      \mydimena=\rowH\advance\mydimena\rowD
+      \setlength{\mydimenb}{%
+                  4\mydimena+3\arrayrulewidth}%
+      \edef\Lw{\mumeisuu\mydimenb}%
+      \Put\LB{%
+       \begin{zahyou*}(0,0)(0,\Lw)%
+        \namisen[namitakasa=1]{(-1,0)}{(-1,\Lw)}%
+        \namisen[namitakasa=1]{(1,0)}{(1,\Lw)}%
+       \end{zahyou*}%
+      }%
+      > 
+    \\\hline
+\end{hyou}
+$
+\end{showEx}
+
+
+波線は，\textsf{zahyou*}環境で\cmd{namisen}を使用しましょう。
+そのためには，表の横幅を知らねばなりません。
+
+\begin{showEx}(.64,.3){表の横幅}
+  \dimenref{Whyou1}\yokohaba
+  下の表の横幅は\yokohaba です。
+  
+  \getWHD{hyou1}{%
+    $\begin{hyou}{|c|r|r|}\hline
+      A & 0 & 1 \\\hline
+      B & 2 & 3 \\
+      Z & 100 & 300 \\\hline
+    \end{hyou}$%
+  }
+\end{showEx}
+
+すなわち，\cmd{getWHD}と\cmd{dimenref}の組合せで表の横幅を知ることができます。
+
+波線を引くには，波線のすぐ上の行の左端の列に\cmd{sya}を適用します。
+\cmd{sya}の\verb+<..>+オプション内は\textsf{picture}環境になっていますから，
+そこに\cmd{namisen}を入れましょう。
+
+\begin{showEx}(.7,.24){横罫線を波線で}
+  \dimenref{Whyou2}\yokohaba
+  \setlength{\mydimena}{\yokohaba-2\arrayrulewidth}%
+  \edef\Lw{\mumeisuu\mydimena}%
+  \getWHD{hyou2}{%
+    $\begin{hyou}{|c|r|r|}\hline
+      A & 0 & 1 \\ \hline
+      \sya(S=B)[o]<%
+        \Put\LB{%
+          \begin{zahyou*}(0,\Lw)(0,0)
+            \namisen[namitakasa=1]{(0,-1)}{(\Lw,-1)}
+          \end{zahyou*}
+        }%
+      > & 2 & 3 \\[2pt]
+      Z & 100 & 300 \\ \hline
+    \end{hyou}$%
+  }
+\end{showEx}
+
+縦の波線も同様です。
+
+\begin{showEx}(.7,.24){縦罫線を波線で}
+  \dimenref{Thyou3}\tatehaba
+  \setlength{\mydimena}{\tatehaba-2\arrayrulewidth}%
+  \edef\Lw{\mumeisuu\mydimena}%
+  \getWHD{hyou3}{%
+    $\begin{hyou}{|c|*2{R{2zw}}|}\hline
+      A & 0 & 1 \\ \hline
+      B & 2 & 3 \\ \hline
+      Z & 100 & 
+        \sya(S=\hfill 300)[o]<%
+        \Put\LB{%
+          \begin{zahyou*}(0,0)(0,\Lw)
+            \namisen[namitakasa=2]{(2,0)}{(2,\Lw)}
+          \end{zahyou*}
+        }%
+      > \\ \hline
+    \end{hyou}$%
+  }
+\end{showEx}
+\clearpage
+
+波線を二重にしてみます。
+
+\begin{showEx}(.7,.24){二重波線}
+  \dimenref{Thyou4}\tatehaba
+  \setlength{\mydimena}{\tatehaba-2\arrayrulewidth}%
+  \edef\Lw{\mumeisuu\mydimena}%
+  \getWHD{hyou4}{%
+    $\begin{hyou}{|c|*2{R{2zw}}|}\hline
+      A & 0 & 1 \\ \hline
+      B & 2 & 3 \\ \hline
+      Z & 100 & 
+        \sya(S=\hfill 300)[o]<%
+        \Put\LB{%
+          \begin{zahyou*}(0,0)(0,\Lw)
+            \namisen*[namitakasa=2,namikankaku=2,dx=0.175]%
+                {(2,0)}{(2,\Lw)}
+          \end{zahyou*}
+        }%
+      > \\ \hline
+    \end{hyou}$%
+  }
+\end{showEx}
+
+波線の形状は\cmd{namisen}のオプションでいろいろ変えることができます。
+\clearpage
+
+\subsection{曲線上の点}
+\subsubsection{\cmd{YTen}}
+$y=f(x)$で与えられた曲線において，
+$x$の値を与えて点($x$, $f(x)$)を求めるコマンドが
+\cmd{YTen}です。
+
+例えば，
+
+\begin{showEx}{\cmd{YTen}}
+\begin{zahyou}[ul=10mm]%
+(-.5,4)(-.5,2)
+  \def\Fx{sqrt(X)}
+  \def\aval{2}
+  \YGurafu*[hidarix=0]\Fx
+  \Put\migiT[se]{$y=\sqrt{x}$}
+  \YTen\Fx\aval\A
+  \Put\A[syaei=xy,xlabel=a,%
+    ylabel=\sqrt{a}]{}
+\end{zahyou}
+\end{showEx}
+
+\cmd{YTen}の書式です。
+
+\begin{boxnote}
+\begin{verbatim}
+y=f(x) 上の点の座標を求める。
+
+\YTen[#1]#2#3#4
+     #1 : 戻り値のフォーマット制御をするオプション
+          key=val の形式
+          xformat=.. : x座標のフォーマット指定（デフォルトは`s'）
+          yformat=.. : y座標のフォーマット指定（デフォルトは`s')
+     #2 : 関数式
+     #3 : x の値
+     #4 : 点の座標を受け取る制御綴
+\end{verbatim}
+\end{boxnote}
+
+\cmd{YTen}は，点の座標を戻しますが，そのフォーマットは
+\begin{jquote}
+\begin{verbatim}
+x座標，y座標とも `s', すなわち#3で与えたものが文字列としてそのまま戻ります。
+\end{verbatim}
+\end{jquote}
+
+$x$の値を計算式で与えるときは，\verb+xformat=f+と指定する必要があります。
+
+\begin{showEx}{\texttt{xformat=..}オプション}
+\def\Fx{X*X}
+\YTen\Fx{1/2}\P
+デフォルトの戻り値は
+\[ \P \]
+
+\YTen[xformat=f]\Fx{1/2}\P
+\verb+xformat=f+を指定したときの戻り値は
+\[ \P \]
+\end{showEx}
+
+\iffalse
+$y$座標が整数となるときは，\verb+yformat=d+オプション
+を与えたほうがよいでしょうか。
+
+\begin{showEx}{\texttt{yformat=..}オプション}
+\def\Fx{X*X}
+\YTen\Fx{3}\P
+デフォルトでは，結果が整数であっても
+\[ \P \]
+
+\YTen[yformat=d]\Fx{3}\P
+\verb+yformat=d+を与えれば
+\[ \P \]
+\end{showEx}
+\fi
+
+同様に，$x=g(y)$で与えられた曲線において，$y$の値を指定して
+点($g(y)$, $y$)を求めるコマンド\cmd{XTen}もあります。
+
+\subsubsection{\cmd{BTen}}
+曲線が媒介変数表示
+\renritu*{x&=f(t) \\ y&=g(t)}
+で与えられている場合に，媒介変数$t$の値を与えて曲線上の点を
+求めるコマンドが\cmd{BTen}です。
+
+\begin{showEx}{\cmd{Bten}}
+\footnotesize
+\begin{zahyou}[ul=6mm]%
+  (-.5,7)(-.5,2)
+  \def\Ft{T-sin(T)}
+  \def\Gt{1-cos(T)}
+  \BGurafu\Ft\Gt{-3}{9}
+  \BTen\Ft\Gt{$pi}\P
+  \Kuromaru\P
+  \Put\P[s]{($t=\pi$)}
+\end{zahyou}
+\end{showEx}
+
+\cmd{BTen}の書式です。
+
+\begin{boxnote}
+\begin{verbatim}
+\BTen#1#2#3#4
+   媒介変数曲線上の1点の座標を求める。
+   #1 : x=f(t)
+   #2 : y=g(t)
+   #3 : t の値
+   #4 : 結果を受け取る制御綴
+\end{verbatim}
+\end{boxnote}
+
+\subsubsection{\cmd{RTen}}
+極方程式$r=f(\theta)$で与えられる曲線上の点を求めるコマンドが
+\cmd{RTen}です。
+
+\begin{showEx}(.5,.44){\cmd{RTen}}
+\begin{zahyou}[ul=10mm]%
+  (-1,2.5)(-2,2)
+  \def\Ft{1+cos(T)}
+  \RGurafu\Ft{0}{2*$pi}
+  \RTen\Ft{$pi/3}\A
+  \Hasen{\O\A}
+  \Kakukigou\XMAX\O\A{$\frac\pi3$}
+\end{zahyou}
+\end{showEx}
+
+\subsection{$y=f(x)$と$y=g(x)$の交点}
+2つのグラフ$y=f(x)$, $y=g(x)$の交点を求めるコマンドが\cmd{YKouten}です
+（もちろん近似値です）。その書式です。
+
+\begin{boxnote}
+\begin{verbatim}
+\YKouten#1#2#3#4#5#6
+  #1 : f(x)
+  #2 : g(x)
+  #3 : 区間左端点（省略時は \xmin)
+  #4 : 区間右端点（省略時は \xmax)
+  #5 : 交点のx座標を受け取る制御綴
+  #6 : 交点の座標を受け取る制御綴
+\end{verbatim}
+\end{boxnote}
+
+まずは，2直線$y=1-x$, $y=\bunsuu12x$の交点を求めてみます。
+
+\begin{showEx}(0.5,0.44){2直線の交点}
+\begin{zahyou}[ul=15mm](-.5,3)(-1,2)
+  \def\Fx{1-X}
+  \def\Gx{X/2}
+  \YKouten\Fx\Gx{}{}\x\P
+  \YGurafu*\Fx
+  \YGurafu*\Gx
+  \Put{(1,0)}[ne]{1}
+  \Put{(0,1)}[ne]{1}
+  \Put\P[syaei=xy,xlabel=,ylabel=]{}
+\end{zahyou}
+\end{showEx}
+
+次は，放物線$y=x^2$と直線$y=x+1$との交点です。
+今度は交点が2個ありますから，それぞれの交点を含む$x$の範囲を明示して
+おく必要があります。
+
+\begin{showEx}(.46,.485){放物線と直線の交点}
+\begin{zahyou}
+[%
+  ul=10mm,Ueyohaku=15pt,%
+  gentenhaiti={[se]},
+  Migiyohaku=45pt%
+](-1.5,2.5)(-1,4)
+\small
+\def\Fx{X*X}
+\def\Gx{X+1}
+\YKouten\Fx\Gx{}{1}\tmpxi\P
+\YKouten\Fx\Gx{1}{}\tmpxii\Q
+\Put\P[syaei=x,xlabel=\alpha]{}
+\Put\Q[syaei=x,xlabel=\beta]{}
+\YNurii*[-45]\Fx\Gx\tmpxi\tmpxii
+\YGurafu*\Fx
+\Put\migiT[n]{$y=x^2$}
+\YGurafu*\Gx
+\Put\migiT[se]{$y=x+1$}
+\end{zahyou}
+\end{showEx}
+
+続いて，三角関数のグラフの交点を求めます。
+今度は接点も含まれますが，うまく求められるでしょうか。
+
+\begin{showEx}(0.46,.485){超越曲線の交点}
+\begin{zahyou}%
+[ul=8mm](-1,7)(-2,2)
+\def\Fx{sin(X)}
+\def\Gx{cos(2*X)}
+\YKouten\Fx\Gx\Pih\Pie\xi\dmy
+\YKouten\Fx\Gx{\Pie}{\Pii}\xii\dmy
+\YNurii*\Fx\Gx\xi\xii
+\YGurafu*\Fx
+\YGurafu*\Gx
+\Put{(\Pie,0)}[sw]{$\pi$}
+\Put{(\Pihiii,-1)}[syaei=xy,
+  xlabel=\frac{3\pi}{2}]{}
+\Put{(\Pih,1)}[houi=n,syaei=xy,
+  xlabel=\frac{\pi}{2},ylabel=]{%
+  $y=\sin x$}
+\Put{(\Pih,-1)}[s]{$y=\cos 2x$}
+\Put{(0,1)}[nw]{1}
+\end{zahyou}
+\end{showEx}
+
+\subsection{塗りつぶし}
+\textsf{Perl}を用いる手法は，塗りつぶしコマンドにも適用されます。
+
+\begin{boxnote}
+\begin{verbatim}
+\YNuri[濃さ]<xの刻み値>{関数}{x1}{x2}
+\YNurii[濃さ]<xの刻み値>{関数1}{関数2}{x1}{x2}
+\YNuri*[斜線方向角]<斜線間隔>(xの刻み値){関数}{x1}{x2}
+\YNurii*[斜線方向角]<斜線間隔>(xの刻み値){関数1}{関数2}{x1}{x2}
+\end{verbatim}
+\end{boxnote}
+
+いずれも \cmd{yNuri...} と同様です。詳しくは，\textsf{sampleP.tex}を
+ご覧ください。
+
+\subsubsection{\cmd{YNuri}}
+まずは$y=f(x)$と，その上の2点を結ぶ弦とで囲まれる図形の塗りつぶしです。
+
+\begin{showEx}{\cmd{YNuri}}
+\begin{zahyou}[ul=10mm](-1,3)(-2,3)
+  \zahyouMemori[g]
+  \def\Fx{X*(X-1)}
+  \YGurafu*\Fx
+  \YNuri\Fx{0}{2}
+  \YGurafu*{X}
+\end{zahyou}
+\end{showEx}
+
+\subsubsection{\cmd{YNurii}}
+続いて，二つの曲線$y=f(x)$と$y=g(x)$で囲まれる領域です。
+
+\begin{showEx}{\cmd{YNurii}}
+\begin{zahyou}[ul=10mm](-1,3)(-2,3)
+  \zahyouMemori[g]
+  \def\Fx{X*(X-1)}
+  \def\Gx{2-.5*(X-2)**2}
+  \YGurafu*\Fx
+  \YGurafu*\Gx
+  \YNurii[.8]\Fx\Gx{0}{2}
+\end{zahyou}
+\end{showEx}
+
+
+\subsubsection{\cmd{XNuri}, \cmd{XNurii}}
+\cmd{XNuri}, \cmd{XNurii}もあります。
+
+\begin{showEx}{\cmd{XNurii}}
+\begin{zahyou}[ul=10mm](-4.5,1.5)(-1,3)
+  \zahyouMemori[g]
+  \def\Fy{Y*Y-4}
+  \def\Gy{1-Y*Y/4}
+  \XGurafu*[sitay=0]\Fy
+  \XGurafu*[sitay=0]\Gy
+  \XNurii\Fy\Gy{0}{2}
+\end{zahyou}
+\end{showEx}
+
+\subsubsection{\cmd{BNuri}}
+\begin{boxnote}
+\begin{verbatim}
+\BNuri[濃さ]<tの刻み値>{f(t)}{g(t)}{t1}{t2}
+\end{verbatim}
+\end{boxnote}
+\noindent
+は，媒介変数$x=f(t)$, $y=g(t)$で表された曲線の$t_1\leqq t\leqq t_2$
+の部分と両端を結ぶ弦で囲まれた領域を塗りつぶします。
+
+\begin{showEx}(.6,.34){\cmd{BNuri}}
+  \def\Ft{T-sin(T)}
+  \def\Gt{1-cos(T)}
+  \begin{zahyou}[ul=4mm](-1,7)(-1,2.5)
+    \BNuri\Ft\Gt{0}{2*$pi}
+    \BGurafu\Ft\Gt{-$pi}{3*$pi}
+  \end{zahyou}
+\end{showEx}
+はよいとして
+
+\begin{showEx}(.6,.34){\cmd{BNuri}}
+  \def\Ft{cos(T)**3}
+  \def\Gt{sin(T)**3}
+  \begin{zahyou}[ul=15mm](-1.2,1.5)(-1.2,1.5)
+    \BNuri\Ft\Gt{0}{$pi/2}
+    \BGurafu\Ft\Gt{0}{2*$pi}
+  \end{zahyou}
+\end{showEx}
+は的外れでしょうね。\cmd{BNuri}は，曲線の弧とその両端を結ぶ弦で囲まれた図形を
+塗りつぶしますから，上の図は指令どおりになっているのですが．．．．．
+
+曲線内部の第1象限を塗りつぶしたいとすれば，
+三角形を塗りつぶして，上図の部分を白塗りするのもありますが，
+曲線の弧を折れ線近似して多角形塗りつぶしコマンド\cmd{Nuritubusi} を用いるのもあります。
+
+\begin{boxnote}
+\begin{verbatim}
+\BKinziOresen{f(t)}{g(t)}{t1}{t2}{tの刻み値}{折れ線を受け取る制御綴}
+\end{verbatim}
+\end{boxnote}
+\noindent
+は，媒介変数表示$x=f(t)$, $y=g(t)$, $(t_1\leqq t\leqq t_2)$された曲線の弧を
+折れ線で近似します。
+
+\begin{showEx}(.6,.34){\cmd{BKinziOresen}}
+  \def\Ft{cos(T)**3}
+  \def\Gt{sin(T)**3}
+  \begin{zahyou}[ul=15mm](-1.2,1.5)(-1.2,1.5)
+    \tenretu{A(1,0)ne;B(0,1)ne}
+    \BKinziOresen\Ft\Gt{0}{$pi/2}{0.05}\oresen
+    \Nuritubusi{\oresen\O}
+    \BGurafu\Ft\Gt{0}{2*$pi}
+  \end{zahyou}
+\end{showEx}
+曲線の弧ABを近似した折れ線が\cmd{oresen}に得られます。
+それに点\cmd{O}を付加して，\cmd{Nuritubusi}コマンドに与えます。
+
+\begin{description}
+\item[（注1）]
+点\cmd{O}を付加しただけでは，折れ線は\verb+(A->B->O)+となって，閉じていません。
+点\cmd{A}をさらに付加すべきですが，\cmd{Nuritubusi}は，
+始点と終点を強制的に結んで閉じさせた上で塗りつぶす仕様となっていますから，
+点\cmd{A}を付加する手間は省略することができます。
+
+\item[（注2）]
+曲線$y=f(x)$を近似する\cmd{YKinziOresen}も用意はしてあります。
+\end{description}
+
+\subsubsection{\cmd{RNuri}}
+極方程式$r=f(\theta)$で与えられた曲線の弧と弦を結ぶ図形を塗りつぶす\cmd{RNuri}もあります。
+近似折れ線を得る\cmd{RKinziOresen}も使用可能です。
+
+\begin{boxnote}
+\begin{verbatim}
+\RNuri[濃さ]<θの刻み値>{f(θ)}{t1}{t2}
+\RKinziOresen{f(θ)}{t1}{t2}{θの刻み値}{折れ線を受け取る制御綴}
+\end{verbatim}
+\end{boxnote}
+
+\begin{showEx}(.54,.4){\cmd{RNuri}}
+\begin{zahyou}[ul=10mm](-1,2.5)(-2,2)
+  \def\Ft{1+cos(T)}
+  \RNuri\Ft{0}{$pi}
+  \RGurafu\Ft{0}{2*$pi}
+\end{zahyou}
+\end{showEx}
+\subsection{斜線塗り}
+\textsf{Perl}を用いる手法は，斜線塗りコマンドにも適用されます。
+
+\begin{boxnote}
+\begin{verbatim}
+\YNuri*[斜線方向角]<斜線間隔>(xの刻み値){関数}{x1}{x2}
+\YNurii*[斜線方向角]<斜線間隔>(xの刻み値){関数1}{関数2}{x1}{x2}
+\end{verbatim}
+\end{boxnote}
+
+いずれも \cmd{yNuri*...} と同様です。詳しくは，\textsf{sampleP.tex}を
+ご覧ください。
+
+\subsubsection{\cmd{YNuri*}}
+\cmd{YNuri*}を用いた例です。
+
+\begin{showEx}{\cmd{YNuri*}}
+\begin{zahyou}[ul=8mm](-3,3)(-1,5)
+  \zahyouMemori[g]
+  \def\Fx{4-X*X}
+  \YNuri*\Fx{-2}{2}
+  \YGurafu*\Fx
+\end{zahyou}
+\end{showEx}
+
+\subsubsection{\cmd{YNurii*}}
+\cmd{YNurii*} を用いた例です。
+
+\begin{showEx}(.55,.39){\cmd{YNurii*}}
+\begin{zahyou}[ul=4mm](-1,7)(-1.5,1.5)
+\def\Fx{sin(X)}
+\def\Gx{cos(X)}
+\YNurii*<.3>\Fx\Gx{\Piq}{\Piqv}
+\YGurafu*\Fx
+\YGurafu*\Gx
+\end{zahyou}
+\end{showEx}
+
+\subsubsection{\cmd{XNuri*}}
+\cmd{XNuri*} もあります。
+
+\begin{showEx}(.55,.39){\cmd{XNuri*}}
+\begin{zahyou}[ul=6mm](-1,6)(-.5,3)
+\small\zahyouMemori[g]
+\def\Fy{Y*Y}
+\XNuri*[-45]<.2>\Fy{0}{2}
+\XGurafu*[sitay=0]\Fy
+\YGurafu{.5*X}{0}{4}
+\end{zahyou}
+\end{showEx}
+
+\subsubsection{\cmd{XNurii*}}
+最後に\cmd{XNurii*}で，$y=\log x$とその接線 $y=ex$ および
+$x$軸で囲まれた領域の斜線塗りです。
+
+\begin{showEx}(.55,.39){\cmd{XNurii*}}
+\begin{zahyou}[ul=8mm](-1,5)(-3,3)
+\small\zahyouMemori[g]
+\def\Fy{exp(Y)}
+\def\Gy{\Napier*Y}
+\XNurii*[-45]\Fy\Gy{0}{1}
+\XGurafu*\Fy
+\XGurafu*\Gy
+\end{zahyou}
+\end{showEx}
+
+\subsubsection{\cmd{BNuri*}}
+媒介変数表示された曲線に対する斜線塗りです。
+
+\begin{boxnote}
+\begin{verbatim}
+\BNuri*[斜線方向角]<斜線間隔>(tの刻み値){f(t)}{g(t)}{t1}{t2}
+\end{verbatim}
+\end{boxnote}
+
+媒介変数表示
+\[ x(t)=\bunsuu{3t}{1+t^3},~y(t)=\bunsuu{3t^2}{1+t^3} 
+  \quad (0\leqq t \leqq 1) \]
+で表される曲線$C$と直線$y=x$で囲まれた領域を斜線塗りします。
+
+\begin{showEx}(.6,.34){\cmd{BNuri*}}
+  \begin{zahyou}[ul=10mm](-.5,2)(-.5,2)
+    \def\Xt{3*T/(1+T**3)}
+    \def\Yt{3*T*T/(1+T**3)}
+    \BNuri*[-45]\Xt\Yt{0}{1}
+    \BGurafu\Xt\Yt{0}{1}
+    \Drawline{(\xmin,\xmin)(\xmax,\xmax)}
+  \end{zahyou}
+\end{showEx}
+
+斜線塗りは厄介で，図形が凸でないなど，複雑な場合は工夫が必要です。
+次の例は，凸でない図形に対し，凸閉包を斜線塗りして，
+余分なところを白塗りしています。
+
+\begin{showEx}(.6,.34){凸閉包を利用}
+\begin{zahyou}[ul=15mm](-1.2,1.5)(-1.2,1.5)
+  \def\Ft{cos(X)**3}
+  \def\Gt{sin(X)**3}
+  \tenretu*{A(1,0);B(0,1);C(-1,0);D(0,-1)}
+  \Nuritubusi*{\A\B\C\D}
+  \BNuri[0]\Ft\Gt{0}{$pi/2}
+  \BNuri[0]\Ft\Gt{$pi/2}{$pi}
+  \BNuri[0]\Ft\Gt{$pi}{1.5*$pi}
+  \BNuri[0]\Ft\Gt{1.5*$pi}{2*$pi}
+  \BGurafu\Ft\Gt{0}{2*$pi}
+\end{zahyou}
+\end{showEx}
+
+べた塗りなら簡単で
+
+\begin{showEx}(.6,.34){べた塗り}
+\begin{zahyou}[ul=15mm](-1.2,1.5)(-1.2,1.5)
+  \def\Ft{cos(X)**3}
+  \def\Gt{sin(X)**3}
+  \BNuri\Ft\Gt{0}{2*$pi}
+  \BGurafu\Ft\Gt{0}{2*$pi}
+\end{zahyou}
+\end{showEx}
+
+\noindent
+でおしまい。
+
+\subsubsection{\cmd{RNuri*}}
+極方程式で与えられた曲線に対する斜線塗りです。
+
+
+\begin{boxnote}
+\begin{verbatim}
+\RNuri*[斜線方向角]<斜線間隔>(θの刻み値){f(t)}{t1}{t2}
+\RKinziOresen{f(θ)}{t1}{t2}{θの刻み値}{折れ線を受け取る制御綴}
+\end{verbatim}
+\end{boxnote}
+
+\begin{showEx}(.6,.34){\cmd{RNuri*}}
+\begin{zahyou}[ul=15mm](-1.2,1.5)(-1.2,1.5)
+  \def\Ft{sin(3*T)}
+  \RNuri*[60]\Ft{0}{$pi/3}
+  \RGurafu\Ft{0}{$pi}
+\end{zahyou}
+\end{showEx}
+
+\noindent
+は簡単ですが，図が複雑になると工夫が必要だということは媒介変数のところでも述べました。
+
+\begin{showEx}(.6,.34){\cmd{RNuri*}}
+\begin{zahyou}[ul=6mm](-2,3.5)(-3,2)
+  \def\Ft{.5*T}
+  \RNuri*[-45]\Ft{0}{2*$pi}
+  \RGurafu\Ft{0}{2*$pi}
+\end{zahyou}
+\end{showEx}
+
+図が凸でないため，原点の右上のところで斜線がはみだしています。
+斜線の方向角を調整するのもひとつの解決法ですが，
+あえて別の方法を紹介します。
+
+$\theta$の範囲を分けて，始線の上下に分けて描画してみます。
+
+\begin{showEx}(.6,.34){分割}
+\begin{zahyou}[ul=6mm](-2,3.5)(-3,2)
+  \def\Ft{.5*T}
+  \RNuri*[-45]\Ft{0}{$pi}
+  \RNuri*[-45]\Ft{$pi}{2*$pi}
+  \RGurafu\Ft{0}{2*$pi}
+\end{zahyou}
+\end{showEx}
+
+はみ出しはなくなりましたが，分割した上下の斜線がつながっていません。
+斜線の通過する1点を指定しましょう。
+
+\begin{showEx}(.6,.34){通過点指定}
+\begin{zahyou}[ul=6mm](-2,3.5)(-3,2)
+  \def\Ft{.5*T}
+  \RNuri*[-45]<syanurisiteiten=\O>\Ft{0}{$pi}
+  \RNuri*[-45]<syanurisiteiten=\O>\Ft{$pi}{2*$pi}
+  \RGurafu\Ft{0}{2*$pi}
+\end{zahyou}
+\end{showEx}
+
+これもべた塗りならどうということはありません。
+
+\begin{showEx}(.6,.34){べた塗り}
+\begin{zahyou}[ul=6mm](-2,3.5)(-3,2)
+  \def\Ft{.5*T}
+  \RNuri\Ft{0}{2*$pi}
+  \RGurafu\Ft{0}{2*$pi}
+\end{zahyou}
+\end{showEx}
+
+\subsection{開領域の斜線塗り}
+領域を斜線塗りする際，境界が含まれないことを図示するために，
+斜線と境界の間を切るという表現法があります。
+
+これを実現するにはいくつかの方法がありますが，
+田中 徹 さんが\verb+BBS #354+に投稿された方法
+\begin{jquote}\relax
+(1) ひとまず塗りつぶしを行う\\
+(2) 境界線を太めの白い線で上書き\\
+(3) 改めて境界線を引く
+\end{jquote}
+は有力な手法です。
+
+そのアイデアを頂いてマクロ化してみました。
+\textsf{emathPh.sty v 1.07}で
+\begin{jquote}
+\begin{verbatim}
+syasentanmatu=...（単位付の長さ）
+\end{verbatim}
+\end{jquote}
+オプションにより白塗りの幅を指定することにしてみました。
+境界線を中心として，その左右に指定した幅を有する白い曲線を描画します。
+
+（斜線の端点と境界線の距離が指定した長さとなり，
+白塗りの曲線の太さは指定した幅の2倍となります。）
+
+\begin{showEx}(.6,.34){\texttt{syasentanmatu=..}オプション}
+\begin{zahyou}[ul=6mm](-3,3)(-1,6)
+  \def\Fx{X*X}
+  \def\Gx{2-X}
+  \YNurii*<syasentanmatu=1mm>\Fx\Gx{-2}{1}
+  \YGurafu*\Fx
+  \YGurafu*\Gx
+\end{zahyou}
+\end{showEx}
+
+ただし境界線を白塗りする結果，座標軸などが消え，
+そのお化粧直しが必要となる場合もあります。
+
+\begin{showEx}(.6,.34){お化粧直し}
+\begin{zahyou}[ul=6mm](-3,3)(-1,6)
+  \def\Fx{X*X}
+  \def\Gx{2-X}
+  \YNurii*<syasentanmatu=1mm>\Fx\Gx{-2}{1}
+  \YGurafu*\Fx
+  \YGurafu*\Gx
+  \drawXaxis\drawYaxis% お化粧直し
+\end{zahyou}
+\end{showEx}
+
+\subsection{区分求積の図}
+\subsubsection{短冊のみ}
+\begin{showEx}(.64,.3){\cmd{kubunkyuusekizu}}
+\begin{zahyou}[ul=20mm](-.2,1.2)(-.2,1.2)
+  \def\Fx{X*X}
+  \YGurafu*\Fx
+  \kubunkyuusekizu\Fx{0}{1}{10}{l}
+\end{zahyou}
+\end{showEx}
+は，関数\verb+\Fx+の区間$0\leqq x\leqq 1$を10等分して，
+区間の左端を高さとする短冊を寄せ集めた図を作ります。
+
+区間の右端を高さとするときは，最後の引数を\verb+{r}+とします。
+
+\begin{showEx}(.64,.3){区間の右端を高さとする}
+\begin{zahyou}[ul=20mm](-.2,1.2)(-.2,1.2)
+  \def\Fx{X*X}
+  \YGurafu*\Fx
+  \kubunkyuusekizu\Fx{0}{1}{10}{r}
+\end{zahyou}
+\end{showEx}
+
+\subsubsection{短冊内をベタ塗り}
+短冊内をベタ塗りするには，\verb+*+付のコマンドを用います。
+\begin{showEx}(.64,.3){\cmd{kubunkyuusekizu*}}
+\begin{zahyou}[ul=20mm](-.2,1.2)(-.2,1.2)
+  \def\Fx{X*X}
+  \YGurafu*\Fx
+  \kubunkyuusekizu*\Fx{0}{1}{10}{l}
+\end{zahyou}
+\end{showEx}
+
+\subsubsection{短冊内を斜線塗り}
+短冊内を斜線塗りするには，\verb+**+付のコマンドを用います。
+\begin{showEx}(.64,.3){\cmd{kubunkyuusekizu**}}
+\begin{zahyou}[ul=20mm](-.2,1.2)(-.2,1.2)
+  \def\Fx{X*X}
+  \YGurafu*\Fx
+  \kubunkyuusekizu**\Fx{0}{1}{10}{l}
+\end{zahyou}
+\end{showEx}
+
+ベタ塗りの濃さ，斜線の方向角・間隔などを変更する方法は
+\cmd{Nuritubusi}コマンドに準じます。
+
+斜線間隔を細かくしてみます。
+\begin{showEx}(.64,.3){斜線間隔の調整}
+\begin{zahyou}[ul=20mm](-.2,1.2)(-.2,1.2)
+  \def\Fx{X*X}
+  \YGurafu*\Fx
+  \kubunkyuusekizu**<.04>\Fx{0}{1}{10}{l}
+\end{zahyou}
+\end{showEx}
+
+%\clearpage
+
+\subsubsection{書式}
+\cmd{kubunkyuusekizu}の書式です。
+\begin{boxnote}
+\begin{verbatim}
+\kubunkyuusekizu[#1]<#2>#3#4#5#6#7%     短冊のみ
+\kubunkyuusekizu*[#1]<#2>#3#4#5#6#7%    ベタ塗り
+\kubunkyuusekizu**[#1]<#2>#3#4#5#6#7%   斜線塗り
+     #1 : 塗りの濃さ／斜線の方向角
+     #2 : 斜線塗りの場合の斜線間隔
+     #3 : 関数式
+     #4 : 区間の左端
+     #5 :       右端
+     #6 : 分割数
+     #7 : l = 区間の左端を高さ
+          r =       右端
+\end{verbatim}
+\end{boxnote}
+
+\clearpage
+
+\subsubsection{実例(1)}
+区間$0\leqq x\leqq 1$を細分するときだけではない，ということで，
+無限級数
+\[ \bunsuu{1}{1^2}+\bunsuu{1}{2^2}+\bunsuu{1}{3^2}+\cdots
++\bunsuu{1}{n^2}+\cdots \]
+が収束することを示す説明図をご覧頂きましょう。
+
+\begin{squarebox}
+次の不等式が成り立つことを証明せよ。ただし，$n$は2以上の自然数とする。
+\[ 1-\bunsuu{1}{n}+\bunsuu{1}{n^2}
+<\bunsuu{1}{1^2}+\bunsuu{1}{2^2}+\bunsuu{1}{3^2}+\cdots+\bunsuu{1}{n^2}
+<2-\bunsuu{1}{n} \]
+\end{squarebox}
+
+\preEqlabel{$\cdots\cdots$}
+\begin{mawarikomi}{}{%
+\footnotesize
+\begin{zahyou}[ul=8mm,yscale=4](-.5,8)(-.1,1.5)
+  \def\Fx{1/(X*X)}
+  \YNurii\Fx{0}{1}{7}
+  \YGurafu*[hidarix=0]\Fx
+  \Put\hidariT[se]{$y=\bunsuu{1}{x^2}$}
+  \kubunkyuusekizu**[15]<.05>\Fx{1}{7}{6}{l}
+  \Put{(1,1)}[syaei=y]{}
+  \Put{(1,0)}[s]{1}
+  \Put{(2,0)}[s]{2}
+  \Put{(3,0)}[s]{3}
+  \Put{(5,0)}[s]{$\cdots\vphantom+$}
+  \Put{(6,0)}[s]{$n-1$}
+  \Put{(7,0)}[s]{$n\vphantom+$}
+\end{zahyou}}
+右上図において，曲線$y=\bunsuu{1}{x^2}\quad (1\leqq x\leqq n)$と
+$x$軸との間の面積と，斜線部の面積を比較して
+\begin{align*}
+  &\dumyeq\dint{1}{n+1}\bunsuu{dx}{x^2}\\
+  &<\bunsuu{1}{1^2}+\bunsuu{1}{2^2}+\bunsuu{1}{3^2}+\cdots+\bunsuu{1}{(n-1)^2}
+\end{align*}
+定積分を計算し，両辺に$\bunsuu{1}{n^2}$を加えると
+\begin{align}
+  &\dumyeq 1-\bunsuu{1}{n}+\bunsuu{1}{n^2} \notag\\
+  &<\bunsuu{1}{1^2}+\bunsuu{1}{2^2}+\bunsuu{1}{3^2}+\cdots+\bunsuu{1}{n^2}
+  \label{E-1}
+\end{align}
+\end{mawarikomi}
+
+\begin{mawarikomi}{}{\footnotesize
+\begin{zahyou}[ul=8mm,yscale=4](-.5,8)(-.1,1.5)
+  \def\Fx{1/(X*X)}
+  \YNurii\Fx{0}{1}{7}
+  \YGurafu*[hidarix=0]\Fx
+  \Put\hidariT[se]{$y=\bunsuu{1}{x^2}$}
+  \kubunkyuusekizu**[15]<.05>\Fx{1}{7}{6}{r}
+  \Put{(1,1)}[syaei=y]{}
+  \Put{(1,0)}[s]{1}
+  \Put{(2,0)}[s]{2}
+  \Put{(3,0)}[s]{3}
+  \Put{(5,0)}[s]{$\cdots\vphantom+$}
+  \Put{(7,0)}[s]{$n\vphantom+$}
+\end{zahyou}}
+
+次に，右下図においては
+\begin{align*}
+  &\dumyeq\dint{1}{n}\bunsuu{dx}{x^2}\\
+  &>\bunsuu{1}{2^2}+\bunsuu{1}{3^2}+\cdots+\bunsuu{1}{n^2}
+\end{align*}
+両辺に1を加えて
+\begin{align}
+  &\dumyeq 2-\bunsuu{1}{n}\notag\\
+  &>\bunsuu{1}{1^2}+\bunsuu{1}{2^2}+\bunsuu{1}{3^2}+\cdots+\bunsuu{1}{n^2}
+  \label{E-2}
+\end{align}
+\eqref{E-1}, \eqref{E-2}より
+\[ 1-\bunsuu{1}{n}+\bunsuu{1}{n^2}
+<\bunsuu{1}{1^2}+\bunsuu{1}{2^2}+\bunsuu{1}{3^2}+\cdots+\bunsuu{1}{n^2}
+<2-\bunsuu{1}{n} \owari[（証明終り）] \]
+\end{mawarikomi}
+
+\clearpage
+\subsubsection{実例(2)}
+先の\cmd{namisen*}と併用した例です。
+
+\begin{itembsquarebox}{2002 慶應義塾大学}
+\hakosyokika
+\hakomozisyu{（ア）}
+\hakoxyohaku{0pt}
+球面を輪切りにし，それぞれの部分を円錐の側面の一部分で近似することによって，
+球の表面積を求めることを考える。
+\begin{enumerate}[(1)]
+  \item 半径$r(>0)$の半円$S:y=\sqrt{r^2-x^2}$と直線$L_s:y=s$ ($0<s<r$)は
+    2つの交点をもつ。それぞれの交点における半円$S$の2本の接線は
+    点(0, \Hako'\bunsuu{r^2}{S}')で交わる。この2本の接線と直線$L_s$で
+    囲まれた三角形を$y$軸のまわりに1回転してできる円錐の側面積は
+    \Hako'\bunsuu{\pi r(r^2-s^2)}{s}'である。さらに，この円錐から
+    平面$y=t$ ($0<s<t\leqq r$)より上にある部分を取り除いた立体図形の
+    側面積は$\pi r(t-s)\times\Hako'\bunsuu{2r^2-s^2-st}{r^2-s^2}'$である。
+  \item $n$を自然数とし，$k=1$, 2, $\cdots$, $n-1$とする。
+    (1)で定義された立体図形で，$s=\bunsuu knr$, $t=\bunsuu{k+1}{n}r$のときの
+    側面積を$A_k$と表すと，
+    \[ A_k=\bunsuu{2\pi r^2}{n}-\bunsuu{\pi r^2}{n^2}
+      \times\Hako'\bunsuu{nk}{n^2-k^2}' \]
+    となる。
+  \item $\dlim{n\to\infty}\retuwa{k=1}{n-1}A_k=2\pi r^2$を証明し，
+    それを\Hako[L2062200204syoumei] に書きなさい。
+\end{enumerate}
+\closeHakoKaiFile
+\end{itembsquarebox}
+\begin{small}
+【解答】
+\HakoKaiKata{t}
+\HakoKaiSityuu[1zh]{1.75zh}
+\inputHakoKaiFile
+\bigskip
+
+\resetcounter{equation}
+\preEqlabel{$\cdots\cdots$}
+\refHako*{L2062200204syoumei}の部分：
+\begin{align}
+  \dlim{n\to\infty}\retuwa{k=1}{n-1}A_k
+    &=\dlim{n\to\infty}\left(
+      \bunsuu{2\pi(n-1)r^2}{n}-\bunsuu{\pi r^2}{n^2}
+        \times \retuwa{k=1}{n-1}\bunsuu{nk}{n^2-k^2}\right)\notag\\
+    &=\dlim{n\to\infty}\left\{
+      2\pi\left(1-\bunsuu1n\right)r^2-\bunsuu{\pi r^2}{n}
+        \times\retuwa{k=1}{n-1}\bunsuu{k}{n^2-k^2}\right\}
+          \label{L2062200204ans}
+\end{align}
+において
+\begin{center}
+\begin{zahyou}[ul=6mm,yscale=5](-1,10)(-.2,1.5)
+  \footnotesize
+  \def\Fx{1/X}
+  \YNurii*[30]\Fx{0}{1}{7}
+  \YGurafu*[hidarix=0]\Fx
+  \Put\hidariT[e]{$y=\frac1x$}
+  \kubunkyuusekizu\Fx{1}{7}{6}{r}
+  \Put{(1,0)}[s]1
+  \Put{(2,0)}[s]2
+  \Put{(3,0)}[s]3
+  \Put{(7,0)}[s]{$n-1$}
+  \namisen*[namitakasa=.05]{(4.25,\trueymin)}{(4.25,\trueymax)}
+\end{zahyou}
+\end{center}
+\begin{align*}
+  \retuwa{k=1}{n-1}\bunsuu{k}{n^2-k^2}
+  &= \retuwa{k=1}{n-1}\bunsuu12\left(\bunsuu{1}{n-k}-\bunsuu{1}{n+k}\right)\\
+  &< \bunsuu12\retuwa{k=1}{n-1}\bunsuu{1}{n-k}\\
+  &= \bunsuu12\left(1+\bunsuu12+\bunsuu13+\dots+\bunsuu{1}{n-1}\right)\\
+  &< \bunsuu12\left(1+\dint{1}{n-1}\bunsuu{dx}{x}\right)\\
+  &= \bunsuu12\left(1+\teisekibun{\log x}{1}{n-1}\right)\\
+  &= \bunsuu12(1+\log (n-1))
+\end{align*}
+従って
+\[ 0<\bunsuu1n\retuwa{k=1}{n-1}\bunsuu{k}{n^2-k^2}
+  < \bunsuu12\left(\bunsuu1n+\bunsuu{\log (n-1)}{n}\right) \]
+$\dlim{n\to\infty}\bunsuu{\log (n-1)}{n}=0$であるから
+\[ \dlim{n\to\infty}\bunsuu1n\retuwa{k=1}{n-1}\bunsuu{k}{n^2-k^2}=0 \]
+ゆえに\eqref{L2062200204ans}より
+\[ \dlim{n\to\infty}\retuwa{k=1}{n-1}A_k=2\pi r^2 \]
+\end{small}
+
+%\subsection{\cmd{checkPerl}}
+%\cmd{checkPerl}は，\texttt{Perl}との連携機能を確認するコマンドです。
+%従来，これがエラーとなるのは，次の2つの場合がありました。
+%\begin{jquote}
+%\begin{verbatim}
+%1. Perl との連携ができていない
+%2. Perl との連携はできているが，-shell-escape オプションをつけずに起動している%。
+%\end{verbatim}
+%\end{jquote}
+%角藤先生が配布されている ptex に，\cmd{write18}が\verb+enable+か否かを
+%確認するコマンド\cmd{ifeof18}が用意されましたので，
+%それを利用して，上記2種類のエラーを分離することを可能としたのが
+%アスタリスクつきコマンド\cmd{checkPerl*}です。
+%
+%このコマンドがうまく機能しない場合は，次の3つのエラーのどれかが発生します。
+%\begin{enumerate}[(1)]
+%  \item \verb+Bad number+\\
+%    これは，ptex が古くて新機能 \cmd{ifeof18} が定義されていません。
+%    対応策は，ptex を更新することです。
+%    あるいは，\cmd{checkPerl*}をあきらめて，
+%    従来どおり\cmd{checkPerl} を用います。
+%  \item \verb+Please enable shell escape by --shell option+\\
+%    文字通り，\texttt{platex}の起動において，\verb+-shell-escape+オプションを
+%    付加するのを忘れたエラーです。
+%  \item \verb+Perl との連携ができていません。+\\
+%    これは，\texttt{Perl}との連携機能が働いていないことを示しています。
+%    次の3点をチェックします。
+%    \begin{enumerate}[(\protect\expandafter\emroman i)]
+%      \item \texttt{Perl}はインストールされているか。
+%      \item \texttt{Perl}に \texttt{PATH} が通っているか。
+%      \item \textsf{emath.pl}などが所定の場所に存在するか。
+%    \end{enumerate}
+%    
+%\end{enumerate}
+%
+\subsection{Perl library の追加}
+\textsf{perl}を利用して，計算結果を受け取る方法において，
+基本的な関数は用意されていますが，
+さらに自分で作成したものを追加したい，というご要望がありましたので，
+\cmd{useperllib}コマンドを用意しました。
+これは，\textsf{perl}のライブラリを作成して，それを利用することになります。
+以下，2つの例を紹介します。
+
+\subsubsection{\textsf{degsine.pl}}
+\textsf{perl}の三角関数$\sin$, $\cos$, $\tan$では，引数はラジアンです。
+六十分法の数値を引数とする三角関数を用いたいときもあります。
+そのために用意したのが，\textsf{perl}のライブラリ\textsf{degsine.pl}です。
+その内容は，次のようになっています。
+\begin{boxnote}
+\begin{verbatim}
+sub degsin{my $x=shift;return sin($pi*$x/180);}
+sub degcos{my $x=shift;return cos($pi*$x/180);}
+sub degtan{my $x=shift;return tan($pi*$x/180);}
+1;
+\end{verbatim}
+\end{boxnote}
+やっていることは単純で，六十分法の角をラジアンに変換して，
+$\sin$, $\cos$, $\tan$に引き渡しているだけです。
+
+簡単な例をご覧頂きましょう。
+
+\begin{showEx}{\cmd{degsine}}
+\calcval{degsin(30)}\stmp
+$\sin30\Deg=\stmp$
+\end{showEx}
+
+$y=\sin x\Deg$のグラフを描いてみましょう。
+\begin{showEx}(.9,.9){$y=\sin x\Deg$のグラフ}
+\begin{pszahyou}[ul=10mm,xscale=0.017453294](-90,450)(-1.2,1.5)
+  \zahyouMemori[g]<dx=90>
+  \YGurafu*(1){degsin(X)}
+\end{pszahyou}
+\end{showEx}
+
+\subsubsection{\textsf{nCr.pl}}
+第2の例は，$n!$, $\zyunretu{n}{r}$, $\kumiawase{n}{r}$の値を計算する
+ライブラリで，その内容は次のようになっています。
+
+\begin{boxnote}
+\begin{verbatim}
+sub kaizyou{my $x=shift;
+    if ($x<2) {return 1;} 
+    else {return $x*kaizyou($x-1);}}
+sub nPr{my $n=shift; my $r=shift;
+    if ($r<1) {return 1;}
+    else {return $n*nPr($n-1,$r-1);}}
+sub nCr{my $n=shift; my $r=shift;
+    if ($r<1) {return 1;}
+    else {return $n*nCr($n-1,$r-1)/$r;}}
+1;
+\end{verbatim}
+\end{boxnote}
+
+使用例です。
+\begin{showEx}{階乗}
+\calcval[d]{kaizyou(10)}\kotae
+$10!=\kotae$
+\end{showEx}
+
+\begin{showEx}{順列}
+\calcval[d]{nPr(10,3)}\ans
+$\zyunretu{10}{3}=\ans$
+\end{showEx}
+
+\begin{showEx}{組合せ}
+\calcval[d]{nCr(10,3)}\tmp
+$\kumiawase{10}{3}=\tmp$
+\end{showEx}
+
+\begin{enumerate}[注 1.~]
+  \item これらの関数を使用するには，プリアンブルに
+\begin{jquote}
+\begin{verbatim}
+\useperllib{nCr}
+\end{verbatim}
+\end{jquote}
+    と宣言をしておく必要があります。
+
+    先の\textsf{degsine.pl}も併用したければ
+\begin{jquote}
+\begin{verbatim}
+\useperllib{degsine}
+\useperllib{nCr}
+\end{verbatim}
+\end{jquote}
+と併記することになります。
+
+  \item \textsf{degsine.pl, nCr.pl}などは，
+    \textsf{emath.pl}と同じディレクトリに置かなければなりません。
+\end{enumerate}
+
+\subsubsection{\cmd{useperlpm}}
+perl のモジュールを利用するためのコマンド\cmd{useperlpm}を新設しました。
+例えば，perl で標準配布されているモジュールの一つ \textsf{POSIX.pm}を
+使用したいときは，プリアンブルに
+\begin{jquote}
+\begin{verbatim}
+\useperlpm{POSIX}
+\end{verbatim}
+\end{jquote}
+を宣言します。このモジュールを用いると
+\begin{jquote}
+\begin{verbatim}
+acos asin atan ceil cosh fabs floor fmod
+frexp ldexp log10 modf pow sinh tan tanh
+\end{verbatim}
+\end{jquote}
+などを使用することが可能となります。
+\texttt{cosh}を使用した一例です。
+
+\begin{showEx}(.9,.6){$y=\cosh(x)$のグラフ}
+\begin{zahyou}[ul=6mm,Ueyohaku=1zh](-3,3)(-1,10)
+  \def\E{(1,2.71828)}\Put\E[syaei=xy,ylabel=e]{}
+  \Put{(0,1)}(1pt,8pt)[lb]{1}
+  \YGurafu*{exp(X)}\Put\migiT[w]{$y=e^x$}
+  \YGurafu*{exp(-X)}\Put\migiT[ne]{$y=e^{-x}$}
+  {\Thicklines\YGurafu*{cosh(X)}\Put\migiT[e]{$y=\cosh(x)$}}
+\end{zahyou}
+\end{showEx}
+
+\subsubsection{emath.pl v0.04}
+\textsf{emathPp.sty}で使用している Perl 用のライブラリ \textsf{emath.pl} に
+いくつかの関数を追加しました。
+
+\paragraph{\texttt{Int}}
+\textsf{Perl}の基本関数に\texttt{int}というのがありますが，これは BASIC の
+\texttt{INT}とは異なります。
+
+\begin{showEx}{\texttt{int} と \texttt{INT} の比較}
+正の数に対しては
+\calcval{int($pi)}\y
+\[ \text{int}(\pi)=\y \]
+負の数に対しては
+\calcval{int(-$pi)}\y
+\[ \text{int}(-\pi)=\y \]
+\end{showEx}
+\bigskip
+
+そこで，「$x$を超えない最大の整数」を得るための \textsf{Perl}の関数
+\texttt{Int}を新設しました。
+
+\begin{showEx}{\texttt{Int}}
+正の数に対しては
+\calcval{Int($pi)}\y
+\[ \text{Int}(\pi)=\y \]
+負の数に対しては
+\calcval{Int(-$pi)}\y
+\[ \text{Int}(-\pi)=\y \]
+\end{showEx}
+
+\paragraph{\texttt{Degsin}, \texttt{Degcos}, \texttt{Degtan}}
+\textsf{perl}の三角関数は，単位がラジアンです。
+六十分法を単位とする三角関数を追加しました。
+
+\begin{showEx}{\texttt{Degsin}など}
+\calcval{Degsin(60)}\y
+\[ \sin60\Deg=\y \]
+\calcval{Degcos(60)}\y
+\[ \cos60\Deg=\y \]
+\calcval{Degtan(60)}\y
+\[ \tan60\Deg=\y \]
+\end{showEx}
+

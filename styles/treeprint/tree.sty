@@ -1,0 +1,103 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  Miss Kuniyasu Madoka entered this program.
+%  Mr. Toshiharu Ohno at ASCII Corp. sent this program.
+%  See TUGboat, Volume 6 (1985), No.1, pp.31-35
+%
+%  Sample: treetest.tex 
+%            Commented and debugged by Hideki ISOZAKI
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\cons#1#2{\edef#2{\xmark #1#2}}
+\def\car#1{\expandafter\docar#1\docar}
+\def\docar\xmark#1\xmark#2\docar{#1}
+\def\cdr#1{\expandafter\docdr#1\docdr#1}
+\def\docdr\xmark#1\xmark#2\docdr#3{\def#3{\xmark #2}}
+\def\xmark{\noexpand\xmark}
+\def\nil{\xmark}
+\def\settreesizes{\setbox0=\copy\treebox \global\let\treesizes\nil \setsizes}
+\newdimen\treewidth
+\def\setsizes{\setbox0=\hbox\bgroup
+  \unhbox0\unskip
+  \inittreewidth
+  \sizesubtrees
+  \sizelevel
+  \egroup}
+\def\inittreewidth{\ifx\treesizes\nil
+    \treewidth=0pt
+  \else \treewidth=\car\treesizes
+    \global\cdr\treesizes
+    \fi}
+\newbox\treebox
+\def\tree{\global\setbox\treebox=\boxtree}
+\def\subtree{\ettext \boxtree}
+\def\leaf#1{\subtree#1\endsubtree}
+\def\endsubtree{\ettext \egroup}
+\def\endtree{\endsubtree \settreesizes \typesettree}
+\newif\iftreetext\treetextfalse
+\def\boxtree{\hbox\bgroup
+  \baselineskip 2.5ex
+  \tabskip 0pt
+  \vbox\bgroup
+  \treetexttrue
+  \let\par\crcr \obeylines
+  \halign\bgroup##\hfil\cr}
+\def\ettext{\iftreetext
+  \crcr\egroup \egroup \fi}
+\def\makesubtree{\setbox1\maketree
+  \unskip\global\setbox\treebox\lastbox
+  \treeheight=\ht1
+  \advance\treeheight 2ex
+  \ifhbox\treebox \topsubfalse
+    \else \topsubtrue \fi
+  \addsubtreebox
+  \iftopsub \global\leaffalse
+    \let\next\relax \else
+    \botsubfalse \let\next\makesubtree
+  \fi \next}
+\def\addsubtreebox{\setbox0=\vbox{\subtreebox\unvbox0}}
+\def\subtreebox{\hbox\bgroup
+  \vbox to \treeheight\bgroup
+    \ifbotsub \iftopsub \vfil
+        \hrule width 0.4pt
+      \else \treehalfrule \fi \vfil
+    \else \iftopsub \vfil \treehalfrule
+      \else \hrule width 0.4pt height \treeheight \fi\fi 
+    \egroup
+  \treectrbox{\hrule width 1em}\hskip 0.2em\treectrbox{\box1}\egroup}
+\def\treectrbox#1{\vbox to \treeheight{\vfil #1\vfil}}
+\def\treehalfrule{\dimen0=\treeheight
+  \divide\dimen0 2\advance\dimen0 0.2pt
+  \hrule width 0.4pt height \dimen0}
+\def\makeleaf{\box\treebox}
+\def\makeparent{\ifdim\ht\treebox>\ht0
+    \treeheight=\ht\treebox
+  \else \treeheight=\ht0 \fi
+  \advance\treewidth-\wd\treebox
+  \advance\treewidth 1em
+  \treectrbox{\box\treebox}\hskip 0.2em
+  \treectrbox{\hrule width \treewidth}\treectrbox{\box0}}
+\def\sizesubtrees{\loop
+  \setbox0=\lastbox \unskip
+  \ifhbox0 \setsizes
+  \repeat}
+\def\sizelevel{\ifdim\treewidth<\wd0
+  \treewidth=\wd0 \fi
+\global\cons{\the\treewidth}\treesizes}
+\newdimen\treeheight
+\newif\ifleaf
+\newif\ifbotsub
+\newif\iftopsub
+\def\typesettree{\medskip \maketree \medskip}
+\def\maketree{\hbox{\treewidth=\car\treesizes
+  \cdr\treesizes
+  \makesubtreebox\unskip
+  \ifleaf \makeleaf
+  \else \makeparent \fi}}
+{\catcode`@=11
+\gdef\makesubtreebox{\unhbox\treebox
+  \unskip\global\setbox\treebox\lastbox
+  \ifvbox\treebox
+    \global\leaftrue \let\next\relax
+  \else \botsubtrue
+    \setbox0\box\voidb@x
+    \botsubtrue \let\next\makesubtree
+  \fi \next}}

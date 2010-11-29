@@ -1,0 +1,127 @@
+% EMminipages.sty by tDB (emath@nifty.com)
+%
+\ProvidesPackage{EMminipages}[2010/04/13 v0.03α]%
+%
+\RequirePackage{keyval}
+%
+\newbox\EMminipages@box
+\define@key{emMw}{retusuu}{\edef\EMminipages@n{#1}}%
+\define@key{emMw}{tate}{\edef\EMminipages@h{#1}}%
+\define@key{emMw}{columnsep}{\setlength{\columnsep}{#1}}%
+\define@key{emMw}{columnseprule}[.4pt]{\setlength{\columnseprule}{#1}}%
+\define@key{emMw}{keiryou}[1]{\edef\EMminipages@keiryou{}}%
+\def\EMminipages{%
+  \edef\EMminipages@totallinewidth{\the\linewidth}%
+  \edef\EMminipages@n{0}%
+  \edef\EMminipages@m{0}%
+  \@ifnextchar<{\EMminipages@}{\@EMminipages}}%
+\def\EMminipages@<#1>{\setkeys{emMw}{#1}\@EMminipages}%
+\def\@EMminipages#1{%
+%
+    \def\EMminipagesbreak{\mbox{}%\@ignoretrue
+      \@ifundefined{EMminipages@keiryou}{%
+        \end{minipage}%
+      }{%
+        \end{minipage}\egroup
+        \@tempdima=\ht\EMminipages@box\advance\@tempdima\dp\EMminipages@box
+%\typeout{EMminipages:height-\EMminipages@i=\the\@tempdima}%
+        \box\EMminipages@box
+      }%
+      \hfill\vrule width\columnseprule\hfill
+      \Incr\EMminipages@i
+      \@ifundefined{EMminipages@h}{%
+        \@ifundefined{EMminipages@keiryou}{%
+          \begin{minipage}[t]{\csname EMminipages@w@\romannumeral \EMminipages@i\endcsname}%
+        }{%
+          \setbox\EMminipages@box=\hbox\bgroup
+            \begin{minipage}[t]{\csname EMminipages@w@\romannumeral \EMminipages@i\endcsname}%
+        }%
+      }{%
+        \begin{minipage}[b][\EMminipages@h]{\csname EMminipages@w@\romannumeral \EMminipages@i\endcsname}%
+      }%
+%       \begin{minipage}[t]{\csname EMminipages@w@\romannumeral \EMminipages@i\endcsname}%
+      \ignorespaces
+    }%
+%
+  \ifnum\EMminipages@n>\z@
+    \@tempdima\linewidth
+    \advance\@tempdima-\EMminipages@n\columnsep
+    \advance\@tempdima\columnsep
+    \divide \@tempdima \EMminipages@n
+    \Cfor{\edef\EMminipages@i{0}}{\EMminipages@i<\EMminipages@n}{}\do{%
+      \Incr\EMminipages@i
+      \expandafter\edef\csname EMminipages@w@\romannumeral \EMminipages@i\endcsname{\the\@tempdima}%
+    }%
+  \else
+    \expandafter\@for\expandafter\@@c\expandafter:\expandafter=#1\do{%
+      \Incr\EMminipages@n
+      \expandafter\edef\csname EMminipages@w@\romannumeral \EMminipages@n\endcsname{\@@c}%
+      \if *\@@c\Incr\EMminipages@m\fi
+    }%
+    \ifnum\EMminipages@m>\z@
+      \@tempdimc=\linewidth
+      \Cfor{\edef\EMminipages@i{0}}{\EMminipages@i<\EMminipages@n}{}\do{%
+        \Incr\EMminipages@i
+        \ifthenelse{\equal{\csname EMminipages@w@\romannumeral\EMminipages@i\endcsname}{*}}{%
+        }{%
+          \advance\@tempdimc-\csname EMminipages@w@\romannumeral\EMminipages@i\endcsname
+        }%
+      }%
+      \advance\@tempdimc-\EMminipages@n\columnsep
+      \advance\@tempdimc\columnsep
+      \divide \@tempdimc \EMminipages@m
+%\typeout{EMminipages:*=\the\@tempdimc}%
+      \Cfor{\edef\EMminipages@i{0}}{\EMminipages@i<\EMminipages@n}{}\do{%
+        \Incr\EMminipages@i
+        \ifthenelse{\equal{\csname EMminipages@w@\romannumeral\EMminipages@i\endcsname}{*}}{%
+          \expandafter\edef\csname EMminipages@w@\romannumeral\EMminipages@i\endcsname{\the\@tempdimc}%
+        }{%
+        }%
+      }%
+    \fi
+%\typeout{EMminipages@n=\EMminipages@n}%
+%\typeout{linewidth=\EMminipages@totallinewidth}
+%    \Ifor*\i{1}{\EMminipages@n}\Do{\typeout{\i:\csname EMminipages@w@\romannumeral\i\endcsname}}%
+    \setlength{\@tempdima}{\EMminipages@totallinewidth}%
+    \Cfor{\edef\EMmp@i{0}}{\EMmp@i<\EMminipages@n}{}\do{%
+      \Incr\EMmp@i
+      \setlength{\@tempdima}{\@tempdima-\csname EMminipages@w@\romannumeral\EMmp@i\endcsname}%
+    }%
+    \ISub\EMminipages@n{1}\EMmp@tmp
+    \Div{1}{\EMmp@tmp}\EMmp@tmp
+    \setlength{\@tempdima}{\EMmp@tmp\@tempdima}%
+    \edef\EMminipages@sep{\the\@tempdima}%
+%\typeout{kankaku=\the\@tempdima}%
+  \fi
+  \noindent
+  \edef\EMminipages@i{1}%
+  \@ifundefined{EMminipages@h}{%
+        \@ifundefined{EMminipages@keiryou}{%
+          \begin{minipage}[t]{\csname EMminipages@w@\romannumeral \EMminipages@i\endcsname}%
+        }{%
+          \setbox\EMminipages@box=\hbox\bgroup
+            \begin{minipage}[t]{\csname EMminipages@w@\romannumeral \EMminipages@i\endcsname}%
+        }%
+  }{%
+    \begin{minipage}[b][\EMminipages@h]{\csname EMminipages@w@\romannumeral \EMminipages@i\endcsname}%
+  }%
+}
+\def\endEMminipages{\@ignoretrue
+      \@ifundefined{EMminipages@keiryou}{%
+        \end{minipage}%
+      }{%
+        \end{minipage}\egroup
+        \@tempdima=\ht\EMminipages@box\advance\@tempdima\dp\EMminipages@box
+%\typeout{EMminipages:height-\EMminipages@i=\the\@tempdima}%
+        \box\EMminipages@box
+      }%
+    \vspace{\dp\strutbox}\par}
+\endinput
+%
+v 0.00α 2007/07/23
+v 0.01α 2007/10/31
+           不要部を削除
+v 0.02α 2008/01/09
+           tyuukai環境の \tyuu を EMminipages環境内で使用可とする。
+v 0.03α 2010/04/13
+           半角空白の除去

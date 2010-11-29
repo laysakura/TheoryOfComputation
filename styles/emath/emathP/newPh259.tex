@@ -1,0 +1,61 @@
+\documentclass[a4j]{jarticle}
+\usepackage{emathPxy}
+\usepackage{showexample}
+
+\begin{document}
+\cmd{Drawtpic}で描画される Bezier曲線の両端に矢印をつける機能を付加しました。
+
+ただし，このコマンドは\texttt{tpic-specials}を用いていますから，
+それに対応した dvi-ware (dvips(k), dviout, dvipdfm(x), ...) を前提とします。
+なお，dviout の設定は
+\begin{verbatim}
+    Option
+      Setup Parameters
+        Graphic
+          tpic specials
+\end{verbatim}
+のところを
+    Bezier
+としておく必要があります。
+
+
+
+\begin{showEx}(.64,.3){\texttt{[yazirusi]}オプション}
+  \begin{zahyou}[ul=6mm](-3,3)(-3,3)
+    \tenretu{A(-2,1)w;B(2,-2)e}
+    \Drawtpic[yazirusi]{\A(0,2)(1,1)\B}
+  \end{zahyou}
+\end{showEx}
+
+始点の方につけたければ
+
+\begin{showEx}(.64,.3){\texttt{[yazirusi=r]}オプション}
+  \begin{zahyou}[ul=6mm](-3,3)(-3,3)
+    \tenretu{A(-2,1)w;B(2,-2)e}
+    \Drawtpic[yazirusi=r]{\A(0,2)(1,1)\B}
+  \end{zahyou}
+\end{showEx}
+
+始点，終点両方なら
+
+\begin{showEx}(.64,.3){\texttt{[yazirusi=b]}オプション}
+  \begin{zahyou}[ul=6mm](-3,3)(-3,3)
+    \tenretu{A(-2,1)w;B(2,-2)e}
+    \Drawtpic[yazirusi=b]{\A(0,2)(1,1)\B}
+  \end{zahyou}
+\end{showEx}
+
+\textsf{emathPxy.sty}を用いた \texttt{yscale=..}オプションとの併用を見ておきましょう。
+
+\begin{showEx}(.68,.26){\texttt{yscale=..}との併用}
+  \begin{zahyou*}[ul=4mm,yscale=.5,%
+      Ueyohaku=1zh,Sitayohaku=1zh](0,6)(-12,0)
+    \tenretu{[$a$]A(0,0)n;[$b$]B(3,0)n;[$c$]C(6,0)n}
+    \tenretu{[$a'$]AA(0,-12)s;[$b'$]BB(3,-12)s;%
+             [$c'$]CC(6,-12)s}
+    \Drawtpic[yazirusi]{\A(0,-4)(2,-6)(3,-8)\BB}
+    \Drawtpic[yazirusi]{\B(3,-4)(5,-6)(6,-8)\CC}
+    \Drawtpic[yazirusi]{\C(6,-4)(2,-6)(0,-8)\AA}
+  \end{zahyou*}
+\end{showEx}
+\end{document}

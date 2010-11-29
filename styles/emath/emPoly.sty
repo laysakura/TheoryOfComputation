@@ -1,0 +1,146 @@
+% emPoly.sty (emathPolygon) by tDB(emath@nifty.com)
+%
+  \NeedsTeXFormat{LaTeX2e}
+  \ProvidesPackage{emPoly}[2006/07/25 v 0.04]%
+  \RequirePackage{emathPh}%
+%
+\define@key{emPoly}{vname}{\def\Rpoly@vname{#1}}%
+%
+%\Rpolygon<#1>[#2]#3#4#5#6
+% 線分#3#4を1辺とする正#5角形
+%   戻り値
+%     中心 \#6
+%     頂点 \#6i(=#3), \#6ii, ......
+% オプション引数
+%   #1 : key=val
+%   #2 : L (default) : 2つの中心のうち，x座標の大きいほう
+%      : l           :                         小さいほう
+%      : O           :                  大きいほうで正多角形を描画しない
+%      : o           :                  小さいほうで正多角形を描画しない
+%
+\def\Rpolygon{\@ifnextchar<{\@Rpolygon}{\@Rpolygon<\empty>}}
+\def\@Rpolygon<#1>{\@ifnextchar[{\@@Rpolygon<#1>}{\@@Rpolygon<#1>[n]}}
+\def\@@Rpolygon<#1>[#2]#3#4#5#6{\Kyori{#3}{#4}\Rpoly@r
+  \ifthenelse{\equal{#6}{P}}{%
+    \errmessage{頂点記号にPを使うことはできません。}}{}%
+  \def\Rpoly@vname{}%
+  \ifx\empty #1\else\setkeys{emPoly}{#1}\fi
+  \Div\Pie@{#5}\Rpoly@th\Sin\Rpoly@th\Rpoly@work\Mul{2}\Rpoly@work\Rpoly@work
+  \Div\Rpoly@r\Rpoly@work\Rpoly@r
+  \Mul\Rpoly@th{2}\Rpoly@th
+  \CandC{#3}\Rpoly@r{#4}\Rpoly@r\Rpoly@v\Rpoly@vv
+  \ifthenelse{\equal{#2}{l}\or\equal{#2}{o}}{%
+    \expandafter\edef\csname #6\endcsname{\Rpoly@v}}{%
+    \expandafter\edef\csname #6\endcsname{\Rpoly@vv}}
+  \expandafter\edef\csname #6i\endcsname{#3}
+  \Cfor{\edef\Rpoly@i{1}\edef\Rpoly@kaku{\Rpoly@th}}{\Rpoly@i<#5}{%
+      \Add\Rpoly@kaku\Rpoly@th\Rpoly@kaku}\do{%
+    \IAdd\Rpoly@i{1}\Rpoly@ii
+    \RadDeg\Rpoly@kaku\Rpoly@rot
+    \Kaiten{\csname #6\endcsname}{#3}\Rpoly@rot\Rpoly@work
+    \expandafter\edef\csname #6\romannumeral\Rpoly@ii\endcsname{\Rpoly@work}%
+    \ifthenelse{\equal{#2}{O}\or\equal{#2}{o}}{}{%
+      \Drawline{\csname #6\romannumeral\Rpoly@i\endcsname
+      \csname #6\romannumeral\Rpoly@ii\endcsname}}%
+    \edef\Rpoly@i{\Rpoly@ii}%
+    }%
+    \ifthenelse{\equal{#2}{O}\or\equal{#2}{o}}{}{%
+    \Drawline{\csname #6\romannumeral\Rpoly@i\endcsname\csname #6i\endcsname}}%
+    \ifx\empty\Rpoly@vname\else
+      \getAlphnum\Rpoly@vname\Rpoly@i
+      \Cfor{\edef\Rpoly@ii{2}}{\Rpoly@ii<#5}{\Incr\Rpoly@i}\do{%
+        \Incr\Rpoly@ii
+        \expandafter\edef\csname\@Alph\Rpoly@i\endcsname{%
+          \csname #6\romannumeral\Rpoly@ii\endcsname}%
+      }%
+    \fi
+}
+%
+%\CRpolygon<#1>[#2]#3#4#5#6{%
+%  中心#3の円周上の点#4を一つの頂点とする，円に内接する正#5角形
+%  戻り値
+%    頂点 #6i(=#4), #6ii, #6iii, ...
+%  #2 = L (default) : 正多角形を描画する。
+%     = O           : 正多角形を描画しない
+\def\CRpolygon{\@ifnextchar<{\@CRpolygon}{\@CRpolygon<\empty>}}
+\def\@CRpolygon<#1>{\@ifnextchar[{\@@CRpolygon<#1>}{\@@CRpolygon<#1>[L]}}
+\def\@@CRpolygon<#1>[#2]#3#4#5#6{%
+%\typeout{arg2=(#2)}%
+  \ifthenelse{\equal{#6}{P}}{%
+    \errmessage{頂点記号にPを使うことはできません。}}{}%
+  \def\Rpoly@vname{}%
+  \ifx\empty #1\else\setkeys{emPoly}{#1}\fi
+  \Div{360}{#5}\CRpoly@th
+  \expandafter\edef\csname #6i\endcsname{#4}%
+\edef\polygon{#4}%
+  \Cfor{\edef\CRpoly@i{1}\edef\CRpoly@kaku{\CRpoly@th}}{\CRpoly@i<#5}{%
+      \Add\CRpoly@kaku\CRpoly@th\CRpoly@kaku}\do{%
+    \IAdd\CRpoly@i{1}\CRpoly@ii
+    \Kaiten{#3}{#4}\CRpoly@kaku\CRpoly@tmp
+\edefappend\polygon{\CRpoly@tmp}%
+    \expandafter\edef\csname #6\romannumeral\CRpoly@ii\endcsname{\CRpoly@tmp}%
+%    \if L#2\relax
+%      \Drawline{\csname #6\romannumeral\CRpoly@i\endcsname
+%      \csname #6\romannumeral\CRpoly@ii\endcsname}%
+%    \fi
+    \edef\CRpoly@i{\CRpoly@ii}%
+  }%
+  \if L#2\relax
+%   \Drawline{\csname #6\romannumeral\CRpoly@i\endcsname\csname #6i\endcsname}%
+\Takakkei{\polygon}%
+  \fi
+  \ifx\empty\Rpoly@vname\else
+      \getAlphnum\Rpoly@vname\Rpoly@i
+      \Cfor{\edef\Rpoly@ii{1}}{\Rpoly@ii<#5}{\Incr\Rpoly@i}\do{%
+        \Incr\Rpoly@ii
+        \expandafter\edef\csname\@Alph\Rpoly@i\endcsname{%
+          \csname #6\romannumeral\Rpoly@ii\endcsname}%
+      }%
+  \fi
+}
+%
+%\CCRpolygon[#1]#2#3#4#5{%
+%  中心#2の円周上の点#3を一つの接点とする，円に外接する正#4角形
+%  戻り値
+%    頂点 #5i, #5ii, #5iii, ...
+%  #1 = L (default) : 正多角形を描画する。
+%     = O           : 正多角形を描画しない
+
+\def\CCRpolygon{\@ifnextchar[{\@CCRpolygon}{\@CCRpolygon[L]}}
+\def\@CCRpolygon[#1]#2#3#4#5{%
+  \ifthenelse{\equal{#5}{P}}{%
+    \errmessage{頂点記号にPを使うことはできません。}}{}%
+  \Div{-180}{#4}\CCRpoly@th
+  \DegRad\CCRpoly@th\CCRpoly@rad\Cos\CCRpoly@rad\CCRpoly@ratio
+  \Div{1}\CCRpoly@ratio\CCRpoly@ratio
+  \Kaiten<\CCRpoly@ratio>{#2}{#3}{\CCRpoly@th}\CCRpoly@sP
+  \Div{360}{#4}\CCRpoly@th
+  \expandafter\edef\csname #5i\endcsname{\CCRpoly@sP}%
+  \Cfor{\edef\CCRpoly@i{1}\edef\CCRpoly@kaku{\CCRpoly@th}}{\CCRpoly@i<#4}{%
+      \Add\CCRpoly@kaku\CCRpoly@th\CCRpoly@kaku}\do{%
+    \IAdd\CCRpoly@i{1}\CCRpoly@ii
+    \Kaiten{#2}{\CCRpoly@sP}\CCRpoly@kaku\CCRpoly@tmp
+    \expandafter\edef\csname #5\romannumeral\CCRpoly@ii\endcsname{%
+      \CCRpoly@tmp}%
+    \if L#1\relax
+      \Drawline{\csname #5\romannumeral\CCRpoly@i\endcsname
+      \csname #5\romannumeral\CCRpoly@ii\endcsname}%
+    \fi
+    \edef\CCRpoly@i{\CCRpoly@ii}%
+  }%
+  \if L#1\relax
+    \Drawline{\csname #5\romannumeral\CCRpoly@i\endcsname\csname #5i\endcsname}%
+  \fi
+}
+\endinput
+
+% v0.00   2000/07/31
+% v0.01   2000/08/01
+%     円に外接する正多角形を描画する \CCRpolygon を追加。
+% v0.02   2004/07/08
+%     emathP ---> emathPh
+%     <vname=.> オプション
+% v0.03   2005/01/22
+%     \CRpolygon : 多角形の頂点列を\polygon に保存し，\Nuritubusi などに利用
+% v 0.04  2006/07/25
+%     \Pie ---> \Pie@

@@ -1,0 +1,72 @@
+\documentclass[fleqn]{jarticle}
+\usepackage{emath}
+\usepackage{emathMw}
+\usepackage{showexample}
+
+\begin{document}
+\hrule
+
+\noindent 左上 \hfill 右上
+
+\begin{Enumerate}[(1)]
+  \item 
+\begin{mawarikomi}{}{%
+  \begin{picture}(100,100)
+    \framebox(100,100){\Huge 図}
+  \end{picture}
+}
+\textsf{mawarikomi}環境下において，\textsf{align}環境などの
+\verb+\intertext+コマンドを用いると，図の部分を侵略します。
+\begin{align}
+  a&=1 \\
+  \intertext{ここで，\cmd{intertext}コマンドを発行します。テキストが図の部分を侵略します。}
+  b&=2 \\
+  c&=3 \\
+  d&=4 \\
+  \intertext{\textsf{align}など，複数行からなる「別行立て数式環境」を用いると，
+  図は終わっても，\textsf{align}環境は継続していることがあります。
+  その場合，\cmd{intertext}コマンドによるテキストが図の部分を侵略することは，
+  歓迎すべきことかもしれません。}
+  e&=5
+\end{align}
+\end{mawarikomi}
+\end{Enumerate}
+
+\hrule\bigskip
+以上の考察から，\cmd{intertext}コマンドとは別に，
+\cmd{MWintertext}コマンドを作成し，これを用いることで
+\textsf{mawarikomi}環境において，図を侵略せず，図の手前で折り返すことを可能としました。
+\newpage
+\resetcounter{equation}
+
+\hrule
+
+\noindent 左上 \hfill 右上
+
+\begin{Enumerate*}
+\item
+\begin{mawarikomi}{}{%
+  \begin{picture}(100,150)
+    \framebox(100,150){\Huge 図}
+  \end{picture}
+}
+\textsf{mawarikomi}環境下において，\textsf{align}環境などの
+\verb+\intertext+コマンドを用いると，図の部分を侵略します。
+\textsf{emathMw.sty v0.14}において，\cmd{MWintertext}コマンドを新設し，
+図への侵略を阻止することとしました。
+\begin{align}
+  a&=1 \\
+  \MWintertext{ここで，新設した\cmd{MWintertext}コマンドを発行します。
+  テキストが図の手前で折り返されるようになりました。}
+  b&=2 \\
+  c&=3 \\
+  d&=4 \\
+  \intertext{\textsf{align}など，複数行からなる「別行立て数式環境」を用いると，
+  図は終わっても，\textsf{align}環境は継続していることがあります。
+  その場合，新設した\cmd{EMintertext}ではなく，\cmd{intertext}コマンドを用いて，
+  テキストに図の部分を侵略させることも可能です。}
+  e&=5
+\end{align}
+\end{mawarikomi}
+\end{Enumerate*}
+\end{document}

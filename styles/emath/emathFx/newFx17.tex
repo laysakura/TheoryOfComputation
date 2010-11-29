@@ -1,0 +1,57 @@
+\documentclass[a4j,fleqn]{jarticle}
+\usepackage{emath}
+\usepackage[tx,txC]{emathFx}
+\usepackage{showexample}
+
+
+\begin{document}
+\section{黒いダイヤ}
+\cmd{diamondsuit}は
+
+\begin{showEx}{\cmd{diamondsuit}}
+$\diamondsuit$
+\end{showEx}
+のように，中が白抜きとなりますが，これを黒く塗りつぶしたものは
+標準の\LaTeX には用意されていないようです。
+\textsf{txfonts}には，\cmd{vardiamondsuit}の名前で黒塗りのものがあります。
+
+\begin{showEx}{\cmd{vardiamondsuit}}
+$\vardiamondsuit$
+\end{showEx}
+
+\textsf{txfonts}を使用する場合は，\cmd{vardiamondsuit}を用いればよいのですが，
+\textsf{cmfont}を主としてこの記号を用いたいとなると，フォントのつまみ食いを
+することになります。\textsf{emathFx.sty v 0.17}に
+その機能を持たせることにしました。
+ただし，この記号のサイズは\LaTeX の\cmd{diamondsuit}のサイズとは一致しません。
+
+\begin{showEx}{\cmd{diamondsuit}と\cmd{vardiamondsuit}}
+\begin{gather*}
+\diamondsuit\\
+\vardiamondsuit
+\end{gather*}
+\end{showEx}
+
+そこで，\cmd{diamondsuit}も\textsf{txfonts}のものを用いるため
+\cmd{txdiamondsuit}を用意しました。
+
+\begin{showEx}{\cmd{txdiamondsuit}}
+\begin{gather*}
+\txdiamondsuit\\
+\vardiamondsuit
+\end{gather*}
+\end{showEx}
+
+関連して
+
+\begin{showEx}{\cmd{varheartsuit}など}
+\begin{gather*}
+\varheartsuit \\
+\txheartsuit \\
+\varclubsuit \\
+\txclubsuit \\
+\varspadesuit \\
+\txspadesuit 
+\end{gather*}
+\end{showEx}
+\end{document}

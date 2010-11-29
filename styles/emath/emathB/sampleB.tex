@@ -1,0 +1,226 @@
+\documentclass[a4j]{jarticle}
+\usepackage{showexample}
+\usepackage{emathB}
+\usepackage[continue]{emathAe}
+
+\def\KaitouTTL{\par\hfill （答）~}
+
+\begin{document}
+\title{分数計算マクロ\\
+emathB.sty {\normalsize ver.0.14}\\使用例}
+\author{tDB}
+\date{2005/03/24}
+
+\maketitle\thispagestyle{empty}
+\begin{abstract}%
+\parindent1zw%
+分数の四則計算結果を分数で表現するためのマクロ集です．
+\LaTeX2e が前提です．
+
+このマクロ集のマクロについてのご質問，バグ報告，修正・追加の提案等は
+\begin{center}
+http://emath.s40.xrea.com/
+\end{center}
+の掲示板へどうぞ。
+\end{abstract}
+\pagebreak
+\pagenumbering{roman}%
+
+\tableofcontents
+
+\pagebreak
+
+\pagenumbering{arabic}
+
+\section{分数の表現}
+このマクロでは，分数$\bunsuu{2}{3}$を文字列\verb+"2/3"+と表現します。
+帯分数$2\bunsuu45$は文字列\verb+"2;4/5"+です。
+この表現形式を通常の表現形式に変換するマクロが\cmd{prF}です
+
+\begin{showEx}{\cmd{prF}}
+\begin{gather*}
+  \prF{2/3} \\
+  \prF{2;4/5}
+\end{gather*}
+\end{showEx}
+
+\cmd{prF}は与えた形式で表示しますが，
+\cmd{prFK}は仮分数表示，\cmd{prFT}は帯分数表示をします。
+
+\begin{showEx}{\cmd{prFK}, \cmd{prFT}}
+\begin{gather*}
+  \prFK{2;4/5} \\
+  \prFT{14/5} \\
+\end{gather*}
+\end{showEx}
+
+\section{分数の四則}
+\subsection{加法}
+分数の加法は\cmd{FAdd}で行います。
+$\bunsuu14+\bunsuu16$を計算する例です。
+\verb+\FAdd{1/4}{1/6}\kotae+により，制御綴\cmd{kotae}には，
+文字列"5/12"が入ります。それを\cmd{prF}で$\bunsuu{5}{12}$と表示させます。
+
+\begin{showEx}{\cmd{FAdd}}
+  \FAdd{1/4}{1/6}\kotae
+  $\prF\kotae$
+\end{showEx}
+
+\subsection{減法}
+減法は\cmd{FSub}です。
+$\bunsuu14-\bunsuu16$を計算する例です。
+
+\begin{showEx}{\cmd{FSub}}
+  \FSub{1/4}{1/6}\kotae
+  $\prF\kotae$
+\end{showEx}
+
+\subsection{乗法}
+乗法は\cmd{FMul}です。
+$\bunsuu14\times\bunsuu25$を計算する例です。
+
+\begin{showEx}{\cmd{FMul}}
+  \FMul{1/4}{2/5}\kotae
+  $\prF\kotae$
+\end{showEx}
+
+\subsection{除法}
+除法は\cmd{FDiv}です。
+$\bunsuu16\div\bunsuu12$を計算する例です。
+
+\begin{showEx}{\cmd{FDiv}}
+  \FDiv{1/6}{1/2}\kotae
+  $\prF\kotae$
+\end{showEx}
+
+\subsection{累乗}
+累乗は\cmd{FPower}です。
+$\left(\bunsuu23\right)^{-2}$を計算する例です。
+
+\begin{showEx}{\cmd{FPower}}
+  \FPower{2/3}{-2}\kotae
+  $\prF\kotae$
+\end{showEx}
+
+ただし，指数は整数でなければなりません。
+
+\section{四則計算式}
+\subsection{\cmd{Fcalc}}
+複雑な式を\cmd{FAdd}, \cmd{FDiv}などを組み合わせて表現するのは面倒ですから，
+\cmd{Fcalc}を用意しました。
+$\bunsuu{1}{2}+\bunsuu{1}{3}\times2$を計算する例です。
+
+\begin{showEx}(.8,.14){\cmd{Fcalc}}
+  \Fcalc{(1/2)+(1/3)*(2)}=\kotae
+  $\prF\kotae$
+\end{showEx}
+
+$\left(\bunsuu{1}{2}+\bunsuu{1}{3}\right)\times2$の場合は
+
+\begin{showEx}(.8,.14){\cmd{Fcalc}}
+  \Fcalc{((1/2)+(1/3))*(2)}=\kotae
+  $\prF\kotae$
+\end{showEx}
+
+各項 \verb+1/2+, \verb+1/3+, \verb+2+ をすべて\verb+(  )+でくくって，
+\verb+(1/2)+, \verb+(1/3)+, \verb+(2)+と表現しなければならない，
+という仕様はちと厄介ではあります。
+
+\cmd{Fcalc}の書式です。
+
+\begin{boxnote}
+\begin{verbatim}
+\Fcalc#1=#2
+  #1 : 計算式
+  #2 : 結果を受け取る制御綴
+\end{verbatim}
+\end{boxnote}
+
+\subsection{\cmd{Fkeisan}}
+\cmd{Fcalc}の第1引数に与える計算式を普通の表現法で表すのが
+\cmd{Fkeisan}です。
+
+\begin{showEx}(.6,.34){\cmd{Fkeisan}}
+  \Fkeisan{((1/2)+(1/3))*(2)}
+\end{showEx}
+\smallskip
+
+\cmd{Fkeisan}に，\verb+<A>+オプションを付加すると
+\begin{jquote}
+\begin{verbatim}
+\kaitou{\prF{計算結果}}
+\end{verbatim}
+\end{jquote}
+が付加されますから，\textsf{emathAe.sty}
+を用いてそれを処理することができます。
+この文書では
+\begin{jquote}
+\begin{verbatim}
+\usepackage[continue]{emathAe}
+
+\def\KaitouTTL{\par\hfill （答）~}
+\end{verbatim}
+\end{jquote}
+としてありますから，
+
+\begin{showEx}(.6,.34){\cmd{Fkeisan}の\texttt{<A>}オプション}
+  \Fkeisan<A>{((1/2)+(1/3))*(2)}
+\end{showEx}
+\smallskip
+
+なお \cmd{Fkeisan}には，未知数を\texttt{X}とする一次方程式を解く機能
+がありますから，
+
+\begin{showEx}(.6,.34){\cmd{Fkeisan}の\texttt{<A>}オプション}
+  \Fkeisan<A>{((0.5)+(1/3))*(2)=X}
+\end{showEx}
+
+あるいは
+
+\begin{showEx}(.6,.34){\cmd{Fkeisan}の\texttt{<A>}オプション}
+  \Fkeisan<A>{(X+(1/3))*(2)=(1)}
+\end{showEx}
+
+もっと複雑な例については，同梱の
+\begin{jquote}
+\begin{verbatim}
+calcfrac.tex, newB14.tex, Fsyndiv.tex
+\end{verbatim}
+\end{jquote}
+をご覧ください。
+
+\section{循環小数}
+分数 \texttt{67/555} を小数展開すると \texttt{0.1207207207...} と
+循環小数になります．\textsf{emathB.sty} では，循環小数は
+循環節を\texttt{(...)} でくくって表現します．この例では
+\texttt{0.1(207)}と表すこととなります．
+分数形式を循環小数形式に変換するマクロが
+\verb/\FtoZ/ です．
+
+\begin{showEx}{\cmd{FtoZ}}
+\FtoZ{67/555}\tmp
+\tmp
+\end{showEx}
+
+この結果を通常の表現形式にするのが \cmd{prZ} です．
+
+\begin{showEx}{\cmd{prZ}}
+\FtoZ{67/555}\tmp
+$\prZ\tmp$
+\end{showEx}
+
+逆に循環小数形式を分数形式に変換するコマンドが \cmd{ZtoF} です．
+
+\begin{showEx}{\cmd{ZtoF}}
+\ZtoF{0.1(207)}\tmp
+\tmp
+\end{showEx}
+
+この分数形式を通常の表現形式にするのが \cmd{prF} です．
+
+\begin{showEx}{\cmd{prF}}
+\ZtoF{0.1(207)}\tmp
+$\prF\tmp$
+\end{showEx}
+
+\end{document}

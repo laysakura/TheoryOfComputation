@@ -1,0 +1,815 @@
+%%% $B2~HGMzNr(B
+%%% ver0.00  1998/2/20
+%%%
+%%% ver0.001 1998/2/20
+%%%     LaTeX 2.09 $B$KBP$7!$(B
+%%%         \newcommand{\tagform}[1]{}%
+%%%     $B$rIU2C$9$k!%(B
+%%% ver0.002 1998/2/22
+%%%     syouMon... $B$r(B edaMon... $B$KJQ99$9$k!%(B
+%%% ver.0.003 1998/2/22
+%%%     \postEqlabel $B$r?7@_$7$F!$(B
+%%%     $B?t<0HV9f$N8e$m$K(B($B6uGr$G$b(B)$BF~$l$i$l$k$h$&$K$9$k!%(B
+%%% ver.0.004 1998/2/23
+%%%     \newif\ifedaMonnopar $B$rDI2C$7$F!$(B
+%%%     edaMon $B$N@hF,$N(B \par $B$rL58z2=$G$-$k$h$&$K$7$?!%(B
+%%% ver.0.005 1998/2/24
+%%%     \retuwa $B$NDj5A$NCf$N(B \ensuremath $B$r:o=|$7$?!%(B
+%%% ver.0.006 1998/2/27
+%%%     \ifedaMonnopar $B$rGQ;_$7!$(B\preedaMon($BFbIt!'(B\pre@edaMon) $B$r?7@_(B
+%%% ver.0.007 1998/3/1
+%%%     \edaMon $B$N2#I}$N7W;;4p=`$r(B \columnwidth $B$+$i(B \linewidth $B$KJQ99(B
+%%% ver.0.008 1998/3/2
+%%%     \edamon[$B2#$KJB$Y$k>.Ld$N8D?t(B]{$B>.Ld$NFbMF(B} $B$r?7@_(B
+%%% ver.0.01 1998/3/5
+%%%     \edamon $BGQ;_(B
+%%%     $B>.Ld$r2#$KJB$Y$k(B edaenumerate $B4D6-$r?7@_(B
+%%% ver.0.01a 1998/3/7
+%%%   \edaenumerate
+%%%     \leftmargin=0pt $B$O(B list $B$N?<$5$,(B1$B$h$jBg$-$$>l9g$K8BDj(B
+%%%     minipage $B$N4V$K%0%k!<$rF~$l$k!%(B
+%%% ver.0.01b 1998/3/8
+%%%   \suuretu {,} $B$r(B \left\{,\right} $B$K$9$k(B
+%%% ver.0.01c 1998/3/10
+%%%   \ko \tate $B$,L$Dj5A$N>l9g$O(B \frown $B$rMQ$$$k(B
+%%% ver.0.01d 1998/3/11
+%%%   edaenumerate $B4D6-$K(B < > $B%*%W%7%g%s$rIU$1$k!%(B
+%%%   \edaitem*(\edaitemm $B$b$*$J$8!K$r?7@_$7!$0z?t$r?t<04D6-$H$9$k!%(B
+%%% ver.0.01e 1998/3/12
+%%%   \edasep $B$G>.Ld$N:81&$N4V3V$r;XDj$G$-$k$h$&$K$9$k!%(B
+%%%     $B!J%G%U%)%k%H(B = 1zw $B!K(B
+%%%   \preedaenumskip $B$GK\J8$H(B edaenumerate $B4D6-$N9T4V3V$r(B
+%%%     $B;XDj$G$-$k$h$&$K$9$k!%!J%G%U%)%k%H(B = -0.5ex $B!K(B
+%%%   edaenumeratem $B4D6-!JA4Ld$,?t<0%b!<%I$N$H$-!K$rIU2C(B
+%%% ver.0.01f 1998/3/14
+%%%   \zettaiti $B@dBPCM5-9f$rI=$9%3%^%s%I$r?7@_(B
+%%% ver.0.01h 1998/3/16
+%%%   caprm $B4D6-!J?t<0%b!<%I$G1QBgJ8;z$r%m!<%^%sBN$K$9$k!K$r?7@_(B
+%%% ver.0.01i 1998/3/19
+%%%   \bekutoru $B:81&$NM>Gr$r=|5n$7!$Lp0u$N9b$5$r>/$79b$/$7!$(B
+%%%     $B$=$l$rJQ99$9$k%3%^%s%I$rMQ0U(B
+%%% ver.0.01j 1998/3/26
+%%%   edaenumerate $B4D6-$G!$(Bpreedaenumskip, postedaenumskip $B$rD4@0(B
+%%% ver.0.01k 1998/3/28
+%%%   \kyouyaku $B6&LrJ#AG?t$rI=$9%3%^%s%I$r?7@_(B
+%%% ver.0.01l 1998/3/29
+%%%   \naiseki $B%Y%/%H%k$NFb@Q$rI=$9%3%^%s%I$r?7@_(B
+%%% ver.0.02  1998/4/1
+%%%   $B8x3+(B
+%%% ver.0.02a 1998/4/5
+%%%   $B%+%&%s%?(B tempcnta(b,c) $B$r?7@_(B
+%%% ver.0.02b 1998/4/7
+%%%   \bunsuu \mathchoice $B$rMQ$$$F!$(B\subscript type $B$KBP1~$9$k!%(B
+%%% ver.0.02c 1998/4/8
+%%%   \itembbox   $B2<$K8+=P$7$rIU$1$k(B itembox
+%%%   \itemtbbox  $B>e2<$K8+=P$7$rIU$1$k(B itembox
+%%% ver.0.02d 1998/4/8
+%%%   \itembbox, \itemtbbox $BFHN)$5$;$k!%(B
+%%% ver.0.02e 1998/4/9
+%%%   \resetcounter#1[#2] $B%+%&%s%?$N%j%;%C%H!$?F;R4X78$N@_Dj(B
+%%% ver.0.02f 1998/4/10
+%%%   \bunsuu \mathchoice $B$r;H$&$H!$(B\Hako $B$KI{:nMQ$"$j!%;HMQJ]N1(B
+%%% ver.0.02g 1998/4/12
+%%%   \renritu $BO"N)J}Dx<0$N?t<0HV9f(B
+%%%   \houteisiki $BJ}Dx<0$r%_%K%Z!<%8$KF~$l$F?t<0HV9f$rIU2C(B
+%%% ver.0.02h 1998/4/18
+%%%   zu $B?^$N$^$o$j$K%F%-%9%H$r$r2s$j9~$^$;$k4D6-(B
+%%% ver.0.02i 1998/4/23
+%%%   enumerate $B4D6-$N%*%W%7%g%s$K(B
+%%%     $B%"!'%"%$%&%(%*!%!%!%(B
+%%%     $B%$!'%$%m%O%K%[!%!%!%(B
+%%%     $B$"!'$"$$$&$($*!%!%!%(B
+%%%     $B$$!'$$$m$O$K$[!%!%!%(B
+%%%     $B0l!'0lFs;0;M8^!%!%!%(B
+%%%   $B$rDI2C$9$k!%(B
+%%% ver.0.02j 1998/4/28
+%%%   edaenumerate $B4D6-$NKAF,$K(B \leavevmode $B$rF~$l$k!%(B
+%%%     \item % $B6uJ8$N>l9g!$IT6q9g$,H/@8$7$?$b$N$KBP1~(B
+%%%       \begin{edaenumerate}
+%%% ver.0.02k 1998/4/29
+%%%     \edaitem \long\def $B$H$9$k!%(B
+%%% ver.0.03 1998/05/01
+%%%   $B8x3+(B
+%%% ver.0.03a 1998/05/04
+%%%     $BJ#AG?t$N<BIt!$5uIt$rI=$95-9f(B
+%%%     \zitubu, \kyobu
+%%% ver.0.03b 1998/05/09
+%%%     \zuhan $B?^$H%F%-%9%H$r2#$KJB$Y$k!%(B
+%%%         zu $B4D6-$H0[$J$j!$2s$j9~$_$O$7$J$$!%(B
+%%%         $B%F%-%9%HItJ,$K(B enumerate $B4D6-$J$I$,$"$C$F$b$h$$!%(B
+%%% ver.0.03c 1998/05/10
+%%%     \houteisiki \abovedisplayskip $B$K0MB8$9$k!%(B
+%%% ver.0.03d 1998/05/14
+%%%     \kaku, \sankaku, \bekutoru *$BIU$-%3%^%s%I$r?7@_!%(B
+%%%       $B0z?t$O?t<0%b!<%I(B (caprm $B4D6-Fb$G;HMQ$rA[Dj(B)
+%%% ver.0.03e 1998/05/14
+%%%     \zettaiti $B4V3V$r(B \lvert, \rvert $B$KB7$($k!%(B
+%%% ver.0.03f 1998/05/17
+%%%     \houteisiki \preEqlabel{$\cdots\cdots$}$B$H$9$k!%(B
+%%% ver.0.03g 1998/05/24
+%%%     \renritu fleqn $B%*%W%7%g%s$,$J$/$F$b;HMQ2DG=!%(B
+%%%     $B$?$@$7!$:84s$;$H$J$k$N$G(B(..)$B%*%W%7%g%s$G:8%^!<%8%s$r;XDj!%(B
+%%% ver.0.03h 1998/06/07
+%%%     \renritu \abovedisplayskip, \belowdisplayskip $B$rM-8z$H$9$k(B
+%%% ver.0.03i 1998/06/26
+%%%     \kongou
+%%% ver.0.03j 1998/07/21
+%%%     \nidan  $BItJ,E*FsCJAH(B (\zuhan $B$O:o=|(B)
+%%% ver.0.03k 1998/07/31
+%%%     \houteisiki fleqn $B%*%W%7%g%s$,$J$/$H$b2D$H$9$k!%(B
+%%% ver.0.03l 1998/08/10
+%%%     \preEqlabel*#1
+%%%         $B?t<0HV9f$N:8$N!&!&!&$rD9$5(B0$B$N%\%C%/%9$H$9$k!%(B
+%%%         $B!J(B alignat $B4D6-MQ!K(B
+%%% ver.0.03m 1998/08/11
+%%%     \kyouyaku $B6&LrJ#AG?t$rI=$9%3%^%s%I(B
+%%% ver.0.04 1998/08/12
+%%%     $B%U%!%$%kL>$r(B emath.sty $B$KJQ99(B
+%%% ver.0.04a 1998/08/19
+%%%     \bunsuu $B$r(B \mathchoice $BBP1~$H$7!$9g$o$;$F(B \houteisiki
+%%%     $B%3%^%s%I$H$H$b$K!$(B \Hako $B$N%+%&%s%?$,?J$_2a$.$k$N$r@)8f$9$k!%(B
+%%% ver.0.04b 1998/08/21
+%%%     \renritu $B%3%^%s%I$N%*%W%7%g%s0z?t(B [...] $B$NKAF,$,%3%^%s%I$N>l9g(B
+%%%     2$B2s%?%$%W%;%C%H$5$l$F$7$^$&!%(B
+%%% ver.0.04c 1998/08/24
+%%%     \strlen $BJ8;zNs$ND9$5$N7W;;(B
+%%% ver.0.04d 1998/08/25
+%%%     \teisei $BDI2C(B
+%%%     \yakubun $BDI2C(B
+%%%     \?e?arrow eepic $B$H$N6&B8(B
+%%% ver.0.04e 1998/09/05
+%%%     Enumerate, Enumerate* $B4D6-(B $B!'(Benumerate $B4D6-$NCfCG!&:F3+(B
+%%% ver.0.04f 1998/09/09
+%%%     \edaitem $B$D$.$N(B \edaitem $B$^$?$O(B \end{edaenumerate} $B$^$G$r0z?t$H$9$k!%(B
+%%%       $B6/@)2~9T$O(B \edakaigyou
+%%%       $BNs4V7S@~$O(B \edasikiri
+%%% ver.0.04g 1998/09/18
+%%%     \souzi, \heikousihenkei, \?e?arrow $B$rJ8;z%5%$%:$NJQ99$KDI?o$5$;$k!%(B
+%%%     \getcurrentsize, \current@ex, \HUge, \HUGe $B$rDI2C!%(B
+%%% ver.0.04h 1998/09/19
+%%%     \teisei $B<h>C$7@~$K?'$r$D$1$i$l$k$h$&$K$9$k!%(B
+%%% ver.0.04i 1998/09/20
+%%%     edaenumerate $B4D6-(B \edaitem $B4V$N4V3V(B \edasep $B$r(B
+%%%        \pre@edasep, \post@edasep $B$KJ,N%$9$k!%(B
+%%% ver.0.04j 1998/09/30
+%%%     edaitem $B$rC1$K(B \item $B$GNI$$$3$H$K$9$k!%(B
+%%%     jquote $B4D6-!'(B $B:8$N$_%$%s%G%s%H!$%$%s%G%s%HNL$b;XDj2DG=(B
+%%% ver.0.04k 1998/10/08
+%%%     \refcurrentenum enumerate $B4D6-$K$*$1$kAj8_;2>HHV9f$r(B
+%%%       $BEv3:%l%Y%k$N$_$H$9$k!%(B
+%%% ver.0.04l 1998/10/20
+%%%     \dmyln[dim] nidan $B4D6-$N1&B&$N=D0LCV=$@5MQ(B
+%%%     caprm [l] $B%*%W%7%g%s$G>.J8;z$b%m!<%^%sBN(B
+%%% ver.0.04m 1998/10/24
+%%%     \DEG $B3QEY$rI=$95-9f(B \r{} $B$rMQ$$$?$b$N(B
+%%% ver.0.04n 1998/11/01
+%%%     jquote $B4D6-(B topsep $B$r(B [...] $B%*%W%7%g%s$G;XDj(B
+%%%     jquotation $B4D6-$rJ;@_(B
+%%% ver.0.04o 1998/11/20
+%%%     $B?t<04D6-Fb$GBgJ8;z$N$_$r%m!<%^%sBN$K$9$k%3%^%s%I(B \mathRM
+%%% ver.0.04p 1998/11/29
+%%%     \dpower $BN_>h$NN_>h$G(B2$B<o$NN_>h$N%Y!<%9%i%$%s$rB7$($k!%(B
+%%% ver.0.04q 1998/12/4
+%%%     enumerate $B4D6-$N%*%W%7%g%sJ8;z$rDI2C(B
+%%%       m: $B4]IU$-HV9f(B
+%%%     Enumerate* $B4D6-$K$O%*%W%7%g%sITMW(B
+%%%       Enumerate $B4D6-$N%*%W%7%g%s$r0z$-7Q$0(B
+%%% ver.0.04r 1998/12/5
+%%%     \setcurrentenum $B8=:_$N%l%Y%k$N(B enumerate $BHV9f$r%;%C%H$9$k!%(B
+%%%
+%%%     $BA}2C8:>/$H1zFL$rI=8=$9$k%3%^%s%I$NJLL>(B
+%%%           $B2<$KFL(B    $B>e$KFL(B  $B1zFL6hJLL5(B
+%%%       $BA}2C(B  \totuzou  \ouzou  \zouka
+%%%       $B8:>/(B  \totugen  \ougen  \gensyou
+%%% ver.0.05  1998/12/16
+%%%     $B8x3+(B
+%%% ver.0.05a 1998/12/20
+%%%     \edaitemindent $B$,L58z$K$J$C$F$$$?!%(B
+%%% ver.0.05b 1998/12/24
+%%%     \edaitemindent $B$rGQ;_$7!$(B
+%%%     edaenumerate $B$K(B (...) $B%*%W%7%g%s$r?7@_(B
+%%%     \begin{edaenumerate}<$B>.Ld?t(B>($B:8%$%s%G%s%H(B)[$BLdBjHV9f7A<0(B]
+%%% ver.0.05c 1999/01/01
+%%%     \zyohou $B@0<0$N=D=q$-3d;;(B
+%%% ver.0.05d 1999/01/10
+%%%     \kyokukeisiki $B0z?t$K(B \Hako $B$rM?$($?$H$-!$(B
+%%%       $B<BIt$H5uIt$NH"$NJ8;z$,0c$C$F$7$^$&!%(B
+%%% ver.0.05e 1999/02/05
+%%%     enumerate, edaenumerate $B$K(B '.....' $B%*%W%7%g%s$rIU2C(B
+%%%     \renewcommand{\labelenumi}{.....} $B$KAjEv!%(B
+%%% ver.0.05f 1999/02/06
+%%%     $B=DD9$N4]IU$-J8;z(B
+%%%     \nagamaru#1
+%%% ver.0.05g 1999/02/07
+%%%     $BD>3Q$rI=$95-9f(B \tyokkaku[$B2sE>3Q(B]{$B%5%$%:(B}
+%%% ver.0.05h 1999/03/07
+%%%     \teisei $B$J$I(B
+%%%     picture $B4D6-$G$N(B \unitlength $B$rL@<($9$k!%(B
+%%%     \tyokkaku $B$O(B emathP.sty $B$K0\$9!%(B
+%%% ver.0.06$B&B(B  1999/04/25
+%%% ver.0.06$B&B(B1 1999/05/01
+%%%     \tasuki, \Tasuki $B$N?7@_(B
+%%% ver.0.06$B&B(B2 1999/05/02
+%%%     \tasuki $B$K(B [l]$B%*%W%7%g%s!J:8B&$@$1!K(B
+%%% ver.0.06$B&B(B3 1999/05/09
+%%%     \Retube $B#3<!$NNs%Y%/%H%k(B
+%%% ver.0.06$B&B(B4 1999/05/10
+%%%     \Retube LaTeX2.09 $B$N>l9g$N%P%0=$@5(B
+%%% ver.0.06$B&B(B5 1999/05/11
+%%%     \renritu* $B$G<0HV9f$J$7(B
+%%% ver.0.06$B&B(B6 1999/05/24
+%%%     \Teisei $BD{@58e$NJ8;zNs$r(B scriptstyle $B$G!$G[CV$r(B
+%%%             $B>e!$1&>e!$:8>e(B
+%%%             $B2<!$1&2<!$:82<(B
+%%% ver.0.06  1999/06/06
+%%% ver.0.07    1999/06/26-07/21
+%%%     emath2e \RequirePackage $BJ8$N0LCV$,ITHw$G(B \fleqn $B$,L58z$H$J$k!%(B
+%%%     \marudashtag, \marudashref
+%%%       $B?t<0HV9f$K%@%C%7%e$r$D$1$k!%(B
+%%%     $B>e5-$K4XO"$7$F(B \houteisiki $B%3%^%s%I$G(B \tag, \tag* $B$r$D$1$k$H$-$O(B
+%%%       [\tag{..}] $B%*%W%7%g%s$rIm2C!%(B
+%%%     $BFbIt4X?t(B \IDiv, \IMod, \IDivMod $BDI2C(B
+%%% ver.0.08  1999/08/23 - 10/30
+%%%     \fsizeup, \fsizedown $B8=:_$h$j0l%i%s%/>e2<$N%U%)%s%H%5%$%:$K(B
+%%%     \chgfontsizeratio $B%U%)%s%H%5%$%:$rHfN($r;XDj$7$FJQ99(B
+%%%     ifthen $B%Q%C%1!<%8<+F0%m!<%I(B
+%%%     \neqq scriptstyle $B$KBP1~(B
+%%%     \maru $BJ8;z%5%$%:$NJQ99$KBP1~$9$k!#(B
+%%%     fleqn $B$N%*%s!&%*%U$,$G$-$k$h$&$K$9$k!%(B
+%%%       (\fleqnon, \fleqnoff)
+%%%     \bunsuu $BJ,?t7S@~$N>e2<$r69$/$9$k!%(B
+%%%     \ruizyoukon \sqrt[n]{a} $B$N(B n $B$r:8$K0\F0$9$k!%(B
+%%% ver0.09   1999/11/21-12/21
+%%%     \BEGINalltt, \ENDalltt
+%%%       emathR $B$rMQ$$$k$H$-!$(B\end{alltt} $B$,(B \end {alltt}
+%%%       $B$H=q$-=P$5$l%(%i!<$H$J$k$3$H$X$NBP:v(B
+%%%     \IForNext $B@0?tJQ?t$N(B FOR $B%k!<%W(B
+%%%     \Strlen, \bStrlen
+%%%       $B4X?tCM$r;XDj$7$?%3%s%H%m!<%k%7!<%1%s%9$KJV$9!%(B
+%%%       $BA43Q$O#2%P%$%H(B \bStrlen
+%%%     \Maru $BCf$NJ8;z$rBg$-$a$K(B
+%%%     \writeLabel $B%i%Y%k=q$-=P$7%3%^%s%I$r?7@_$9$k!%(B
+%%%     \topchar $B@hF,$N0lJ8;z$rJ,N%$9$k!%(B
+%%%     \edefappend
+%%%       \edef $B$N0z?t$K(B \sqrt, \bunsuu $B$J$I$r5-=R$G$-$k$h$&$K$9$k!%(B
+%%%       $B!J(B\noexpand $B$NJ;MQ!K(B
+%%%     \gIForNext \global \IForNext
+%%% ver0.10 1999/12/22-24
+%%%     \Cfor C$B8@8lIw$N(B for $B%k!<%W(B
+%%%       $B%$%s%/%j%a%s%H(B \Incr, \xIncr
+%%%       $B%G%/%j%a%s%H(B   \Decr, \xDecr
+%%% ver0.11 1999/12/24-26
+%%%     \IMax $B:GBgCM(B
+%%%     \Icalc a+b=c $B$N7A<0(B
+%%%     \strchr, \strsep
+%%% ver 0.12 1999/12/27-28
+%%%     \headchar $B=$@5(B
+%%%     \strsep   $B=$@5(B
+%%%     \Leftstr, \Rightstr, \Midstr
+%%% ver 0.13 2000/01/01-07
+%%%     \getflnode $B=$@5(B
+%%%     $B%U%!%$%k=hM}(B
+%%%       \gettimestamp $B%?%$%`%9%?%s%W$rF@$k!%(B
+%%%       \delfile      $B%U%!%$%k$r:o=|$9$k!%(B
+%%%       \getTEXMFDIR  $B4D6-JQ?t(B TEXMF $B$NCM$rJ8;zNs$H$7$F<hF@$9$k!%(B
+%%%     \hairetu, \edefhairetu
+%%% ver 0.14  2000/01/08
+%%%       \headchar $B=$@5(B
+%%% ver 0.16  2000/02/13-15
+%%%     \polar $B%*%W%7%g%s$G@dBPCM!$%+%C%3$N<oN`$r;XDj2DG=$H$9$k!%(B
+%%%     \Saidaikouyakusuu, \saisyoukoubaisuu, \Saisyoukoubaisuu $BDI2C(B
+%%% ver.0.17
+%%%     \IADD, \IMUL
+%%% ver.0.18  2000/02/26
+%%%     \Not $BH]Dj$N%9%i%C%7%e$r=E$M$k!%(B
+%%% ver.0.19  2000/03/11
+%%%     \kyouyaku $B$NF15A8l$H$7$F(B \conjugate, \conj $B$rDj5A(B
+%%% ver.0.20  2000/03/12
+%%%     \dlim [...] $B%*%W%7%g%s$G(B lim $B$N2<$NJ8;z$K$D$$$F2#J}8~05=LN($r;XDj(B
+%%% ver.0.21  2000/03/16
+%%%     \to [..] $B%*%W%7%g%s$GLp@~$ND9$5$rJQ99(B
+%%% v0.22     2000/03/19-22
+%%%     \Strcat $B?7@_(B
+%%%     \senbun, \senbun* $B@~J,$ND9$5$rI=$95-9f!J(B\overline)
+%%% v0.23     2000/03/28
+%%%     \renritu $B$r4D6-;EN)$F$H$9$k!'(BRenritu
+%%% v0.24     2000/04/11
+%%%     \owari $B9TKv$K%^!<%/!J%G%U%)%k%H$O(B $\blacksquare$ $B!K$rCV$/!#(B
+%%%     \Cdots $BA43Q$N(B3$BE@%j!<%@!<!V!D!W(B
+%%%     \kotae $B9TKv$K!V!JEz!K!W(B
+%%%       $B$=$NA0$N(B3$BE@%j!<%@!<$N8D?t$r(B [.] $B%*%W%7%g%s$G;XDj$9$k!#(B
+%%%         $B!J%G%U%)%k%H$O#2!K(B
+%%% v0.25     2000/04/16
+%%%     \syutten, \owari, \kotae, \Cdots
+%%%       $B%3%^%s%IL>$N>WFM$KHw$((B\newcommand $B$GDj5A$9$k!#(B
+%%% v0.26     2000/04/26-27
+%%%     \syutten, \owari, \kotae vmode $B$N$H$-$O(B \leavevmode $B$rIm2C$9$k!#(B
+%%%     \tasuki, \Tasuki $B%P%j%(!<%7%g%s(B
+%%%       \tasukikata, \tasukimozihaiti $B$r?7@_(B
+%%% v0.27     2000/06/01-04
+%%%     \Heikou, \nHeikou
+%%%       picture$B4D6-$rMQ$$$?J?9T5-9f(B
+%%%     \syndiv $BAH$_N)$F=|K!(B
+%%%     \kagenhou $B2C8:K!(B
+%%%     \houteisiki $B>e2<0LCV$rD4@0$9$k$?$a$N%*%W%7%g%s(B <...> $B$rIU2C(B
+%%% v0.28     2000/06/11
+%%%     \tasuki \unitlength$B$NJQ99$r6I=jE*$K(B
+%%%     \maru $B0z?t$O%F%-%9%H%b!<%I$H$9$k!#(B
+%%% v0.29     2000/07/02
+%%%     LaTeX(plain TeX) $B$N(B \cases $B$r(B \baaiwake $B$G;HMQ2DG=$H$9$k!#(B
+%%% v0.30     2000/07/11-12
+%%%     \kagenhou $B78?t$,(B0$B$N>l9g$NIT6q9g$r=$@5(B
+%%%     \baaiwake $B$K(B[r]$B%*%W%7%g%s!J1&3g8L$r$D$1$k7A<0!K$rIU2C(B
+%%%     emcases $B4D6-(B
+%%%       \begin{emcases}[#1][#2]
+%%%         #1 : l or r or b
+%%%         #2 : array $B4D6-$N0z?t(B
+%%%       \casesstretch emcases$BFb$N(B \arraystretch $B%G%U%)%k%HCM(B=1
+%%% v0.31     2000/07/15
+%%%     emcases amsmath.sty ver.1 $B$K$bBP1~(B
+%%%       \emcasesArrayarg $B$G(B array$B4D6-$N0z?t$N%G%U%)%k%H$rJQ99(B
+%%% v0.32     2000/07/15-18
+%%%     \preHEqlabel \houteisiki $B?t<0HV9f$KA0CV$9$k%j!<%@!<$J$I$N;XDj(B
+%%%     \cdotfill, \crulefill $B7S@~%j!<%@!<(B
+%%%     \Cdotfill
+%%% v0.33     2000/08/03-09/01
+%%%     \edaMon emathOld $B$K0\$9!#(B
+%%%     emcases $B4D6-$H(B array $B%Q%C%1!<%8$N6&B8$r?^$k!#(B
+%%%     \renritu $B:G8e$K(B \ignorespaces $B$rDI2C(B
+%%%     \tsqrt \textstyle\sqrt : $BFs=E:,9f$G$OJXMx$+$b(B
+%%%     \edeffrontappend#1#2  #2#1--->#1
+%%%       cf. \edefappend#1#2 #1#2 ---> #1
+%%% v0.34     2000/09/18
+%%%     \argsep $BJ8;zNs$r;XDj$7$?J8;z$r6h@Z;R$H$7$F@Z$jJ,$1$k!#(B
+%%% v 0.35    2000/10/09-10
+%%%     \ifempty eplain.tex $B$h$j(B
+%%%     \ifthenelse $B7A<0$N(B \IFempty
+%%% v 0.36    2000/10/16
+%%%     \Strchr $B0z?t$,6u$N>l9g$K$bBP1~(B
+%%% v 0.37    2000/10/29-30
+%%%     \sityuu $B?<$5$b%*%W%7%g%s$G;XDj2DG=$H$9$k(B
+%%%     \strcmp $BJ8;zNsHf3S(B
+%%% v 0.38    2000/11/15
+%%%     mawarikomi $B4D6-$H$N4X78$G(B
+%%%       \endjquote, \endjquotation $B$r=$@5(B
+%%% v 0.39    2000/11/26-12/05
+%%%     $BJ8;zNs$N@hF,!$KvHx$N6uGr$r=|5n$9$k(B \trim
+%%%     $B%m!<%I%*%W%7%g%s(B times
+%%%     \tasuki, \Tasuki : array.sty $B$HJ;MQ$9$k$H%(%i!<(B
+%%%       $B4XO"$7$F!$%3%^%s%I(B \Tasukimozihaiti $B$r?7@_(B
+%%% v 0.40    2000/12/09
+%%%     array$B4D6-$N0z?t$rJQ?t$G<h$k$3$H$r2DG=$H$9$k(B EMarray$B4D6-(B
+%%%     \Tasukimozihaiti $B$OITMW(B
+%%% v 0.41    2000/12/19
+%%%     \nagamaru $B$GMQ$$$F$$$k(B tpic special ar $B$,>.?t$r0z?t$H$7$F$$$?$N$G!$(B
+%%%       \@seisuu $B$NDj5A$r(B emathPh.sty $B$+$i(B emath.sty $B$K0\$7!$$=$l$rMQ$$$k!#(B
+%%%     \EMcaption $B?^(B??: $B$N%3%m%s$r$D$1$J$$!#(B
+%%%       $B4XO"$7$F!$(B\fgEMcaption, \tbEMcaption
+%%% v 0.44    2001/03/04
+%%%     \EMabs : \zettaiti $B$NF15A8l(B
+%%% v 0.45    2001/03/17
+%%%     \syuugou, \teisekibun, \fboxnil
+%%% v 0.46    2001/03/20---4/7
+%%%     $B%m!<%I%*%W%7%g%s(B varg, txfonts
+%%%     $B%Y%/%H%k$NFb@Q(B \vnaiseki
+%%%               $BBg$-$5(B \EMvabs
+%%% v 0.47    2001/04/22-27
+%%%     \izyohou $B$H(B \zyohou $B$rF1;~$K;HMQ$9$k$H43>D$9$k!#$3$l$r2sHr!#(B
+%%%     \Seisuububun 
+%%% v 0.48    2001/05/03
+%%%     $B>e5-43>D$N2sHr$=$N#2(B
+%%%     \soinsi $B:n$jJQ$((B
+%%%     \Soinsuubunkai
+%%% v 0.49    2001/06/07-07/22
+%%%     \nagamaru $B$N@5<0L>$r(B \EMnagamaru $B$H$9$k!#(B
+%%%     $B!J2J8&Hq%^%/%m$H$N>WFM!K(B
+%%%     \vnaiseki, \syuugou : \ensuremath $B$r$+$V$;$k!#(B
+%%% v 0.50    2001/07/25
+%%%     jquote$B4D6-(B $BKAF,$N(B \leavevmode $B$r:o=|(B
+%%%                       $B!J>e$NCJMn$H$N4V3V$,6u$-$9$.$k>l9g$"$j!K(B
+%%% v 0.51    2001/07/31-08/06
+%%%     \Requirepackage[psamsfonts]{amssymb} $B%*%W%7%g%sIm2C(B --- $BJ]N1(B
+%%%                                                   type1cm.sty $B$GBe9T(B
+%%%     \bekusityuu \beku $B$N;YCl$rJQ99$9$k(B
+%%% v 0.52 2001/08/23
+%%%     \soinsi 1$B$N>l9g$NNc30=hM}$rDI2C(B
+%%% v 0.53 2001/08/25
+%%%     \getEMATHDIR : kpsewhich $B$rMxMQ$7$F(B emath.sty $B$N%U%)%k%@L>$rF@$k!#(B
+%%% v 0.54 2001/08/27
+%%%     \getEMATHDIR : \@currdir $B$rMQ$$$F!$(B\kugirisi $B$rDj$a$k!#(B
+%%% v 0.55 2001/09/02
+%%%     emathPh $B$G$N(B Gurafu.pl $BGQ;_$KH<$$!$(B\getEMATHDIR $B<B9TJ]N1(B
+%%% v 0.56 2001/09/07
+%%%     \kaizyou $B3,>h5-9f!J(B! $B$N:81&$K(B 1mu $B$N%9%Z!<%9$r$D$1$k!K(B
+%%% v 0.57 2001/09/09
+%%%     \kaizyou \ensuremath $B$r$+$V$;$k!#(B
+%%% v 0.58 2001/09/28
+%%%     \zettaiti $B@dBPCM5-9f$N9b$5!&?<$5$rJL!9$K@)8f2DG=$H$9$k!#(B
+%%%     \textstyle\retuwa $B$N>JN,7A(B \tretuwa
+%%%     \emsideset $B:81&!$>eIU$-!&2<IU$-(B
+%%% v 0.59  2001/10/03
+%%%     \bm bm.sty $B$r%m!<%I:Q$_$N$H$-$O!$$=$A$i$rMQ$$$k(B
+%%%     \kyouyaku : $B9b$5$r=$@5$9$k%*%W%7%g%s$rIm2C(B
+%%%     \renrituat : alignat $B4D6-$r%Y!<%9$K$7$?(B \renritu
+%%% v 0.60  2001/11/08-21
+%%%     $B%P!<%8%g%s%a%C%;!<%8$r(B emath.sty, emath2e.sty $BN>J}$G=P$9!#(B
+%%%     \templa, \templb \newlength ---> \newdimen
+%%% v 0.61  2001/11/26
+%%%     \Deruta : $B-y5-9f(B
+%%%     \syou@amari $BJQ?t$N1#JC%_%9$,$"$j!$(B\Yakubun $B$,$*$+$7$/$J$C$F$$$?!#(B
+%%% v 0.62 2001/12/02
+%%%     \polar <c> $B%*%W%7%g%s$G6&Lr$rI=$9!#(B
+%%% v 0.63 2001/12/05
+%%%     \maru \text $B$r$+$V$;$k(B
+%%% v 0.64 2002/01/03
+%%%     \kasen $B2<@~(B
+%%%     $B7W;;ItJ,$r(B emathC.sty $B$KJ,N%(B
+%%%     \bekutorukata \bekutoru $B$NLp0u$N7?$r(B cm, tx, eu, xy $B$N(B4$B<oN`(B
+%%%     \pxpercent pxfonts $B$N(B `%'
+%%% v 0.65 2002/02/02
+%%%     \kotae <..> $B%*%W%7%g%s$G1&M>GrNL$r;XDj$9$k!#(B
+%%%     \eqref $B?t;z$G$J$$>l9g$K$bBP1~(B
+%%% v 0.66 2002/02/22
+%%%     jquote $B4D6-$N0z?t$K7W;;<0$r5vMF(B
+%%% v 0.67 2002/03/14
+%%%     \tasuki $B$N2#I}$r>/$7C;$/$7$?(B \stasuki
+%%%     \bekutoru $B$NDj5A$r5l$KLa$7!$Lp0u$N7A>uJQ99$O(B emathFx $B$K0\$9!#(B
+%%%     \EMvphantom $B>e2<$KM>Gr$r$D$1$k(B
+%%%     \syuugou |$B$N9b$5$r!$:81&$N$b$N$H$"$o$;$k!#(B\hakobanpush$BIm2C(B
+%%% v 0.68 2002/04/09-11
+%%%     \bsityuu    : $B%G%U%)%k%HCM$NJQ99(B
+%%%     \knagamaru  : $B=DD9$N4]0O$_?t;z$r!$Gr9uH?E>(B
+%%%     \ynagamaru  : $B2#D9$N4]0O$_?t;z(B
+%%%     \kynagamaru : $B$=$NGr9uH?E>(B
+%%%     \kmaru      : \maru $B$NGr9uH?E>(B
+    v 0.69 2002/04/18
+        pxfonts $B%*%W%7%g%s(B
+        \dumyeq : align$B4D6-$G!$:8C<$N(B = $B$r$=$m$($k:]!$@hF,9T$N%@%_!<Ey9f(B
+    v 0.70 2002/05/02
+        \degree ---> \EMdegree $B$H2~L>(B
+        $B!J(B mathabx.sty $B%*%W%7%g%s;~0J30$O(B \let\degree\EMdegree $B!K(B
+    emath2e v 0.67 2002/04/25-05/02
+        txfonts, pxfonts $B$N=hM}K!$rJQ99(B
+        $B%m!<%I%*%W%7%g%s(B mathabx $B?7@_(B
+    v 0.71 2002/05/14-15
+        \atag align*$B4D6-$J$I$G!$?t<0HV9f$rIUM?$9$k(B
+        \zitubu, \kyobu ---> \DeclareMathOperator $B$rMQ$$$k(B
+    v 0.72 2002/06/09-30
+        [mathabx]$B%*%W%7%g%s$r$D$1$?$H$-$N(B \bekutorusityuu $B$rDc$/$9$k(B
+                  \cmsum, \cmint
+        \Not : \backslash $B$H$9$k!#(B
+        \Incr $B$J$I$r(B emathC.sty $B$K0\4I(B
+        \gyouretu[r]{}{}{}{}, \gyouretuhaiti{r}
+            $B9TNs$NMWAG$rG[CV$9$kB7$($r;XDj2DG=$H$9$k!#(B
+    v 0.73 2002/08/11-28
+        \lineskip=3pt plus 0.5pt $B$H@_Dj(B
+        \EMphantombox : phantom $B7O%3%^%s%I$rH/9T$7$?$H$-!$(B
+                        $B$=$N%5%$%:$r;}$D%\%C%/%9(B
+        \Ifor : $B@0?t7?(B FOR .... NEXT 
+    v 0.74 2002/09/12-16
+        \Zyunretu : $B=EJ#=gNs(B
+        \Kumiawase : $B=EJ#AH9g$;(B
+        \Cnum : $BJ#AG?t$N5uIt$H(Bi$B$N4V$K>.%9%Z!<%9(B
+    v 0.75 2002/09/28-10/14
+        \Cfor@sub : \gdef ---> \def
+        \pgyouretu : $B0lHL$N9TNs(B
+        \maru : \protect $B$r$+$V$;$k!#(B
+        \writeLabel : \hyperref $B$KBP1~$9$k$?$a$N1~5^=hCV(B
+    v 0.76 2002/11/05
+        \kmaru : $BD4@0(B
+    v 0.77 2002/11/12
+        \kmaru : $BJ8;z$b5vMF$9$k!#(B
+    v 0.78 2002/11/26
+        \owari : $B?t<0HV9f$H$N6&B8(B
+    v 0.79 2002/12/11
+        \delfile : $BL58z%3%^%s%I$H$9$k!#(B
+    v 0.80 2002/12/20
+        \zwmaru : 2$B7e0J>e$OA43Q(B1$BJ8;zI}$K=L>.(B
+    v 0.81 2002/12/30
+        %\newdimen\tmp@ht@s%
+        %\newdimen\tmp@dp@s% $B$r%3%^%s%I$K(B
+    v 0.82 2003/03/03
+        \heikukan : $BJD6h4V(B
+        \endcaprm : \@ignoretrue $B$rA^F~$7!$H>3Q6uGr%:%l$r2sHr(B
+    v 0.83 2003/03/15
+        $B%m!<%I%*%W%7%g%s(B notMy
+    v 0.84 2003/03/22
+        \EMcaption : $BG[CV%*%W%7%g%s(B[l]
+    v 0.85 2003/04/02
+        \renritu : mawarikomi$B4D6-Fb$G$N;HMQ$r9MN8(B
+    v 0.86 2003/04/06
+        \EMparbox : $B<+A3D9$N(B\parbox
+        \kagenhou $B$K(B<M>$B%*%W%7%g%s(B
+    v 0.87 2003/06/12
+        \syutten : mawarikomi $B$H$N4XO"D4@0(B
+    v 0.88 2003/06/21-23
+        \EMparbox : <t> $B$G=DAH$r2DG=(B
+        \syutten : $B>e5-!$:FD4@0(B
+    v 0.89 2003/07/04
+        \DEG : schlmath $B$G$bF1L>%3%^%s%I$,$"$k$N$G(B \emDEG $B$KJQ99(B
+               $B!J(B\DEG $B$b;HMQ2D!K(B
+    v 0.90 2003/08/04
+        \rbunsuu : $BJ,?t$NJ,;R!&J,Jl$r1&B7$((B
+    v 0.91 2003/08/30
+        $B9TNs$N3g8L5-9f$r>.$5$a$K$9$k=$@5(B
+    v 0.93 2003/09/11
+        \Ifor, \Cfor : emathC $B$K0\@R(B
+        \retube, \Retube $B$KBP$7$F$b(B [r] $B%*%W%7%g%s$rM-8z$H$9$k!#(B
+    v 0.94 2003/09/21
+        $B1|B<@h@8$N(B okumacro.sty $B$+$i(B \MARU $B$r<ZMQ(B
+    v 0.95 2003/09/22
+        \MARU $B$NDj5A$K!$(B\@ifundefined $B$r$+$V$;$k!#(B
+    v 0.96 2003/09/27
+        \kaikukan(#1,#2)
+    v 0.97 2003/10/11
+        \seibun $B%3%s%^6h@Z$j$NJ8;zNs(B
+        \seibun $B$J$I$N=8Bg@.$H$7$F(B \retu
+    v 0.98 2003/11/01
+        \EMcaption $B$K(B <font=..> $B%*%W%7%g%s$rIm2C(B
+    v 1.00 2003/12/03
+        \Mumeisuu#1#2 : $BC10LIU?tCM(B#1$B$r(Bpt$BC10L$K49;;$7!$L5L>?t$G(B#2$B$N@)8fDV$KJV$9(B
+    v 1.01 2003/12/13
+        mathabx.sty $B$N2~D{$KBP1~(B
+    v 1.02 2004/01/02
+        \ifsymMaru $B!{0O$_$r(B ifsym $B$N(B \BigCircle
+    v 1.03 2004/01/13
+        \kaku, \sankaku : \text ---> \mbox (hako.sty $B$H$N4XO"(B)
+    v 1.04 2004/03/01
+        jquote \topsep : 0pt ---> $B$=$N;~E@$N(B \topsep
+    v 1.05 2004/03/10
+        \kagenhou : $BJQ?t;XDj$r6I=jE*$K(B
+    v 1.06 2004/04/19
+        \kagenhou : array$B4D6-$NG[CV%*%W%7%g%s$r(B <pos=t/b/c> $B$G2DG=$H$9$k!#(B
+    v 1.07 2004/05/13
+        \EMcaptionpunc : \caption $BHV9f$H%-%c%W%7%g%s4V$N=q<0;XDj(B
+    v 1.08 2004/05/18
+        \p@=1truept $B$H$9$k!#(B---$B8+9g$;(B
+    v 1.09 2004/06/18
+        \bekutoru*, \sankaku*, \kaku* : [caprm]$B%*%W%7%g%s$rIm2C(B
+    v 1.10 2004/07/01
+        \renritu : jsarticle [9pt] $B%*%W%7%g%s$J$I$KBP1~(B
+        \bnaiseki
+        \kumiawase : $B:8B&$K(B \Hako $B$J$I$rG[CV$9$k$H$-$O(B \kumiawase* $B$H$9$k!#(B
+    v 1.12 2004/07/18
+        \eqref : hyperref $BBP:v$G!$(B\ref $B$KBe$($F(B \ltxref $B$r8F$S=P$9!#(B
+    v 1.13 2004/07/25
+        \gyoube
+    v 1.14 2004/07/29
+        \zettaiti : $B%9%j%`2=(B
+    v 1.15 2004/07/30
+        \EMvphantom* : $B;YCl$rN)$F$k$@$1$G$O$J$/!$0z?t$r%?%$%W%;%C%H$9$k!#(B
+        \emabs : \left|, \right| $B$G0O$`$@$1!#(B
+    v 1.16 2004/08/06-14
+        \mitC : $B?t<0%$%?%j%C%/(BS
+        \mitS : $B?t<0%$%?%j%C%/(BS
+        \mitV : $B?t<0%$%?%j%C%/(BV
+        \ko*  : $B0z?t$O?t<0%b!<%IFb(B
+        \EMresetstrutbox : \f@size $B$K$h$k>l9g$o$1(B
+    v 1.17 2004/08/20
+        \zyohou : ) $B$NBg$-$5!$0LCV$ND4@0(B
+    v 1.18 2004/08/23
+        \namikasen : $BGH2<@~(B
+        \EMresetstrutbox : \f@size $B$,@0?t$G$J$$>l9g$KBP1~(B
+    v 1.19 2004/08/23
+        \namikasen $B@0Hw(B
+    v 1.20 2004/08/31-09/16
+        \EMleqno : $B?t<0HV9f$r:8$K(B
+        \EMsaveeqno, \EMrestoreeqno : $B?t<0HV9f$NJ]B8(B
+        \Int : $B@0?tItJ,(B
+        load option [normallineskip]
+        \eqref : \ltxref ---> \ref $B$KLa$9(B
+                 \ltxref $B$K$7$?$$$H$-$O(B \let\eqrefref\ltxref
+                 $B%G%U%)%k%H$O(B           \let\eqrefref\ref
+    v 1.21 2004/09/20
+        \emovalbox
+    v 1.24 2004/11/21
+        fleqnon, fleqnoff ---> $B4D6-;EN)$F$H$7!$=*N;8e$NH>3Q%9%Z!<%9:.F~$r2sHr(B
+        EMleqno, EMreqno  ---> $B4D6-;EN)$F$H$7!$=*N;8e$NH>3Q%9%Z!<%9:.F~$r2sHr(B
+    v 1.26 2005/01/09
+        $B%m!<%I%*%W%7%g%s(B papersize
+    v 1.27 2005/01/09
+        papersize $B%*%W%7%g%s!'(Bjs*.cls $B$KBP$7$F$OL58z(B
+    v 1.28 2005/01/23
+        \houteisiki <#2> $BId9f$rH<$&>l9g$O!$%G%U%)%k%HCM$KBP$9$kAjBPCM(B
+    v 1.29 2005/02/12
+        \@percent $B$J$I$NDj5A$r(B emathPp.sty $B$+$i0\4I(B
+    v 1.30 2005/02/19
+        $BJL9TN)$F?t<0Fb$G$b(B \baselinestretch $B$rH?1G$5$;$k(B
+    v 1.31 2005/03/01
+        $B%m!<%I%*%W%7%g%s(B normallineskip $B$r@0Hw(B
+    v 1.32 2005/03/10
+        \EMresetstrutbox : \small $B$N>l9g(B
+    v 1.33 2005/04/02
+        \notni : \ni $B$NH]Dj1i;;;R(B
+    v 1.34 2005/04/23
+        \mathRM : \ensuremath $B$r$+$V$;$k(B
+    v 1.35 2005/05/06
+        LaTeX $B$N(Bequation$B$r(Bltxequation$B$H$7$FJ]B8$7!$(B\houteisiki$B$G;HMQ(B
+        equation$B$r;HMQ$9$k$b$N$r(B\amshouteisiki
+    v 1.36 2005/05/12
+        \everyEMresetstrutbox
+        \maru $BCf$NJ8;z$K$D$$$F!$%Y!<%9%i%$%s$r30B&$H$=$m$($?$b$N$r(B \bmaru
+    v 1.37 2005/05/14
+        \conjstrut $B?7@_(B ex->2218200518.tex
+    v 1.38 2005/05/17
+        \ltxequation : $B6IItE*$K(B \let\normalcolor\relax $B$H$9$k(B
+    v 1.39 2005/05/22
+        \EMresetstrutbox : [12pt]$B%*%W%7%g%s$N>l9g(B
+                           js*.cls $B$N>l9g$O(B \relax $B$H$9$k(B
+    v 1.40 2005/05/28
+        \teisei $B$GIA2h$9$k<P@~$K$D$$$F!$(B\rotateline $B$,;H$($k$h$&$K$9$k!#(B
+    v 1.41 2005/06/12
+        jquote, jquotation: <tsep=..,bsep=..,vsep=..> $B$G>e2<$H$N4V3VD4@0(B
+    v 1.42 2005/06/19
+        \ltxcdots : amsmath $B$G$O(B \edef\foo{\cdots} $B$G%(%i!<$H$J$k$3$H$X$NBP1~(B
+    v 1.43 2005/06/24
+        \EMmaru :   $B;YCl$rN)$F$k(B
+    v 1.44 2005/06/30
+        jquote, jquotation$B4D6-$r(B jquote.sty $B$H$7$FJ,N%(B
+    v 1.45 2005/08/01
+        \renritu : mawarikomi $B$H$ND4@0(B
+    v 1.46 2005/08/14
+        \marusuuref : \ref $B$GF@$i$l$kJ8;zNsKvHx$N(B \relax $B$r=|5n(B
+        \zwmaru : \scriptsize $B;XDj!$(B\EMmaru $B$r8F$S=P$9!#(B
+    v 1.47 2005/09/03
+        jquote, jquotation ---> jquote.sty
+        fgcaption $B$J$I(B -------> emathCap.sty
+    v 1.48 2005/09/12
+        \bunsuu* : \displaystyle $B$H$$$&A0Ds$r;}$?$J$$(B
+        $B%m!<%I%*%W%7%g%s(B [ceo]
+          \kaku ---> \EMkaku
+        preEqlabel : $B=i4|CMJQ99(B (cdot ---> cdotp)
+    v 1.49 2005/10/06
+        ceo.sty 2005/10/05 $B$KBP1~(B
+          \sankaku ---> \EMsankaku
+          $B5U$K(B \maru $B$O(B emath.sty $B$N$b$N$rM%@h$7!$(Bceo.sty $B$N$b$N$O(B \ceomaru
+    v 1.50 2005/10/09
+        \marudashref: \maru $B$,(B \arMaru $B$J$I$N>l9g$K$D$$$F=$@5!J(B\text... $B$rIU2C!K(B    v 1.51 2005/10/23
+        \maruKata, \Kakko : $B?7@_!J(BemathUtf $B8_49$N$?$a!K(B
+    v 1.54 2005/10/31
+        \nagamaruyokoHankei, \nagamarutateHankei : $BC10LIU$ND9$5$r0z?t$K(B
+    v 1.55 2005/11/17
+        \bunsuu $B$K(B \protect $B$r$+$V$;$k(B
+    v 1.56 2005/12/05
+        \houteisiki $B$K(B (W=..) $B%*%W%7%g%s(B
+    v 1.57 2005/12/16
+        \ifsymMaru : ifsym.sty $B$rITMW$H$9$k(B
+    v 1.58 2006/01/30
+        \EMparbox : \hakobanpush, \hakobanpop $B$rJd$&(B
+    v 1.59 2006/02/15
+        \ltxlabel : \atag $B$HJ;MQ$9$k(B \label $B$O(B \ltxlabel $B$NJ}$,NI$$(B
+    v 1.60 2006/02/26
+        \everyzahyou $B?7@_!'(Bzahyou$B4D6-Fb$G(B Kaiotu$B4D6-$r;HMQ$9$k>l9g$J$I$X$NBP1~(B
+    v 1.61 2006/04/06
+        \retu\langle....\rangle
+    v 1.62 2006/04/15
+        \zettaiti $B$K(B [kagi=..,senhaba=..] $B%*%W%7%g%s(B
+    v 1.63 2006/05/16
+        \kagenhou : <prei=..> $B$G!$<0$KA0CVJ8(B
+    v 1.64 2006/05/29
+        \zyohou : $B78?t$K(B \sqrt $B$J$I$r5vMF(B
+    v 1.65 2006/06/09
+        \ltxitem $B$NDj5A$r(B emathAe.sty $B$+$i0\4I(B
+    v 1.66 2006/07/19
+        \Bcdot : bold \cdot
+    v 1.67 2006/07/19
+        \Add $B$NDj5A$r:o=|(B --->BBS 4877
+    v 1.68 2006/08/19
+        \emMaruKata $B$J$I(B
+    v 1.69 2006/08/22
+        \ltxitem $B$NDj5A$r(B emathEc.sty $B$K0\4I(B
+    v 1.70 2006/12/17
+        \kagenhou : <M>$B$r(B key $B$H$7$F07$&(B
+        \everzahyou : $B=i4|2=(B
+    v 1.71 2006/12/29
+        \csyndiv : $BJ8;z78?t$NAH$_N)$F=|K!(B
+    v 1.72 2007/01/03
+        \hirei : $BHfNc$N5-9f(B
+        \vmatrix $B$KBP$7$F$b(B \pmatrix $B$HF1MM$K9T%T%C%A$NJQ99(B
+    v 1.73 2007/01/06
+        \EMmatrixsep
+    v 1.75 2007/01/17
+        \houteisiki $B$H(B mawarikomi$B4D6-Fb$G;HMQ$9$k:]$N0LCVD4@0(B
+    v 1.76 2007/01/17
+        \houteisiki : \ltxhouteisiki $B$H2~L>$7!$(B\let\houteisiki\ltxhouteisiki
+    v 1.77 2007/02/09
+        \eqref : $BKvHx(B \relax $B$r=|5n(B
+    v 1.78 2007/02/28
+        \EMpercentchar
+    v 1.79 2007/04/05
+        \emgauss
+        \saidaikouyakusuu : $B0z?t$K(B0$B$r4^$`>l9g(B
+    v 1.80 2007/06/06
+        \eqref : \edef ---> \EMedef
+        \EMpower#1^#2 : $B?7@_(B
+        \ruizyoukon : $BJ?J}:,$b2D!$(B\vphantom{b}
+        \EMnotni, EMnotin
+        \EMvarnotni, EMvarnotin
+        $B%m!<%I%*%W%7%g%s(B notAMS
+        \amshouteisiki : (W=..) $B%*%W%7%g%s$rM-8z$K(B
+    v 1.81 2007/06/10
+        \houteisiki : js*.cls $B$KBP1~(B
+    v 1.82 2007/06/11
+        \amshouteisiki : js*.cls $B$KBP1~(B
+    v 1.83 2007/06/27
+        \EMvphantom : hakobanpush, pop
+    v 1.84 2007/06/29
+        \EMvphantom : $BD4@0(B
+        \zettaiti, \emabs : \DeclareRobustCommand
+    v 1.85 2007/07/27
+        \bsityuu : \ensuremath $B$r$+$V$;$k(B
+        \neqq : \DeclareRobustCommand
+    v 1.86 2007/08/31
+        \ngyouretu
+        \Retube
+        \checkedaenum : edaenumerate$B4D6-Fb$K$"$k$+H]$+$N%A%'%C%/(B
+    v 1.87 2007/09/30
+        \syuten --> \emsyutten
+        \degree $B$N07$$$r=$@5(B
+        \EMmathruby
+    v 1.88 2007/11/03
+        \@percent $B$J$I!$(BemathC.sty $B$K0\4I(B
+        \kagenhou : $B:8JU$H1&JU$rF~$lBX$($k(B <reverse> $B%*%W%7%g%s(B
+    v 1.89 2007/12/01
+        \bekutoru : \bm $B$KBP1~(B
+    v 1.90 2007/12/23
+        \preEq $B?7@_(B
+        \EMhouteisiki $B?7@_(B
+        \kotae : $B=$@5(B
+    v 1.91 2007/12/23
+        \kotae*
+        \houteisikiWidth
+    v 1.92 2008/01/04
+        preEq$B4D6-(B : alignat$B4D6-$rMQ$$$k(B
+        \@ifclassloaded{jsarticle}{..}{..}
+    v 1.93 2008/01/10
+        \eqref : hyperref $B$KBP1~(B (\ltxref $B;HMQ(B) (saloon #528)
+    v 1.94 2008/01/22
+        \teisei, \Teisei : emathPh.sty $B$N$b$N$K0lK\2=(B
+    v 1.95 2008/01/26
+        \kotae, \owari : *$BIU$-$G!$JL9TN)$F?t<0$G$b9TKv$KG[CV(B
+    v 1.96 2008/03/29
+        \newcounter{marginpar}
+    v 1.97 2008/05/31
+        \EMworkfiledir
+        \EMjmath: $B?t<09T4V$r(B jarticle $B$N;EMM$KLa$9!#(B
+    v 1.98 2008/07/02
+        \EMnagamaru*
+    v 1.99 2008/07/14
+        \EMleqno $B@0Hw(B
+    v 2.00 2008/08/11
+        \tbunsuu: textstyle
+    v 2.01 2008/08/19
+        \dashtag, \dashref
+    v 2.02 2008/09/27
+        \bekutoru, \beku: \DeclareRobustCommand (BBS #7545)
+        \gyouretu: <gyoukan=..> $B%*%W%7%g%s(B
+    v 2.03 2008/10/11
+        \dashtag: fleqn$B%*%W%7%g%s$N$D$+$J$$(Bequation (BBS #7603)
+    v 2.04 2008/11/02
+        hyperref.sty $B$H$NJ;MQ$K$D$$$F!$7Y9p$r=PNO(B (BBS #7655)
+    v 2.05 2008/11/26
+        \gyouretu: \DeclareRobustCommand
+    v 2.06 2009/01/17
+        \bsityuubox
+        \mathstrut: \DeclareRobustCommand
+        $BJL9TN)$F?t<0$NKAF,$K(B \advance\abovedisplayskip3pt (Q&A 52569)--$BJ]N1(B
+    v 2.07 2009/02/23
+        numcases*$B4D6-(B
+    v 2.08 2009/03/08
+        \trenritu
+    v 2.09 2009/03/15
+        \normalsize $B$h$j>.$5$$%5%$%:$K$*$1$k(B $B?t<09T4VD4@0(B
+    v 2.10 2009/04/10
+        \vabs $B$,(B ceo.sty $B$H>WFM$9$k$3$H$N2sHr(B (BBS #8066)
+    v 2.11 2009/06/09
+        \csyndiv: 1$B<!$N78?t$,(B 1 $B$G$J$$>l9g(B (BBS #8169)
+    v 2.12 2009/06/20
+        \zwmaru: \DeclareRobustCommand (BBS #8219)
+    v 2.13 2009/09/02
+        \suuretu: $B5l$KLa$9(B (BBS #8333)
+    v 2.14 2009/09/08
+        \bsityuu: \Robust
+    v 2.15 2009/09/19
+        \gyouretu $BEy(B: <gyoukan=..> \vspace $B$K$h$k(B
+    v 2.16 2009/12/12
+        \bekutoru: \displaystyle $B$r6I=j2=(B (BBS #8472)
+    v 2.17 2010/01/20
+        \pushlasteqnum, \poplasteqnum: 
+        $B!!!!LdBjJ8$N:G=*(B equation $B$r(B Kaitou$B4D6-$K0z$-7Q$0(B
+    v 2.19 2010/02/20
+        \poplasteqnum: hyperref $B$X$NBP1~(B
+    v 2.20 2010/03/11
+        \eqref: showkeys.sty $B$H$NJ;MQ(B
+    v 2.21 2010/03/13
+        \emKuroKaku: utf $B$KG[I[Cf;_$K$H$b$J$&A<CV(B
+    v 2.22 2010/03/24
+        \emKuroMaru
+    v 2.24 2010/04/04
+        showkeys.sty $BBP:v!'(B\eqref $B$NJ}$K$OI=<($7$J$$(B
+    v 2.25 2010/04/09
+        \shortintertext
+    v 2.26 2010/04/27
+        \getflext
+    v 2.29 2010/06/21
+        \sTasuki (BBS #8924)

@@ -1,0 +1,44 @@
+\documentclass[a4j]{jarticle}
+\usepackage{emath}
+\usepackage{showexample}
+
+\makeatletter
+  \DeclareSymbolFont{txsymbols}{OMS}{txsy}{m}{n}%
+  \DeclareSymbolFont{ceosymbols}{OMS}{ceo}{m}{n}
+  \DeclareSymbolFont{ceoletters}{OML}{ceo}{m}{it}
+  \DeclareSymbolFont{EMmatha}{U}{matha}{m}{n}
+%
+  \DeclareMathSymbol{\txLeftarrow}{\mathrel}{txsymbols}{40}%
+  \DeclareMathSymbol{\txRightarrow}{\mathrel}{txsymbols}{41}%
+    \DeclareMathSymbol{\ceoLeftarrow}{\mathrel}{ceosymbols}{"28}
+    \DeclareMathSymbol{\ceoRightarrow}{\mathrel}{ceosymbols}{"29}
+\DeclareMathSymbol{\abxLeftarrow}             {3}{EMmatha}{"F0}
+\DeclareMathSymbol{\abxRightarrow}            {3}{EMmatha}{"F1}
+%
+        \DeclareMathSymbol{\varx}{\mathalpha}{ceoletters}{"D1}
+        \DeclareMathSymbol{\vary}{\mathalpha}{ceoletters}{"D2}
+\makeatother
+
+\begin{document}
+\begin{showEx}(.7,.24){\cmd{Longleftrightarrow}}
+\begin{tabular}{lc}
+cm & $x \Longleftrightarrow y$\\
+tx & 
+  \let\Rightarrow\txRightarrow
+  \let\Leftarrow\txLeftarrow
+  $x \Longleftrightarrow y$ \\
+abx & 
+  \let\Rightarrow\abxRightarrow
+  \let\Leftarrow\abxLeftarrow
+  $x \Longleftrightarrow y$ \\
+ceo & 
+  \let\Rightarrow\ceoRightarrow
+  \let\Leftarrow\ceoLeftarrow
+  $x \Longleftrightarrow y$ \\
+ceo & 
+  \let\Rightarrow\ceoRightarrow
+  \let\Leftarrow\ceoLeftarrow
+  $\varx \Longleftrightarrow \vary$ \\
+\end{tabular}
+\end{showEx}
+\end{document}

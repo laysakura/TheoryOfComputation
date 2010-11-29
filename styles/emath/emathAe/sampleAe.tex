@@ -1,0 +1,215 @@
+\documentclass{jarticle}
+\usepackage{emath}
+\usepackage{emathR}
+\usepackage{emathEy}
+\usepackage{emathAe}
+\usepackage{showexample}
+
+\def\showExP#1#2{%
+    \begin{itembox}{#1}
+    \verbatiminput{#2}
+    \end{itembox}
+
+\clearpage
+
+    \begin{shadebox}
+    \begin{minipage}[t][.98\textheight]{.98\linewidth}
+    \input{#2}
+    \end{minipage}
+    \end{shadebox}
+}%
+
+\begin{document}
+\title{解答を巻末に（環境形式）\\
+emathAe.sty {\normalsize ver.0.36}\\使用例}
+\author{tDB}
+\date{2004/07/22}
+
+\maketitle\thispagestyle{empty}
+\begin{abstract}%
+\parindent1zw%
+数学の問題集で解答を巻末にまとめるためのスタイルファイルです．
+\LaTeX2e が前提です．
+
+このマクロ集のマクロについてのご質問，バグ報告，修正・追加の提案等は
+\begin{center}
+http://emath.s40.xrea.com/
+\end{center}
+の掲示板へどうぞ。
+\end{abstract}
+
+\tableofcontents
+
+\pagebreak
+
+\section{はじめに}
+このスタイルファイルでは，問題と解答を \textsf{enumerate} 環境で配列する．
+すなわち
+\begin{screen}
+\begin{jquote}
+\begin{verbatim}
+    \begin{enumerate}
+        \item 1番の問題文
+              1番の解答文
+        \item 2番の問題文
+              2番の解答文
+        \item 3番の問題文
+              3番の解答文
+    \end{enumerate}
+\end{verbatim}
+\end{jquote}
+\end{screen}
+と記述したソースをタイプセットしたとき，
+第1部に問題部分を集め，
+\begin{shadebox}
+\begin{jquote}
+\begin{verbatim}
+           【第1部・問題】
+        1. 1番の問題文
+        2. 2番の問題文
+        3. 3番の問題文
+\end{verbatim}
+\end{jquote}
+\end{shadebox}
+その後ろに解答部分を集める．
+\begin{shadebox}
+\begin{jquote}
+\begin{verbatim}
+           【第2部・解答】
+        1. 1番の解答文
+        2. 2番の解答文
+        3. 3番の解答文
+\end{verbatim}
+\end{jquote}
+\end{shadebox}
+すなわち，問題と解答を分離することを目指しています．
+
+\clearpage
+
+\section{基本的な使用法}
+まずは，基本的な使用法からご紹介しましょう．
+下のリストをタイプセットすると，次ページの結果が得られます．
+
+\showExP{基本例}{example/ex01}
+
+\clearpage
+
+すなわち，記述の手順は
+\begin{enumerate}[1.\ ]
+    \item \verb/\openKaiFile/\\
+        で，解答部分をまとめる補助ファイルを用意します．
+        補助ファイルは，ソースファイルと同一名で拡張子が \texttt{.kai}
+        となります．
+    \item 問題・解答を \textsf{enumerate}環境で記述します．
+        その際，解答は各問題毎に \textsf{Kaitou} 環境内に記述します．
+    \item \verb/\closeKaiFile/\\
+        で，補助ファイルを閉じ，
+    \item \verb/\inputKaiFile/\\
+        で解答ファイルを読み込み，解答部を作成します．
+\end{enumerate}
+\clearpage
+
+\section{解答部の小問を横に配置}
+問題部の小問を \textsf{edaenumerate} 環境で横に配置しても，
+解答部は普通の\\
+\textsf{enumerate} 環境で縦に配置されます．
+
+小問の解答部を \textsf{edaenumerate} 環境で横に配置するには，
+大問の解答部に 
+
+\begin{screen}
+\begin{verbatim}
+　　\setKaienum{edaenumerate}
+\end{verbatim}
+\end{screen}
+その例です．下の例をタイプセットした結果が次頁です．
+
+\showExP{解答部を横配置}{example/ex02}
+
+\section{\textsf{emathR.sty}との併用}
+既に作成済みの独立してタイプセットできる複数のファイルを \textsf{emathR.sty}
+を用いて読み込むことも出来ます．その例です．
+
+下の例では，独立してタイプセットできる2つのファイル
+\begin{verbatim}
+    tan03.tex, sin03.tex
+\end{verbatim}
+を読み込んで，問題部分と解答部分を分離しています．
+タイプセットした結果は次頁です．
+
+\showExP{\textsf{emathR}との併用}{example/ex03}
+
+\section{考査問題に答えを埋め込む}
+テスト問題の印刷において，\textsf{Kaitou}環境内の解答を，
+ロードオプション
+\begin{jquote}
+\begin{verbatim}
+maskAnstrue
+maskAnstfalse
+\end{verbatim}
+\end{jquote}
+を切り替えることで，
+\begin{jquote}
+\begin{verbatim}
+印刷しない
+印刷する
+\end{verbatim}
+\end{jquote}
+を切り替えることができます。
+
+具体例として test フォルダに
+\begin{enumerate}[(1)]
+  \item 2枚組の定期テスト問題（問題用紙に解答も記述させる） test.tex
+  \item 問題用紙と解答用紙を分ける実力テスト zitute.lzh
+\end{enumerate}
+の例を置いてあります。
+
+後者のパッケージには
+\begin{jquote}
+\begin{verbatim}
+　　zitute2.tex 問題用紙
+　　zitute2a1.tex 解答用紙（１）
+　　zitute2a2.tex 解答用紙（２）
+　　　ans4.tex, ans5.tex, ans6.tex
+　　　　解答用紙（２）の各問題の解答で 
+　　　　zitute2a2.tex によって読み込まれるサブファイル
+\end{verbatim}
+\end{jquote}
+が含まれています。
+
+\if0
+\section{\textsf{emathA.sty} との比較}
+既に同種のスタイルファイルとして \textsf{emathA.sty} を作成していますが，
+あえて似たスタイルファイルを作成した最大の理由は，
+\textsf{emathA} では解答部分を \cmd{kaitou}コマンドの引数として
+記述していました．解答部分が長くなるとコマンドではなく，環境内に記述したいと
+いうことです．
+
+ただし，\textsf{emathA} は，
+\textsf{enumerate}環境だけではなく，\textsf{newtheorem}で定義された環境にも
+適用できていましたが，\textsf{emathAe} は \textsf{enumerate}環境だけにしか
+用いることが出来ません．
+また，\textsf{emathA}では，解答部分を追い込み形式で詰めこむことが出来ましたが，
+\textsf{emathAe} では不可能です．
+
+\section{\cmd{kaitou}コマンドの併用}
+\textsf{emathAe}では，\cmd{kaitou}コマンドを\textsf{Kaitou}環境に
+翻訳して処理する機能が付いています．すなわち
+\begin{screen}
+\begin{verbatim}
+    \kaitou{.....}
+\end{verbatim}
+\end{screen}
+という記述は
+\begin{screen}
+\begin{verbatim}
+    \begin{Kaitou}
+    .....
+    \end{Kaitou}
+\end{verbatim}
+\end{screen}
+という記述として扱われます．従って，既に \textsf{emathA} 用に作られたファイルを
+そのまま \textsf{emathAe} で処理することが可能です．
+また，\textsf{Kaitou}環境と\cmd{kaitou}コマンドを併用することも可能です．
+\fi
+\end{document}

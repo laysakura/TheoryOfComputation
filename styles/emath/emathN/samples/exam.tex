@@ -1,0 +1,142 @@
+% 年度 1998
+% 出題 0032 電気通信大学 後期
+% 検索キーワード  コンピュータ
+% 科目 数Ａ
+
+\documentclass[a4j,fleqn]{jarticle}
+\usepackage{alltt}
+\usepackage{emathN}
+\usepackage{emathOld}
+\usepackage{hako}
+\pagestyle{empty}
+
+\begin{document}
+\hakosyokika
+\begin{caprm}
+\begin{nidan}{29em}{%
+\small
+\abovedisplayskip0pt
+\belowdisplayskip0pt
+\noindent
+\begin{caprm}
+\begin{nagarezu}[.45](32em,37\baselineskip)%
+  \tansi{はじめ}%
+  \sitahe%
+  \nyuusyuturyoku{%
+  \parbox{8zw}{\ $S(1),\cdots,S(5)$の値を入力}}%
+  \sitahe
+  \syori{$J=1$}%
+  \sitahe[label1]%
+  \begin{handan}<.6><1.2>{　$\strut J>4$ ?　}%
+    \begin{migibunki}%
+      \migihe<n>(50pt)"yes"%
+      \sitahe%
+      \tansi{おわり}%
+    \end{migibunki}%
+    \begin{sitabunki}%
+      \sitahe"No"
+    \syori{\parbox{5zw}{\vspace{-.4\baselineskip}%
+      \begin{align*}
+        M&=J\\ K&=J+1
+        \end{align*}}}%
+    \sitahe[label2]%
+    \begin{handan}<.6><1.2>{　$\strut K>5$ ?　}%
+    \begin{hidaribunki}%
+      \hidarihe<n>"no"%
+      \sitahe
+        \begin{handan}<.6><1.2>{　$\strut S(M)<S(K)$ ?　}%
+          \begin{sitabunki}%
+            \sitahe"no"%
+            \syori{$M=K$}%
+            \sitahe[matome1]%
+            \pushcurP
+          \end{sitabunki}%
+          \begin{migibunki}%
+            \migihe<n>"yes"%
+            \sitahe<n>`matome1'
+            \hidarihe`matome1'
+          \end{migibunki}%
+        \end{handan}%
+        \popcurP
+        \syori{K=K+1}%
+        \sitahe<n>%
+        \hidarihe<n>(60pt)%
+        \uehe<n>`label2'%
+        \migihe`label2'%
+      \end{hidaribunki}%
+      \begin{migibunki}%
+        \migihe<n>(50pt)"yes"%
+        \sitahe
+      \syori{\parbox{5zw}{\vspace{-.4\baselineskip}%
+        \begin{align*}
+            &B=S(J)\\
+            &S(J)=S(M)\\
+            &S(M)=B
+          \end{align*}}}%
+        \sitahe
+        \nyuusyuturyoku{%
+        \parbox{8zw}{$S(1),\cdots,S(5)$の値を表示}}%
+      \Put\migityuuten(0,0)[l]{ $\cdots\cdots(\ast)$}%
+        \sitahe
+        \syori{$J=J+1$}%
+        \sitahe
+        \hidarihe<n>(200pt)%
+        \uehe<n>`label1'%
+        \migihe`label1'%
+      \end{migibunki}%
+    \end{handan}%
+    \end{sitabunki}%
+  \end{handan}%
+\end{nagarezu}%
+\end{caprm}
+}%
+下のBASICによるプログラムは，
+\begin{jquote}
+$S(I)$が偶数のとき\\
+　$S(I+1)=S(I)/2$ \\
+$S(I)$が奇数のとき\\
+　$S(I+1)=3\times S(I)-1$
+\end{jquote}
+という規則に従う数列を生成する．
+\begin{alltt}
+10 DIM S(10)
+20 N=6:I=1
+30 S(I)=N
+40 PRINT S(I)
+50 IF \Hako THEN N=N/2
+　 ELSE N=3*N-1
+60 I=I+1
+7O IF N<>1 GOTO 30
+8O END
+\end{alltt}
+(注意:DIM S(10)という命令は，$S(1)，S(2)，\cdots\cdots，S(10)$という配列を
+使えるようにするためのものである．\texttt{N<>1}は$N\neqq 1$を表す．)
+\end{nidan}
+\begin{Enumerate}[(1)]
+  \item プログラム中の空欄に入るべき式を答えよ．ただし，
+    正の数が与えられたとき，その小数部分を切り捨てた整数を求める関数INTを
+    用いてよい．
+  \item このプログラムにより表示される数を，表示される順にすべて答えよ．
+\end{Enumerate}
+
+次に，このプログラムで得られた数列のうち，S(1)からS(5)までの値を
+入力として，上の流れ図に示される手順で計算を行う．
+\begin{Enumerate*}
+  \item 
+    \begin{nidan}{21zw}{%
+      \begin{tabular}[t]{|l|*{5}{c|}} \hline
+          & S(1) & S(2) & S(3) & S(4) & S(5) \\\hline
+      2回目 &&&&& \\\hline
+      4回目 &&&&& \\\hline
+      \end{tabular}
+    }\noindent
+    図中の$(*)$を2回目と4回目に実行するときに表示される
+    $S(1)，S(2)，\cdots\cdots，S(5)$の値をそれぞれ求め，
+    右の表の形で解答欄(省略)に記入せよ．
+    \end{nidan}
+  \item 次の空欄に当てはまる言葉を答えよ．
+    「この流れ図による処理は，一般に，入力として与えられた数列
+    $S(1),~S(2),~\cdots\cdots,~S(5)$を\Hako に並べ替える働きをする．
+\end{Enumerate*}
+\end{caprm}
+\end{document}

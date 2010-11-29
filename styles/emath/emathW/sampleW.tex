@@ -1,0 +1,224 @@
+\documentclass[fleqn]{jarticle}
+  \usepackage{emathW}
+  \usepackage{emathAe}
+  \usepackage{showexample}
+
+\begin{document}
+\openKaiFile
+%\kaikaigyousuizyun{0}
+このパッケージには
+\begin{jquote}
+  正整数の加減乗除算\\
+  整数係数整式の乗除算
+\end{jquote}
+を筆算形式で表すためのコマンドが6種類定義されています．
+\begin{verbatim}
+    \tasizan    正整数のたしざん
+    \hikizan    正整数のひきざん
+    \kakezan    正整数のかけざん
+    \warizan    正整数のわりざん
+    \izyouhou   整数係数整式の乗法
+    \izyohou    整数係数整式の除法
+\end{verbatim}
+
+この他
+\begin{verbatim}
+    \soinsuubunkai  素因数分解
+    \gozyohou       互除法
+\end{verbatim}
+があります。
+\newpage
+
+\section{基本的使用法}
+まず，基本的な使用法を紹介します．
+\begin{Enumerate}[\bfseries 例 1.]
+\item $正整数+正整数$
+
+  \begin{showEx}(.54,.4){たしざん}
+    \tasizan{34}{29}
+  \end{showEx}
+
+\item $正整数-正整数$
+
+  \begin{showEx}(.54,.4){ひきざん}
+    \hikizan{34}{29}
+  \end{showEx}
+
+\item $正整数 \times 正整数$
+  
+  \begin{showEx}(.54,.4){かけざん}
+    \kakezan{17}{12}
+  \end{showEx}
+
+\item $正整数 \div 正整数$
+
+  \begin{showEx}(.54,.4){わりざん}
+    \warizan{1234}{98}
+  \end{showEx}
+
+\clearpage
+
+\item 整数係数整式の乗法
+
+整式の表しかたは，係数を降べき順にコンマで区切って並べます．
+係数が0で飛んでいるところは，0を明記する必要があります．
+（下の例では，0を省略していますが，
+この場合はコンマが複数続くことになります．）
+\begin{jquote}
+\begin{minipage}{16zw}
+\begin{itembox}{整式の乗法}
+\verb|\izyouhou{1,,-3,4}{9,8}|
+\end{itembox}
+\end{minipage}\vspace{1ex}\par
+\qquad$\longrightarrow$\quad
+\begin{minipage}{18zw}
+\begin{shadebox}
+$\izyouhou{1,,-3,4}{9,8}$
+\end{shadebox}
+\end{minipage}
+\end{jquote}
+整式の文字は，デフォルトでは $x$ ですが，これを変更することができます．
+その方法は次節で紹介します．
+
+\item 整数係数整式の除法
+\begin{jquote}
+\begin{minipage}{16zw}
+\begin{itembox}{整式の除法}
+\verb|\izyohou{9,-8,,6}{1,-2}|
+\end{itembox}
+\end{minipage}\vspace{1ex}\par
+\qquad$\longrightarrow$\quad
+\begin{minipage}{16zw}
+\begin{shadebox}
+$\izyohou{9,-8,,6}{1,-2}$
+\end{shadebox}
+\end{minipage}
+\end{jquote}
+\clearpage
+
+\item 素因数分解
+
+\begin{showEx}{\cmd{soinsuubunkai}}
+\soinsuubunkai{108}
+\end{showEx}
+
+（注）まぎらわしいですが，\textsf{emath.sty} には
+\cmd{Soinsuubunkai}があります。
+
+\begin{showEx}(.5,.44){\cmd{Soinsuubunkai}}
+\Soinsuubunkai{108}\kotae
+$108=\kotae$
+\end{showEx}
+
+\item 二つの自然数の最大公約数を求める互除法
+
+\begin{showEx}{\cmd{gozyohou}}
+\gozyohou{108}{60}
+\end{showEx}
+\end{Enumerate}
+\clearpage
+
+\section{整式の文字変更}
+整式の文字はデフォルトでは $x$ となっています．
+これを変更するには，\texttt{[.]} オプションを用います．
+
+\begin{Enumerate*}
+\item 文字を $y$ に変更
+\begin{jquote}
+\begin{minipage}{17zw}
+\begin{itembox}{文字の変更}
+\verb|\izyouhou[y]{1,,-3,4}{9,8}|
+\end{itembox}
+\end{minipage}\vspace{1ex}\par
+\qquad$\longrightarrow$\quad
+\begin{minipage}{17zw}
+\begin{shadebox}
+$\izyouhou[y]{1,,-3,4}{9,8}$
+\end{shadebox}
+\end{minipage}
+\end{jquote}
+
+\item 除法でも同様
+\begin{jquote}
+\begin{minipage}{17zw}
+\begin{itembox}{\texttt{[a]} オプション}
+\verb|\izyohou[a]{1,,,,-1}{1,-1}|
+\end{itembox}
+\end{minipage}\vspace{1ex}\par
+\qquad$\longrightarrow$\quad
+\begin{minipage}{16zw}
+\begin{shadebox}
+$\izyohou[a]{1,,,,-1}{1,-1}$
+\end{shadebox}
+\end{minipage}
+\end{jquote}
+\end{Enumerate*}
+\clearpage
+
+\section{問題部分のみ表示}
+問題部分のみを表示させるには，\verb+<M>+オプションを付加します。
+
+\begin{Enumerate}[\bfseries 例 1.]
+\item $正整数 \times 正整数$
+
+\begin{showEx}{\cmd{kakezan}}
+$\kakezan<M>{17}{12}$
+\end{showEx}
+
+\item $正整数 \div 正整数$
+
+\begin{showEx}{\cmd{warizan}}
+$\warizan<M>{17}{12}$
+\end{showEx}
+\end{Enumerate}
+
+\section{\texttt{emathA.sty} との併用}
+解答を巻末にまとめるためのスタイルファイル \texttt{emathA.sty}
+を使用するとき，
+\begin{verbatim}
+  \item $123 \times 45$
+    \kaitou{$\kakezan{123}{45}}
+\end{verbatim}
+と書くのは二度手間ですね．\verb/\kakezan/ 等に \texttt{<A>} オプションを
+つけてこの無駄を排することができます．
+
+\begin{itembox}{\texttt{<A>} オプション}
+\begin{verbatim}
+\openKaiFile
+次の計算をせよ．
+\begin{enumerate}[(1)]
+  \item $\kakezan<A>{12}{13}$
+  \item $\warizan<A>{987}{12}$
+  \item $\izyouhou<A>{1,2,3}{9,8}$
+  \item $\izyohou<A>{9,-8,7,-6}{1,-2,3}$
+\end{enumerate}
+\closeKaiFile
+\clearpage
+\centerline{【解答】}
+\inputKaiFile
+\end{verbatim}
+\end{itembox}
+と記述することで，
+\begin{jquote}
+  問題部分は次ページのように通常の表現で問題が記述され，\\
+  解答部分は次々ページのように筆算形式で解答が記述されます．
+\end{jquote}
+\clearpage
+
+\begin{itemshadebox}{問題部分}
+次の計算をせよ．
+\begin{enumerate}[(1)]
+  \item $\kakezan<A>{12}{13}$
+  \item $\warizan<A>{987}{12}$
+  \item $\izyouhou[t]<A>{1,2,3}{9,8}$
+  \item $\izyohou<A>{9,-8,7,-6}{1,-2,3}$
+\end{enumerate}
+\end{itemshadebox}
+\closeKaiFile
+\clearpage
+\begin{itemshadebox}{解答部分}
+\centerline{【解答】}
+\inputKaiFile
+\end{itemshadebox}
+\end{document}
+

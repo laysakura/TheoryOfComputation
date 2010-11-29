@@ -1,0 +1,86 @@
+\documentclass[a4j]{jarticle}
+\usepackage{emathB}
+\usepackage{showexample}
+
+\begin{document}
+\section{\cmd{Fsyndiv}の揃え}
+\subsection{デフォルトの揃えを中央に変更}
+\cmd{Fsyndiv}において，係数を右揃えにしていましたが，
+分数と整数を縦に揃えるには右揃えよりも，
+中央揃えが適切と思われますから，
+デフォルトでは，中央揃えとするように仕様を変更しました。
+\begin{showEx}(.54,.4){デフォルトは中央揃え}
+$\Fsyndiv{3,1,0,2}{-2/3}$
+\end{showEx}
+
+\subsection{右揃えにするオプション}
+右揃えにするには，\verb+<soroe=r>+を附加します。
+
+\begin{showEx}(.54,.4){\texttt{<soroe=r>}}
+$\Fsyndiv<soroe=r>{3,1,0,2}{-2/3}$
+\end{showEx}
+
+縦に揃ってないですか ？
+
+これは，\TeX において，分数と整数を右揃えにする仕様です。
+それを見ていただきましょう。
+
+\begin{showEx}(.54,.4){\textsf{array}環境の右揃え}
+$\begin{array}{rr}
+  -2 & 2 \\
+  \bunsuu25 & \bunsuu25
+\end{array}$
+\end{showEx}
+
+\TeX は，これで「右揃え」をした，といっているのです。
+
+数字を揃えたい，というご希望が出そうなので
+\verb+<soroe=R>+オプションを用意しました。
+
+\begin{showEx}(.54,.4){\texttt{<soroe=R>}}
+$\Fsyndiv<soroe=R>{3,1,0,2}{-2/3}$
+\end{showEx}
+
+お気付きのことと思いますが，$\bunsuu{14}{9}$のように，
+分子・分母の桁数が異なるときは中央揃えが標準ですが，
+\verb+<soroe=r/R>+オプションをつけたときは，ここも
+右揃えにこだわっています。
+\newpage
+
+\subsection{答行の縦位置}
+答えの行に分数が含まれるとき，その分数と上の横罫線がついてしまいます。
+これは\textsf{array}環境の仕様で，\verb+\arraystretch+を変更するなどの
+対策もあります。
+
+\begin{showEx}(.54,.4){\cmd{arraystretch}の変更}
+\def\arraystretch{1.33}%
+$\Fsyndiv{3,1,0,2}{-2/3}$
+\end{showEx}
+
+ただ，分数の上下の空き具合がいまひとつ，ということで\cmd{Fsyndiv}に
+\verb+<kotaegyousityuu=..>+オプションをつける方法も用意しました。
+
+\begin{showEx}(.54,.4){\texttt{<kotaegyousityuu=\bsityuu>}}
+$\Fsyndiv<kotaegyousityuu=\bsityuu>%
+  {3,1,0,2}{-2/3}$
+\end{showEx}
+
+ここで登場している\cmd{bsityuu}は，分数$\bunsuu12$の高さ，深さに
+それぞれ\texttt{4pt, 3pt}を附加した支柱です。
+
+上の例では，3行目の答え行のみに支柱を立てていますが，
+3行全てに支柱を立てるオプションは\verb+<gyousityuu=..>+です。
+
+\begin{showEx}(.54,.4){\texttt{<gyousityuu=\bsityuu>}}
+$\Fsyndiv<gyousityuu=\bsityuu>%
+  {3,1,0,2}{-2/3}$
+\end{showEx}
+
+前節の揃えオプションとの併用も可能です。
+
+\begin{showEx}(.54,.4){縦横オプション}
+$\Fsyndiv
+  <kotaegyousityuu=\bsityuu,soroe=R>%
+  {3,1,0,2}{-2/3}$
+\end{showEx}
+\end{document}

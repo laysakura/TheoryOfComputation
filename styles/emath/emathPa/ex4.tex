@@ -1,0 +1,24 @@
+\documentclass{jarticle}
+\usepackage{emathPa}
+\usepackage{emathPp}
+
+\begin{document}
+\begin{zahyou}[ul=10mm](-3,5)(-2,4)
+  \zahyouMemori[g]%
+  \def\Fx{(X*X+.5)/sqrt(2)}
+  \YKinziOresen\Fx\xmin\xmax{.05}\oresen
+  \YKinziOresen\Fx{-1/sqrt(2)}{1/sqrt(2)}{.05}\nurisen
+  \edefappend\nurisen{(0,0)(-.707,.707)}
+  \YGurafu(.1)(.05)\Fx\xmin\xmax
+  \rtenretu*{E(1,-45);F(1,45)}
+  \def\OO{(1,-1)}
+  \kTyokusen\OO{-45}{}{}\Put\migiT[se]{$X$}
+  \kTyokusen\OO{45}{}{}\Put\migiT[e]{$Y$}
+  \begin{azahyou}[\OO]\E\F
+    \azTenretutoz\oresen\oresen
+    \azTenretutoz\nurisen\nurisen
+    \clipDrawline\oresen
+    \Nuritubusi\nurisen
+  \end{azahyou}
+\end{zahyou}
+\end{document}

@@ -1,0 +1,48 @@
+%%% 考査用紙スタイル Ｂ４横三段組 サンプルファイル
+%%% 両面印刷の例です．
+
+\documentclass[landscape,b4paper,fleqn,twoside]{jarticle}%twoside オプション
+\usepackage[papersize]{emath}%
+\usepackage{b4yoko3}%
+
+\begin{document}
+\testname{\ 1学年『数学I』二学期中間考査\ \ 1998.10.22(木)\ }%
+\prpagetrue
+\pageran{\thepage/\pageref{lastpage}}% ページ番号の出力様式を変更してみます．
+                                     % 総ページ数を必要とするときは，
+                                     % 最終ページで \label{lastpage} として
+                                     % ラベル lastpage を定義します．
+\begin{sheet}
+  \begin{column}
+    \item aaa
+  \end{column}
+  \begin{column}
+    \item aaa\vspace{10cm}
+    \item bbb
+  \end{column}
+  \begin{column}
+    \item ccc
+  \end{column}
+\end{sheet}
+
+% 裏面です．
+%\mondaibangou{1}%    裏面が表面の解答である場合は，問題番号を1から振り直す
+%                     必要があります．そのためのコマンドです．
+
+\danhaba{0.275}{0.275}{0.45}% 裏面は段の横巾を不均等にしてみます．
+                            % 三つの段の横巾比率を 和が1になるような数値で
+                            % 与えます．
+\begin{sheet}
+  \begin{column}
+    \item ddd
+  \end{column}
+  \begin{column}
+    \item eee
+  \end{column}
+% \begin{column}%     裏面の3段目が不要のときは省略することができます．
+%   \item fff
+% \end{column}
+\end{sheet}%
+\label{lastpage}%     全ページ情報をヘッダなどで使用するときは
+                %     lastpage という名前のラベルを利用します．
+\end{document}

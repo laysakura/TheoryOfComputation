@@ -1,0 +1,42 @@
+% emathCap.sty by tDB (emath@nifty.com)
+%
+\NeedsTeXFormat{LaTeX2e}%
+\ProvidesPackage{emathCap}[2009/02/02 v0.01]%
+%
+\RequirePackage{keyval}%
+%
+% caption
+%
+\def\EMcaption@font@{\relax}%
+\def\EMcaptionfont#1{\def\EMcaption@font@{#1}}%
+\define@key{emath}{font}[1]{\def\EMcaption@font{#1}}%
+\def\tbcaption{\def\@captype{table}\caption}
+\def\fgcaption{\def\@captype{figure}\caption}
+\def\fgEMcaption{\def\@captype{figure}\EMcaption}
+\def\tbEMcaption{\def\@captype{table}\EMcaption}
+\def\EMcaption{\let\EMcaption@font\EMcaption@font@
+  \@ifnextchar<{\EMcaption@}{\@EMcaption}}
+\def\EMcaption@<#1>{\setkeys{emath}{#1}\@EMcaption}
+\def\@EMcaption{\@ifnextchar[{\@@EMcaption}{\@@EMcaption[c]}}
+\def\caption@punc{\protect\hskip1em\relax}
+\def\EMcaptionpunc#1{\def\caption@punc{#1}}%
+\def\@@EMcaption[#1]{%
+\long\def\@makecaption##1##2{%
+  \vskip\abovecaptionskip
+% \sbox\@tempboxa{##1~##2}%
+  \sbox\@tempboxa{\EMcaption@font ##1\caption@punc ##2}%
+  \ifdim \wd\@tempboxa >\hsize
+    ##1\caption@punc ##2\par
+  \else
+    \global \@minipagefalse
+    \if l#1\relax
+      \hb@xt@\hsize{\box\@tempboxa\hfil}%
+    \else
+      \hb@xt@\hsize{\hfil\box\@tempboxa\hfil}%
+    \fi
+  \fi
+  \vskip\belowcaptionskip}%
+  \caption}
+\endinput
+%
+v 0.01 2009/02/02 キャプション \EMcaptionfont

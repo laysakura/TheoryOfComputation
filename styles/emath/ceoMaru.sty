@@ -1,0 +1,95 @@
+% ceoMaru.sty by tDB (emath@nifty.com)
+%
+\NeedsTeXFormat{LaTeX2e}%
+\ProvidesPackage{ceoMaru}[2010/03/25 v0.01]%
+%
+\def\ceo@ref#1{%
+  \edefstrlen{#1}\aj@Roman@tmp
+  \ifnum\aj@Roman@tmp<4\relax
+    \strsep{#1}{\hbox}\tmp@a\tmp@b
+  \else
+    \edef\tmp@a{0}%
+  \fi
+  \count255=0\tmp@a\relax\edef\ceo@tmp{\the\count255}%
+}%
+\DeclareRobustCommand\ceoMaru[1]{\ceo@ref{#1}%
+  \ifnum\ceo@tmp>100\errmessage{ceoMaru:counter too large:#1}\fi
+  \hbox{%
+    \ifnum\ceo@tmp<11 \IAddself\ceo@tmp{48}%
+    \else\ifnum\ceo@tmp<21 \IAddself\ceo@tmp{22}%
+    \else\ifnum\ceo@tmp<50 \IAddself\ceo@tmp{107}%
+    \else\ifnum\ceo@tmp<101 \IAddself\ceo@tmp{111}%
+    \fi\fi\fi\fi
+    {\fontencoding{U}\fontfamily{marua}\fontseries{m}\fontshape{n}\selectfont\char\ceo@tmp}%
+  }}%
+  \let\maru\ceoMaru
+%
+\DeclareRobustCommand\ceoKuroMaru[1]{\ceo@ref{#1}%
+  \ifnum\ceo@tmp>9\errmessage{ceoKuroMaru:counter too large:#1}\fi
+  \hbox{%
+    \IAddself\ceo@tmp{64}%
+    {\fontencoding{U}\fontfamily{kigob}\fontseries{m}\fontshape{n}\selectfont\char\ceo@tmp}%
+  }}%
+%
+\DeclareRobustCommand\ceoRoman[1]{%
+  \count255=0#1\relax\edef\ceo@tmp{\the\count255}%
+  \ifnum\ceo@tmp>10\errmessage{ceoMaru:counter too large:#1}\fi
+  \mbox{%
+    \ifnum\ceo@tmp<11 \IAddself\ceo@tmp{96}\fi
+    \fontencoding{U}\fontfamily{kigob}\fontseries{m}\fontshape{n}\selectfont
+      \char\ceo@tmp}}%
+%
+\DeclareRobustCommand\ceoroman[1]{%
+  \count255=0#1\relax\edef\ceo@tmp{\the\count255}%
+  \ifnum\ceo@tmp>10\errmessage{ceoMaru:counter too large:#1}\fi
+  \mbox{%
+    \ifnum\ceo@tmp<11 \IAddself\ceo@tmp{112}\fi
+    \fontencoding{U}\fontfamily{kigob}\fontseries{m}\fontshape{n}\selectfont
+      \char\ceo@tmp}}%
+%
+\gdef\ceoKakkoRoman#1{%
+  \count255=0#1\relax\edef\ceo@tmp{\the\count255}%
+  \ifnum\ceo@tmp>10\errmessage{ceoMaru:counter too large:#1}\fi
+  \mbox{%
+    \ifnum\ceo@tmp<11 \IAddself\ceo@tmp{240}\fi
+    \fontencoding{U}\fontfamily{kigob}\fontseries{m}\fontshape{n}\selectfont
+      \char\ceo@tmp}}%
+\let\orgemKakkoRomannum\emKakkoRomannum
+\def\emKakkoRomannum#1{%
+  \ifnum #1>15\relax
+    \orgemKakkoRomannum{#1}%
+  \else\ifnum #1>10\relax
+    \ajKakkoRoman{#1}%
+  \else
+    \ceoKakkoRoman{#1}%
+  \fi\fi
+}%
+%
+\gdef\ceoKakkoroman#1{\ceo@ref{#1}%
+%  \count255=0#1\relax\edef\ceo@tmp{\the\count255}%
+  \ifnum\ceo@tmp>10\errmessage{ceoMaru:counter too large:#1}\fi
+  \mbox{%
+    \ifnum\ceo@tmp<11 \IAddself\ceo@tmp{144}\fi
+    \fontencoding{U}\fontfamily{kigob}\fontseries{m}\fontshape{n}\selectfont
+      \char\ceo@tmp}}%
+\let\orgemKakkoromannum\emKakkoromannum
+\def\emKakkoromannum#1{%
+  \ifnum #1>10\relax
+    \orgemKakkoromannum{#1}%
+  \else
+    \ceoKakkoroman{#1}%
+  \fi
+}%
+%
+\gdef\ceoKakuRoman#1{%
+  \count255=0#1\relax\edef\ceo@tmp{\the\count255}%
+  \ifnum\ceo@tmp>10\errmessage{ceoMaru:counter too large:#1}\fi
+  \mbox{%
+    \ifnum\ceo@tmp<11 \IAddself\ceo@tmp{192}\fi
+    \fontencoding{U}\fontfamily{kigob}\fontseries{m}\fontshape{n}\selectfont
+      \char\ceo@tmp}}%
+\endinput
+
+v 0.00 2010/03/22 丸付き数字
+v 0.01 2010/03/25
+         \ceoKuroMaru

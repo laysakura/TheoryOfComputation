@@ -1,0 +1,42 @@
+\documentclass{jarticle}
+\usepackage{emathN}
+
+\begin{document}
+\fbox{%
+\begin{caprm}
+\begin{nagarezu}(13zw,38zh)(6zw,0zh)
+	\termbox{始め}
+	\downto
+	\iobox{N を入力}
+	\downto
+	\opbox{$P \longleftarrow 1$}
+	\downto
+	\opbox{$K \longleftarrow 1$}
+	\downto[loop0]
+	\begin{ifbox}<1.5><1.5>{$K\leqq N$}
+		\begin{sitabunki}
+			\downto"yes"
+			\opbox{$P \longleftarrow P*K$}
+			\downto
+			\opbox{$K \longleftarrow K+1$}\relax
+			\Addvec{\sitatyuuten}{(0,-10)}\tmp
+			\nahuda\tmp{owari}
+			\leftto<n>
+			\upto<n>`loop0'
+			\rightto`loop0'
+		\end{sitabunki}
+		\begin{migibunki}
+			\rightto<n>"no"
+			\downto<n>`owari'
+			\leftto<n>`owari'
+			\downto
+			\iobox{P を表示}
+			\downto
+			\termbox{終わり}
+		\end{migibunki}
+	\end{ifbox}
+\end{nagarezu}
+\end{caprm}
+}
+
+\end{document}

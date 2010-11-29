@@ -1,0 +1,246 @@
+% カウンタ
+\newcounter{myfootnote} % minipage環境中で脚注番号を自動振りするための知恵
+\newcounter{mysectionbuf}       % myexample辺りで使用する
+\newcounter{myexamplecnt}
+\setcounter{mysectionbuf}{0}
+\setcounter{myexamplecnt}{0}
+
+%
+\newtheorem{theorem}{定理}[section]
+\newtheorem{proof}{証明}[section]
+
+% change spaces between lines and lines in description env.
+\renewenvironment{description}%  
+{%
+  \begin{list}{\parbox{1zw}{$\bullet$}}% 見出し記号／直後の空白を調節
+   {%
+%      \setlength{\topsep}{0zh}
+      %% \setlength{\itemindent}{0zw}
+      %% \setlength{\leftmargin}{2zw}%  左のインデント
+      %% \setlength{\rightmargin}{0zw}% 右のインデント
+      %% \setlength{\labelsep}{1zw}%    黒丸と説明文の間
+      %% \setlength{\labelwidth}{3zw}%  ラベルの幅
+     \setlength{\itemsep}{2zw}%     項目ごとの改行幅
+      %% \setlength{\parsep}{0em}%      段落での改行幅
+      %% \setlength{\listparindent}{0zw}% 段落での一字下り
+   }
+}
+{%
+  \end{list}%
+}
+
+% change spaces between lines and lines in itemize env.
+\renewenvironment{itemize}%  
+{%
+  \begin{list}{\parbox{1zw}{$\bullet$}}% 見出し記号／直後の空白を調節
+   {%
+%      \setlength{\topsep}{0zh}
+      %% \setlength{\itemindent}{0zw}
+      %% \setlength{\leftmargin}{2zw}%  左のインデント
+      %% \setlength{\rightmargin}{0zw}% 右のインデント
+      %% \setlength{\labelsep}{1zw}%    黒丸と説明文の間
+      %% \setlength{\labelwidth}{3zw}%  ラベルの幅
+     \setlength{\itemsep}{0.5zw}%     項目ごとの改行幅
+      %% \setlength{\parsep}{0em}%      段落での改行幅
+      %% \setlength{\listparindent}{0zw}% 段落での一字下り
+   }
+}
+{%
+  \end{list}%
+}
+
+% change spaces between lines and lines in enumerate env.
+\renewenvironment{enumerate}%  
+{%
+  \begin{list}{\parbox{1zw}{$\bullet$}}% 見出し記号／直後の空白を調節
+   {%
+%      \setlength{\topsep}{0zh}
+      %% \setlength{\itemindent}{0zw}
+      %% \setlength{\leftmargin}{2zw}%  左のインデント
+      %% \setlength{\rightmargin}{0zw}% 右のインデント
+      %% \setlength{\labelsep}{1zw}%    黒丸と説明文の間
+      %% \setlength{\labelwidth}{3zw}%  ラベルの幅
+     \setlength{\itemsep}{0.5zw}%     項目ごとの改行幅
+      %% \setlength{\parsep}{0em}%      段落での改行幅
+      %% \setlength{\listparindent}{0zw}% 段落での一字下り
+   }
+}
+{%
+  \end{list}%
+}
+
+% listings default setting
+% Usage:
+% \lstinputlisting[label=src:cpu.v, caption=トップモジュールのソース, language=Verilog]{cpu.v}
+\renewcommand{\lstlistingname}{ソース}
+\lstset{
+%  language={C++}, %MUST BE SPECIFIED BY CALLE!!!
+%  Available langages are listed in:
+%  /usr/local/teTeX/share/texmf/ptex/platex/listings/listings.pdf
+%  backgroundcolor={\color[gray]{.97}},
+  tabsize=4,
+  basicstyle={\small},
+  identifierstyle={\small},
+  commentstyle={\small}\color{DarkRed},
+  keywordstyle={\small\bfseries}\color{DarkBlue},
+  stringstyle={\small\ttfamily}\color{Green},
+  %identifierstyle={\small\ttfamily}\color{DarkOrchid},
+  ndkeywordstyle={\small},
+  frame={tb},
+  breaklines=true,
+  columns=[l]{fullflexible},
+  xrightmargin=0zw,
+  xleftmargin=0zw,
+  numberstyle={\footnotesize},
+  numbers=left,
+  numbersep=1ex,
+  stepnumber=1,
+  showstringspaces=false,
+  lineskip=-0.2ex,
+  defaultdialect=[Visual]Basic,
+  defaultdialect=[x86masm]Assembler
+}
+
+
+% Display title
+%% Usage:
+%% \mytitle{A title}
+%% \mytitle[2010/10/30]{A title}
+\newcommand{\mytitle}[2][\the\month/\the\day/\the\year] {
+\title{#2}
+\author{電気電子工学科 03100509 中谷 翔}
+\date{#1}
+\maketitle
+}
+
+% make text strong
+\newcommand{\mystrong}[1]{
+\textcolor{red}{#1}
+}
+
+% Display units
+\newcommand{\myunit}[1]{
+\,[\mathrm{#1}]
+}
+
+% Display images
+% Usage:
+% \myfigure{hoge.esp}{this is a label}
+% \myfigure[5cm]{hoge.esp}{this is a title}
+\newcommand{\myfigure}[3][width=120truemm]{
+\begin{figure}[!ht]
+ \begin{center}
+  \includegraphics[clip,autoebb,#1]{#2} % 'true' is necessary
+                                % when jsarticle expand or shrink pages
+  \caption{#3}
+  \label{fig:#2}
+ \end{center}
+\end{figure}
+}
+
+% Usage:
+% \begin{myexample}{TITLE}
+% Some text
+% \end{myexample}
+\newenvironment{myexample}[1]
+{
+  %% check whether the subsection is the same as previous example.
+  \addtocounter{myexamplecnt}{1}
+
+  \ifnum \arabic{section}>\arabic{mysectionbuf}
+  \setcounter{mysectionbuf}{\value{section}}
+  \setcounter{myexamplecnt}{1}
+  \fi
+
+\begin{breakrectbox}[item=~例\thesection.\arabic{myexamplecnt}:\hspace{1.5ex}#1~, itempos=c, hsep=5ex, vsep=2.5ex, rectboxparindent=1zw]
+}
+{
+\end{breakrectbox}
+}
+
+
+% Label in myexample env.
+% Usage:
+% \begin{myexample}{title} \myexamplelabel{hoge_label}
+% ...
+% \end{myexample}
+% ...
+% \myexampleref{hoge_label}
+\newcommand{\myexamplelabel}[1]{
+  \newcounter{chap#1}
+  \setcounter{chap#1}{\value{chapter}}
+  \newcounter{sec#1}
+  \setcounter{sec#1}{\value{section}}
+  \newcounter{mycnt#1}
+  \setcounter{mycnt#1}{\value{myexamplecnt}}
+}
+\newcommand{\myexampleref}[1]{
+  \arabic{chap#1}.\arabic{sec#1}.\arabic{mycnt#1}
+}
+
+% Usage:
+% \begin{mypre}{TITLE}
+% Some text
+% \end{mypre}
+\newenvironment{mypre}[1]
+{
+\VerbatimEnvironment
+\begin{breakitembox}{#1}
+\begin{Verbatim}
+}
+{
+\end{Verbatim}
+\end{breakitembox}
+}
+
+% for mytheorem env.
+\newenvironment{theoremleftbar}{
+  \def\FrameCommand{\textcolor{DarkSlateGray}{\vrule width 2pt} \hspace{1zw}}%
+  \MakeFramed {\advance\hsize-\width \FrameRestore}
+
+}
+{
+  \endMakeFramed
+}
+
+% for myproof env.
+\newenvironment{proofleftbar}{
+  \def\FrameCommand{\textcolor{LightSlateGray}{\vrule width 3pt} \hspace{2zw}}%
+  \MakeFramed {\advance\hsize-\width \FrameRestore}
+
+}
+{
+  \endMakeFramed
+}
+
+% Usage:
+% \begin{mytheorem}{some theorem}
+% some text
+% \end{mytheorem}
+\newenvironment{mytheorem}
+{
+  \begin{theorem}
+  \begin{theoremleftbar}
+    \mbox{} \\
+}
+{
+  \end{theoremleftbar}
+  \end{theorem}
+}
+
+% Usage:
+% \begin{myproof}{some proof}
+% some text
+% \end{myproof}
+\newenvironment{myproof}[1]
+{
+  \begin{proof}
+  \begin{proofleftbar}
+    \textbf{#1}
+
+}
+{
+  \end{proofleftbar}
+  \end{proof}
+}
+

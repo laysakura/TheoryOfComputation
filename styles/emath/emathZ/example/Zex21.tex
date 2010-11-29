@@ -1,0 +1,23 @@
+\begin{itemsquarebox}{確率樹形図}
+3本の当たりくじを含む10本のくじがある．このくじをA, Bがこの順に1本ずつ
+引くとき，Bが当たる確率を求めよ．ただし，Aが引いたくじはもとに
+戻さないとする．
+\end{itemsquarebox}
+{\zyukeizuEdaVpitch{10}%
+
+\hspace{5zw}
+\begin{zyukeizu}%
+\eda[$\frac{3}{10}$](0,6pt)[b]{ ○ %
+	\begin{zyukeizu}%
+	\eda[$\frac29$](0,4pt)[b]{ ○ }%
+	\eda[$\frac79$][t]{ × }%
+	\end{zyukeizu}%
+}%
+\eda[$\frac{7}{10}$](0,-2pt)[t]{ × %
+	\begin{zyukeizu}%
+	\eda[$\frac39$](0,4pt)[b]{ ○ }%
+	\eda[$\frac69$][t]{ × }%
+	\end{zyukeizu}%
+}%
+\end{zyukeizu}%
+}

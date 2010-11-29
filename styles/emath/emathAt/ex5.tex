@@ -1,0 +1,67 @@
+\documentclass[fleqn]{jarticle}
+\usepackage{emathMw}
+\usepackage{emathAt}
+\usepackage{color}
+\usepackage{emathPh}
+\usepackage{itembbox}
+
+\begin{document}
+\def\tyuumark{$\blacktriangleleft$}
+\def\tyuuitemizeoption{%
+  \labelwidth=6pt\labelsep=3pt\leftmargin9pt\footnotesize}
+\begin{itembox}{正弦定理}
+\sankaku{ABC}において，$a=10$, $B=30\Deg$, $C=105\Deg$のとき，
+外接円の半径$R$を求めよ。
+\end{itembox}
+\begin{itemsquarebox}[l]{解法の手順}
+\small
+\begin{enumerate}[\protect\expandafter\fbox1]
+  \item $A$を求める。
+  \item 正弦定理により，$R$を求める。
+  \item 正弦定理により，$b$を求める。
+\end{enumerate}
+\end{itemsquarebox}
+
+\hidarityuukeisentrue
+\begin{tyuukai}
+  【解答】
+
+  \tyuu{三角形の内角の和は180\Deg すなわち
+  \[ A+B+C=180\Deg \]}
+  \indent\gyoutou{\small\fbox1}
+  $A=180\Deg-(B+C)=45\Deg$であるから，
+
+  \begin{mawarikomi}{}{%
+    \begin{zahyou*}[ul=12mm](-1,1)(-1,1.2)
+      \footnotesize
+      \rtenretu{A(1,165)w;B(1,15)e;C(1,105)n}
+      \Kakukigou\C\B\A[w]{30\Deg}%
+      \Kakukigou\A\C\B[s]{105\Deg}%
+      \Kakukigou\B\A\C{}
+      \Hen_ko[0]\B\C{10}
+      \Bunten\A\C11\AC
+      \PutStr{(-.8,.8)}[w]{$b$}to[.8]\AC
+      \Drawline{\A\B\C\A}
+      \En\O{1}
+    \end{zahyou*}
+    }
+    \gyoutou{\small\fbox2}
+    正弦定理より
+    \begin{gather*}
+      \bunsuu{a}{\sin A}=\bunsuu{b}{\sin B}=2R\\
+      2R=\bunsuu{10}{\sin45\Deg}=10\sqrt{2}
+    \end{gather*}
+    \tyuu<-3\baselineskip>{\makebox[0pt][l]{%
+      $\sin45\Deg=\bunsuu{\sqrt{2}}{2}$}}
+    よって
+    \[ R=5\sqrt{2} \]
+    \noindent\gyoutou{\protect\fbox3}また
+    \tyuu<2\baselineskip>{\makebox[0pt][l]{$\sin30\Deg=\bunsuu{1}{2}$}}
+    \begin{align*}
+      b&=2R\sin B\\
+       &=10\sqrt{2}\sin30\Deg\\
+       &=\bm{5\sqrt{2}}
+    \end{align*}
+  \end{mawarikomi}
+\end{tyuukai}
+\end{document}

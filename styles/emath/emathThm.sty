@@ -1,0 +1,215 @@
+% emathThm.sty by tDB (CQB00260@nifty.ne.jp)
+%
+\def\tmpname{LaTeX2e}%
+\ProvidesPackage{emathThm}[2010/09/16 v0.10]%
+\RequirePackage{theorem}%
+\RequirePackage{emath}%
+%
+%\gdef\th@EMplain{\@input@{EMthp.sty}}%
+%\gdef\th@EMbreak{\@input@{EMthb.sty}}%
+%
+\let\ltxnewtheorem\newtheorem
+\define@key{EMthm}{itemindent}{\edef\EMthm@@itemindent{#1}}%
+\define@key{EMthm}{leftmargin}{\edef\EMthm@@leftmargin{#1}}%
+\define@key{EMthm}{Leftmargin}{\edef\EMthm@@Leftmargin{#1}}%
+\define@key{EMthm}{frontThnum}{\EMedef\EMthm@@frontThnum{#1}}%
+\define@key{EMthm}{postThnum}{\edef\EMthm@@postThnum{#1}}%
+\define@key{EMthm}{labelThm}{\EMedef\EMthm@@labelThm{#1}}%
+%
+\def\EMthm@leftmargin{1zw}%
+\def\EMthm@Leftmargin{.25zw}%
+\def\EMthm@itemindent{0zw}%
+\def\EMthm@frontThnum{}%
+\def\EMthm@postThnum{}%
+\def\EMthm@labelThm#1{#1}%
+\def\EMtheorem{\@ifnextchar<{\@EMtheorem}{\@EMtheorem<\empty>}}
+\def\@EMtheorem<#1>#2{%
+  \expandafter\xdef\csname #2@leftmargin\endcsname{\EMthm@leftmargin}%
+  \expandafter\xdef\csname #2@Leftmargin\endcsname{\EMthm@Leftmargin}%
+  \expandafter\xdef\csname #2@itemindent\endcsname{\EMthm@itemindent}%
+  \expandafter\def\csname #2@frontThnum\endcsname{\EMthm@frontThnum}%
+  \expandafter\xdef\csname #2@postThnum\endcsname{\EMthm@postThnum}%
+  \expandafter\gdef\csname #2@labelThm\endcsname{\EMthm@labelThm}%
+  \xdef\EMthm@@itemindent{\EMthm@itemindent}%
+  \xdef\EMthm@@leftmargin{\EMthm@leftmargin}%
+  \xdef\EMthm@@Leftmargin{\EMthm@Leftmargin}%
+  \xdef\EMthm@@frontThnum{\EMthm@frontThnum}%
+  \xdef\EMthm@@postThnum{\EMthm@postThnum}%
+  \gdef\EMthm@@labelThm{\EMthm@labelThm}%
+  \ifx\empty #1\relax\else\setkeys{EMthm}{#1}%
+    \expandafter\xdef\csname #2@leftmargin\endcsname{\EMthm@@leftmargin}%
+    \expandafter\xdef\csname #2@Leftmargin\endcsname{\EMthm@@Leftmargin}%
+    \expandafter\xdef\csname #2@itemindent\endcsname{\EMthm@@itemindent}%
+    \expandafter\EMxdef\csname #2@frontThnum\endcsname{\EMthm@@frontThnum}%
+    \expandafter\xdef\csname #2@postThnum\endcsname{\EMthm@@postThnum}%
+    \expandafter\gdef\csname #2@labelThm\endcsname{\EMthm@@labelThm}%
+  \fi\ltxnewtheorem{#2}}
+%
+%\global\let\@endtheorem=\endlist
+%
+\newcounter{mycnta}
+\@ifundefined{ifpr@kaitou}{\newif\ifpr@kaitou\pr@kaitoufalse}{}%
+%
+\gdef\@xnthm#1#2[#3]{\expandafter\@ifdefinable\csname #1\endcsname
+   {%
+    \@definecounter{#1}\@newctr{#1}[#3]%
+    \expandafter\xdef\csname the#1\endcsname
+      {\expandafter \noexpand \csname the#3\endcsname
+       \@thmcountersep \@thmcounter{#1}}%
+    \def\@tempa{\global\@namedef{#1}}%
+    \expandafter \@tempa \expandafter{%
+      \csname th@\the \theorem@style
+            \expandafter \endcsname \the \theorem@bodyfont
+     \@thm{#1}{#2}}%
+%
+\def\@tempa{\global\@namedef{ttl#1}}\expandafter \@tempa
+\expandafter{\refstepcounter{#1}#2\ \@nameuse{the#1}}%
+%
+    \global \expandafter \def \csname end#1\endcsname {%
+    \ifpr@kaitou
+%
+      \@whilenum\K@currentenumdepth>\@enumdepth\do{%
+        \xDecr\K@currentenumdepth
+        \ifx\empty\edaenumopt
+          \ifx\empty\betaenumopt
+            \immediate\write\kaitou@out{\string\end\string\Kaienumerate\string\def\string\Kaienumerate{enumerate}\string\def\string\Kaienumopt{}}%
+          \else
+            \immediate\write\kaitou@out{\string\end{betaenumerate}\string\par}%
+            \xdef\betaenumopt{\empty}%
+          \fi
+        \else
+          \immediate\write\kaitou@out{\string\end{edaenumerate}\string\par}%
+          \xdef\edaenumopt{\empty}%
+        \fi
+      }%
+%
+      \immediate\write\kaitou@out{\string\end{\Aeprobname}}%
+      \global\pr@kaitoufalse
+    \fi
+   \@endtheorem
+    }%
+   }}
+%
+\gdef\@ynthm#1#2{%
+  \expandafter\@ifdefinable\csname #1\endcsname
+   {\@definecounter{#1}%
+    \expandafter\xdef\csname the#1\endcsname{\@thmcounter{#1}}%
+    \def\@tempa{\global\@namedef{#1}}\expandafter \@tempa
+     \expandafter{\csname th@\the \theorem@style \expandafter
+     \endcsname \the\theorem@bodyfont \@thm{#1}{#2}}%
+%
+\def\@tempa{\global\@namedef{ttl#1}}\expandafter \@tempa
+\expandafter{\refstepcounter{#1}#2\ \@nameuse{the#1}}%
+%
+    \global \expandafter \def \csname end#1\endcsname {%
+    \ifpr@kaitou
+%
+      \@whilenum\K@currentenumdepth>\@enumdepth\do{%
+        \xDecr\K@currentenumdepth
+        \ifx\empty\edaenumopt
+          \ifx\empty\betaenumopt
+            \immediate\write\kaitou@out{\string\end\string\Kaienumerate\string\def\string\Kaienumerate{enumerate}\string\def\string\Kaienumopt{}}%
+          \else
+            \immediate\write\kaitou@out{\string\end{betaenumerate}\string\par}%
+            \xdef\betaenumopt{\empty}%
+          \fi
+        \else
+          \immediate\write\kaitou@out{\string\end{edaenumerate}\string\par}%
+          \xdef\edaenumopt{\empty}%
+        \fi
+      }%
+%
+      \immediate\write\kaitou@out{\string\end{\Aeprobname}}%
+      \global\pr@kaitoufalse
+    \fi
+    \@endtheorem}}%
+}
+%
+\gdef\@othm#1[#2]#3{%
+  \expandafter\ifx\csname c@#2\endcsname\relax
+   \@nocounterr{#2}%
+  \else
+   \expandafter\@ifdefinable\csname #1\endcsname
+   {\expandafter \xdef \csname the#1\endcsname
+     {\expandafter \noexpand \csname the#2\endcsname}%
+    \def\@tempa{\global\@namedef{#1}}\expandafter \@tempa
+     \expandafter{\csname th@\the \theorem@style \expandafter
+     \endcsname \the\theorem@bodyfont \@thm{#2}[#1]{#3}}%
+%
+\def\@tempa{\global\@namedef{ttl#1}}\expandafter \@tempa
+\expandafter{\refstepcounter{#1}#2\ \@nameuse{the#1}}%
+%
+    \global \expandafter \def \csname end#1\endcsname {%
+    \ifpr@kaitou
+%
+      \@whilenum\K@currentenumdepth>\@enumdepth\do{%
+        \xDecr\K@currentenumdepth
+        \ifx\empty\edaenumopt
+          \ifx\empty\betaenumopt
+            \immediate\write\kaitou@out{\string\end\string\Kaienumerate\string\def\string\Kaienumerate{enumerate}\string\def\string\Kaienumopt{}}%
+          \else
+            \immediate\write\kaitou@out{\string\end{betaenumerate}\string\par}%
+            \xdef\betaenumopt{\empty}%
+          \fi
+        \else
+          \immediate\write\kaitou@out{\string\end{edaenumerate}\string\par}%
+          \xdef\edaenumopt{\empty}%
+        \fi
+      }%
+%
+      \immediate\write\kaitou@out{\string\end{\Aeprobname}}%
+      \global\pr@kaitoufalse
+    \fi
+    \@endtheorem}}%
+  \fi}%
+%
+\gdef\@thm#1{\@ifnextchar[{\@thm@{#1}}{\@thm@{#1}[#1]}}
+\gdef\@thm@#1[#2]#3{\refstepcounter{#1}%
+%\typeout{now! @thm:arg1=#1,arg2=#2,arg3=#3}%
+  \trivlist
+  \itemindent=\csname #1@itemindent\endcsname
+  \leftmargin=\csname #1@leftmargin\endcsname
+  \advance\linewidth -\leftmargin
+  \advance\@totalleftmargin \leftmargin
+  \parshape \@ne \@totalleftmargin \linewidth
+  \@topsep \theorempreskipamount               % used by first \item
+  \@topsepadd \theorempostskipamount           % used by \@endparenv
+  \parindent=1zw\relax
+\EMedef\Aeprob{#1}%
+\EMedef\Aeprobname{#2}%
+%  \def\makelabel##1{\hspace*{-\leftmargin}%
+%\typeout{makelabel:arg1=##1}%
+%    \hspace{\csname #1@Leftmargin\endcsname}
+%    \csname #1@labelThm\endcsname{##1}}%
+  \def\makelabel##1{\hspace*{-\leftmargin}%
+    \hspace{\csname #1@Leftmargin\endcsname}%
+    \csname #1@frontThnum\endcsname{\!\!##1}\csname #1@postThnum\endcsname
+  }%
+  \@ifnextchar [%
+  {\@ythm{#1}{#3}}%
+  {\@begintheorem{#3}{\csname the#1\endcsname}}}%
+%
+\let\newtheorem\EMtheorem
+\endinput
+
+v 0.01 2004/05/21
+    \global\let\@endtheorem=\endlist を附加
+v 0.02 2004/07/19
+    <leftmargin=..>オプション
+    <Leftmargin=..>オプション
+v 0.03 2004/07/25
+    <postThnum=..>オプション
+v 0.04 2004/07/26
+    \ttlteiri など
+v 0.05 2006/10/07
+    <frontThnum=..> オプション
+v 0.06 2006/10/08
+    emathAe.sty との連携
+v 0.07 2007/05/01
+    \newtheorem#1#2[#3]に対応：\gdef\@xnthm#1#2[#3] にパッチ
+v 0.08 2007/05/06
+    \newtheorem#1[#2]#3 に対応
+v 0.09 2008/01/31
+    \if@prkaitou: 二重定義防止
+v 0.10 2010/09/16
+    \theoremtype{EMplain}

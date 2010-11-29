@@ -1,0 +1,88 @@
+\documentclass{jarticle}
+\usepackage{emathPa}
+\usepackage{emathPp}
+
+
+\begin{document}
+\begin{zahyou}[ul=8mm](-1,12)(-1,12)
+\zahyouMemori[g]%
+\def\E{(2,1)}%
+\def\F{(1,2)}%
+\changeArrowHeadSize{2}%
+%\begin{azahyou}[(1,0)]\E\F
+\begin{azahyou}\E\F
+  \def\A{(2,1)}
+  \azkousi{4}{3}
+  \azKuromaru\A
+  \azPut\A[se]{A}
+  \azArrowLine\O{(1,0)}
+  \azArrowLine\O{(0,1)}
+  \azArrowLine\O\A
+\end{azahyou}
+\end{zahyou}
+
+\begin{zahyou}[ul=10mm](-3,5)(-1,5)
+  \zahyouMemori[g]%
+  \def\Fx{(X*X+.5)/sqrt(2)}
+  \YKinziOresen\Fx\xmin\xmax{.05}\oresen
+  \YKinziOresen\Fx{-1/sqrt(2)}{1/sqrt(2)}{.05}\nurisen
+  \edefappend\nurisen{(0,0)(-.707,.707)}
+  \YGurafu(.1)(.05)\Fx\xmin\xmax
+  \kTyokusen\O{-45}{}{}\Put\migiT[se]{$X$}
+  \kTyokusen\O{45}{}{}\Put\migiT[e]{$Y$}
+  \rtenretu*{E(1,-45);F(1,45)}
+  \begin{azahyou}\E\F
+    \azTenretutoz\oresen\oresen
+    \azTenretutoz\nurisen\nurisen
+    \clipDrawline\oresen
+    \Nuritubusi\nurisen
+  \end{azahyou}
+\end{zahyou}
+\end{document}
+
+\makeatletter
+\def\aztoz#1#2{%
+  \edef\aztoz@tmp{#1}\expandafter\@aztoz\aztoz@tmp#2}
+\def\@aztoz(#1,#2)#3{%
+  \Mulvec{#1}\az@ex\az@x
+  \Mulvec{#2}\az@ey\az@y
+  \Addvec\az@x\az@y\az@x
+  \Addvec\az@o\az@x #3}%
+\def\azTenretutoz#1#2{%
+  \edef\azTenretu@a{#1}%
+  \edef\azTenretu@b{}%
+  \@azTenretutoz\edef#2{\azTenretu@b}}
+\def\@azTenretutoz{\expandafter\@azTenretutoz@sub\azTenretu@a}%
+\def\@azTenretutoz@sub{\@ifnextchar({\@@azTenretutoz@sub}{}}
+\def\@@azTenretutoz@sub(#1,#2){\@aztoz(#1,#2)\azTenretu@c
+  \edefappend\azTenretu@b{\azTenretu@c}\@azTenretutoz@sub}
+\def\azDrawline{\@ifnextchar<{\@azDrawline}{\@azDrawline<\empty>}}
+\def\@azDrawline<#1>#2{%
+  \azTenretutoz{#2}\azDrawline@a\@Drawline<#1>\azDrawline@a}
+\def\azPut#1{%
+  \aztoz{#1}\azPut@P\Put\azPut@P}
+\def\azKuromaru#1{%
+  \aztoz{#1}\azKuromaru@P\Kuromaru\azKuromaru@P}
+\def\azArrowLine#1#2{%
+  \aztoz{#1}\azArrowLine@a
+  \aztoz{#2}\azArrowLine@b
+  \ArrowLine\azArrowLine@a\azArrowLine@b}
+\def\azkousi#1#2{%
+  \Cfor{\edef\azkousi@x{-1}}{\azkousi@x<#1}{}\do{\Incr\azkousi@x%
+    \azDrawline{(\azkousi@x,0)(\azkousi@x,#2)}}%
+  \Cfor{\edef\azkousi@y{-1}}{\azkousi@y<#2}{}\do{\Incr\azkousi@y%
+    \azDrawline{(0,\azkousi@y)(#1,\azkousi@y)}}}
+
+
+\def\azahyou{\@ifnextchar[{\@azahyou}{\@azahyou[{(0,0)}]}}
+\def\@azahyou[#1]#2#3(#4,#5)(#6,#7){%
+  \edef\az@o{#1}%
+  \edef\az@ex{#2}%
+  \edef\az@ey{#3}%
+  \edef\az@xmin{#4}%
+  \edef\az@xmax{#5}%
+  \edef\az@ymin{#6}%
+  \edef\az@ymax{#7}%
+}
+\def\endazahyou{\relax}
+\makeatother

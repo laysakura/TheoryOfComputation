@@ -1,0 +1,30 @@
+\documentclass[a4p]{jarticle}
+%%%%%   pdf を使いたい，というのは dvipdfmx を想定しているのでしょうから
+%%%%%   graphicx, color には [dvipdfmx] オプションをつけるのでしょう。
+\usepackage[dvipdfmx]{graphicx}
+\usepackage[notMy]{emath}
+%%%%% step1 ------------------------------------------
+%%%%% emathPs.sty を普通にロードして eps を作る。
+  \usepackage{emathPs}
+%%%%% step2 ------------------------------------------
+%%%%% emathPs.sty に [remakefalse,pdf] オプションを付加して 
+%%%%%   pdf が作られていないか，eps よりも古い場合は
+%%%%%      eps → pdf 変換をして
+%%%%%   eps ではなく，pdf を読み込む。
+% \usepackage[remakefalse,pdf]{emathPs}
+%%%%% step3 ------------------------------------------
+%%%%% emathPs.sty に [remakefalse,PDF] オプションを付加して 
+%%%%%   eps には目もくれず pdf を読み込む。
+% \usepackage[remakefalse,PDF]{emathPs}
+%%%%%
+\begin{document}
+\begin{pszahyou}[ul=30mm](-2,2)(-2,2)
+  \tenretu{A(1,0)se}
+  \En\O{1}
+\end{pszahyou}
+
+\begin{pszahyou*}[ul=10mm](-2,2)(-2,2)
+  \tenretu{A(-1,1)nw;B(-1,-1)sw;C(1,-1)se;D(1,1)ne}
+  \Takakkei{\A\B\C\D}
+\end{pszahyou*}
+\end{document}

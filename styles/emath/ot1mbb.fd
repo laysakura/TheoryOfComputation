@@ -1,0 +1,23 @@
+\ProvidesFile{ot1mbb.fd}
+  [2005/08/30]
+%
+\DeclareFontFamily{OT1}{mbb}{\hyphenchar\font45}
+%
+\DeclareFontShape{OT1}{mbb}{m}{n}{
+      <5> <6> <7> <8> <9> <10> gen * mbb
+      <10.95> mbb10 <12> <14.4> mbb12 <17.28> <20.74> <24.88> mbb17
+      }{}
+\DeclareSymbolFont{mbb}{OT1}{mbb}{m}{n}
+%
+\DeclareFontShape{OT1}{mbb}{bx}{n}{
+      <5> <6> <7> <8> <9> <10> gen * mbb
+      <10.95> mbb10 <12> <14.4> mbb12 <17.28> <20.74> <24.88> mbb17
+      }{}
+\DeclareSymbolFont{mbb}{OT1}{mbb}{bx}{n}
+%
+\DeclareSymbolFontAlphabet{\mathmbb}{mbb}
+\DeclareFontSubstitution{OT1}{mbb}{m}{n}
+\DeclareRobustCommand\bbfamily
+        {\not@math@alphabet\bbfamily\mathmbb
+         \fontfamily{mbb}\selectfont}
+\DeclareTextFontCommand{\textmbb}{\bbfamily}

@@ -1,0 +1,56 @@
+\documentclass[a4j]{jarticle}
+\usepackage{color}
+\usepackage{emathG}[2007/07/28]
+\usepackage{showexample}
+
+\begin{document}
+\section{縦棒グラフの機能増強}
+\subsection{横幅の指定}
+縦棒グラフにおいて，各項目の横幅は1となっています
+（棒グラフに間隔をつけるときは，それを含めて）。
+
+\begin{showEx}(.54,.4){\texttt{<boukankaku=..>}オプション}
+\begin{bouG}[ul=8mm,Sitayohaku=1zh]%
+      (0,4)(0,5)
+  \bou{2}{A}
+  \bou{4}{B}
+  \bou{3}{C}
+\end{bouG}
+\end{showEx}
+
+各項目ごとに横幅を指定するには，
+\cmd{bou}コマンドに\texttt{(bouhaba=..)}オプションをつけます。
+右辺値は\cmd{xunitlength}を単位とする無名数です。
+
+\begin{showEx}(.54,.4){\texttt{<boukankaku=..>}オプション}
+\begin{bouG}[ul=8mm,Sitayohaku=1zh]%
+      (0,5)(0,5)
+  \bou{2}{A}
+  \bou(bouhaba=2){4}{B}
+  \bou{3}{C}
+\end{bouG}
+\end{showEx}
+
+\subsection{項目の上見出しの変更}
+各棒グラフの上部には，度数が表示されますが，これを変更するには，
+\cmd{bou}コマンドに\texttt{(item=..)}オプションをつけます。
+
+\begin{showEx}(.54,.4){\texttt{<boukankaku=..>}オプション}
+\begin{bouG}[ul=8mm,Sitayohaku=1zh]%
+      (0,5)(0,5)
+  \bou{2}{A}
+  \bou(bouhaba=2,item=上見出し){4}{B}
+  \bou{3}{C}
+\end{bouG}
+\end{showEx}
+
+
+\begin{bouG}[ul=8mm,yscale=.5,Sitayohaku=1zh]%
+              (0,8)(0,10)
+  \bou{4}{A}
+  \bou*[nuriiro=green](bouhaba=2,item=緑){9}{B}
+  \bou*[nuriiro=red](bouhaba=4,item=,%
+      bouOption={\PutStr*{(0,1zw)}[n]{x}to{(\boumozix,\boumoziy)}}%
+  ){8}{C}
+\end{bouG}
+\end{document}

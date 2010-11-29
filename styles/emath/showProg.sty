@@ -1,0 +1,219 @@
+% showProg.sty by tDB (CQB00260@nifty.ne.jp)
+%
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{showProg}[2002/11/09 v0.00α TeX 対訳 ]
+\RequirePackage{ifthen}%
+\RequirePackage{verbatim}%
+\RequirePackage{ascmac}%
+\RequirePackage{program}%
+%
+\@ifundefined{showex@out}{\newwrite\showex@out}{}%
+\def\program#1#2{%
+% \setcounter{prglineno}{0}%
+  \@program{#1}{#2}\frenchspacing\@vobeyspaces%
+  \verbh@@k\@programdefs\@xprogram%
+}%
+
+\def\showProgbox{shadebox}
+
+\def\showProg{\@ifnextchar[{\showProg@}{\showProg@[1]}}
+\def\showProg@[#1]{\bgroup
+  \setcounter{prglineno}{#1}%
+  \addtocounter{prglineno}{-1}%
+  \showProg@@}%
+\def\showProg@@{\@ifnextchar({\@showProg}{\@showProg(.45,.45)}}%
+\def\@showProg(#1,#2)#3#4{\xdef\@lsz{#1}\xdef\@rsz{#2}\def\showProgTTL{#3}%
+    \bgroup\immediate\openout\showex@out=showex.tmp%
+    \immediate\write\showex@out{\string\begin{program}\string\showProgTTL{#4}}%
+    \@bsphack\let\do\@makeother\dospecials
+    \catcode`\^^M\active
+    \def\verbatim@processline{%
+        \immediate\write\showex@out{\the\verbatim@line}}%
+    \verbatim@start}%
+\def\endshowProg{\@esphack
+  \immediate\write\showex@out{\string\end{program}}%
+  \immediate\closeout\showex@out\egroup
+    \par\noindent
+    \begin{minipage}{\@lsz\linewidth}
+      \input{showex.tmp}
+    \end{minipage}%
+  \@tempdima=\@lsz pt\advance\@tempdima\@rsz pt\relax%
+  \ifdim\@tempdima>.95pt\relax\vspace{2pt}\par\noindent\fi%
+  \@tempdima\@rsz pt\relax\ifdim\@tempdima>.95pt\relax%
+  \hspace*{2zw}↓\par\noindent\else\hfill → \hfill\fi%
+    \begin{minipage}{\@rsz\linewidth}%
+    \begin{\showProgbox}%
+      \def\program##1##2{\relax}%
+      \def\endprogram{\relax}%
+      \input{showex.tmp}%
+    \end{\showProgbox}%
+    \end{minipage}%
+    \egroup
+    \par\noindent}%
+%
+\def\showcProg{\@ifnextchar({\@showcProg}{\@showcProg(.45,.45)}}%
+\def\@showcProg(#1,#2)#3#4{\bgroup
+    \xdef\@lsz{#1}\xdef\@rsz{#2}\def\showProgTTL{#3}%
+    \bgroup\immediate\openout\showex@out=showex.tmp%
+    \immediate\write\showex@out{\string\begin{cprogram}\string\showProgTTL{#4}}%
+    \@bsphack\let\do\@makeother\dospecials
+    \catcode`\^^M\active
+    \def\verbatim@processline{%
+        \immediate\write\showex@out{\the\verbatim@line}}%
+    \verbatim@start}%
+\def\endshowcProg{\@esphack
+  \immediate\write\showex@out{\string\end{cprogram}}%
+  \immediate\closeout\showex@out\egroup
+    \par\noindent
+    \begin{minipage}{\@lsz\linewidth}
+      \input{showex.tmp}
+    \end{minipage}%
+  \@tempdima=\@lsz pt\advance\@tempdima\@rsz pt\relax%
+  \ifdim\@tempdima>.95pt\relax\vspace{2pt}\par\noindent\fi%
+  \@tempdima\@rsz pt\relax\ifdim\@tempdima>.95pt\relax%
+  \hspace*{2zw}↓\par\noindent\else\hfill → \hfill\fi%
+    \begin{minipage}{\@rsz\linewidth}%
+    \begin{\showProgbox}%
+      \def\cprogram##1##2{\relax}%
+      \def\endcprogram{\relax}%
+      \input{showex.tmp}%
+    \end{\showProgbox}%
+    \end{minipage}%
+    \egroup
+    \par\noindent}%
+%
+\def\shownhProg{\@ifnextchar[{\shownhProg@}{\shownhProg@[1]}}
+\def\shownhProg@[#1]{\bgroup
+  \setcounter{prglineno}{#1}%
+  \addtocounter{prglineno}{-1}%
+  \shownhProg@@}%
+\def\shownhProg@@{\@ifnextchar({\@shownhProg}{\@shownhProg(.45,.45)}}%
+\def\@shownhProg(#1,#2){\xdef\@lsz{#1}\xdef\@rsz{#2}%
+    \bgroup\immediate\openout\showex@out=showex.tmp%
+    \immediate\write\showex@out{\string\begin{nhprogram}}%
+    \@bsphack\let\do\@makeother\dospecials
+    \catcode`\^^M\active
+    \def\verbatim@processline{%
+        \immediate\write\showex@out{\the\verbatim@line}}%
+    \verbatim@start}%
+\def\endshownhProg{\@esphack
+  \immediate\write\showex@out{\string\end{nhprogram}}%
+  \immediate\closeout\showex@out\egroup
+    \par\noindent
+    \begin{minipage}{\@lsz\linewidth}
+      \input{showex.tmp}
+    \end{minipage}%
+  \@tempdima=\@lsz pt\advance\@tempdima\@rsz pt\relax%
+  \ifdim\@tempdima>.95pt\relax\vspace{2pt}\par\noindent\fi%
+  \@tempdima\@rsz pt\relax\ifdim\@tempdima>.95pt\relax%
+  \hspace*{2zw}↓\par\noindent\else\hfill → \hfill\fi%
+    \begin{minipage}{\@rsz\linewidth}%
+    \begin{\showProgbox}%
+      \def\nhprogram{\relax}%
+      \def\endnhprogram{\relax}%
+      \input{showex.tmp}%
+    \end{\showProgbox}%
+    \end{minipage}%
+    \egroup
+    \par\noindent}%
+%
+\def\shownhcProg{\@ifnextchar({\@shownhcProg}{\@shownhcProg(.45,.45)}}%
+\def\@shownhcProg(#1,#2){\bgroup
+    \xdef\@lsz{#1}\xdef\@rsz{#2}%
+    \bgroup\immediate\openout\showex@out=showex.tmp%
+    \immediate\write\showex@out{\string\begin{nhcprogram}}%
+    \@bsphack\let\do\@makeother\dospecials
+    \catcode`\^^M\active
+    \def\verbatim@processline{%
+        \immediate\write\showex@out{\the\verbatim@line}}%
+    \verbatim@start}%
+\def\endshownhcProg{\@esphack
+  \immediate\write\showex@out{\string\end{nhcprogram}}%
+  \immediate\closeout\showex@out\egroup
+    \par\noindent
+    \begin{minipage}{\@lsz\linewidth}
+      \input{showex.tmp}
+    \end{minipage}%
+  \@tempdima=\@lsz pt\advance\@tempdima\@rsz pt\relax%
+  \ifdim\@tempdima>.95pt\relax\vspace{2pt}\par\noindent\fi%
+  \@tempdima\@rsz pt\relax\ifdim\@tempdima>.95pt\relax%
+  \hspace*{2zw}↓\par\noindent\else\hfill → \hfill\fi%
+    \begin{minipage}{\@rsz\linewidth}%
+    \begin{\showProgbox}%
+      \def\nhcprogram{\relax}%
+      \def\endnhcprogram{\relax}%
+      \input{showex.tmp}%
+    \end{\showProgbox}%
+    \end{minipage}%
+    \egroup
+    \par\noindent}%
+%
+\def\shownfProg{\@ifnextchar[{\shownfProg@}{\shownfProg@[1]}}
+\def\shownfProg@[#1]{\bgroup
+  \setcounter{prglineno}{#1}%
+  \addtocounter{prglineno}{-1}%
+  \shownfProg@@}%
+\def\shownfProg@@{\@ifnextchar({\@shownfProg}{\@shownfProg(.45,.45)}}%
+\def\@shownfProg(#1,#2)#3#4{\xdef\@lsz{#1}\xdef\@rsz{#2}\def\showProgTTL{#3}%
+    \bgroup\immediate\openout\showex@out=showex.tmp%
+    \immediate\write\showex@out{\string\begin{nfprogram}\string\showProgTTL{#4}}%
+    \@bsphack\let\do\@makeother\dospecials
+    \catcode`\^^M\active
+    \def\verbatim@processline{%
+        \immediate\write\showex@out{\the\verbatim@line}}%
+    \verbatim@start}%
+\def\endshownfProg{\@esphack
+  \immediate\write\showex@out{\string\end{nfprogram}}%
+  \immediate\closeout\showex@out\egroup
+    \par\noindent
+    \begin{minipage}{\@lsz\linewidth}
+      \input{showex.tmp}
+    \end{minipage}%
+  \@tempdima=\@lsz pt\advance\@tempdima\@rsz pt\relax%
+  \ifdim\@tempdima>.95pt\relax\vspace{2pt}\par\noindent\fi%
+  \@tempdima\@rsz pt\relax\ifdim\@tempdima>.95pt\relax%
+  \hspace*{2zw}↓\par\noindent\else\hfill → \hfill\fi%
+    \begin{minipage}{\@rsz\linewidth}%
+    \begin{\showProgbox}%
+      \def\nfprogram##1##2{\relax}%
+      \def\endnfprogram{\relax}%
+      \input{showex.tmp}%
+    \end{\showProgbox}%
+    \end{minipage}%
+    \egroup
+    \par\noindent}%
+%
+\def\shownfcProg{\@ifnextchar[{\shownfcProg@}{\shownfcProg@[1]}}
+\def\shownfcProg@[#1]{\bgroup\shownfcProg@@}%
+\def\shownfcProg@@{\@ifnextchar({\@shownfcProg}{\@shownfcProg(.45,.45)}}%
+\def\@shownfcProg(#1,#2)#3#4{\xdef\@lsz{#1}\xdef\@rsz{#2}\def\showProgTTL{#3}%
+    \bgroup\immediate\openout\showex@out=showex.tmp%
+    \immediate\write\showex@out{\string\begin{nfcprogram}\string\showProgTTL{#4}}%
+    \@bsphack\let\do\@makeother\dospecials
+    \catcode`\^^M\active
+    \def\verbatim@processline{%
+        \immediate\write\showex@out{\the\verbatim@line}}%
+    \verbatim@start}%
+\def\endshownfcProg{\@esphack
+  \immediate\write\showex@out{\string\end{nfcprogram}}%
+  \immediate\closeout\showex@out\egroup
+    \par\noindent
+    \begin{minipage}{\@lsz\linewidth}
+      \input{showex.tmp}
+    \end{minipage}%
+  \@tempdima=\@lsz pt\advance\@tempdima\@rsz pt\relax%
+  \ifdim\@tempdima>.95pt\relax\vspace{2pt}\par\noindent\fi%
+  \@tempdima\@rsz pt\relax\ifdim\@tempdima>.95pt\relax%
+  \hspace*{2zw}↓\par\noindent\else\hfill → \hfill\fi%
+    \begin{minipage}{\@rsz\linewidth}%
+    \begin{\showProgbox}%
+      \def\nfcprogram##1##2{\relax}%
+      \def\endnfcprogram{\relax}%
+      \input{showex.tmp}%
+    \end{\showProgbox}%
+    \end{minipage}%
+    \egroup
+    \par\noindent}%
+\endinput
+
+ver 0.00α 2002/11/09

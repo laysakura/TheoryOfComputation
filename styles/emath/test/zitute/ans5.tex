@@ -1,0 +1,32 @@
+\documentclass[fleqn,b4j]{jarticle}
+\usepackage{multicol}
+\usepackage{emath}
+
+%%% 版面の指定です．
+\setlength{\oddsidemargin}{-0.5cm}
+\setlength{\evensidemargin}{-0.5cm}
+\setlength{\topmargin}{-20mm}
+\setlength{\headheight}{15pt}
+\setlength{\headsep}{15pt}
+\setlength{\textwidth}{21.5cm}
+\setlength{\textheight}{33cm}
+\AtBeginDvi{\special{papersize=25.7cm,36.4cm}}
+
+\begin{document}
+\begin{multicols}{2}
+2直線$l_1$, $l_2$の方程式を連立させて解くことにより，
+交点Aの座標はA(3, 4)であることがわかる。
+\begin{enumerate}[(1)]
+  \item $3(x-3)+2(y-4)=0$より
+    \[ l_3:\bm{3x+2y-17=0} \]
+\columnbreak
+  \item 求める直線の傾きは
+    \[ \tan120\Deg=-\sqrt{3} \]
+    であるから，求める直線の方程式は
+    $y-4=-\sqrt{3}(x-3)$すなわち
+    \[ l_4: \bm{\sqrt{3}x+y-4-3\sqrt{3}=0} \]
+  \item $(x-3)^2+(y-4)^2=2^2$を整理して
+    \[ \bm{x^2+y^2-6x-8y+21=0} \]
+\end{enumerate}
+\end{multicols}
+\end{document}

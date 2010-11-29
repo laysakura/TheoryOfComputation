@@ -1,0 +1,207 @@
+% emathUtf.sty by tDB(emath@nifty.com)
+%
+  \NeedsTeXFormat{LaTeX2e}
+  \ProvidesPackage{emathUtf}[2010/03/05 v 0.07]%
+%
+  \DeclareOption{otf}{\def\otf@{}}%
+  \ProcessOptions\relax
+  \@ifundefined{otf@}{%
+    \RequirePackage{utf}%
+  }{%
+    \RequirePackage{otf}%
+  }%
+  \RequirePackage{emathC}%
+%
+\def\aj@ref#1{%
+  \edefstrlen{#1}\aj@Roman@tmp
+  \ifnum\aj@Roman@tmp<4\relax
+    \strsep{#1}{\hbox}\tmp@a\tmp@b
+  \else
+    \edef\tmp@a{0}%
+  \fi
+  \count255=0\tmp@a\relax\edef\aj@tmp{\the\count255}%
+}%
+%
+%\gdef\ajMaru{\@ifstar{\@aj@Maru}{\aj@Maru}}
+\DeclareRobustCommand{\ajMaru}{\@ifstar{\@aj@Maru}{\aj@Maru}}%
+\gdef\aj@Maru#1{\aj@ref{#1}%
+  \mbox{%
+    \ifnum\aj@tmp=\z@ \CID{8224}%
+    \else\ifnum\aj@tmp<21 \shift@CID{\aj@tmp}{7554}%
+    \else\ifnum\aj@tmp=21 \CID{8091}%
+    \else\ifnum\aj@tmp<32 \shift@CID{\aj@tmp}{8080}%
+    \else\shift@CID{\aj@tmp}{10212}%
+    \fi\fi\fi\fi
+  }}%
+\gdef\@aj@Maru#1{\aj@ref{#1}%
+  \ifnum\aj@tmp<10 \shift@CID{\aj@tmp}{10234}%
+  \else\ifnum\aj@tmp<21 \shift@CID{\aj@tmp}{7554}%
+  \else\ifnum\aj@tmp=21 \CID{8091}%
+  \else\ifnum\aj@tmp<32 \shift@CID{\aj@tmp}{8080}%
+  \else\shift@CID{\aj@tmp}{10212}%
+  \fi\fi\fi\fi}
+%
+%\gdef\ajMaruAlph#1{%
+%%  \count255=0#1\relax\edef\aj@tmp{\the\count255}%
+%  \getAlphnum{#1}\aj@tmp
+%\mbox{%
+%  \ifnum\aj@tmp=\z@ \CID{10483}%
+%  \else\ifnum\aj@tmp<27 \shift@CID{\aj@tmp}{10338}%
+%  \else\CID{10483}%
+%  \fi\fi
+%}}%
+\gdef\ajMaruAlph#1{\aj@ref{#1}%
+\mbox{%
+  \ifnum\aj@tmp=\z@ \CID{10483}%
+  \else\ifnum\aj@tmp<27 \shift@CID{\aj@tmp}{10338}%
+  \else\CID{10483}%
+  \fi\fi
+}}%
+%\gdef\ajMarualph#1{%
+%%  \count255=0#1\relax\edef\aj@tmp{\the\count255}%
+%  \getalphnum{#1}\aj@tmp
+%\mbox{%
+%  \ifnum\aj@tmp=\z@ \CID{10483}%
+%  \else\ifnum\aj@tmp<27 \shift@CID{\aj@tmp}{10312}%
+%  \else\CID{10483}%
+%  \fi\fi
+%}}%
+%\gdef\ajMarualph#1{%
+\DeclareRobustCommand{\ajMarualph}[1]{\aj@ref{#1}%
+  \mbox{%
+    \ifnum\aj@tmp=\z@ \CID{10483}%
+    \else\ifnum\aj@tmp<27 \shift@CID{\aj@tmp}{10312}%
+    \else\CID{10483}%
+    \fi\fi
+  }%
+}%
+\let\ajMaruAlphnum\ajMaruAlph
+\let\ajMarualphnum\ajMarualph
+%
+\gdef\ajKuroMaru{\@ifstar{\@aj@KuroMaru}{\aj@KuroMaru}}
+\gdef\aj@KuroMaru#1{\aj@ref{#1}%
+  \ifnum\aj@tmp=\z@ \CID{10503}%
+  \else\ifnum\aj@tmp<10 \shift@CID{\aj@tmp}{8285}%
+  \else\shift@CID{\aj@tmp}{10504}%
+  \fi\fi}
+\gdef\@aj@KuroMaru#1{\aj@ref{#1}%
+  \shift@CID{\aj@tmp}{10504}}%
+%
+\gdef\ajKaku{\@ifstar{\@aj@Kaku}{\aj@Kaku}}
+\gdef\aj@Kaku#1{\aj@ref{#1}%
+  \ifnum\aj@tmp<10{\@tempcnta\aj@tmp\multiply\@tempcnta\tw@
+  \shift@CID{\@tempcnta}{10764}}%
+  \else\shift@CID{\aj@tmp}{10774}%
+  \fi}
+\gdef\@aj@Kaku#1{\aj@ref{#1}%
+  \ifnum\aj@tmp<10{\@tempcnta\aj@tmp\multiply\@tempcnta\tw@
+  \shift@CID{\@tempcnta}{10765}}%
+  \else\shift@CID{\aj@tmp}{10774}%
+  \fi}
+\DeclareRobustCommand{\ajKuroKaku}{\@ifstar{\@aj@KuroKaku}{\aj@KuroKaku}}
+\gdef\aj@KuroKaku#1{\aj@ref{#1}%
+  \ifnum\aj@tmp<10{\@tempcnta\aj@tmp\multiply\@tempcnta\tw@
+  \shift@CID{\@tempcnta}{11037}}%
+  \else\shift@CID{\aj@tmp}{11047}%
+  \fi\ignorespaces}
+\gdef\@aj@KuroKaku#1{\aj@ref{#1}%
+  \ifnum\aj@tmp<10{\@tempcnta\aj@tmp\multiply\@tempcnta\tw@
+  \shift@CID{\@tempcnta}{11038}}%
+  \else\shift@CID{\aj@tmp}{11047}%
+  \fi}
+\gdef\ajMaruKaku{\@ifstar{\@aj@MaruKaku}{\aj@MaruKaku}}
+\gdef\aj@MaruKaku#1{\aj@ref{#1}%
+  \ifnum\aj@tmp<10{\@tempcnta\aj@tmp\multiply\@tempcnta\tw@
+  \shift@CID{\@tempcnta}{11307}}%
+  \else\shift@CID{\aj@tmp}{11317}%
+  \fi}
+\gdef\@aj@MaruKaku#1{\aj@ref{#1}%
+  \ifnum\aj@tmp<10{\@tempcnta\aj@tmp\multiply\@tempcnta\tw@
+  \shift@CID{\@tempcnta}{11308}}%
+  \else\shift@CID{\aj@tmp}{11317}%
+  \fi}
+\gdef\ajKakko{\@ifstar{\@aj@Kakko}{\aj@Kakko}}
+\gdef\aj@Kakko#1{\aj@ref{#1}%
+  \ifnum\aj@tmp=\z@ \CID{8227}%
+  \else\ifnum\aj@tmp<21 \shift@CID{\aj@tmp}{8070}%
+  \else\shift@CID{\aj@tmp}{9873}%
+  \fi\fi}
+\gdef\@aj@Kakko#1{\aj@ref{#1}%
+  \ifnum\aj@tmp<10 \shift@CID{\aj@tmp}{9884}%
+  \else\ifnum\aj@tmp<21 \shift@CID{\aj@tmp}{8070}%
+  \else\shift@CID{\aj@tmp}{9873}%
+  \fi\fi}
+\gdef\ajRoman{\@ifstar{\@aj@Roman}{\aj@Roman}}
+\gdef\aj@Roman#1{\aj@ref{#1}%
+  \ifnum\aj@tmp<11 \shift@CID{\aj@tmp}{7574}%
+  \else\ifnum\aj@tmp<13 \shift@CID{\aj@tmp}{8214}%
+  \else\shift@CID{\aj@tmp}{8282}%
+  \fi\fi}
+\gdef\@aj@Roman#1{\aj@ref{#1}%
+  \ifnum\aj@tmp=4 \CID{9883}\else\aj@Roman{\aj@tmp}\fi}
+\gdef\ajroman#1{\aj@ref{#1}%
+  \ifnum\aj@tmp<11 \shift@CID{\aj@tmp}{8091}%
+  \else\shift@CID{\aj@tmp}{8287}%
+  \fi}
+\gdef\ajPeriod#1{\aj@ref{#1}%
+  \ifnum\aj@tmp<10 \shift@CID{\aj@tmp}{8061}\else\shift@CID{\aj@tmp}{20577}\fi}%
+\gdef\ajKakkoroman#1{\aj@ref{#1}%
+  \shift@CID{\aj@tmp}{9973}}
+\gdef\ajKakkoRoman#1{\aj@ref{#1}%
+  \shift@CID{\aj@tmp}{9988}}
+\gdef\ajKakkoHira#1{\aj@ref{#1}%
+  \shift@CID{\aj@tmp}{10029}}
+\gdef\ajKakkoKata#1{\aj@ref{#1}%
+  \shift@CID{\aj@tmp}{10077}}
+\gdef\ajKakkoKansuji#1{\aj@ref{#1}%
+  \shift@CID{\aj@tmp}{10125}}
+\gdef\ajMaruKansuji#1{\aj@ref{#1}%
+  \shift@CID{\aj@tmp}{10460}}
+\gdef\ajNijuMaru#1{\aj@ref{#1}%
+  \shift@CID{\aj@tmp}{16222}}
+\gdef\ajRecycle#1{\aj@ref{#1}%
+  \shift@CID{\aj@tmp}{16314}}
+\gdef\ajKakkoalph#1{\aj@ref{#1}%
+  \shift@CID{\aj@tmp}{8111}}
+\gdef\ajKakkoAlph#1{\aj@ref{#1}%
+  \shift@CID{\aj@tmp}{10003}}
+\gdef\ajHasenKakuAlph#1{\aj@ref{#1}%
+  \shift@CID{\aj@tmp}{20496}}%AJ1-6
+\gdef\ajarabic{\@ifstar{\@aj@arabic}{\aj@arabic}}
+%
+\gdef\aj@arabic#1{\aj@ref{#1}%
+  \ifnum\aj@tmp<10 \shift@CID{\aj@tmp}{780}%
+  \else\shift@CID{\aj@tmp}{20749}%
+  \fi}
+\gdef\@aj@arabic#1{\aj@ref{#1}%
+  \shift@CID{\aj@tmp}{20749}}
+%
+\gdef\ajMaruKata#1{\aj@ref{#1}%
+  \shift@CID{\aj@tmp}{10412}%
+}
+\gdef\ajMaruHira#1{\aj@ref{#1}%
+  \shift@CID{\aj@tmp}{10364}%
+}
+%
+\def\ajMaruKataIroha#1{\ajMaruKata{\irohanum{#1}}}%
+\def\ajMaruHiraIroha#1{\ajMaruHira{\irohanum{#1}}}%
+\def\ajMaruKataAkasa#1{\ajMaruKata{\akasa{#1}}}%
+\def\ajMaruHiraAkasa#1{\ajMaruHira{\akasa{#1}}}%
+%
+\def\ajSessi{\CID{15461}}
+\def\ajKasi{\CID{8305}}
+%
+\let\Kakko\ajKakko
+\let\maruKata\ajMaruKata
+\endinput
+
+v 0.00 2005/09/10
+v 0.01 2006/02/15 \ajMaru : textmode
+                  \ajMaruAlph{A..Z}, \ajMaruAlphnum{1..26}
+v 0.02 2006/08/11 \ajMarualph, \ajMarualphnum
+v 0.03 2006/08/17 \ajMaruAlph{1..26}
+v 0.04 2007/09/14 \ajSessi, \ajKasi
+v 0.05 2008/09/15 \ajMaru: hyperref 対策 (saloon #668)
+v 0.06 2008/10/15 つづき
+v 0.07 2010/03/05 emathC.sty をロードする
+                  \ajKuroKaku: \DeclareRobustCommand

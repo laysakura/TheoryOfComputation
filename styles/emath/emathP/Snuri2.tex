@@ -1,0 +1,70 @@
+\section{塗りつぶし(2)}
+この節のマクロは,\textsf{emathPg.sty}で定義されています。
+
+\subsection{整関数のグラフで囲まれる図形の塗りつぶし}
+放物線 $y=x^2$ の上にある2点 A$(-1,~1)$, B(2, 4) を結ぶ線分と
+放物線とで囲まれる図形を塗りつぶします．
+
+\showexample[放物線と弦で囲まれる図形](.5)(0.4){example/nuri01}
+
+\cmd{Nuri}の書式です．\cindex{Nuri}
+\begin{boxnote}
+\begin{verbatim}
+\Nuri[#1](#2)#3#4#5
+    #1 : 濃さ
+    #2 : x の刻み値
+    #3 : 整関数
+    #4 : x1
+    #5 : x2
+#3 で与えられる整関数のグラフとその上の
+2点 (x1,y1), (x2,y2) を結ぶ弦との間を
+指定された濃さで塗りつぶします．
+\end{verbatim}
+\end{boxnote}
+
+次は2つの整関数で挟まれた部分を塗りつぶします．
+
+\showexample[2つの放物線で囲まれる図形](.5)(0.4){example/nuri02}
+
+\cmd{Nurii}の書式です．\cindex{Nurii}
+\begin{boxnote}
+\begin{verbatim}
+\Nurii[#1](#2)#3#4#5#6
+    #1 : 濃さ
+    #2 : x の刻み値
+    #3 : 整関数1
+    #4 : 整関数2
+    #5 : x1
+    #6 : x2
+上下は #3 と #4 で与えられる整関数のグラフ
+左右は直線 $x=x_1$, $x=x_2$ で挟まれる部分を
+指定された濃さで塗りつぶします．
+\end{verbatim}
+\end{boxnote}
+
+\subsection{一般の関数のグラフで囲まれる図形の塗りつぶし}
+整関数用の \cmd{Nuri}, \cmd{Nurii} は，一般関数ではそれぞれ
+\cmd{yNuri}, \cmd{yNurii} に対応します．\cindex{yNuri}\cindex{yNurii}
+
+\showexample[一般関数と弦で囲まれる図形](.5)(0.4){example/nuri03}
+
+\showexample[2つの一般関数で囲まれる図形](.5)(0.4){example/nuri04}
+
+\subsection{$x=g(y)$ で与えられる曲線の塗りつぶし}
+曲線が $x=g(y)$ で与えられる場合は、\cmd{yNurii} に代えて \cmd{xNurii}
+などを用います．\cindex{xNurii}
+
+\showexample[$x=g(y)$で囲まれる図形](.6)(0.5){example/nuri07}
+
+\subsection{媒介変数表示の曲線で囲まれる図形の塗りつぶし}
+整関数の \cmd{Nuri} に対応するものが \cmd{bNuri} です．
+\cindex{bNuri}
+
+\showexample[媒介変数表示曲線で囲まれる図形](1)(0.7){example/nuri05}
+
+\subsection{極方程式であらわされた曲線で囲まれる図形の塗りつぶし}
+整関数の \cmd{Nuri} に対応するものが \cmd{rNuri} です．
+\cindex{rNuri}
+
+\showexample[極方程式で表される曲線の塗りつぶし](1)(0.7){example/nuri06}
+

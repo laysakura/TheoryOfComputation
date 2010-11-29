@@ -1,0 +1,13 @@
+\ProvidesFile{umathx.fd}
+  [2003/07/29]
+
+%\mathabx@mathx
+\DeclareFontFamily{U}{mathx}{\hyphenchar\font45}
+\DeclareFontShape{U}{mathx}{m}{n}{
+      <5> <6> <7> <8> <9> <10>
+      <10.95> <12> <14.4> <17.28> <20.74> <24.88>
+      mathx10
+      }{}
+%\DeclareSymbolFont{mathx}{U}{mathx}{m}{n}
+%\DeclareFontSubstitution{U}{mathx}{m}{n}
+%\end@mathabx

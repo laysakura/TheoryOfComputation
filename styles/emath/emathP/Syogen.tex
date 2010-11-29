@@ -1,0 +1,83 @@
+\section{正弦定理・余弦定理}
+\subsection{正弦定理}
+正弦定理を用いて三角形の辺・角，外接円の半径を求めるコマンドを
+解説します．
+一例として，
+\begin{jquote}
+$A=120\Deg$,~$B=15\Deg$,~$c=10$ 
+\end{jquote}
+である三角形を BC を底辺として描画することを考えてみます．
+そのために $\mathrm{BC}=a$ を正弦定理で求めます．
+
+\resetcounter{equation}
+まずは $C=45\Deg$ と $c=10$ から
+\[ \bunsuu{c}{\sin C}=2R \]
+を用いて外接円の半径を求めます．そのためのコマンドが
+\cmd{seigenR}です．書式は\cindex{seigenR}\cindex{lR}\cindex{lRR}
+\begin{boxnote}
+\begin{verbatim}
+\seigenR#1#2
+    #1 : 向かい合った辺・角のうち辺
+    #2 : 　　　　　　　　　　　　角
+　　外接円の直径が \lRR, 半径が \lR にセットされる．
+\end{verbatim}
+\end{boxnote}
+ここでは，\verb/\seigenR{10}{45}/ とします．
+
+次いで，
+\[ \bunsuu{a}{\sin A}=2R \]
+を用いて $a$ を求めます．そのためのコマンドが \cmd{seigen} です．
+\cindex{seigen}
+\begin{boxnote}
+\begin{verbatim}
+\seigen#1#2
+   #1 : 角
+   #2 : 角と向かい合った辺の長さを受取るコントロールシーケンス
+\end{verbatim}
+\end{boxnote}
+ここでは \verb/\seigen{120}\la/ として \verb/\la/ に $a$ が
+セットされます．
+
+関連して，逆に辺を与えて角を求めるコマンドが \cmd{Seigen} です．
+\cindex{Seigen}
+\begin{boxnote}
+\begin{verbatim}
+\Seigen[#1]#2#3
+  #2 : a
+  #3 : A を受取るコントロールシーケンス
+  #1 = e のときは，角A（鋭角）を求める．（デフォルト）
+  #1 = d のときは，角A（鈍角）を求める．
+\end{verbatim}
+\end{boxnote}
+
+では，この節のはじめに取り上げた三角形を実際に描画してみましょう．
+
+\showexample[正弦定理](0.9)(0.6){example/seigen01}
+
+\subsection{余弦定理}
+2辺夾角がわかっているときに，第3辺を求めるコマンドが
+\cmd{yogen} です．\cindex{yogen}
+\begin{boxnote}
+\begin{verbatim}
+2辺夾角から第3辺の長さを求める．
+\yogen#1#2#3#4
+  #1=b, #2=c, #3=A → a を#4にセットする．
+\end{verbatim}
+\end{boxnote}
+では，このコマンドを用いて
+\[ b=2,~c=3,~A=60\Deg \]
+である三角形を BC を底辺として描画してみます．
+
+\showexample[余弦定理](0.9)(0.4){example/yogen01}
+
+関連して，3辺の長さがわかっているとき，
+角を求めるコマンドが \cmd{Yogen} です．\cindex{Yogen}
+\begin{boxnote}
+\begin{verbatim}
+3辺の長さから角の余弦を求める．
+\Yogen[#1]#2#3#4#5
+   cos(A)=(b^2+c^2-a^2)/(2bc)
+   #2=a, #3=b, #4=c 結果は #5 にセット
+   #1=a のときは角を求める．（単位は度）
+\end{verbatim}
+\end{boxnote}

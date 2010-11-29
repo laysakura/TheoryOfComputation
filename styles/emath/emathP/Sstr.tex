@@ -1,0 +1,1766 @@
+\section{文字列}
+\subsection{文字列}
+%\subsubsection{\texorpdfstring{\cmd{Put}}{Put}}
+\subsubsection{\cmd{Put}}
+\LaTeX の \textsf{picture} 環境において，文字列を配置するコマンドは
+\cmd{put}です。
+
+\textsf{emath} では，点の位置を \cmd{A} などの変数名で指定します。
+そこで \cmd{Put} の登場となります。
+
+\begin{showEx}{\cmd{Put}}
+\begin{picture}(3,2)
+\def\A{(0,0)}
+\def\B{(3,2)}
+\Drawline{\A\B}
+\Put\A{A}
+\Put\B{B}
+\end{picture}
+\end{showEx}
+
+うまくないですね。
+単に \verb+\Put\A{A}+ では，文字`A'の左下が指定した点\verb+A(0,0)+に
+くるように配置されます。これを修正するのに
+\begin{jquote}
+\begin{verbatim}
+(dx,dy)[pos]
+\end{verbatim}
+\end{jquote}
+オプションを用意しました。次節以降この解説をしますが，とりあえず
+\cmd{Put}の書式をご覧ください。
+
+\begin{boxnote}
+\begin{verbatim}
+\Put#1(#2,#3)[#4]#5
+    #1 : 文字列を置く位置（座標）
+    (#2,#3) : 位置の修正ベクトル（長さの単位が必要です。）
+    #4 : 配置 (l,r,t,b)
+    #5 : 文字列
+\end{verbatim}
+\end{boxnote}\cindex{Put}
+
+\subsubsection{文字位置の調整}
+文字列位置の微調整を行う例です。
+
+\showexample[位置の調整前](0.55)(0.4){example/string02}
+
+\showexample[位置の調整後](0.55)(0.4){example/string03}
+
+Aの調整は \texttt{(0,2pt)} の指定により，頂点Aの上 \texttt{2pt} の
+ところが基準になります。\texttt{[b]}指定により，基準点が文字の
+\texttt{bottom}となるように配置されます。
+\texttt{(x,y)} の \texttt{x, y} は単位をつけた数値です。
+0だけは単位をつけなくてもよい，としてあります。
+
+文字位置の調整量\verb/(#2,#3)/は直交座標成分ですが，
+\verb/[r](#2,#3)/とすれば，極座標指定とみなされます。
+Aの位置を変えてみます。
+
+\showexample[調整量を極座標指定](0.55)(0.4){example/string07}
+
+\subsubsection{文字列位置の簡易指定}
+位置の調整を記述するのは面倒なので，簡易指定オプションを用意しました。
+その書式です。
+
+\begin{boxnote}
+\begin{verbatim}
+\Put#1[#2]#3
+    #1 : 文字列を置く位置（座標）
+    #2 : 位置指定オプション
+      n = 北  （上）
+      nw= 北西（左上）
+      w = 西  （左）
+      sw= 南西（左下）
+      s = 南  （下）
+      se= 南東（右下）
+      e = 東  （右）
+      ne= 北東（右上）
+    #3 : 文字列
+\end{verbatim}
+\end{boxnote}
+
+これを用いると，先の例は次のように記述できます。
+
+\showexample[位置の簡易指定オプション](0.55)(0.4){example/string04}
+
+すなわち，点からみて文字列をおくべき方位を指定します。
+
+（注）\cmd{Put} の正しいコマンド名は \cmd{emathPut} です。
+\cindex{emathPut}コマンド名 \cmd{Put}が他のスタイルファイルと
+競合した場合は，\cmd{emathPut} をお使いください。
+
+\subsubsection{文字列の回転}
+\verb/\Put[#1]/ には前節のほか次のオプションがあります。
+\begin{boxnote}
+\begin{verbatim}
+background=white 背景を白く塗る
+kaiten    =ddd   文字を回転する
+houkou    =vvv   回転角を間接的に指定
+from      =PPP   次の to=QQQ と併せて回転角を間接的に指定
+to        =QQQ
+\end{verbatim}
+\end{boxnote}
+
+次は \texttt{kaiten=ddd} で文字を回転させます。
+回転角 \texttt{ddd} は符号付きの六十分法でです。
+
+\begin{showEx}(.62,.32){\texttt{kaiten=}}
+\unitlength6mm\footnotesize
+\begin{zahyou}(-2.5,2.5)(-2.5,2.5)
+\tenretu*{A(0,-1);B(1,0)}
+\Put\A[w]{$-1$}
+\Put\B[s]{1}
+\Tyokusen\A\B{}{}
+\Put[kaiten=45]\B(0,1mm)[lb]{%
+$y=x-1$}
+\end{zahyou}
+\end{showEx}
+
+回転角を方向ベクトルによって与えるオプション
+\texttt{houkou=vvv} です。
+
+\begin{showEx}(.64,.3){\texttt{houkou=}}
+\unitlength6mm\footnotesize
+\begin{zahyou}(-2.5,2.5)(-2.5,2.5)
+\tenretu*{A(0,2);B(1,0)}
+\Put\A[w]{2}
+\Put\B[s]{1}
+\Tyokusen\A\B{}{}
+\Subvec\B\A\AB
+\Put[houkou=\AB]\A(1mm,0)[lb]{%
+$y=2-2x$}
+\end{zahyou}
+\end{showEx}
+
+2点を与えて回転角を指示する例です。
+\begin{showEx}(.64,.3){\texttt{from= , to= }}
+\unitlength6mm\footnotesize
+\begin{zahyou}(-2.5,2.5)(-2.5,2.5)
+\tenretu*{A(0,2);B(1,0)}
+\Put\A[w]{2}
+\Put\B[s]{1}
+\Tyokusen\A\B{}{}
+\Put[from=\A,to=\B]\A(1mm,0)[lb]{%
+$y=2-2x$}
+\end{zahyou}
+\end{showEx}
+
+\texttt{background=white}と併用してみます。
+
+\begin{showEx}(.64,.3){\texttt{background=white}と併用}
+\unitlength6mm\footnotesize
+\begin{zahyou}(-2.5,2.5)(-2.5,2.5)
+\tenretu*{O(0,0);A(0,2);B(1,0)}
+\Put\A[w]{2}
+\Put\B[s]{1}
+\En*\O{2}
+\Tyokusen\A\B{}{}
+\Put[background=white,from=\A,to=\B]\A(%
+1mm,0)[lb]{$y=2-2x$}
+\end{zahyou}
+\end{showEx}
+
+文字の外側の余白は \verb/\fboxsep/ により調整できます。
+
+\begin{showEx}(.64,.3){\cmd{fboxsep}による余白調整}
+\unitlength6mm\footnotesize
+\begin{zahyou}(-2.5,2.5)(-2.5,2.5)
+\tenretu*{O(0,0);A(0,2);B(1,0)}
+\Put\A[w]{2}
+\Put\B[s]{1}
+\En*\O{2}
+\Tyokusen\A\B{}{}
+{\fboxsep=0pt
+\Put[background=white,from=\A,to=\B]\A(%
+1mm,0)[lb]{$y=2-2x$}}
+\end{zahyou}
+\end{showEx}
+
+\subsubsection{文字列から基準点への矢線}
+文字列を置きたい付近で図が込み入っている場合，
+文字列を少し離れた位置において，そこから該当個所に
+矢線を引くためのコマンドが \cmd{PutStr} です。
+
+\showexample[\cmd{PutStr}](0.58)(0.36){example/string11}
+
+矢線を円弧にしたいときは \verb+to+ の後ろに \verb+[半径]+ オプションを
+つけます。半径は無名数で単位は \verb+\unitlength+ です。
+
+\showexample[\cmd{PutStr}](0.58)(0.36){example/string06}
+
+半径に負の値を指定すると，矢印が負の回転を表す方向につきます。
+
+\showexample[\cmd{PutStr}](0.58)(0.36){example/string12}
+
+
+\paragraph{\texttt{addvec=}オプション}
+矢印の先端が曲線に埋没しているのが気になる場合の対策です。
+矢印の先端の位置を微調整するためにのオプションが\texttt{[addvec=..]}です。
+上の例で，矢印の先端を上方に\texttt{1.1pt}持ち上げてみます。
+
+\begin{showEx}(.6,.34){\cmd{PutStr}}
+  \begin{zahyou}[ul=7.5mm](-2,3)(-2,3)
+    \PutStr{(1,2)}(0,0)[b]{A(1, 1)}%
+      to[addvec={(0,1.1pt)}]{(1,1)}
+    {\Thicklines
+      \En\O{1.414}
+      \kTyokusen\O{45}{}{}
+    }%
+  \end{zahyou}
+\end{showEx}
+
+すなわち，\texttt{addvec}の右辺値に矢印の位置を修正するベクトルを与えますが，
+その成分は，単位を伴った数値です。x成分，y成分の間に`,'が入りますから，
+\verb+addvec={(0,1.1pt)}+と，右辺全体を\verb+{ }+でくくっておく必要があります。
+%\clearpage
+
+\paragraph{極座標形式の指定法}
+また，線幅が細くても対象点に黒丸をつけたりした場合も矢印が埋没します。
+
+\begin{showEx}(.6,.34){\cmd{PutStr}}
+  \begin{zahyou}[ul=7.5mm](-2.5,3)(-2.5,3)
+    \def\A{(1,1.732)}
+    \PutStr{(-1,2)}(0,0)[r]%
+      {A(1, $\sqrt3$)}%
+      to\A
+    \En\O{2}
+    \kTyokusen\O{60}{}{}
+    \Kuromaru\A
+  \end{zahyou}
+\end{showEx}
+
+この場合は，微調整ベクトルを極座標形式で与える方法も用意しました。
+
+\begin{showEx}(.6,.34){\cmd{PutStr}}
+  \begin{zahyou}[ul=7.5mm](-2.5,3)(-2.5,3)
+    \def\A{(1,1.732)}
+    \PutStr{(-1,2)}(0,0)[r]%
+      {A(1, $\sqrt3$)}%
+      to[addvec={r(1.2pt,180)}]\A
+    \En\O{2}
+    \kTyokusen\O{60}{}{}
+    \Kuromaru\A
+  \end{zahyou}
+\end{showEx}
+
+すなわち，\verb+r(.,.)+と，先頭に`r'を附加します。
+
+\paragraph{円弧にする場合の半径指定}
+矢線を円弧にするには，\verb+[...]+オプションに，
+\verb+[hankei=..]+を附加します。
+
+\begin{showEx}(.6,.34){\cmd{PutStr}}
+  \begin{zahyou}[ul=7.5mm](-2.5,3)(-2.5,3)
+    \def\A{(1,1.732)}
+    \PutStr{(-1,2.5)}(0,0)[r]%
+      {A(1, $\sqrt3$)}%
+      to[hankei=-2,addvec={r(1.2pt,120)}]\A
+    \En\O{2}
+    \kTyokusen\O{60}{}{}
+    \Kuromaru\A
+  \end{zahyou}
+\end{showEx}
+
+右辺値は，\cmd{unitlength}を単位とする無名数であるのは，
+今までの仕様を引きずっています。
+
+\paragraph{\cmd{PutStr} の \texttt{arrowheadsize=}オプション}
+\cmd{PutStr}は，デフォルトでは矢印がつきます。
+
+矢印のサイズを変更するためにのオプションが\verb+arrowheadsize=..+です。
+特に右辺値を0とすれば，矢印がつかないこととなります。
+
+\begin{showEx}(.64,.3){\cmd{PutStr}}
+\begin{zahyou}[ul=10mm](-1.2,2.5)(-1.2,1.5)
+  \En\O{1}
+  \PutStr{(1.2,.5)}[e]{(1, 0)}to
+    [hankei=-1,arrowheadsize=0]%
+    {(1,0)}
+\end{zahyou}
+\end{showEx}
+
+\paragraph{\cmd{PutStr}の書式}
+\cmd{PutStr}の書式です。\cindex{PutStr}
+
+\begin{boxnote}
+\begin{verbatim}
+\PutStr#1[#2]#3to[#4]#5
+   #1 : 文字列を置く位置
+   #2 : #1 から見ての方位（デフォルト = e ）
+   #3 : 文字列
+   #4 : 文字列から出る矢印を円弧にしたいときは
+        その半径を指定する。
+        key=val の形式も可能
+          hankei=..
+          addvec=..
+          arrowheadsize=..
+   #5 : 文字列から出る矢印の終点
+\PutStr#1(#2,#3)[#4]#5to[#6]#7
+   #1〜#5 : \Put 文と同じ
+   #6 : 文字列から出る矢印を円弧にしたいときは
+        その半径を指定する。
+   #7 : 文字列から出る矢印の終点
+\end{verbatim}
+\end{boxnote}
+
+\if0
+\subsubsection{文字列の白抜き}
+\cmd{Put}の引数の冒頭に\verb/[background=white]/オプションを付加することにより
+文字列を白抜きで配置することができます。
+
+背景を白く塗るには，
+\begin{verbatim}
+   \colorbox{white}{....}
+\end{verbatim}
+がありますが，文字を回転させるのに
+\begin{verbatim}
+   \rotate{..}{\colorbox{white}{...}}
+\end{verbatim}
+としたとき，角の大きさによっては背景に痕跡が残ってしまうことがあります。
+そこで，\texttt{Tpic specials} を用いて背景を白塗りすることにしました。
+
+\begin{showEx}(.64,.3){\texttt{background=white}}
+\unitlength6mm\footnotesize
+\drawaxisfalse
+\begin{zahyou}(-2.5,2.5)(-2.5,2.5)
+\def\O{(0,0)}
+\En*\O{2}
+\Put[background=white]\O(0,0){$S$}
+\end{zahyou}
+\end{showEx}
+\fi
+
+
+
+\subsection{複数の点の定義とラベル付け}
+%\subsubsection{\texorpdfstring{\cmd{tenretu}}{tenretu}}
+\subsubsection{\cmd{tenretu}}
+複数の点の定義とラベル付けを同時に片付けようというのが
+\cmd{tenretu}コマンドです。\cindex{tenretu}
+
+\showexample[\cmd{tenretu}](0.55)(0.4){example/string05}
+
+\begin{boxnote}
+\begin{verbatim}
+ 複数の点の定義とラベルつけ
+ \tenretu#1
+ \tenretu*#1（定義のみ  ラベル付けはオプション）
+   #1 は点列を `;' で区切った列
+     #1は
+       [##1]##2(##3,##4)##5
+     の形式で点列を `;' で区切る。
+       ##1 : オプションで，点の位置に置く文字列
+             （省略時は，##2 と同じ）
+       ##2 : \##2 という変数の頂点名
+       [r] : をつけると極座標形式とみなす
+       [s] : をつけると相対移動とみなす
+       (##3,##4) : 頂点の座標
+       ##5 : 頂点の近傍に置く文字列の配置オプション
+             [方角] オプションに限り
+             区切子 `[', `]' を省略可能
+  \edef\##2{(##3,##4)}として，点\##2 が定義され，
+  \Put に
+       \Put\##2##5{##1}
+  として引き渡される。）
+\end{verbatim}
+\end{boxnote}
+\cindex{tenretu}
+
+%\subsubsection{\texorpdfstring{\cmd{tenretu*}}{tenretu*}}
+\subsubsection{\cmd{tenretu*}}
+\texttt{*}を附加した \cmd{tenretu*} は，点を定義するだけで，
+ラベル付けはしません。
+
+\showexample[\cmd{tenretu}](0.55)(0.4){example/string13}
+\cindex{tenretu*}
+
+%\subsubsection{\texorpdfstring{\cmd{oresen}}{oresen}}
+\subsubsection{\cmd{oresen}}
+更にそれらを折れ線で結んでしまおう，
+というのが\cmd{oresen}です。\cindex{oresen}
+
+\showexample[\cmd{oresen}](0.55)(0.4){example/string08}
+
+\verb/<sensyu=...>/オプションを利用して，折れ線を点線・破線・鎖線に
+することも可能です。
+
+\showexample[線種の変更（鎖線）](0.55)(0.4){example/string09}
+
+\showexample[線種の変更（破線）](0.55)(0.4){example/string10}
+
+\cmd{oresen}の書式です。
+
+\begin{boxnote}
+\begin{verbatim}
+\oresen<#1>#2
+  <#1> : 線種を変更するときのオプション
+     sensyu=\dashline[40]{.1}
+     sensyu=\chainline[.4][.2]
+     など
+  #2 は折れ線の頂点列を `;' で区切った列
+    #2は
+      [##1]##2(##3,##4)##5
+    の形式で点列を `;' で区切る。
+      ##1 : オプションで，点の位置に置く文字列
+            （省略時は，##2 と同じ）
+      ##2 : \##2 という変数の頂点名
+      [r] : をつけると極座標形式とみなす
+      [s] : をつけると相対移動とみなす
+      (##3,##4) : 頂点の座標
+      ##5 : 頂点の近傍に置く文字列の配置オプション
+            [方角] オプションに限り
+            区切子 `[', `]' を省略可能
+ \edef\##2{(##3,##4)}として，点\##2 が定義され，
+ \Put に
+      \Put\##2##5{##1}
+ として引き渡される。）
+\end{verbatim}
+\end{boxnote}
+
+%\subsubsection{\texorpdfstring{\cmd{rtenretu}}{rtenretu}}
+\subsubsection{\cmd{rtenretu}}
+\cmd{tenretu(*)}による点の定義は直交座標を前提としています。
+\verb+[r]+オプションで極座標形式にすることができますが，
+多くの点を極座標形式で定義するには，煩雑です。
+
+そこで，すべての点が極座標形式であるときに使用するために
+\cmd{rtenretu(*)}を作りました。
+\begin{showEx}(.6,.345){\cmd{rtenretu}}
+\begin{zahyou}[ul=10mm](-1.2,1.5)(-1.2,1.5)
+\small
+\rtenretu{A(1,0)ne;B(1,60)ne;C(1,120)nw;
+D(1,180)nw;E(1,240)sw;F(1,300)se}
+\Drawline{\A\B\C\D\E\F\A}
+\En\O{1}
+\end{zahyou}
+\end{showEx}
+\cindex{rtenretu}
+
+中心が原点以外のときは\verb+[...]+オプションで指定します。
+\begin{showEx}(.6,.345){\cmd{rtenretu[極]}}
+\begin{zahyou}[ul=10mm](-0.2,2.5)(-1.2,1.5)
+\small
+\def\Tyuusin{(1,0)}
+\rtenretu[\Tyuusin]{A(1,0)ne;B(1,60)ne;
+C(1,120)nw;D(1,180)nw;E(1,240)sw;F(1,300)se}
+\Drawline{\A\B\C\D\E\F\A}
+\En\Tyuusin{1}
+\end{zahyou}
+\end{showEx}
+
+\verb+*+付の\cmd{rtenretu*}と\cmd{rtenretu}の関係は，
+\cmd{tenretu*}と\cmd{tenretu}の関係と同じです。
+\cindex{rtenretu*}
+
+\subsubsection{座標に計算式を記述}
+\cmd{tenretu}に\verb+<perl>+オプションを付加すると，
+座標に計算式を記述することができます。
+ただし，perlとの連携機能を前提としますから，
+\textsf{samplePp.tex}をご覧ください。
+
+\subsection{線分に文字列}
+\subsubsection{線分の長さ表記}
+線分の両端を円弧で結び，その中央部に長さなどを記入するための
+コマンド \cmd{HenKo} です。
+\cindex{HenKo}
+
+\showexample[\cmd{HenKo}](0.55)(0.35){example/HenKo01}
+
+\cmd{HenKo}は基本的には，
+\begin{jquote}
+    線分の両端と中央部に置く文字列
+\end{jquote}
+の3個の引数を与えます。なお，与える両端の点の順序を逆転させると，
+円弧と文字列が線分の反対側に表示されます。
+
+\showexample[端点の順序](0.55)(0.35){example/HenKo04}
+
+書式は
+
+\begin{boxnote}
+\begin{verbatim}
+\HenKo[#1]<#2>#3#4#5
+
+   #1: 弧を点線にする場合，点の個数(*を指定した場合は，一任)
+   #2: key=val
+         henkoH=.. 辺と弧の距離(単位付数値) デフォルト値=1.6ex
+         henkohi=..右辺値は無名数で，
+                   辺と弧の距離をデフォルトの何倍にするかを指定
+         putoption=.. 
+         henkosep=.. (白抜きボックスの \fboxsep)
+         yazirusi=a/r/b
+         henkomozikaiten=1/-1
+         linewidth=..
+         henkotype=0/1 (0:円弧（デフォルト）, 1:楕円, 2:折れ線)
+   #3,#4 : 両端の点
+   #5 : 配置する文字列
+\end{verbatim}
+\end{boxnote}
+引数が多いですが，必須のものは，
+上の例のように \verb+#3, #4, #5+ だけです。
+
+線分と弧の間隔を調整するには，\verb+henkoH=..+オプションを用います。
+デフォルト値の\verb+1.6ex+から大きくしてみましょう。
+
+\showexample[文字と線分との間隔](0.55)(0.35){example/HenKo02}
+
+弧の部分を点線にするには \verb+[#1]+ で，弧上に置く点の個数を指定します。
+
+\showexample[弧を点線で](0.55)(0.35){example/HenKo03}
+
+極端な話し，これを \verb+[0]+ と指定すれば，円弧は描かれません。
+
+\showexample[文字のみ](0.55)(0.35){example/HenKo05}
+
+なお，文字列は線分の中央に置かれますが，これをどちらかに寄せるコマンドが
+\cmd{sPut} です。
+
+\showexample[\cmd{sPut}](0.55)(0.35){example/sPut01}
+
+書式は\cindex{sPut}
+\begin{boxnote}
+\begin{verbatim}
+\sPut[#1]#2#3(#4,#5)[#6]#7
+    #1 : 比率 (0~1)
+    #2 : 始点
+    #3 : 終点
+   (#4,#5) : 位置の修正ベクトル 単位必須
+    #6 : \makebox の [..] オプション
+    #7 : 文字列
+#2 から #3 へ向かう線分の #1 倍の位置(\X)に，
+    \Put\X(#4,#5)[#6]#7 として文字列(#7)を置く。
+\end{verbatim}
+\end{boxnote}
+
+（注）dviout.exe による印刷で，辺の傍に記した長さの文字などが
+黒いボックスになってしまう場合は，dviout の 
+        graphic --- color specials
+設定を
+        replace(def) または replace(bak)
+にしてみてください。
+
+%\subsubsection{\texorpdfstring{\cmd{HenKo}}{HenKo} : 文字列の配置調整}
+\subsubsection{\cmd{HenKo} : 文字列の配置調整}
+\cmd{HenKo}で線分の傍に置く文字列が長くなったときなど
+文字位置を調整したいときがあります。
+その一例です。
+
+\begin{showEx}(.65,.29){修正前}
+\unitlength10mm\footnotesize
+\drawaxisfalse
+\begin{zahyou}(-.5,2.5)(-.5,2.5)
+\Thicklines
+\oresen{A(0,2)n;B(2,0)s}
+\thinlines
+\HenKo\A\B{$2+\sqrt3$}
+\end{zahyou}
+\end{showEx}
+
+文字列$2+\sqrt{3}$が線分にかかっていますので，左に動かします。
+調整に入る前に，デフォルトの文字列配置について述べます。
+
+基準点は円弧の中点で，文字列ボックスの中心がこの基準点にくるように
+配置されます。
+では，基準点を左に4mm動かしてみましょう。
+\begin{showEx}(.65,.29){平行移動}
+\unitlength10mm\footnotesize
+\drawaxisfalse
+\begin{zahyou}(-.5,2.5)(-.5,2.5)
+\Thicklines
+\oresen{A(0,2)n;B(2,0)s}
+\thinlines
+\HenKo<putoption={(-4mm,0)}>\A\B%}>%
+{$2+\sqrt3$}
+\end{zahyou}
+\end{showEx}
+\verb/<putoption={(-4mm,0)}>/の部分が平行移動をするためのオプションで，
+\cmd{Put}にオプションとして引き渡されます。
+すなわち，円弧の中点を\verb/\Q/として
+\begin{verbatim}
+    \Put\Q(-4mm,0){$2+\sqrt3$}
+\end{verbatim}
+が実行されます。
+
+文字列が長いときは，文字列を回転して線分と平行にする方がよいでしょうか。
+\begin{verbatim}
+  <henkomozikaiten=1> オプション
+\end{verbatim}
+です。
+
+\begin{showEx}(.65,.29){回転}
+\unitlength10mm\footnotesize
+\drawaxisfalse
+\begin{zahyou}(-.5,2.5)(-.5,2.5)
+\tenretu{A(0,2)n;B(2,0)s}
+\HenKo<henkomozikaiten=1>\A\B%
+{$2+\sqrt3$}
+{\Thicklines\Drawline{\A\B}}
+\end{zahyou}
+\end{showEx}
+
+オプションの右辺値を$-1$とすれば，文字は180度回転します。
+
+\begin{showEx}(.65,.29){逆回転}
+\unitlength10mm\footnotesize
+\drawaxisfalse
+\begin{zahyou}(-.5,2.5)(-.5,2.5)
+\tenretu{A(0,2)n;B(2,0)s}
+\HenKo<henkomozikaiten=-1>\A\B%
+{$2+\sqrt3$}
+{\Thicklines\Drawline{\A\B}}
+\end{zahyou}
+\end{showEx}
+
+\subsubsection{弧に矢印}
+弧の端末に矢印をつけるオプションが\verb+<yazirusi=a>+オプションです。
+
+\begin{showEx}{\texttt{<yazirusi=a>}オプション}
+\begin{zahyou*}(0,3)(0,3)
+\def\A{(1,1)}%
+\def\B{(2,2)}%
+\Put\A{\makebox(0,0)[r]{A }}%
+\Put\B{\makebox(0,0)[l]{ B}}%
+\HenKo<yazirusi=a>\A\B{$r$}%
+\Drawline{\A\B}
+\end{zahyou*}
+\end{showEx}
+
+逆向きにつけるには
+
+\begin{showEx}{\texttt{<yazirusi=r>}オプション}
+\begin{zahyou*}(0,3)(0,3)
+\def\A{(1,1)}%
+\def\B{(2,2)}%
+\Put\A{\makebox(0,0)[r]{A }}%
+\Put\B{\makebox(0,0)[l]{ B}}%
+\HenKo<yazirusi=r>\A\B{$r$}%
+\Drawline{\A\B}
+\end{zahyou*}
+\end{showEx}
+
+両向きにつけるには
+
+\begin{showEx}{\texttt{<yazirusi=b>}オプション}
+\begin{zahyou*}(0,3)(0,3)
+\def\A{(1,1)}%
+\def\B{(2,2)}%
+\Put\A{\makebox(0,0)[r]{A }}%
+\Put\B{\makebox(0,0)[l]{ B}}%
+\HenKo<yazirusi=b>\A\B{$r$}%
+\Drawline{\A\B}
+\end{zahyou*}
+\end{showEx}
+
+%\subsubsection{\texorpdfstring{\cmd{HenKo}}{HenKo}の中点，中心}
+\subsubsection{\cmd{HenKo}の中点，中心}
+\cmd{HenKo}コマンド発行後，円弧の中点，円弧の中心位置を知りたいことがあります。
+
+\paragraph{\cmd{HenKoTyuuten}}
+\cmd{HenKo}で描画される円弧の中点は\cmd{HenKoTyuuten}に保存されています。
+
+\begin{showEx}(.6,.34){\cmd{HenKoTyuuten}}
+  \begin{zahyou*}[ul=8mm](-.5,3)(-.5,2.5)
+    \tenretu{A(0,0)nw;B(3,2)ne}
+    \Drawline{\A\B}
+    \HenKo\A\B{}
+    \Kuromaru\HenKoTyuuten
+  \end{zahyou*}
+\end{showEx}
+
+\paragraph{\cmd{HenKoTyuusin}}
+\cmd{HenKo}で描画される円弧の中心を\cmd{HenKoTyuusin}に保存します。
+
+\begin{showEx}(.6,.34){\cmd{HenKoTyuuten}}
+  \begin{zahyou*}[ul=8mm](-1,4)(-1,4)
+    \tenretu{A(0,0)sw;B(2,0)se}
+    \Drawline{\A\B}
+    \HenKo\A\B{}
+    \Kuromaru\HenKoTyuusin
+    \Hasen{\A\HenKoTyuusin\B}
+    \Enko<hasen={[.5][.8]}>\HenKoTyuusin%
+      {tuukaten=\A}%
+      {hazimeten=\B}{owariten=\A}
+  \end{zahyou*}
+\end{showEx}
+
+%\clearpage
+
+\paragraph{応用例}
+\cmd{HenKoTyuuten}, \cmd{HenKoTyuusin}を利用した例です。
+
+\begin{showEx}(.7,.24){応用例}
+  \begin{zahyou*}[ul=8mm](-.5,2.5)(-.5,4.5)
+    \tenretu{A(2,4)n;B(1,2)se;C(0,0)s}
+    \Drawline{\A\C}
+    \HenKo\A\B{}
+    \Bunten\HenKoTyuusin\HenKoTyuuten{.95}{.05}\P
+    \Bunten\HenKoTyuusin\HenKoTyuuten{1.05}{-.05}\Q
+      \Drawline{\P\Q}
+    \HenKo\B\C{}
+    \Bunten\HenKoTyuusin\HenKoTyuuten{.95}{.05}\P
+    \Bunten\HenKoTyuusin\HenKoTyuuten{1.05}{-.05}\Q
+      \Drawline{\P\Q}
+  \end{zahyou*}
+\end{showEx}
+
+\subsubsection{\cmd{HenKo}の形状いろいろ}
+\cmd{HenKo}の\verb+<henkotype=..>+オプションにより，
+円弧部分のバリエーションについて説明します.
+
+この節では，\verb+\HenKo+の方が焦点ですから，
+辺のほうは破線描画としておきます。
+
+\paragraph{色つけ}
+円弧の部分に色をつけるには \verb+<henkocolor=...>+ オプションを用います。
+
+\begin{showEx}(.7,.24){\texttt{<henkocolor=..>}オプション}
+\begin{zahyou*}[ul=6mm](0,5)(0,4)
+  \tenretu{A(0,1)w;B(4,2)e}
+  \Hasen{\A\B}
+  \HenKo<henkocolor=red>\A\B{$a$}
+\end{zahyou*}
+\end{showEx}
+
+\paragraph{\texttt{<henkotype=..>}オプション}
+デフォルトでは，辺の両端を円弧で結びますが，
+この形状を変えるオプションが \verb+<henkotype=..>+オプションです。
+
+\subparagraph{\texttt{<henkotype=ellipse>}}
+円弧ではなく，楕円弧にするオプションが
+\begin{jquote}
+\begin{verbatim}
+<henkotype=1> または <henkotype=ellipse>
+\end{verbatim}
+\end{jquote}
+です。
+
+\begin{showEx}(.7,.24){\texttt{<henkotype=ellipse>}オプション}
+\begin{zahyou*}[ul=6mm](0,5)(0,4)
+  \tenretu{A(0,1)w;B(4,2)e}
+  \Hasen{\A\B}
+  \HenKo<henkotype=ellipse>\A\B{$a$}
+\end{zahyou*}
+\end{showEx}
+
+\subparagraph{\texttt{<henkotype=triangle>}}
+円弧ではなく，辺の両端点・文字列を配置する点を結ぶ三角形を描画する
+オプションが
+\begin{jquote}
+\begin{verbatim}
+<henkotype=2> または <henkotype=triangle>
+\end{verbatim}
+\end{jquote}
+です。
+
+\begin{showEx}(.7,.24){\texttt{<henkotype=triangle>}オプション}
+\begin{zahyou*}[ul=6mm](0,5)(0,4)
+  \tenretu{A(0,1)w;B(4,2)e}
+  \Hasen{\A\B}
+  \HenKo<henkotype=triangle>\A\B{$a$}
+\end{zahyou*}
+\end{showEx}
+
+\subparagraph{\texttt{<henkotype=parallel>}}
+円弧ではなく，辺と平行な線分を描画するオプションが
+\begin{jquote}
+\begin{verbatim}
+<henkotype=3> または <henkotype=parallel>
+\end{verbatim}
+\end{jquote}
+です。
+
+\begin{showEx}(.7,.24){\texttt{<henkotype=parallel>}オプション}
+\begin{zahyou*}[ul=6mm](0,5)(0,4)
+  \tenretu{A(0,1)w;B(4,2)e}
+  \Hasen{\A\B}
+  \HenKo<henkotype=parallel>\A\B{$a$}
+\end{zahyou*}
+\end{showEx}
+
+\paragraph{\texttt{yazirusi=a/r/b}オプション}
+
+この形状は，線分ABの長さを表すときなどに利用できそうです。
+そして，\cmd{HenKo}で描画される方の線分には矢印をつけることが多いようです。
+
+\begin{showEx}(.7,.24){\texttt{<yazirusi=b>}オプション}
+\begin{zahyou*}[ul=6mm](0,5)(0,4)
+  \tenretu{A(0,1)w;B(4,2)e}
+  \Hasen{\A\B}
+  \HenKo<henkotype=parallel,yazirusi=b>\A\B{$a$}
+\end{zahyou*}
+\end{showEx}
+
+\verb+\HenKo<yazirusi=..>\A\B{...}+における\verb+yazirusi=..+の右辺値は
+\begin{jquote}
+\begin{verbatim}
+a: 点\Aから点\Bに向かう向き
+r: 点\Bから点\Aに向かう向き
+b: 両向き
+\end{verbatim}
+\end{jquote}
+のいずれかです。
+
+\paragraph{\texttt{<henkosideb=..,henkosidet=..>} オプション}
+この場合，さらに補助線 --- 線分の両端と\cmd{HenKo}によって
+引かれる並行線分の両端を結ぶ線分（若干延長して)が欲しくなるかもしれません。
+
+\begin{showEx}(.7,.24){\texttt{<henkosideb=..,henkosidet=..>}オプション}
+\begin{zahyou*}[ul=6mm](0,5)(0,4)
+  \tenretu{A(0,1)w;B(4,2)e}
+  \Hasen{\A\B}
+  \HenKo<henkotype=parallel,yazirusi=b,%
+    henkosideb=0,henkosidet=1.5>\A\B{$a$}
+\end{zahyou*}
+\end{showEx}
+
+この場合，補助線は，辺の端点と\cmd{HenKo}によって引かれる線分（矢線）の
+端点を結ぶ線分を
+\begin{jquote}
+\begin{verbatim}
+  \henkosideb : 1-\henkosideb
+と
+  \henkosidet : 1-\henkosidet
+に分ける2点を結ぶ線分
+\end{verbatim}
+\end{jquote}
+となります。
+
+なお，\verb+<henkocolor=..>+オプションによる色づけは\verb+\HenKo+による
+線分（両向き矢線）に対してのみ働きます。
+
+\begin{showEx}(.7,.24){\texttt{<henkocolor=..>}オプション}
+\begin{zahyou*}[ul=6mm](0,5)(0,4)
+  \tenretu{A(0,1)w;B(4,2)e}
+  \Hasen{\A\B}
+  \HenKo<henkotype=parallel,yazirusi=b,%
+    henkocolor=red,%
+    henkosideb=0,henkosidet=1.5>\A\B{$a$}
+\end{zahyou*}
+\end{showEx}
+
+補助線に対する色づけは\verb+<henkosidecolor=..>+オプションで行います。
+
+\begin{showEx}(.7,.24){\texttt{<henkosidecolor=..>}オプション}
+\begin{zahyou*}[ul=6mm](0,5)(0,4)
+  \tenretu{A(0,1)w;B(4,2)e}
+  \Hasen{\A\B}
+  \HenKo<henkotype=parallel,yazirusi=b,%
+    henkocolor=red,henkosidecolor=green,%
+    henkosideb=0,henkosidet=1.5>\A\B{$a$}
+\end{zahyou*}
+\end{showEx}
+
+まさかねぇ〜\verb+(^^ゞ+
+
+\subparagraph{\texttt{<henkotype=bracket>}}
+円弧ではなく，大括弧にするオプションが
+\begin{jquote}
+\begin{verbatim}
+<henkotype=1> または <henkotype=bracket>
+\end{verbatim}
+\end{jquote}
+です。
+
+\begin{showEx}(.7,.24){\texttt{<henkotype=bracket>}オプション}
+\begin{zahyou*}[ul=6mm](0,5)(0,4)
+  \tenretu{A(0,1)w;B(4,2)e}
+  \Hasen{\A\B}
+  \HenKo<henkotype=bracket>\A\B{$a$}
+\end{zahyou*}
+\end{showEx}
+
+\paragraph{角を丸く}
+コーナーを丸くするオプションが\verb+<Oval=..>+オプションです。
+右辺値は，単位を伴った長さでコーナーの四分円の半径を指定します。
+
+\begin{showEx}(.7,.24){\texttt{<Oval=...>}オプション}
+\begin{zahyou*}[ul=6mm](0,5)(0,4)
+  \tenretu{A(0,1)w;B(4,2)e}
+  \Hasen{\A\B}
+  \HenKo<henkotype=bracket,Oval=4pt,henkocolor=cyan>
+    \A\B{$a$}
+\end{zahyou*}
+\end{showEx}
+
+注：\verb+<henkotype=brace>+はありません。
+後述の\cmd{rotUbrace}コマンドをご覧ください.
+
+\paragraph{\texttt{<agezoko=..>}オプション}
+\cmd{HenKo}の端点を辺から浮かせたいときがあります。
+そのためのオプションです。
+右辺値は無名数で単位は\cmd{unitlength}です。
+単位をつけた数値で指定したいときは\verb+<Agezoko=..>+オプションを用います。
+
+\begin{showEx}(.7,.24){\texttt{<agezoko=>}オプション}
+\begin{zahyou*}[ul=6mm](0,5)(0,4)
+  \tenretu{A(0,1)w;B(4,2)e}
+  \Hasen{\A\B}
+  \HenKo<henkotype=bracket,Agezoko=5pt>\A\B{$a$}
+\end{zahyou*}
+\end{showEx}
+
+\paragraph{\texttt{<agezokovi=..,agezokovii=..>}オプション}
+\cmd{HenKo}の端点をオプションの右辺値だけずらすオプションです。
+右辺値はベクトルで，成分は無名数---単位は\cmd{unitlength}です。
+単位をつけた数値で指定したいときは\verb+<Agezokovi=..,\Agezokovii=..>+オプションを用います。
+末尾\verb+`i'+が始点に，\verb+`ii'+が終点に対する補正ベクトルです。
+
+\begin{showEx}(.7,.24){\texttt{<agezokovi=>}オプション}
+\begin{zahyou*}[ul=6mm](0,5)(0,2)
+  \tenretu{A(0,1)nw;B(4,1)ne}
+  \Hasen{\A\B}
+  \HenKo<henkotype=bracket>\A\B{}
+  \HenKo<henkotype=bracket,henkocolor=red,%
+    Agezokovi={(-2pt,0)},Agezokovii={(2pt,0)},%
+    henkoH=3pt>\A\B{}
+\end{zahyou*}
+\end{showEx}
+
+
+%\subsubsection{辺に\texorpdfstring{\cmd{brace}}{brace}}
+\subsubsection{辺に\cmd{brace}}
+\cmd{underbrace}, \cmd{overbrace}を
+傾いた線分に対して使用するコマンドが
+\begin{jquote}
+  \cmd{rotUbrace}, \cmd{rotObrace}
+\end{jquote}
+です。
+
+まずは，\cmd{rotUbrace}の書式から
+\begin{boxnote}
+\begin{verbatim}
+\rotUbrace[#1]#2#3#4
+     点#2から点#3へ向かう有向線分の，
+       進行方向右側に \underbrace をつけ，
+       中央下部に文字列#4を配置する。
+       （#4 は数式モード内と解釈される。--- \scriptstyle ）
+     \underbrace 記号と有向線分の間隔を空けたいときは#1に
+        depth=3pt
+     などと，間隔を単位付き数値で指定する。
+\end{verbatim}
+\end{boxnote}
+\cindex{rotUbrace}
+
+では，簡単な使用例です。
+\begin{showEx}(.55,.39){\cmd{rotUbrace}}
+\footnotesize
+\begin{zahyou}[ul=4mm](-1,11)(-1,6)%
+\tenretu*{A(0,5);B(10,0)}%
+\Put\A[w]{5}\Put\B[s]{10}%
+\kuromaru[2pt]{\A;(2,4);(4,3);
+  (6,2);(8,1);\B}%
+\Tyokusen\A\B{}{}%
+\rotUbrace\A\B{\text{6個}}%
+\end{zahyou}
+\end{showEx}
+すなわち点A(0, 5)から点B(10, 0)へ向かう線分の下に
+\cmd{underbrace}をつけ，その中央部に格子点の個数を示しています。
+この文字列はデフォルトでは\cmd{scriptstyle}で小さすぎますので，
+\cmd{textstyle}を付加しています。
+
+\cmd{underbrace}を線分から少し離したい，という場面もあるでしょう。
+そのためのオプションが
+\begin{jquote}
+  \verb+[depth=...]+
+\end{jquote}
+です。右辺値は単位を伴った数値です。
+
+\begin{showEx}(.55,.39){\texttt{[depth=...}オプション}
+\footnotesize
+\begin{zahyou}[ul=4mm](-1,11)(-1,6)%
+\tenretu*{A(0,5);B(10,0)}%
+\Put\A[w]{5}\Put\B[s]{10}%
+\kuromaru[2pt]{\A;(2,4);(4,3);
+(6,2);(8,1);\B}%
+\Tyokusen\A\B{}{}%
+\rotUbrace[depth=3pt]\A\B%
+  {\text{6個}}%
+\end{zahyou}
+\end{showEx}
+
+基準となる線分は有向線分として扱われます。
+上の例で，向きを入れ変えると
+
+\begin{showEx}(.55,.39){有向線分の向きを逆}
+\footnotesize
+\begin{zahyou}[ul=4mm](-1,11)(-1,6)%
+\tenretu*{A(0,5);B(10,0)}%
+\Put\A[w]{5}\Put\B[s]{10}%
+\kuromaru[2pt]{\A;(2,4);(4,3);
+(6,2);(8,1);\B}%
+\Tyokusen\A\B{}{}%
+\rotUbrace\B\A{\text{6個}}%
+\end{zahyou}
+\end{showEx}
+
+\cmd{brace}記号が線分ABに関して対称な位置に付きます。
+文字の向きがおかしいですか。
+これは\cmd{underbrace}を回転させているからで，
+文字の向きを逆にするには，\cmd{overbrace}を用いればよいでしょう。
+ということで，つぎは\cmd{rotObrace}の話しに移ります。
+
+\begin{showEx}(.55,.39){\cmd{rotObrace}}
+\footnotesize
+\begin{zahyou}[ul=4mm](-1,11)(-1,6)%
+\tenretu*{A(0,5);B(10,0)}%
+\Put\A[w]{5}\Put\B[s]{10}%
+\kuromaru[2pt]{\A;(2,4);(4,3);
+(6,2);(8,1);\B}%
+\Tyokusen\A\B{}{}%
+\rotObrace\A\B{\text{6個}}%
+\end{zahyou}
+\end{showEx}
+
+線分と\cmd{overbrace}記号を離すためのオプションは
+\verb![height=...]!です。
+
+\begin{showEx}(.55,.39){\texttt{[height=...]オプション}}
+\footnotesize
+\begin{zahyou}[ul=4mm](-1,11)(-1,6)%
+\tenretu*{A(0,5);B(10,0)}%
+\Put\A[w]{5}\Put\B[s]{10}%
+\kuromaru[2pt]{\A;(2,4);(4,3);
+(6,2);(8,1);\B}%
+\Tyokusen\A\B{}{}%
+\rotObrace[height=3pt]\A\B{\text{6個}}%
+\end{zahyou}
+\end{showEx}
+
+\cmd{rotObrace}の書式です。
+\begin{boxnote}
+\begin{verbatim}
+\rotObrace[#1]#2#3#4
+     点#2から点#3へ向かう有向線分の，
+       進行方向左側に \overbrace をつけ，
+       中央上部に文字列#4を配置する。
+       （#4 は数式モード内と解釈される。--- \scriptstyle ）
+     \overbrace 記号と有向線分の間隔を空けたいときは#1に
+        height=3pt
+     などと，間隔を単位付き数値で指定する。
+\end{verbatim}
+\end{boxnote}
+\cindex{rotObrace}
+
+\subsubsection{等辺記号}
+2つの線分の長さが等しいときに，縦棒を引いたりして表現するための
+コマンド \cmd{Touhenkigou} です。\cindex{Touhenkigou}
+
+\showexample[\cmd{Touhenkigou}](0.55)(0.4){example/Touhen01}
+
+書式です。
+\begin{boxnote}
+\begin{verbatim}
+\Touhenkigou[#1]<#2><#3>(#4)#5#6
+     #1 : 記号（デフォルトは | ）
+     #2 : 個数
+     #3 : #2で複数を指定した場合の記号間間隔（デフォルト0.5pt）
+     #4 : 位置（デフォルトは0.5，すなわち中点）
+     #5, #6 : 線分の両端
+\end{verbatim}
+\end{boxnote}
+
+辺上に置く縦棒を2本（3本）にしたいときは \verb+<#2>+ オプションを用います。
+
+\showexample[\cmd{Touhenkigou}](0.55)(0.4){example/Touhen02}
+
+複数の線分に等辺記号をつけるコマンドが \cmd{touhenkigou} です。
+線分を`;'で区切って並べます。
+
+\showexample[\cmd{touhenkigou}](0.55)(0.4){example/Touhen03}
+
+書式です。\cindex{touhenkigou}
+\begin{boxnote}
+\begin{verbatim}
+\touhenkigou[#1]<#2>#3
+        #1 : 辺上に置く記号（デフォルトは | ）
+        #2 : 個数
+        #3 : 線分列（区切子は`;'）
+\end{verbatim}
+\end{boxnote}
+
+\subsubsection{平行記号}
+\begin{showEx}(.59,.35){\cmd{heikoukigou}}
+\unitlength5mm\small
+\begin{picture}(6,6)
+\tenretu{A(1,1)s;B(4,5)n;
+  C(3,1)s;D(6,5)n}
+\heikoukigou{\A\C;\B\D}
+\heikoukigou[2]{\A\B;\C\D}
+\end{picture}
+\end{showEx}
+
+\begin{enumerate}[(1)]
+  \item すなわち一番簡単な使用法は
+\begin{jquote}
+\begin{verbatim}
+\heikoukigou{\P\Q;\R\S}
+\end{verbatim}
+\end{jquote}
+などと，新コマンド\cmd{heikoukigou}の引数に
+平行記号をつけたい線分を`;'で区切って並べます．
+  \item (1)の場合，記号`$>$'は1個だけつきますが，これを2個にしたければ
+\begin{jquote}
+\begin{verbatim}
+\heikoukigou[2]{\P\Q;\R\S}
+\end{verbatim}
+\end{jquote}
+と，\cmd{heikoukigou}に\verb+[2]+オプションをつけます．
+  \item さらに記号のサイズ，間隔，位置などを調整したいときは
+    \verb+[...]+ オプションに
+\begin{jquote}
+\begin{verbatim}
+key=val,key=val,....
+\end{verbatim}
+\end{jquote}
+の形のオプションを列記します．どの様なオプションがあるかは，
+次の書式をご覧ください．
+\end{enumerate}
+
+\begin{boxnote}
+\begin{verbatim}
+平行記号
+線分の中央に，記号 `>' を配置する。
+ \heikoukigou[#1]#2
+   #1 : 記号の個数
+     または key=val
+        heikoukigoukosuu=記号の個数（デフォルト値は1）
+        heikoukigouiti  =記号の位置（デフォルト値は0.5, 
+                                    すなわち線分の中点）
+        heikoukigoukankaku=記号を複数配置するときの間隔
+                          （デフォルト値は1mm）
+        heikoukigousize =記号の大きさ（デフォルト値は2）
+   #2 : 線分の列を`;'区切りで列記する．
+\end{verbatim}
+\end{boxnote}
+
+\subsection{角の内部に記号}
+%\subsubsection{\texorpdfstring{\cmd{Kakukigou}}{Kakukigou}}
+\subsubsection{\cmd{Kakukigou}}
+角の内部に円弧などを描き，角の大きさなどを表示させるコマンド\\
+\cmd{Kakukigou} です。\cindex{Kakukigou}
+
+\showexample[\cmd{Kakukigou}](0.6)(0.35){example/KAKUki01}
+
+\cmd{Kakukigou} の基本的な使用法は
+\begin{jquote}
+角を構成する3点（真ん中が角の頂点）と角内に置く記号（文字列）
+\end{jquote}
+の4つの引数を与えます。書式は
+
+\begin{boxnote}
+\begin{verbatim}
+角の内部に円弧を描き，その傍に記号などを置く。
+  \Kakukigou[#1]<#2>#3#4#5<#6><#7>
+    #1 : 円弧の上に置く記号
+     #1=a のときは角記号に矢印をつける。
+     #1=r のときは角記号に逆向きの矢印をつける。
+     #1=b のときは角記号に両向きの矢印をつける。
+     #1=| のときは，円弧中央に円弧と垂直な短い線分
+         注：| は，アルファベット小文字のエル(l)ではなく，縦棒(|)です。
+    #2 : 円弧の個数
+    #3#4#5 : 角BAC 
+       #4 が角の頂点
+       半直線 #4#3 を 回転して #4#5 に重ねる回転を表示する。
+    #6 : 円弧と頂点の距離係数（デフォルト値 1 ）
+       hankei=（無名数） 半径の指定
+       Hankei=（単位付）     〃
+       siteiten=         円弧が指定点を通過
+       hasen=[破線の長さ][破線の間隔] 円弧を破線で
+    #7 : 円弧の中心と角の頂点位置（デフォルト値 0 ）
+    以下，\emathPut に続く。
+  \Kakukigou* : 円弧の内部を塗りつぶします。
+\end{verbatim}
+\end{boxnote}
+
+\verb+#3+ と \verb+#5+ を入れ替えると，
+
+\showexample[角の向き](0.6)(0.35){example/KAKUki09}
+
+すなわち，半直線 \verb+#4#3+ を正の向きに回転して \verb+#4#5+ に
+重ねる回転を表示します。
+
+円弧の位置を調整するには \verb+<#6>+ オプションを用います。
+デフォルトを1として，1より大きくすれば頂点から離れ，
+1より小さくすると頂点に近づきます。
+
+\showexample[円弧の位置](0.64)(0.3){example/KAKUki06}
+
+円弧の半径を直接指定することも可能です。
+
+\showexample[円弧の半径指定](0.64)(0.3){example/KAKUki13}
+
+\verb/hankei=/の右辺値の単位は\verb/\unitlength/です。
+これを\verb/\unitlength/に依存しない値で指定するには，
+\verb/Hankei=/とします。
+
+\showexample[円弧の半径指定（単位付）](0.64)(0.3){example/KAKUki14}
+
+円弧が通過すべき一点を指定する方法もあります。
+
+\showexample[円弧の通過点指定](0.64)(0.3){example/KAKUki15}
+
+円弧の曲がり具合は，\verb+<#7>+ オプションで調整します。
+デフォルトは 0 ですが，1に近づけると半径が小さくなっていきます。
+
+\showexample[\cmd{Kakukigou}](0.64)(0.3){example/KAKUki07}
+
+円弧の中央部に円弧に垂直な縦線を1本入れる表示法もあります。
+\texttt{[|]} オプションです。
+
+\showexample[円弧の中心に縦棒](0.64)(0.3){example/KAKUki11}
+
+円弧に矢印をつけるには \cmd{Kakukigou} に \verb+[a]+ オプションをつけます。
+
+\showexample[円弧に矢印](0.64)(0.3){example/KAKUki08}
+
+\verb+[a]+ オプションでは，矢印は正の回転方向につきます。
+これを逆向きにつけたいときは，\verb+[a]+ オプションに代えて
+\verb+[r]+ オプションをつけます。
+
+\showexample[逆向きに矢印](0.64)(0.3){example/KAKUki10}
+
+\verb+[b]+ オプションをつけると，両向きに矢印がつきます。
+
+\showexample[両向きに矢印](0.64)(0.3){example/KAKUki21}
+
+円弧の内部を塗りつぶすには，\verb+\Kakukigou*+コマンドを用います。
+
+\showexample[円弧の内部を塗りつぶす](0.64)(0.3){example/KAKUki23}
+
+塗りつぶしの濃度を指定するには\verb+[...]+オプションを用います。
+0（白）と1（真黒）の間の数を指定します。
+
+\showexample[円弧の内部を黒で塗りつぶす](0.64)(0.3){example/KAKUki24}
+
+複数の角を区別するため，
+角内の円弧を2重，3重にすることができます。\texttt{<..>}オプションです。
+
+\showexample[円弧を二重に](0.9)(0.5){example/KAKUki02}
+
+逆に \texttt{<..>} オプションに \texttt{<0>} と指定すれば，
+角内に円弧は描かず，記号類だけを置くこともできます。
+
+\showexample[円弧なし](0.9)(0.5){example/KAKUki03}
+
+円弧を破線で描画することも可能です。
+
+\showexample[破線の円弧](0.9)(0.5){example/KAKUki18}
+
+さらに矢印を付けることも可能です。
+
+\showexample[破線の円弧に矢印](0.9)(0.5){example/KAKUki22}
+
+最後に，角内に置く文字列の位置調整です。
+これは，\cmd{Put}の文字列位置調整オプションと同じです。
+
+\showexample[\cmd{Kakukigou}](0.64)(0.3){example/KAKUki16}
+
+\noindent
+と簡易指定オプション\verb/[e]/も使えますが，
+角内は狭いですから
+
+\showexample[\cmd{Kakukigou}](0.64)(0.3){example/KAKUki17}
+
+\noindent
+などと細かく指定した方が良いでしょう。
+蛇足ながら文字列を配置する基準点は，円弧の中点です。
+
+等しい角に同じ記号をつけるためのコマンドが \cmd{toukakukigou} です。
+角を `;' で区切って並べるというのは，\cmd{touhenkigou} と同様です。
+
+\showexample[\cmd{toukakukigou}](0.55)(0.39){example/KAKUki19}
+
+\cmd{toukakukigou*}と`$*$'をつけると角内を塗りつぶします。
+
+\showexample[\cmd{toukakukigou*}](0.55)(0.39){example/KAKUki20}
+
+書式です。\cindex{toukakukigou}\cindex{toukakukigou*}
+
+\begin{boxnote}
+\begin{verbatim}
+複数の角に角記号をつける。
+  \toukakukigou[#1]<#2>#3
+  \toukakukigou*[#1]<#2>#3
+    #1 : 円弧の上に置く記号
+     [|] のときは，円弧中央に円弧と垂直な短い線分（デフォルト）
+         注：| は，アルファベット小文字のエル(l)ではなく，縦棒(|)です。
+     [] のときは，なにもつけない（円弧のみ）
+     *付のときは，塗りつぶしの濃度(0〜1)
+    #2 : 円弧の個数
+    #3 : 角の列 区切り子は`;'
+\end{verbatim}
+\end{boxnote}
+
+\subsubsection{直角記号}
+特に直角を表す記号です。
+
+\showexample[\texttt{<..>}オプション](0.55)(0.4){example/KAKUki04}
+
+書式は\cindex{Tyokkakukigou}
+
+\begin{boxnote}
+\begin{verbatim}
+\Tyokkakukigou[#1](#2)#3#4#5
+        #1      : 直角記号内を塗りつぶすときの濃さ
+        #2      : 直角記号のサイズ
+        #3#4#5  : 直角(#4が頂点)
+\end{verbatim}
+\end{boxnote}
+
+直角記号のサイズは \verb+(#2)+ で指定できます。
+デフォルトは \texttt{5(pt)} です。\texttt{10pt} にしたいときは，
+\texttt{(10)} と指定します。
+
+\showexample[\texttt{<..>}オプション](0.55)(0.4){example/KAKUki05}
+
+空間図形など複雑な図形で，直角記号を塗りつぶしたいときは，
+\verb/[#1]/ オプションに塗りつぶしの濃度(0〜1)を指定します。
+
+\showexample[\texttt{<..>}オプション](0.95)(0.6){example/KAKUki12}
+
+複数の角に直角記号をつけるコマンド\cmd{tyokkakukigou}もあります。
+\cindex{tyokkakukigou}
+
+\subsubsection{一般角}
+360\Deg を越える角に角記号をつけるコマンド \cmd{ippankaku} の
+基本的な使用法は，引数に角度を与えるだけです。
+
+\begin{showEx}{\cmd{ippankaku}}
+\unitlength8mm\small
+\begin{zahyou}(-3,3)(-3,3)%
+\ippankaku{1230}%
+\kHantyokusen{(0,0)}{1230}%
+\end{zahyou}
+\end{showEx}
+\bigskip
+
+\paragraph{\cmd{rasenP}}
+この記号の適当なところに文字列を配置するために，
+角度を指定して螺旋上の点を求めるコマンド \cmd{rasenP} を
+用意しました。\cmd{emathPut}と併用して文字列を配置します。
+
+\begin{showEx}{\cmd{rasenP}}
+\unitlength8mm\small
+\begin{zahyou}(-3,3)(-3,3)%
+\ippankaku{1230}%
+\rasenP{1140}\P
+\kHantyokusen{(0,0)}{1230}%
+\Put\P[ne]{1230\Deg}%
+\end{zahyou}
+\end{showEx}
+%\clearpage
+
+\paragraph{螺旋の形状変更}
+螺旋 $r=a\theta+b$ の係数 $a$, $b$ のデフォルト値は
+$a=0.02$, $b=0.2$ としてあります。これを変更するためのオプションが
+\begin{jquote}
+\begin{verbatim}
+  \ippankaku<#1><#2>
+  #1 : a を #1 倍する。
+  #2 : b を #2 倍する。
+\end{verbatim}
+\end{jquote}
+
+その効果は
+
+\begin{showEx}{\texttt{<...>}オプション}
+\unitlength8mm\small
+\begin{zahyou}(-3,3)(-3,3)%
+\ippankaku<1.5><2.5>{1230}%
+\kHantyokusen{(0,0)}{1230}%
+\end{zahyou}
+\end{showEx}
+
+\paragraph{始線変更オプション}
+始線の位置を変更するには \texttt{[...]} オプションを用います。
+
+\begin{showEx}{\texttt{[...]}オプション}
+\unitlength8mm\small
+\begin{zahyou}(-3,3)(-3,3)%
+\ippankaku[60]{1230}%
+\def\O{(0,0)}%
+\kHantyokusen{(0,0)}{60}%
+\kHantyokusen{(0,0)}{1230}%
+\end{zahyou}
+\end{showEx}
+\bigskip
+
+\paragraph{角が負の場合の処理}
+角が負の場合は，内部処理で $r=a\theta+b$ の $a$ の符号を逆転させています。
+
+\begin{showEx}{負の角}
+\unitlength8mm\small
+\begin{zahyou}(-3,3)(-3,3)%
+\ippankaku{-1230}%
+\kHantyokusen{(0,0)}{-1230}%
+\end{zahyou}
+\end{showEx}
+\bigskip
+
+\paragraph{矢印の制御}
+矢印の制御は \verb/(#4)/ オプションで行います。
+デフォルトは終端に矢印をつけます。
+これを逆に始端につけたいときは \verb/(s)/ オプションをつけます。
+\begin{showEx}{\texttt{(s)}オプション}
+\unitlength8mm\small
+\begin{zahyou}(-3,3)(-3,3)%
+\ippankaku(s){1230}%
+\kHantyokusen{(0,0)}{1230}%
+\end{zahyou}
+\end{showEx}
+\bigskip
+
+両端につけるには \verb/(b)/ オプションを用います。
+\begin{showEx}{\texttt{(b)}オプション}
+\unitlength8mm\small
+\begin{zahyou}(-3,3)(-3,3)%
+\ippankaku(b){1230}%
+\kHantyokusen{(0,0)}{1230}%
+\end{zahyou}
+\end{showEx}
+\bigskip
+
+矢印をつけたくないときは \verb/(n)/ オプションです。
+\begin{showEx}{\texttt{(n)}オプション}
+\unitlength8mm\small
+\begin{zahyou}(-3,3)(-3,3)%
+\ippankaku(n){1230}%
+\kHantyokusen{(0,0)}{1230}%
+\end{zahyou}
+\end{showEx}
+\bigskip
+
+\paragraph{両端に\cmd{Kuromaru}, \cmd{Siromaru}}
+両端に黒丸,白丸を配置したいときは，
+らせん上の1点を求める \cmd{rasenP} コマンドを用います。
+\begin{showEx}(.54,.4){$-690\Deg\leqq \theta<0\Deg$}
+\small
+\begin{zahyou*}[ul=8mm](-3,3)(-3,3)%
+\drawXYaxis
+\ippankaku<1.5><2.5>(n){-690}%
+\kHantyokusen{(0,0)}{-690}%
+\rasenP{0}\Start\Siromaru\Start
+\rasenP{-690}\End\Kuromaru\End
+\rasenP{-640}\P
+\Put\P[ne]{$-690\Deg$}%
+\end{zahyou*}
+\end{showEx}
+%\clearpage
+
+\paragraph{\cmd{ippankaku} の書式}
+\cmd{ippankaku} の書式です。
+
+\begin{boxnote}
+\begin{verbatim}
+\ippankaku<#1><#2>[#3](#4)#5
+        #1 : a の倍率
+        #2 : b の倍率
+        #3 : 始め角（六十分法）
+        #4 : 矢印の配置
+          e = 終端（デフォルト）
+          s = 始端
+          b = 両端
+          n = なし
+        #5 : 終り角（六十分法）
+\end{verbatim}
+\end{boxnote}
+
+\subsection{数式に\textsf{picture}環境を併置}
+\subsubsection{\textsf{sikipicture}環境}
+数式に\textsf{picture}環境を併設し,数式を飾り立てようというのが
+\textsf{sikipicture}環境です。これは，実質\textsf{zahyou*}環境です。
+したがって，その環境内には，\textsf{zahyou*}環境内に記述できる
+ものはすべて記述可能です。
+
+\begin{showEx}{\textsf{sikipicture}環境}
+a\begin{sikipicture}{%
+  x^2,
+  +,
+  2,
+  x,
+  +,
+  \protect\bunsuu12}
+\Takakkei{\LT\LB\RB\RT}
+\put(0,0){\color{red}\Kuromaru\O}%
+\end{sikipicture}z
+\end{showEx}
+
+座標領域を確認するため，四隅を結ぶ四角形と
+座標原点に赤丸印を描画しておきました。
+
+\begin{enumerate}[注1.~]
+  \item \verb+\begin{sikipicture}{...}+の引数内に\cmd{bunsuu}などのコマンドを
+    入れるときは\verb+\protect+をかぶせておく必要があります。
+  \item \TeX が認知するサイズは上図の四角形です。
+    \cmd{put}を用いてこの四角形の外部に文字列を配置することは可能ですが，
+    \TeX はその存在を認知しませんから，前後の文章とかぶります。
+    \verb+\vspace{...}+などで調整する必要があります。
+  \item \textsf{sikipicture}環境の\cmd{unitlength}は，1pt（固定）です。
+  \item \textsf{sikixypos}も同義語として使えます。
+\end{enumerate}
+
+\subsubsection{\cmd{sikiBi}, \cmd{sikiTi}}
+\verb+\begin{sikipicture}{...}+の引数内で，分割記述された各項の中央下部
+の点の座標が
+\begin{jquote}
+\begin{verbatim}
+\sikiBi, \sikiBii, \sikiBiii, .....
+\end{verbatim}
+\end{jquote}
+に定義されています。そこに赤丸を打ってみましょう。
+
+\begin{showEx}{\cmd{sikiBi},...}
+a\begin{sikipicture}{%
+  x^2,
+  +,
+  2,
+  x,
+  +,
+  \protect\bunsuu12}
+\put(0,0){\color{red}\kuromaru{%
+  \sikiBi;\sikiBii;\sikiBiii;%
+  \sikiBiv;\sikiBv;\sikiBvi}}%
+\end{sikipicture}z
+\end{showEx}
+
+$+$の下の赤丸がずれていますね。
+これは，二項演算子，関係演算子には両側にアキが入ることによるずれです。
+正しい位置が欲しければ，\verb+\begin{sikipicture}{...}+の引数内の演算子両側に
+\verb+{}+を補ってやります。
+
+\begin{showEx}{二項演算子に対する補正}
+a\begin{sikipicture}{%
+  x^2,
+  {}+{},
+  2,
+  x,
+  {}+{},
+  \protect\bunsuu12}
+\put(0,0){\color{red}\kuromaru{%
+  \sikiBi;\sikiBii;\sikiBiii;%
+  \sikiBiv;\sikiBv;\sikiBvi}}%
+\end{sikipicture}z
+\end{showEx}
+
+$x^2$の下もずれてるって ？
+これはずれていません。$x^2$の中央下です。底の$x$の中央下が欲しいなら，
+$x$とその冪を分離して与えます。
+
+ついでに，各項の中央上にも緑丸をつけてみます。
+（\verb+\sikiTi, \sikiTii, .....+）
+
+\begin{showEx}{二項演算子に対する補正}
+a\begin{sikipicture}{%
+  x,
+  {}^2,
+  {}+{},
+  2,
+  x,
+  {}+{},
+  \protect\bunsuu12}
+\put(0,0){\color{red}\kuromaru{%
+  \sikiBi;\sikiBii;\sikiBiii;%
+  \sikiBiv;\sikiBv;\sikiBvi;%
+  \sikiBvii}}%
+\put(0,0){\color{green}\kuromaru{%
+  \sikiTi;\sikiTii;\sikiTiii;%
+  \sikiTiv;\sikiTv;\sikiTvi;%
+  \sikiTvii}}%
+\end{sikipicture}z
+\end{showEx}
+
+\subsubsection{\cmd{sikixposi}, \cmd{sikiyhposi}, \cmd{sikiydposi}}
+なお，丸印をつけた点の$x$座標は
+\begin{jquote}
+\begin{verbatim}
+\sikixposi, \sikixposii, .....
+\end{verbatim}
+\end{jquote}
+です。また$y$座標は，赤丸のほうが
+\begin{jquote}
+\begin{verbatim}
+\sikiydposi, \sikiydposii, .....
+\end{verbatim}
+\end{jquote}
+緑丸のほうが
+\begin{jquote}
+\begin{verbatim}
+\sikiyhposi, \sikiyhposii, .....
+\end{verbatim}
+\end{jquote}
+となっています。
+
+\begin{showEx}{\cmd{sikixpos..}}
+a\begin{sikipicture}{%
+  x,
+  {}^2,
+  {}+{},
+  2,
+  x,
+  {}+{},
+  \protect\bunsuu12}
+\Takakkei{\LT\LB\RB\RT}
+\put(0,0){\color{red}\kuromaru{%
+  (\sikixposi,\ymin);%
+  (\sikixposii,\ymin);%
+  (\sikixposiii,\ymin)}}%
+\put(0,0){\color{green}\kuromaru{%
+  (\sikixposi,\ymax);%
+  (\sikixposii,\ymax);%
+  (\sikixposiii,\ymax)}}%
+\end{sikipicture}z
+\end{showEx}
+
+\subsubsection{\cmd{sikixlposi}, \cmd{sikixrposi}}
+\cmd{sikixposi}などは各項の中央$x$座標を表しますが，
+各項・左右端の$x$座標はそれぞれ
+
+\begin{jquote}
+\begin{verbatim}
+\sikixlposi, \sikilposii, .....
+\sikixrposi, \sikirposii, .....
+\end{verbatim}
+\end{jquote}
+などです。
+
+\begin{showEx}{\cmd{sikixlpos..}, \cmd{sikixrpos..}}
+a\begin{sikipicture}{%
+  x,
+  {}^2,
+  {}+{},
+  2,
+  x,
+  {}+{},
+  \protect\bunsuu12}
+\Takakkei{\LT\LB\RB\RT}
+\put(0,0){\color{red}\kuromaru{%
+  (\sikixlposiv,\sikiyhposiv);%
+  (\sikixrposiv,\sikiyhposiv)}}%
+\put(0,0){\color{green}\kuromaru{%
+  (\sikixposiv,\sikiydposiv)}}%
+\end{sikipicture}z
+\end{showEx}
+
+\subsubsection{使用例}
+\paragraph{式展開の説明図}
+式を展開するときの流れを説明する図です.
+
+\begin{showEx}(1,.9){式展開の説明図}
+\vskip 24pt
+
+\begin{sikipicture}{(,a,+,b,),\kern1em(,x,+,y,)=,ax,+,ay,+,bx,+,by}
+  \HenKo{(\sikixposvii,\ymax)}{(\sikixposii,\ymax)}{\maru1}
+  \HenKo<henkoH=15pt>{(\sikixposix,\ymax)}{(\sikixposii,\ymax)}{\maru2}
+  \HenKo{(\sikixposiv,\ymin)}{(\sikixposvii,\ymin)}{\maru3}
+  \HenKo<henkoH=15pt>{(\sikixposiv,\ymin)}{(\sikixposix,\ymin)}{\maru4}
+  \Put{(\sikixposxi,\ymax)}(0,0)[b]{\maru1}
+  \Put{(\sikixposxiii,\ymax)}(0,0)[b]{\maru2}
+  \Put{(\sikixposxv,\ymin)}(0,0)[t]{\maru3}
+  \Put{(\sikixposxvii,\ymin)}(0,0)[t]{\maru4}
+\end{sikipicture}
+\vskip 10pt
+
+\mbox{}
+\end{showEx}
+
+\paragraph{部分積分の流れ}
+部分積分の流れを示すのにも使えます.
+
+\begin{showEx}(1,.9){不定積分の流れ}
+\vskip15pt
+
+\begin{sikipicture}{%
+  \dint{}{},f'(x),g(x),dx=,f(x),g(x),-,\dint{}{},f(x),g'(x),dx
+}
+  \HenKo<henkoH=15pt,yazirusi=r>\sikiTv\sikiTii{\footnotesize 積分する}
+  \HenKo<henkoH=15pt,yazirusi=r>\sikiTix\sikiTv{\footnotesize そのまま}
+  \HenKo<henkoH=15pt,yazirusi=a>\sikiBiii\sikiBvi{\footnotesize そのまま}
+  \HenKo<henkoH=15pt,yazirusi=a>\sikiBvi\sikiBx{\footnotesize 微分する}
+\end{sikipicture}
+\vskip10pt
+\mbox{}
+\end{showEx}
+
+\cmd{HenKo}による円弧を式から少し離したいときは，\cmd{HenKo}に対し
+\verb+<agezoko=..>+オプションをつけます。
+
+\begin{showEx}(1,.9){不定積分の流れ}
+\vskip18pt
+
+\begin{sikipicture}{%
+  \dint{}{},f'(x),g(x),dx=,f(x),g(x),-,\dint{}{},f(x),g'(x),dx
+}
+  \HenKo<henkoH=15pt,yazirusi=r,agezoko=3>\sikiTv\sikiTii{\footnotesize 積分する}
+  \HenKo<henkoH=15pt,yazirusi=r,agezoko=3>\sikiTix\sikiTv{\footnotesize そのまま}
+  \HenKo<henkoH=15pt,yazirusi=a,agezoko=3>\sikiBiii\sikiBvi{\footnotesize そのまま}
+  \HenKo<henkoH=15pt,yazirusi=a,agezoko=3>\sikiBvi\sikiBx{\footnotesize 微分する}
+\end{sikipicture}
+\vskip10pt
+\mbox{}
+\end{showEx}
+
+\paragraph{談話室 No.107 ふたたび}
+\texttt{newPh232.tex}でも取り上げた使用例を再度取り上げてみます。\\
+ソースリストは\texttt{re107a.tex}です。
+
+\begin{shadebox}
+\ReadTeXFile{re107a.tex}
+\vskip12pt
+\mbox{}
+\end{shadebox}
+\bigskip
+
+右側の部分，前回は\cmd{phkasen}でアンダーラインを引きましたが，
+今回は\cmd{HenKo}で
+\begin{jquote}
+\begin{verbatim}
+<henkotype=bracket>
+\end{verbatim}
+\end{jquote}
+オプションを用いてみました。
+\pagebreak
+
+\subsubsection{\textsf{bunpicture}環境}
+\textsf{sikipicture}環境は，数式に対するもので
+\begin{jquote}
+\begin{verbatim}
+\begin{sikipicture}{.....}
+\end{verbatim}
+\end{jquote}
+の引数\verb+{.....}+は数式モードに入ると仮定されています。
+
+これに対して，テキストモードに入るものを\textsf{bunpicture}環境と称することとします。
+
+\begin{showEx}(1,.9){\textsf{bunpicture}環境}
+\begin{bunpicture}{%
+    \underline{It}, is natural  ,\underline{that she should think}, so.}
+  \HenKo<yazirusi=r,henkotype=bracket,Oval=4pt,Agezoko=2pt>\bunBi\bunBiii{}
+\end{bunpicture}
+\vskip5pt
+
+\mbox{}
+\end{showEx}
+
+さらに手が込んで
+
+\begin{showEx}(1,.9){応用例}
+\mbox{}\vskip1\baselineskip
+\begin{bunpicture}{It ,is natural, that ,she should think so,.}
+  \HenKo<henkotype=bracket,yazirusi=r,Agezoko=2pt,putoption={(0,1pt)[b]}>%
+    \bunTiii\bunTi{\footnotesize Itはthat以下を表します}
+  \HenKo<henkotype=bracket,yazirusi=a,Agezoko=2pt>%
+    {(\bunxposiii,\ymin)}{(\bunxlposiv,\ymin)}{}
+  \Add\ymin{-2}\yy
+\put(0,0){\color{red}%
+  \ArrowLine{(\bunxlposiv,\yy)}{(\bunxrposiv,\yy)}%
+  \HenKo<henkotype=bracket,yazirusi=r,henkoH=10pt,Oval=5pt,%
+        putoption={(0,-2pt)[t]},Agezoko=2pt>%
+    {(\bunxlposii,\ymin)}{(\bunxrposiv,\ymin)}%
+    {\color{black}\footnotesize that以下がItの後に続きます}
+  \ArrowLine{(\bunxlposii,\yy)}{(\bunxrposii,\yy)}%
+}%
+\end{bunpicture}
+\vskip1\baselineskip
+\mbox{}
+\end{showEx}
+

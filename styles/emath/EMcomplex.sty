@@ -1,0 +1,324 @@
+% EMcomplex.sty by tDB(emath@nifty.com)
+%
+%    ガウス整数環における演算を扱う
+%
+  \ProvidesPackage{EMcomplex}[2008/04/30 v 0.03α]%
+%
+  \RequirePackage{emath}
+%
+\def\Ggozyohou{\@ifnextchar[{\@Ggozyohou}{\@Ggozyohou[\Ggozyohou@kekka]}}%
+\def\@Ggozyohou[#1]#2#3{%
+  \GNorm{#2}\Ggozyo@tmp
+  \GNorm{#3}\Ggozyo@tmpp
+  \ifnum\Ggozyo@tmp>\Ggozyo@tmpp
+    \xdef\Ggozyo@a{#2}\xdef\Ggozyo@b{#3}%
+  \else
+    \xdef\Ggozyo@a{#3}\xdef\Ggozyo@b{#2}%
+  \fi
+  \xdef\Ggozyo@owari{0}%
+  \ensuremath{\begin{array}[t]{r|r|r|r}%
+    \Cfor{}{\Ggozyo@owari=\z@}{%
+      \xdef\Ggozyo@a{\Ggozyo@r}\xdef\Ggozyo@b{\Ggozyo@rr}\\\hline}\do{%
+      \GDivMod\Ggozyo@a\Ggozyo@b\Ggozyo@q\Ggozyo@r
+        \xdef\Ggozyo@q{\Ggozyo@q}\xdef\Ggozyo@r{\Ggozyo@r}%
+      \ifthenelse{\equal{\Ggozyo@r}{0,0}}{%
+        \xdef\Ggozyo@owari{1}\xdef#1{\Ggozyo@b}\xdef\Ggozyo@rr{0,0}%
+      }{%
+        \GDivMod\Ggozyo@b\Ggozyo@r\Ggozyo@qq\Ggozyo@rr
+          \xdef\Ggozyo@qq{\Ggozyo@qq}\xdef\Ggozyo@rr{\Ggozyo@rr}%
+          \ifthenelse{\equal{\Ggozyo@rr}{0,0}}{\xdef\Ggozyo@owari{1}\xdef#1{\Ggozyo@r}}{}%
+      }%
+      \prComplex\Ggozyo@q & \prComplex\Ggozyo@a 
+        & \ifthenelse{\equal{\Ggozyo@r}{0,0}}{\bm{\prComplex\Ggozyo@b}}{\prComplex\Ggozyo@b}%
+        & \ifthenelse{\equal{\Ggozyo@r}{0,0}}{}{\prComplex\Ggozyo@qq}\\
+      & \GMul\Ggozyo@b\Ggozyo@q\Ggozyo@tmp\prComplex\Ggozyo@tmp
+        & \ifthenelse{\equal{\Ggozyo@r}{0,0}}{}{\GMul\Ggozyo@r\Ggozyo@qq\Ggozyo@tmp\prComplex\Ggozyo@tmp}%
+        &
+    }%
+    & \ifthenelse{\equal{\Ggozyo@r}{0,0}}{\prComplex\Ggozyo@r}{\bm{\prComplex\Ggozyo@r}}%
+      & \ifthenelse{\equal{\Ggozyo@r}{0,0}}{}{\prComplex\Ggozyo@rr}%
+  \end{array}}}
+%
+\def\GGozyohou{\@ifnextchar[{\@GGozyohou}{\@GGozyohou[\gozyohou@kekka]}}%
+\def\@GGozyohou[#1]#2#3{%
+  \GNorm{#2}\Ggozyo@tmp
+  \GNorm{#3}\Ggozyo@tmpp
+  \ifnum\Ggozyo@tmp>\Ggozyo@tmpp
+    \edef\Gz@ai{#2}\edef\Gz@aii{#3}%
+  \else
+    \edef\Gz@ai{#3}\edef\Gz@aii{#2}%
+  \fi
+  \edef\Gz@i{2}%
+  \Cfor{\GDivMod\Gz@ai\Gz@aii\Gz@q\Gz@r}{\not\equal{\Gz@r}{0,0}}{}\do{%
+    \IAdd\Gz@i{1}\Gz@ii
+    \expandafter\edef\csname Gz@a\romannumeral \Gz@ii\endcsname{\Gz@r}%
+    \GDivMod{%
+      \csname Gz@a\romannumeral\Gz@i\endcsname}{\csname Gz@a\romannumeral\Gz@ii\endcsname}\Gz@q\Gz@r
+    \edef\Gz@i{\Gz@ii}%
+  }%
+  \ISub\Gz@i{1}\Gz@mi
+  \EMedef\Gz@iln{}%
+  \EMedef\Gz@iiln{\protect\bm{\protect\prComplex{\csname Gz@a\romannumeral\Gz@i\endcsname}}}%
+  \EMedef\Gz@iiiln{}%
+  \EMedef\Gz@ivln{}%
+  \Ifor*\Gz@j{\Gz@mi}{1}[-1]\Do{%
+    \IAdd\Gz@j{1}\Gz@jj
+    \GDivMod{%
+      \csname Gz@a\romannumeral\Gz@j\endcsname}{\csname Gz@a\romannumeral\Gz@jj\endcsname}\Gz@q\Gz@r
+    \EMedefappend\Gz@iln{& \protect\prComplex{\Gz@q}}%
+    \EMedefappend\Gz@ivln{& \protect\prComplex{\Gz@r}}%
+    \GMul\Gz@q{\csname Gz@a\romannumeral\Gz@jj\endcsname}\Gz@tmp
+    \EMedefappend\Gz@iiiln{& \protect\prComplex{\Gz@tmp}}%
+    \EMedefappend\Gz@iiln{&\smash[b]{\Big )}\ \protect\prComplex{\csname Gz@a\romannumeral \Gz@j\endcsname}}}%
+  \ensuremath{%
+    \arraycolsep=\z@
+    \begin{array}[t]{r@{}*{\Gz@mi}{r@{\ }}}
+      \Gz@iln\\\cline{2-\Gz@i}
+      \Gz@iiln\\
+      \Gz@iiiln\\\cline{2-\Gz@i}
+      \Gz@ivln
+    \end{array}
+  }%
+  \edef#1{\csname Gz@a\romannumeral\Gz@i\endcsname}%
+}%
+%
+\def\tyokkin@seisuu{\@ifstar{\tyokkin@seisuu@}{\@tyokkin@seisuu}}%
+\def\@tyokkin@seisuu#1#2#3{%
+% (#1)/(#2) に対し，直近整数を求めます。
+  \ifnum #1<\z@\def\tk@sign{-}\IMul{#1}{-1}\ts@a\else\def\tk@sign{+}\edef\ts@a{#1}\fi
+  \IDivMod{\ts@a}{#2}\ts@q\ts@r
+  \IMul\ts@r{2}\ts@rr
+  \ifnum\ts@rr>#2\relax
+    \Incr\ts@q
+    \edef#3{\ts@q}%
+  \else
+    \edef#3{\ts@q}%
+  \fi
+  \if -\tk@sign\edef#3{-#3}\fi
+}%
+\def\tyokkin@seisuu@#1#2#3{%
+% (#1)/(#2) に対し，直近整数を求めます。
+  \ifnum #1<\z@\def\tk@sign{-}\IMul{#1}{-1}\ts@a\else\def\tk@sign{+}\edef\ts@a{#1}\fi
+  \IDivMod{\ts@a}{#2}\ts@q\ts@r
+  \IMul\ts@r{2}\ts@rr
+  \ifnum\ts@rr>#2\relax
+    \Incr\ts@q
+    \edef#3{\ts@q}%
+    \if -\tk@sign\edef#3{-#3}\fi
+  \else\ifnum\ts@rr=#2\relax
+    \IAdd\ts@q{1}\ts@qq
+    \if -\tk@sign
+      \edef#3{-\ts@q,-\ts@qq}%
+    \else
+      \edef#3{\ts@q,\ts@qq}%
+    \fi
+  \else
+    \edef#3{\ts@q}%
+    \if -\tk@sign\edef#3{-#3}\fi
+  \fi\fi
+}%
+\def\prComplex#1{%
+  \RIbunkai{#1}\prC@r\prC@i
+  \ifnum\prC@r=\z@
+    \ifnum\prC@i=\z@\relax
+      0\relax
+    \else
+      \ifnum\prC@i=\@ne\relax
+        i%
+      \else\ifnum\prC@i=\m@ne\relax
+        -\,i
+      \else
+        \prC@i\,i
+      \fi\fi
+    \fi
+  \else
+    \ifnum\prC@i=\z@
+      \prC@r
+    \else\ifnum\prC@i>\z@
+      \ifnum\prC@i=\@ne
+        \prC@r + i 
+      \else
+        \prC@r + \prC@i\,i
+      \fi
+    \else
+      \ifnum\prC@i=\m@ne
+        \prC@r -i
+      \else
+        \prC@r \prC@i\,i
+      \fi
+    \fi\fi
+  \fi
+}
+%
+\def\prFComplex{\@ifstar\prFComplex@\@prFComplex}
+\def\prFComplex@#1{%
+  \RIbunkai{#1}\prC@r\prC@i
+  \FtoB\prC@r\prC@r@bunsi\prC@r@bunbo
+  \BYakubun\prC@r@bunsi\prC@r@bunbo\prC@r@bunsi\prC@r@bunbo
+  \FtoB\prC@i\prC@i@bunsi\prC@i@bunbo
+  \BYakubun\prC@i@bunsi\prC@i@bunbo\prC@i@bunsi\prC@i@bunbo
+  \ILCM\prC@r@bunbo\prC@i@bunbo\prC@bunbo
+  \IDiv\prC@bunbo\prC@r@bunbo\prC@tmp\IMulself\prC@r@bunsi\prC@tmp
+  \IDiv\prC@bunbo\prC@i@bunbo\prC@tmp\IMulself\prC@i@bunsi\prC@tmp
+  \bunsuu{\prComplex{\prC@r@bunsi,\prC@i@bunsi}}{\prC@bunbo}%
+}%
+\def\@prFComplex#1{%
+  \RIbunkai{#1}\prC@r\prC@i
+  \Fhikaku\prC@r{0}\prC@o
+  \ifnum\prC@o=\z@
+    \Fhikaku\prC@i{0}\prC@o
+    \ifnum\prC@o=\z@\relax
+      0\relax
+    \else
+      \Fhikaku\prC@i{1}\prC@one
+      \ifnum\prC@one=\z@\relax
+        i%
+      \else
+        \Fhikaku\prC@i{-1}\prC@mone
+        \ifnum\prC@mone=\z@\relax
+          -\,i
+        \else
+          \prF[y]\prC@i\,i
+        \fi
+      \fi
+    \fi
+  \else
+    \Fhikaku\prC@i{0}\prC@o
+    \ifnum\prC@o=\z@
+      \prF[y]\prC@r
+    \else\ifnum\prC@o>\z@
+      \Fhikaku\prC@i{1}\prC@one
+      \ifnum\prC@one=\z@
+        \prF[y]\prC@r + i 
+      \else
+        \prF[y]\prC@r + \prF[y]\prC@i\,i
+      \fi
+    \else
+      \Fhikaku\prC@i{-1}\prC@mone
+      \ifnum\prC@mone=\z@
+        \prF[y]\prC@r -i
+      \else
+        \prF[y]\prC@r \prF[y]\prC@i\,i
+      \fi
+    \fi\fi
+  \fi
+}
+%
+\def\prassociates#1{%
+  \prComplex{#1},\ \relax
+  \GMul{#1}{-1,0}\prdouhan@tmp\prComplex\prdouhan@tmp,\ \relax
+  \GMul{#1}{0,1}\prdouhan@tmp\prComplex\prdouhan@tmp,\ \relax
+  \GMul{#1}{0,-1}\prdouhan@tmp\prComplex\prdouhan@tmp.
+}%
+%
+\def\GConj#1#2{%
+  \RIbunkai{#1}\GM@c\GM@d
+  \IMulself\GM@d{-1}%
+  \edef#2{\GM@c,\GM@d}%
+}%
+\def\GNorm#1#2{%
+  \GConj{#1}\GN@tmp
+  \GMul{#1}\GN@tmp\GN@tmp
+  \RIbunkai\GN@tmp#2\GN@tmp
+}%
+\def\RIbunkai#1#2#3{%
+  \edef\RIb@tmp{#1}%
+  \Strsep\RIb@tmp{,}#2#3\relax
+}%
+\def\GAdd#1#2#3{%
+  \RIbunkai{#1}\GA@a\GA@b
+  \RIbunkai{#2}\GA@c\GA@d
+  \IAdd\GA@a\GA@c\GA@r
+  \IAdd\GA@b\GA@d\GA@i
+  \edef#3{\GA@r,\GA@i}%
+}%
+\def\GSub#1#2#3{%
+  \RIbunkai{#1}\GS@a\GS@b
+  \RIbunkai{#2}\GS@c\GS@d
+  \ISub\GS@a\GS@c\GS@r
+  \ISub\GS@b\GS@d\GS@i
+  \edef#3{\GS@r,\GS@i}%
+}%
+\def\GMul#1#2#3{%
+  \RIbunkai{#1}\GM@a\GM@b
+  \RIbunkai{#2}\GM@c\GM@d
+  \IMul\GM@b\GM@d\GM@tmp
+  \IMul\GM@a\GM@c\GM@r
+  \ISubself\GM@r\GM@tmp
+  \IMul\GM@a\GM@d\GM@i
+  \IMul\GM@b\GM@c\GM@tmp
+  \IAddself\GM@i\GM@tmp
+  \edef#3{\GM@r,\GM@i}%
+}%
+\def\GDivMod#1#2#3#4{%
+  \RIbunkai{#1}\GDM@a\GDM@b
+  \RIbunkai{#2}\GDM@c\GDM@d
+  \IMul\GDM@c\GDM@c\GDM@tmp
+  \IMul\GDM@d\GDM@d\GDM@bunbo
+  \IAddself\GDM@bunbo\GDM@tmp
+  \IMul\GDM@a\GDM@c\GDM@tmp
+  \IMul\GDM@b\GDM@d\GDM@r
+  \IAddself\GDM@r\GDM@tmp
+  \tyokkin@seisuu*\GDM@r\GDM@bunbo\GDM@r
+  \IMul\GDM@a\GDM@d\GDM@tmp
+  \IMul\GDM@b\GDM@c\GDM@i
+  \ISubself\GDM@i\GDM@tmp
+  \tyokkin@seisuu*\GDM@i\GDM@bunbo\GDM@i
+  \edef\GDivModQi{\empty}%
+  \edef\GDivModQii{\empty}%
+  \edef\GDivModQiii{\empty}%
+  \edef\GDivModQiv{\empty}%
+  \strsep\GDM@r{,}\GDM@r@i\GDM@r@ii
+  \strsep\GDM@i{,}\GDM@i@i\GDM@i@ii
+  \edef\GDivModQi{\GDM@r@i,\GDM@i@i}%
+  \ifx\empty\GDM@r@ii
+    \ifx\empty\GDM@i@ii
+    \else
+      \edef\GDivModQii{\GDM@r@i,\GDM@i@ii}%
+    \fi
+  \else
+    \edef\GDivModQii{\GDM@r@ii,\GDM@i@i}%
+    \ifx\empty\GDM@i@ii
+    \else
+      \edef\GDivModQiii{\GDM@r@i,\GDM@i@ii}%
+      \edef\GDivModQiv{\GDM@r@ii,\GDM@i@ii}%
+    \fi
+  \fi
+%
+  \edef\GDivModRi{\empty}%
+  \edef\GDivModRii{\empty}%
+  \edef\GDivModRiii{\empty}%
+  \edef\GDivModRiv{\empty}%
+%
+  \GMul\GDivModQi{#2}\GDM@tmp
+  \GSub{#1}\GDM@tmp\GDivModRi
+  \ifx\empty\GDivModQii\else
+    \GMul\GDivModQii{#2}\GDM@tmp
+    \GSub{#1}\GDM@tmp\GDivModRii
+    \ifx\empty\GDivModQiii\else
+      \GMul\GDivModQiii{#2}\GDM@tmp
+      \GSub{#1}\GDM@tmp\GDivModRiii
+    \fi
+    \ifx\empty\GDivModQiv\else
+      \GMul\GDivModQiv{#2}\GDM@tmp
+      \GSub{#1}\GDM@tmp\GDivModRiv
+    \fi
+  \fi
+  \edef#3{\GDivModQi}%
+  \edef#4{\GDivModRi}%
+}%
+%
+\def\GDiv#1#2#3{%
+  \GNorm{#2}\GDiv@bunbo
+  \GConj{#2}\GDiv@tmp
+  \GMul\GDiv@tmp{#1}\GDiv@tmp
+  \RIbunkai{\GDiv@tmp}\GDiv@r\GDiv@i
+  \edef#3{\GDiv@r/\GDiv@bunbo,\GDiv@i/\GDiv@bunbo}%
+}%
+%
+\endinput
+%
+v 0.00 2008/02/03
+v 0.01 2008/02/03 \GGozyohou
+v 0.02 2008/04/21 \prassociates
+v 0.03 2008/04/30 \prFComplex* (実部虚部を通分)

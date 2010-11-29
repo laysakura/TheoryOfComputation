@@ -1,0 +1,130 @@
+\documentclass[a4j]{jarticle}
+\usepackage{graphicx,color}
+\usepackage{emathPh}
+\usepackage{emathPs}
+\usepackage{showexample}
+
+\begin{document}
+\section{線分を延長}
+\subsection{\cmd{hamidasisenbun}}
+\textsf{emathPh.sty} \texttt{v.0.90 2001/11/11}で定義したコマンドですが，
+ドキュメントを作っていなかったので，ここから始めます。
+
+2点A, Bを結ぶ線分を描画するには\cmd{Drawline}を用います。
+
+\begin{showEx}(.6,.34){線分AB}
+\begin{zahyou}[ul=6mm](-2.5,2.5)(-2.5,2.5)
+  \zahyouMemori[g]
+  \tenretu{A(-1,-1)s;B(1,1)n}
+  \Drawline{\A\B}
+\end{zahyou}
+\end{showEx}
+
+この線分を延長するのが\cmd{hamidasisenbun}です。
+
+\begin{showEx}(.6,.34){線分ABを延長}
+\begin{zahyou}[ul=6mm](-2.5,2.5)(-2.5,2.5)
+  \zahyouMemori[g]
+  \tenretu{A(-1,-1)s;B(1,1)n}
+  \hamidasisenbun\A\B{.25}{.5}
+\end{zahyou}
+\end{showEx}
+
+書式は
+\begin{boxnote}
+\begin{verbatim}
+\hamidasisenbun#1#2#3#4
+  #1 : 端点1
+  #2 : 端点2
+  #3 : 端点1に対するはみ出し係数
+  #4 : 端点2に対するはみ出し係数
+\end{verbatim}
+\end{boxnote}
+
+はみ出し係数は，線分\verb+#1#2+の長さを1としての相対値です。
+符号が正の場合，線分は延長され，負の場合縮小されます。
+
+今回の改定で，はみ出し量を単位付の数値で指定するコマンド
+\cmd{Hamidasisenbun}を追加しました。
+
+\begin{showEx}(.6,.34){\cmd{Hamidasisenbun}}
+\begin{zahyou}[ul=6mm](-2.5,2.5)(-2.5,2.5)
+  \zahyouMemori[g]
+  \tenretu{A(-1,-1)s;B(1,1)n}
+  \Hamidasisenbun\A\B{4.243mm}{8.485mm}
+\end{zahyou}
+\end{showEx}
+
+\subsection{\cmd{HenKo}に対する\texttt{<Hamidasi=..>}オプション}
+\textsf{pszahyou}環境では，線分が少し太めになります。
+
+\begin{showEx}(.64,.3){\textsf{pszahyou}環境における\cmd{HenKo}}
+\begin{pszahyou}[ul=6mm](-2.5,2.5)(-2.5,2.5)
+  \tenretu{A(-1,-1)s;B(1,1)n}
+  \Drawline{\A\B}
+  \HenKo<linewidth=3>\A\B{$a$}
+\end{pszahyou}
+\end{showEx}
+
+\cmd{HenKo}の両端が線分に埋もれた感じになります。これを修正するために
+\verb+<Agezoko=..>+オプションを用意してあります。
+
+\begin{showEx}(.64,.3){\texttt{<Agezoko=..>}オプション}
+\begin{pszahyou}[ul=6mm](-2.5,2.5)(-2.5,2.5)
+  \tenretu{A(-1,-1)s;B(1,1)n}
+  \Drawline{\A\B}
+  \HenKo<linewidth=3,Agezoko=.5pt>\A\B{$a$}
+\end{pszahyou}
+\end{showEx}
+
+しかし，三角形の辺の場合には
+
+\begin{showEx}(.64,.3){三角形の場合}
+\begin{pszahyou}[ul=6mm](-2.5,2.5)(-2.5,2.5)
+  \tenretu{A(-1,-1)s;B(1,1)n;C(-.5,.5)nw}
+  \Takakkei{\A\B\C}
+  \HenKo<linewidth=3,Agezoko=.5pt>\A\B{$a$}
+\end{pszahyou}
+\end{showEx}
+
+頂点のところで，ジョイント補正に\cmd{HenKo}が追随していません。
+そこで，今回の改定で\cmd{HenKo}に\verb+<Hamidasi=..>+オプションを用意しました。
+
+\begin{showEx}(.64,.3){\texttt{<Hamidasi=..>}オプション}
+\begin{pszahyou}[ul=6mm](-2.5,2.5)(-2.5,2.5)
+  \tenretu{A(-1,-1)s;B(1,1)n;C(-.5,.5)nw}
+  \Takakkei{\A\B\C}
+  \HenKo<linewidth=3,Agezoko=.5pt,%
+      Hamidasi=1.75pt>\A\B{$a$}
+\end{pszahyou}
+\end{showEx}
+
+ただし，\verb+<Hamidasi=..>+の右辺値は，
+現時点では試行錯誤で決めるしかありません。\verb+(^^ゞ+
+
+さらに，三角形の形状によっては
+
+\begin{showEx}(.64,.3){\texttt{<Hamidasi=..>}オプション}
+\begin{pszahyou}[ul=6mm](-2.5,2.5)(-2.5,2.5)
+  \tenretu{A(-1,-1)s;B(1,1)n;C(0,2)ne}
+  \Takakkei{\A\B\C}
+  \HenKo<linewidth=3,Agezoko=.5pt,%
+      Hamidasi=1.75pt>\A\B{$a$}
+\end{pszahyou}
+\end{showEx}
+
+左右で異なる値を指定する必要があります。
+
+\begin{showEx}(.64,.3){\texttt{<HamidasiA=..>}オプション}
+\begin{pszahyou}[ul=6mm](-2.5,2.5)(-2.5,2.5)
+  \tenretu{A(-1,-1)s;B(1,1)n;C(0,2)ne}
+  \Takakkei{\A\B\C}
+  \HenKo<linewidth=3,Agezoko=.5pt,%
+      HamidasiA=1.75pt,HamidasiB=0.4pt>\A\B{$a$}
+\end{pszahyou}
+\end{showEx}
+
+\verb+HamidasiA=..+の右辺値が\verb+\HenKo+の始点に対する補正値で，
+\verb+HamidasiB=..+の右辺値が\verb+\HenKo+の終点に対する補正値です。
+
+\end{document}

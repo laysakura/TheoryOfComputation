@@ -1,0 +1,3924 @@
+%%% emath.sty by tDB(emath@nifty.com)
+%%%
+%%% $B=iEy?t3X(B (elementary mathematics) $B$N%W%j%s%H$r:n$k:]!$(B
+%%%           ^          ^^^^
+%%% $BI,MW$H$J$k5-9fN`$r=8$a$?%Q%C%1!<%8%U%!%$%k$G$9!%(B
+%%%
+%%% $B;H$$J}$NNc$O!$(Bsample.tex $B$r$4Mw$/$@$5$$!%(B
+%%% $B$3$N%Q%C%1!<%8$N%5%]!<%H%5%$%H$O(B
+%%%     http://emath.s40.xrea.com/
+%
+\newif\ifsuuzi@smac%
+\newif\iftemp@s%
+\newif\ifin@caprm
+\newif\ifwari@pr\wari@prfalse
+\@ifundefined{ifpapersize}{\newif\ifpapersize\papersizefalse}{}%
+\newbox\EM@boxa
+\newbox\bsityuubox
+%
+    \def\tmpname{LaTeX2e}%
+    \ifx\fmtname\tmpname%
+      \NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{emath}[2010/06/24 2.30]
+%
+\newif\if@jsclasses \@jsclassesfalse
+\@ifclassloaded{jsarticle}{\@jsclassestrue}{}
+\@ifclassloaded{jsbook}{\@jsclassestrue}{}
+\@ifundefined{emathiie}{\edef\emathiie{emath2e.sty}}{}%
+%
+%\let\ltxitem\item
+%
+%\let\ltxequation\equation
+%\let\endltxequation\endequation
+%
+\newenvironment{ltxequation}%
+    {\@beginparpenalty\predisplaypenalty
+     \@endparpenalty\postdisplaypenalty
+     \refstepcounter{equation}%
+     \trivlist 
+      \item[]\leavevmode
+       \hb@xt@\linewidth\bgroup $\m@th% $
+         \displaystyle
+         \hskip\mathindent}%
+        {$\hfil % $
+\let\normalcolor\relax%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 2005/05/17 ????
+         \displaywidth\linewidth\hbox{\@eqnnum}%
+       \egroup
+     \endtrivlist}
+%
+%       \input{emath2e.sty}%
+       \input{\emathiie}%
+    \else%
+      \input emath209.sty%
+    \fi%
+%
+\@ifundefined{c@marginpar}{%
+  \newcounter{marginpar}%
+  \def\themarginpar{\@arabic\c@marginpar}%
+}{}%
+\@ifundefined{c@tempcnta}{\newcounter{tempcnta}}{}
+%\newcounter{tempcntb}
+%\newcounter{tempcntc}
+\@ifundefined{templa}{\newdimen\templa}{}%
+\@ifundefined{templb}{\newdimen\templb}{}%
+\newdimen\templc%
+%\newdimen\tmp@ht@s%
+%\newdimen\tmp@dp@s%
+\newbox{\tempboxa}%
+\newbox{\tempboxb}%
+%\p@=1truept\relax
+%
+\def\BEGINalltt{\begin{alltt}}%
+\def\ENDalltt{\end{alltt}}%
+%
+\edef\iro@{\empty}%
+%
+\define@key{emath}{kotae}{\def\@kotae{#1}}%
+\define@key{emath}{pos}{\def\@pos{#1}}%
+\define@key{emath}{arrayarg}{\EMedef\array@arg{#1}}%
+\define@key{emath}{aval}[1]{\def\aval@{#1}}%
+\define@key{emath}{linethickness}{\linethickness{#1}}%
+%
+\edef\rectbox@parindent@{0pt}%
+\edef\rectbox@parindent{0pt}%
+%
+% amsmath $B$G(B \@ifnextchar $B$,:FDj5A$5$l$k$3$H$X$NBP:v(B
+%
+\let\ltx@ifnextchar\@ifnextchar
+\def\ProvidesFile#1{%
+  \begingroup
+    \catcode`\ 10 %
+    \ifnum \endlinechar<256 %
+      \ifnum \endlinechar>\m@ne
+        \catcode\endlinechar 10 %
+      \fi
+    \fi
+    \@makeother\/%
+    \@makeother\&%
+    \ltx@ifnextchar[{\@providesfile{#1}}{\@providesfile{#1}[]}}
+
+
+%------------------------
+% $BBe?t(B
+%------------------------
+
+% $BEy$7$/$J$$(B
+% $B!b$N<P@~$r%P%C%/%9%i%C%7%e(B
+%\def\neqq{\mathrel{\mathpalette\neqqsub=}}%
+\DeclareRobustCommand\neqq{\mathrel{\mathpalette\neqqsub=}}%
+\def\neqqsub#1#2{\m@th\ooalign{\hfil{%
+    \ifthenelse{\equal{#1}{\scriptstyle}\or\equal{#1}{\scriptscriptstyle}}{%
+    \raise.1ex\hbox{$\scriptscriptstyle\backslash$}}{%
+    \raise.16ex\hbox{$\scriptstyle\backslash$}}}\hfil\crcr$#1#2$}}%
+
+%\def\neqq{\mathrel{\mathpalette\neqqsub=}}%
+%    \def\neqqsub#1#2{%
+%     \m@th\ooalign{\hfil{{\chgfontsizeratio{.707}\raise.2ex\hbox{%
+%     $#1\backslash$}}}\hfil\crcr$#1#2$}}%
+%\def\neqq{\mathrel{\mathpalette\neqqsub=}}%
+%    \def\neqqsub#1#2{\m@th\ooalign{\hfil{\raise.09ex\hbox{%
+%    $#1\mkern1mu\scriptstyle\backslash$}}\hfil\crcr$#1#2$}}%
+
+\def\c@ncelskip{1}%
+\def\cancelskip#1{\def\c@ncelskip{#1}}%
+\def\Not#1{\mathrel{\ooalign{\hfil$\backslash$\hfil\crcr$#1$}}}%
+\def\c@ncel#1#2{\m@th\ooalign{$\hfil#1\mkern1mu/\hfil$\crcr$#1#2$}}
+\def\bc@ncel#1#2{\m@th\ooalign{$\hfil#1\mkern\c@ncelskip mu\backslash\hfil$\crcr$#1#2$}}
+\def\vc@ncel#1#2{\m@th\ooalign{$\hfil#1|\hfil$\crcr$#1#2$}}
+\def\EMvarnotin{\mathrel{\m@th\mathpalette\vc@ncel\in}}
+\def\EMvarnotni{\mathrel{\m@th\mathpalette\vc@ncel\ni}}
+\def\varneqq{\mathrel{\m@th\mathpalette\vc@ncel=}}
+
+% $B6a;wEy9f(B
+\ifx\fmtname\tmpname%
+\newcommand{\kinzi}{\fallingdotseq}%
+\fi%
+
+% align $B4D6-$J$I$K$*$$$F!$@hF,9T$N(B = $BJ,$N6uGr(B
+\def\dummyEQ{\mathrel{\phantom=}}
+\let\dumyeq\dummyEQ
+
+% $BJ,?t5-9f(B($BJ,?t7S$r>/$7D9$a$K(B)
+%\newcommand{\bunsuu}[2]{\dfrac{\,#1\,}{\,#2\,}}%
+% $B$5$i$K7S@~$N>e2<$r69$/!%(B
+%\newcommand\Bunsuu[2]{\bunsuu{\lower.7ex\hbox{$#1$}}{\lower-.1ex\hbox{$#2$}}}%
+%
+\def\bunsuu{\protect\@bunsuu}%
+\def\@bunsuu{\@ifstar{\bunsuu@}{\@@bunsuu}}
+\def\@@bunsuu#1#2{%
+    \dfrac{\lower.44ex\hbox{$\,#1\,$}}{\lower-.1ex\hbox{$\,#2\,$}}}%
+%\def\bunsuu@#1#2{%
+%  \@ifundefined{hakobanpush}{%
+%          \mathchoice{%
+%            \dfrac{\mkern1mu #1\mkern1mu }{\lower-.1ex\hbox{$\mkern1mu #2\mkern1mu $}}}%
+%            {\tfrac{\mkern1mu #1\mkern1mu }{\lower-.1ex\hbox{$\scriptstyle \mkern1mu  #2\mkern1mu $}}}%
+%            {\frac{\mkern1mu #1\mkern1mu }{\lower-.05ex\hbox{$\scriptscriptstyle \mkern1mu #2\mkern1mu $}}}%
+%            {\frac{\mkern1mu #1\mkern1mu }{\lower-.01ex\hbox{$\scriptscriptstyle \mkern1mu #2\mkern1mu $}}}%
+%  }{%
+%          \mathchoice{%
+%            \hakobanpush\dfrac{\mkern1mu #1\mkern1mu }{\lower-.1ex\hbox{$\mkern1mu #2\mkern1mu $}}\hakobanpop}%
+%            {\hakobanpush\tfrac{\mkern1mu #1\mkern1mu }{\lower-.1ex\hbox{$\scriptstyle \mkern1mu #2\mkern1mu $}}\hakobanpop}%
+%            {\hakobanpush\frac{\mkern1mu #1\mkern1mu }{\lower-.05ex\hbox{$\scriptscriptstyle \mkern1mu #2\mkern1mu $}}\hakobanpop}%
+%            {\hakobanpush\frac{\mkern1mu #1\mkern1mu }{\lower-.01ex\hbox{$\scriptscriptstyle \mkern1mu #2\mkern1mu $}}\hakobanpop}%
+%          {\setbox0\hbox{$\frac{#1}{#2}$}}%
+%  }%
+%}
+\def\tbunsuu#1#2{%
+  \tfrac{\mkern1mu #1\mkern1mu }{%
+    \lower-.1ex\hbox{$\scriptstyle \mkern1mu  #2\mkern1mu $}}%
+}%
+% $BK\J8Cf$KJ,?t$rF~$l$k:]!$>e2<(B3pt$B$:$D$NM>Gr$r:n$k!#(B
+% \Bunsuu[$B?<$5(B=3pt][$B9b$5(B=0pt]{$BJ,;R(B}{$BJ,Jl(B}
+
+\def\Bunsuu{\@ifnextchar[{\@Bunsuu}{\@Bunsuu[3pt]}}
+\def\@Bunsuu[#1]{\@ifnextchar[{\@@Bunsuu[#1]}{\@@Bunsuu[#1][\z@]}}
+\def\@@Bunsuu[#1][#2]#3#4{%
+  \@ifundefined{hakobanpush}{}{\hakobanpush}%
+  \EMvphantom[#2][#1]{\bunsuu{#3}{#4}}%
+  \@ifundefined{hakobanpush}{}{\hakobanpop}%
+  \bunsuu{#3}{#4}%
+}
+
+
+\def\bunsuu@#1#2{%
+  \@ifundefined{hakobanpush}{%
+           \mathchoice{\bunsuu{#1}{#2}}%
+           {\frac{\,#1\,}{\,#2\,}}%
+           {\scriptstyle\frac{#1}{#2}}%
+           {\scriptscriptstyle\frac{#1}{#2}}%
+  }{%
+           \mathchoice{\hakobanpush\bunsuu{#1}{#2}\hakobanpop}%
+           {\hakobanpush\frac{\,#1\,}{\,#2\,}\hakobanpop}%
+           {\hakobanpush\scriptstyle\frac{\,#1\,}{\,#2\,}\hakobanpop}%
+           {\hakobanpush\scriptscript\frac{\,#1\,}{\,#2\,}\hakobanpop}%
+           {\setbox0\hbox{$\frac{#1}{#2}$}}%
+  }%
+}%
+%
+% $BJ,;R!&J,Jl$r1&B7$((B
+%
+\def\rbunsuu#1#2{%
+  \setbox0=\hbox{$#1$}\edef\l@bunsi{\the\wd0}%
+  \setbox0=\hbox{$#2$}\edef\l@bunbo{\the\wd0}%
+  \ifdim\l@bunsi>\l@bunbo\relax
+    \bunsuu{#1}{\makebox[\l@bunsi][r]{#2}}%
+  \else
+    \bunsuu{\makebox[\l@bunbo][r]{#1}}{#2}%
+  \fi
+}
+\def\Rbunsuu#1#2{\rbunsuu{#1}{#2}\kern-.3em\relax}
+\let\cbunsuu\bunsuu
+%
+\renewcommand{\cfrac}[3][c]{{\EMresetstrutbox
+  \dfrac{%
+  \strut
+  \ifx r#1\hfill\fi#2\ifx l#1\hfill\fi}{#3}}%
+  \kern-\nulldelimiterspace}
+%
+%\if0
+% $B2<@~(B
+%
+\def\kasenhutosa{0.4pt}
+\def\kasenkankaku{0.5pt}
+
+% \kasen(#1)[#2]<#3>#4
+%   #1 : $BIm2C$9$k2#I}(B
+%   #2 : $BJ8;z$H2<@~$H$N4V3V!J%G%U%)%k%HCM(B \kasenkankaku=0.5pt$B!K(B
+%   #3 : $B2<@~$NB@$5!J%G%U%)%k%HCM(B \kasenhutosa=0.4pt)
+%   #4 : $BJ8;z(B
+
+\def\kasen{\@ifnextchar({\@kasen}{\@kasen(\z@)}}
+\def\@kasen(#1){\@ifnextchar[{\@@kasen(#1)}{\@@kasen(#1)[\kasenkankaku]}}
+\def\@@kasen(#1)[#2]{\@ifnextchar<{\@@@kasen(#1)[#2]}{%
+  \@@@kasen(#1)[#2]<\kasenhutosa>}}
+\def\@@@kasen(#1)[#2]<#3>#4{{%
+  \ifmmode
+    \setbox0=\hbox{{\ensuremath{#4}}}%
+  \else
+    \setbox0=\hbox{{#4}}%
+  \fi
+  \@tempdima#2\relax
+  \advance\@tempdima\dp0
+  \@tempdimb\@tempdima
+  \advance\@tempdimb#3\relax
+  \@tempdimc=#1\relax
+  \@tempdimc2\@tempdimc\relax
+  \advance\@tempdimc\wd0\relax
+  \makebox[\z@][l]{%
+    \vrule width \@tempdimc height -\@tempdima depth \@tempdimb}\relax
+  \hspace*{#1}\box0\hspace*{#1}%
+}}
+%\fi
+%
+%$BGH2<@~(B
+%
+%  \uuwave : ulem.sty $B$N(B \uwave $B$r!$Fs=E2<@~$H$7$?$b$N(B
+%
+\def\uuwave{\bgroup \markoverwith{\vtop{\sixly
+   \kern1.2\p@\hbox{\kern-.21\p@\char58\kern-.21\p@}\kern-1\baselineskip
+   \kern1.5\p@\hbox{\kern-.21\p@\char58\kern-.21\p@}}}\ULon}
+%
+% \namikasen[#1]#2
+%
+%   $BGH2<@~(B
+%
+%   #1 : $B2<@~$rFs=E@~$H$9$k>l9g$NFs=E@~$N4V$N4V3V(B
+%   #2 : $B2<@~$r0z$/BP>](B
+%
+% \hutonamikasen[#1]#2
+%
+%   $BB@$$GH2<@~(B
+%
+\def\nami@leaders{\cleaders\hbox to \nami@ul{%
+    $\widetilde{\null\kern.41zw}$}\hfil}%
+\def\bnami@leaders{\cleaders\hbox to \nami@ul{%
+    \raisebox{-.45\normalbaselineskip}{\scalebox{1}[2]{$\widetilde{\null\kern.41zw}$}}}\hfil}%
+\def\namikasen@uehosei{0pt}%
+\def\namikasen@sitahosei{0pt}%
+\def\namikasenUehosei#1{\def\namikasen@uehosei{#1}}
+\def\namikasenSitahosei#1{\def\namikasen@sitahosei{#1}}
+\def\namikasen{\let\nami@@leaders\nami@leaders\@namikasen}
+\def\hutonamikasen{\let\nami@@leaders\bnami@leaders\@namikasen}
+\def\@namikasen{\@ifnextchar[{\@@namikasen}{\@@namikasen[\empty]}}
+\def\@@namikasen[#1]#2{{\setbox\tempboxa=\hbox{\textrm{\char126}}%
+  \@tempdima=.77\wd\tempboxa\edef\nami@ul{\the\@tempdima}%
+% \@tempdima=.82\wd\tempboxa\edef\nami@ul{\the\@tempdima}%
+  \setbox\tempboxa=\hbox{#2}%
+  \unitlength=\p@
+  \@tempdima\dp\tempboxa\advance\@tempdima1zh\advance\@tempdima-\p@\relax
+  \edef\nami@hukasa{\strip@pt\@tempdima}%
+  \ukansan{\namikasen@uehosei}\namikansan@@uehosei
+  \Addself\nami@hukasa\namikansan@@uehosei
+  \@tempdima\dp\tempboxa\advance\@tempdima.5ex\relax
+  \edef\nami@soko{\strip@pt\@tempdima}%
+  \ukansan{\namikasen@sitahosei}\namikansan@@sitahosei
+  \Addself\nami@soko\namikansan@@sitahosei
+  \begin{picture}(0,0)\relax
+    \@tempdima\wd\tempboxa%\advance\@tempdima.06em\relax
+    \edef\nami@haba{\the\@tempdima}%
+    \put(0,-\nami@hukasa){\hbox to \nami@haba{\nami@@leaders}}%
+    \ifx\empty #1\relax\else
+      \Addself\nami@hukasa{#1}%
+      \put(0,-\nami@hukasa){\hbox to \@tempdima{\nami@@leaders}}%
+    \fi
+  \end{picture}%
+  \box\tempboxa\relax
+  \ifx\empty #1\relax\else\Addself\nami@soko{#1}\fi
+  \vrule width \z@ depth \nami@soko \p@
+}}
+%%
+%% $BD{@5(B
+%%    \teisei[#1](#2)#3[#4]
+%%            #1: $B@~$N0z$-J}$K$D$$$F$N%*%W%7%g%s0z?t$G!$(B
+%%                s : $B<P@~!J!?!K(B [$B%G%U%)%k%H(B]
+%%                r : $B<P@~!J!@!K(B
+%%                h : $B2#@~(B
+%%                d : $B2#FsK\@~(B
+%%            #2: $B@~$N?'(B
+%%            #3: $B@~$r0z$/BP>](B
+%%            #4: $BD{@58e$NJ8;zNs(B
+%%
+%%{\catcode`\p=12\catcode`\t=12\gdef\@mumeisuu#1pt{#1}}%
+%%\def\mumeisuu#1{\expandafter\@mumeisuu\the#1}%
+\def\mumeisuu#1{\strip@pt#1}%
+\def\@Mumeisuu#1pt\@nil{#1}
+\def\Mumeisuu#1{\expandafter\@Mumeisuu#1\@nil}
+%%\def\Mumeisuu#1#2{\setlength{\@tempdima}{#1}\edef#2{\strip@pt\@tempdima}}
+%\@ifundefined{syasen}{\def\syasen{\drawline}}{}%
+%\def\teisei{%
+%    \@ifnextchar[{\@teisei}{\@teisei[s]}}%
+%\def\@teisei[#1]{%
+%    \@ifnextchar({\@teisei@[#1]}{\@teisei@[#1](\empty)}}%
+%\def\@teisei@[#1](#2)#3{%
+%  \@ifnextchar[{\@@teisei[#1](#2)#3}{\@@teisei[#1](#2){#3}[\empty]}}%
+%\def\@@teisei[#1](#2)#3[#4]{{\unitlength\p@
+%  \ifmmode\setbox0\hbox{$#3$}\else\setbox0\hbox{#3}\fi
+%  \ifx\empty#4\relax{%
+%    \ifx\empty#2\else\color{#2}\fi%
+%    \begin{picture}(0,0)%
+%      \if#1r\relax
+%        \syasen(0,\strip@pt\ht0)(\strip@pt\wd0,-\strip@pt\dp0)%
+%      \else\if#1h\relax
+%        \setlength{\templa}{\ht0}\addtolength{\templa}{-\dp0}%
+%        \divide\templa by 2\relax
+%        \syasen(0,\strip@pt\templa)(\strip@pt\wd0,\strip@pt\templa)%
+%      \else\if#1d\relax
+%        \setlength{\templa}{\ht0}\addtolength{\templa}{-\dp0}%
+%        \divide\templa by 2\relax
+%        \setlength{\templb}{\templa}\addtolength{\templb}{-0.8pt}%
+%        \setlength{\templc}{\templa}\addtolength{\templc}{1.2pt}%
+%        \syasen(0,\strip@pt\templb)(\strip@pt\wd0,\strip@pt\templb)%
+%        \syasen(0,\strip@pt\templc)(\strip@pt\wd0,\strip@pt\templc)%
+%      \else\if#1x\relax
+%        \syasen(0,-\strip@pt\dp0)(\strip@pt\wd0,\strip@pt\ht0)%
+%        \syasen(0,\strip@pt\ht0)(\strip@pt\wd0,-\strip@pt\dp0)%
+%      \else\if#1S\relax
+%        \put(0,1){\syasen(0,-\strip@pt\dp0)(\strip@pt\wd0,\strip@pt\ht0)}%
+%        \put(0,-1){\syasen(0,-\strip@pt\dp0)(\strip@pt\wd0,\strip@pt\ht0)}%
+%      \else
+%        \syasen(0,-\strip@pt\dp0)(\strip@pt\wd0,\strip@pt\ht0)%
+%      \fi\fi\fi\fi\fi
+%    \end{picture}}\box0%
+%  \else%
+%    \ifmmode\setbox1\hbox{$#4$}\else\setbox1\hbox{#4}\fi
+%    \ensuremath{\stackrel{\box1}{{%
+%      \ifx\empty#2\else\color{#2}\fi%
+%      \begin{picture}(0,0)%
+%          \if#1r\relax
+%            \syasen(0,\strip@pt\ht0)(\strip@pt\wd0,-\strip@pt\dp0)%
+%          \else\if#1h\relax
+%            \setlength{\templa}{\ht0}\addtolength{\templa}{-\dp0}%
+%            \divide\templa by 2\relax
+%            \syasen(0,\strip@pt\templa)(\strip@pt\wd0,\strip@pt\templa)%
+%          \else\if#1d\relax
+%            \setlength{\templa}{\ht0}\addtolength{\templa}{-\dp0}%
+%            \divide\templa by 2\relax
+%            \setlength{\templb}{\templa}\addtolength{\templb}{-0.8pt}%
+%            \setlength{\templc}{\templa}\addtolength{\templc}{1.2pt}%
+%            \syasen(0,\strip@pt\templb)(\strip@pt\wd0,\strip@pt\templb)%
+%            \syasen(0,\strip@pt\templc)(\strip@pt\wd0,\strip@pt\templc)%
+%          \else\if#1S\relax
+%            \put(0,1){\syasen(0,-\strip@pt\dp0)(\strip@pt\wd0,\strip@pt\ht0)}%
+%            \put(0,-1){\syasen(0,-\strip@pt\dp0)(\strip@pt\wd0,\strip@pt\ht0)}%
+%          \else
+%            \syasen(0,-\strip@pt\dp0)(\strip@pt\wd0,\strip@pt\ht0)%
+%          \fi\fi\fi\fi
+%      \end{picture}}\box0\relax
+%    }}%
+%  \fi%
+%}}%
+%%
+%% $BD{@5!J3HD%HG!K?t<0%b!<%I$G;HMQ$9$k$3$H!%(B
+%%\teisei $B$H$N0c$$$O!$(B
+%%    $B#0!%?t<0%b!<%I$NCf!$$H$$$&A0Ds$rIU$1$?!%(B
+%%    $B#1!%D{@58e$NJ8;zNs$O%*%W%7%g%s0z?t$G$O$J$/!$I,?\$N0z?t$H$7$?!%(B
+%%    $B#2!%D{@58e$NJ8;zNs$O>.$5$a$K$J$C$?(B (scriptstyle)
+%%    $B#3!%D{@58e$NJ8;zNs$N0LCV$r%*%W%7%g%s$G(B
+%%                $B:8>e(B  $B>e(B  $B1&>e!J%G%U%)%k%H!K(B
+%%                $B:82<(B  $B2<(B  $B1&2<(B
+%%        $B$N(B6$B%v=j$r;XDj$9$k$3$H$,$G$-$k$h$&$K$7$?!%(B
+%%
+%%  \Teisei[#1](#2)#3[#4]#5
+%%            #1: $B@~$N0z$-J}$K$D$$$F$N%*%W%7%g%s0z?t$G!$(B
+%%                s : $B<P@~!J!?!K(B [$B%G%U%)%k%H(B]
+%%                r : $B<P@~!J!@!K(B
+%%                h : $B2#@~(B
+%%                d : $B2#FsK\@~(B
+%%            #2: $B@~$N?'(B
+%%            #3: $B@~$r0z$/BP>](B
+%%            #4: $BD{@58e$NJ8;z0LCV(B
+%%                   r = $B1&>e(B (=tr=rt)$B!J%G%U%)%k%H!K(B
+%%                   l = $B:8>e(B (=tl=lt)
+%%                   t = $B>e(B
+%%                   b = $B2<(B
+%%                   rb=br=$B1&2<(B
+%%                   lb=bl=$B:82<(B
+%%            #5: $BD{@58e$NJ8;zNs(B (scriptstyle)
+%%
+%\def\Teisei{%
+%    \@ifnextchar[{\@Teisei}{\@Teisei[s]}}%
+%\def\@Teisei[#1]{%
+%    \@ifnextchar({\@Teisei@[#1]}{\@Teisei[#1](\empty)}}%
+%\def\@Teisei@[#1](#2)#3{%
+%  \@ifnextchar[{\@@Teisei[#1](#2){#3}}{\@@Teisei[#1](#2){#3}[r]}}%
+%\def\@@Teisei[#1](#2)#3[#4]#5{{%
+%    \edef\mozi@iti{0}%
+%%                           4  0  2
+%%                            {#3}
+%%                           5  1  3
+%    \expandafter\@tfor\expandafter\@c\expandafter:\expandafter=#4%
+%    \do {\if r\@c\IAdd\mozi@iti{2}\mozi@iti\else
+%        \if l\@c\IAdd\mozi@iti{4}\mozi@iti\else
+%        \if b\@c\IAdd\mozi@iti{1}\mozi@iti\fi\fi\fi}%
+%    \ifx\empty#5\@teisei@[#1](#2){#3}{}\else%
+%    \ifcase\mozi@iti\overset{#5}{\@teisei@[#1](#2){#3}{}}%
+%    \or\underset{#5}{\@teisei@[#1](#2){#3}{}}%
+%    \or{\@teisei@[#1](#2){#3}{}}^{\,{#5}}%
+%    \or{\@teisei@[#1](#2){#3}{}}_{\,{#5}}%
+%    \or{}^{#5}{\@teisei@[#1](#2){#3}{}}%
+%    \or{}_{#5}{\@teisei@[#1](#2){#3}{}}\fi
+%    \fi}}%
+%
+%% $BLsJ,(B
+%%    \yakubun[#1](#2)<#3>#4#5#6#7
+%%        #1: $B<P@~$N0z$-J}$r;XDj$9$k%*%W%7%g%s0z?t$G!$(B
+%%                s : $B<P@~!J!?!K(B [$B%G%U%)%k%H(B]
+%%                r : $B<P@~!J!@!K(B
+%%        #2: $B@~$N?'(B
+%%        #3: $BLsJ,$7$?7k2L$NI=<(0LCV$r;XDj$9$k%*%W%7%g%s0z?t$G!$(B
+%%                c : $BCf1{>e2<(B   [$B%G%U%)%k%H(B]
+%%                l : $B:88*(B
+%%                r : $B1&8*(B
+%%        #4: $BLsJ,$9$kA0$NJ,;R(B
+%%        #5: $BLsJ,$9$kA0$NJ,Jl(B
+%%        #6: $BLsJ,$7$?8e$NJ,;R(B
+%%        #7: $BLsJ,$7$?8e$NJ,Jl(B
+%
+\def\yakubun{%
+    \@ifnextchar[{\yakubun@}{\yakubun@[s]}}%
+\def\yakubun@[#1]{%
+    \@ifnextchar({\@yakubun[#1]}{\@yakubun[#1](\empty)}}%
+\def\@yakubun[#1](#2){%
+    \@ifnextchar<{\@@yakubun[#1](#2)}{\@@yakubun[#1](#2)<c>}}%
+\def\@@yakubun[#1](#2)<#3>#4#5#6#7{%
+    \if#3c%
+      \bunsuu{\overset{#6}{\teisei[#1](#2){#4}}}{%
+      \underset{#7}{\teisei[#1](#2){#5}}}%
+    \else\if#3r%
+      \bunsuu{{\teisei[#1](#2){#4}}^{\,#6}}{{\teisei[#1](#2){#5}}^{\,#7}}%
+    \else%
+      \bunsuu{{}^{#6\,}\teisei[#1](#2){#4}}{{}^{#7\,}\teisei[#1](#2){#5}}%
+    \fi\fi}%
+
+% $B%$%s%F%j%8%'%s%H$JLsJ,(B
+%    \Yakubun[#1](#2)<#3>#4#5
+%        #1: $B<P@~$N0z$-J}$r;XDj$9$k%*%W%7%g%s0z?t$G!$(B
+%                s : $B<P@~!J!?!K(B [$B%G%U%)%k%H(B]
+%                r : $B<P@~!J!@!K(B
+%        #2: $B@~$N?'(B
+%        #3: $BLsJ,$7$?7k2L$NI=<(0LCV$r;XDj$9$k%*%W%7%g%s0z?t$G!$(B
+%                c : $BCf1{>e2<(B   [$B%G%U%)%k%H(B]
+%                l : $B:88*(B
+%                r : $B1&8*(B
+%        #4: $BLsJ,$9$kA0$NJ,;R(B
+%        #5: $BLsJ,$9$kA0$NJ,Jl(B
+
+\def\saidaikouyakusuu#1#2#3{%
+  \ifnum #1=\z@
+    \edef#3{#2}\relax
+  \else
+    \ifnum #2=\z@\edef#3{#1}\relax
+    \else
+      \edef\saidaikouyakusuu@a{#1}\edef\saidaikouyakusuu@b{#2}%
+      \ifnum\saidaikouyakusuu@a<\z@\IMul{-1}\saidaikouyakusuu@a\saidaikouyakusuu@a
+      \fi
+      \ifnum\saidaikouyakusuu@b<\z@\IMul{-1}\saidaikouyakusuu@b\saidaikouyakusuu@b
+      \fi
+      \@saidaikouyakusuu\edef#3{\saidaikouyakusuu@}\relax
+    \fi
+  \fi}
+\def\@saidaikouyakusuu{%
+    \IDivMod{\saidaikouyakusuu@a}{\saidaikouyakusuu@b}\@syou\@amari
+    \ifnum\@amari=\z@\edef\saidaikouyakusuu@{\saidaikouyakusuu@b}%
+      \let\@next\relax\else\edef\saidaikouyakusuu@a{\saidaikouyakusuu@b}%
+      \edef\saidaikouyakusuu@b{\@amari}\let\@next\@saidaikouyakusuu\fi%
+      \@next}%
+
+\def\Saidaikouyakusuu#1#2{\edef\Saidaikouyakusuu@ans{0}%
+  \expandafter\@for\expandafter\@@c\expandafter:\expandafter=#1\do{%
+    \ifnum\Saidaikouyakusuu@ans=\z@\edef\Saidaikouyakusuu@ans{\@@c}\else
+      \saidaikouyakusuu\Saidaikouyakusuu@ans\@@c\Saidaikouyakusuu@ans
+    \fi}\IAbs\Saidaikouyakusuu@ans#2}%
+
+\def\saisyoukoubaisuu#1#2#3{\saidaikouyakusuu{#1}{#2}\gcm@ans
+  \IDiv{#1}\gcm@ans\lcm@ans\IMul\lcm@ans{#2}\lcm@ans\edef#3{\lcm@ans}}
+
+\def\Saisyoukoubaisuu#1#2{\edef\Saisyoukoubaisuu@ans{1}%
+  \expandafter\@for\expandafter\@@c\expandafter:\expandafter=#1\do{%
+    \saisyoukoubaisuu\Saisyoukoubaisuu@ans\@@c\Saisyoukoubaisuu@ans
+  }\IAbs\Saisyoukoubaisuu@ans#2}
+
+\newcount\EMc@hizyosuu
+\newcount\EMc@syou
+\newcount\EMc@zyo@amari
+\newcount\GCM
+%\def\syou@amari#1#2{%
+%    \EMc@hizyosuu#1\@zyosuu#2\EMc@syou\EMc@hizyosuu\divide\EMc@syou\@zyosuu%
+%    {\@tempcnta\EMc@syou\multiply\@tempcnta\@zyosuu\EMc@zyo@amari\EMc@hizyosuu%
+%    \global\advance\EMc@zyo@amari -\@tempcnta}}%
+
+%\def\syou@amari#1#2{\EMc@syou#1\divide\EMc@syou #2{\@tempcnta\EMc@syou%
+%\multiply\@tempcnta #2\EMc@zyo@amari#1\global\advance\EMc@zyo@amari -\@tempcnta%}}%
+
+\def\syou@amari#1#2{\EMc@syou#1\relax
+  \EMc@zyo@amari #2\relax
+  \divide\EMc@syou \EMc@zyo@amari\relax
+  {\@tempcnta\EMc@syou\relax
+  \multiply\@tempcnta by \EMc@zyo@amari\relax
+  \EMc@zyo@amari#1\relax
+  \global\advance\EMc@zyo@amari by -\@tempcnta}}
+
+\def\gcm#1#2{{\@tempcnta#1\@tempcntb#2\relax%
+    \ifnum\@tempcnta>\@tempcntb%
+        \GCM\@tempcnta\@tempcnta\@tempcntb\@tempcntb\GCM\fi%
+    \loop\syou@amari{\@tempcntb}{\@tempcnta}%
+        \ifnum\EMc@zyo@amari>\z@\@tempcntb\@tempcnta\@tempcnta\EMc@zyo@amari%
+    \repeat\global\GCM\@tempcnta}}%
+\def\Yakubun{%
+    \@ifnextchar[{\Yakubun@}{\Yakubun@[s]}}%
+\def\Yakubun@[#1]{%
+    \@ifnextchar({\@Yakubun[#1]}{\@Yakubun[#1](\empty)}}%
+\def\@Yakubun[#1](#2){%
+    \@ifnextchar<{\@@Yakubun[#1](#2)}{\@@Yakubun[#1](#2)<c>}}%
+\def\@@Yakubun[#1](#2)<#3>#4#5{{%
+    \@tempcnta#4\@tempcntb#5\relax
+    \gcm{\@tempcnta}{\@tempcntb}%
+    \divide\@tempcnta\GCM
+    \divide\@tempcntb\GCM
+    \if#3c%
+      \bunsuu{\overset{\the\@tempcnta}{\teisei[#1](#2){#4}}}{%
+      \underset{\the\@tempcntb}{\teisei[#1](#2){#5}}}%
+    \else\if#3r%
+      \bunsuu{{\teisei[#1](#2){#4}}^{\,\the\@tempcnta}}{{%
+        \teisei[#1](#2){#5}}^{\,\the\@tempcntb}}%
+    \else%
+      \bunsuu{{}^{\the\@tempcnta\,}\teisei[#1](#2){#4}}{%
+        {}^{\the\@tempcntb\,}\teisei[#1](#2){#5}}%
+    \fi\fi}}%
+%
+% $B?t<0$KBP$9$k%k%S(B
+%
+  \def\EMmathruby@strut{\mathstrut}%
+  \def\EMmathrubystrut#1{\def\EMmathruby@strut{#1}}%
+  \def\EMmathruby{\@ifstar{\EMmathruby@}{\@EMmathruby}}%
+  \def\@EMmathruby#1#2{\overset{#2}{#1\EMmathruby@strut}}%
+  \def\EMmathruby@#1#2{\underset{#2}{#1\EMmathruby@strut}}%
+%
+% $BN_>h(B
+\def\ruizyou#1^#2{\smash[b]{#1^{#2}_{\mathstrut}}}
+% $BN_>h$NN_>h(B
+\def\dpower{\@ifnextchar[{\@dpower}{\@dpower[(]}}%
+\def\@dpower[#1]#2#3#4{%
+    \ifx#1\{\def\@rightp{\}}\else\ifx#1[\def\@rightp{]}\else\def\@rightp{)}%
+    \fi\fi
+    {\smash{\left#1{#2}^{#3}\right\@rightp}\vphantom{#2}}^{#4}%
+}%
+
+\def\EXP#1{e^{#1}}
+
+% $B:,9f(B
+\def\tsqrt{\textstyle\sqrt}
+\def\dsqrt{\displaystyle\sqrt}
+%
+\def\kongou{\@ifnextchar[{\@kongou}{\@kongou[o]}}%
+\def\@kongou[#1]#2{%
+\ifx#1o\sqrt{\smash[b]{\mathstrut #2}}%
+\else\sqrt[#1]{\smash[b]{\mathstrut #2}}%
+\fi}%
+% $BN_>h:,(B
+\def\leftroot@default{2}%
+\def\uproot@default{1}%
+\def\leftrootdefault#1{\def\leftroot@default{#1}}%
+\def\uprootdefault#1{\def\uproot@default{#1}}%
+\def\ruizyoukon@sityuu{\vphantom{b}}%
+\def\ruizyoukonsityuu#1{\def\ruizyoukon@sityuu{#1}}%
+%
+\def\truizyoukon{\textstyle\ruizyoukon}%
+\def\druizyoukon{\displaystyle\ruizyoukon}%
+\def\ruizyoukon{\@ifnextchar[{\@ruizyoukon}{\ruizyoukon[o]}}%
+\def\@ruizyoukon[#1]{\@ifnextchar[{\@@ruizyoukon[#1]}{\@@ruizyoukon[#1][\leftroot@default]}}%
+\def\@@ruizyoukon[#1][#2]{\@ifnextchar[{\@@@ruizyoukon[#1][#2]}{\@@ruizyoukon[#1][#2][\uproot@default]}}%
+\def\@@@ruizyoukon[#1][#2][#3]#4{%
+  \ifx#1o\relax
+    \sqrt{\ruizyoukon@sityuu #4}%
+  \else
+    \sqrt[\leftroot{#2}\uproot{#3}#1]{\ruizyoukon@sityuu #4}%
+  \fi
+}%
+%
+% $B%,%&%95-9f(B
+\newcommand{\gauss}[1]{\ensuremath{\left[\mkern1mu #1\mkern1mu\right]}}%
+\def\emgauss#1{\zettaiti<kagi>[2pt]{#1}}
+%
+% $BJD6h4V5-9f(B
+\def\lheikukan{\lbrack}
+\def\rheikukan{\rbrack}
+\def\heikukankigou#1{%
+  \def\lheikukan{\csname #1lbrack\endcsname}%
+  \def\rheikukan{\csname #1rbrack\endcsname}%
+}
+\def\heikukan[#1,#2]{\ensuremath{%
+  \left\lheikukan\mkern 2mu #1,\,#2\mkern 2mu\right\rheikukan}}
+%\def\heikukan#1#2{\gauss{#1,\,#2}}
+\def\kaikukan(#1,#2){\ensuremath{%
+  \left(\mkern 2mu #1,\,#2\mkern 2mu\right)}}
+%
+% $B?t<0%b!<%IFb$N%3%s%^6h@Z$jNs(B
+%
+\define@key{emath}{retukugiri}{\def\retu@kugirisi{#1}}%
+\define@key{emath}{caprm}[1]{\caprm}%
+\def\retutansi@s{.}%
+\def\retutansi@e{.}%
+\def\retu@kugirisi{,\,}%
+%\def\retu{\bgroup\@ifnextchar<{\retu@}{\@retu}}
+\DeclareRobustCommand\retu{\bgroup\@ifnextchar<{\retu@}{\@retu}}
+\def\retu@<#1>{\setkeys{emath}{#1}\@retu}
+\def\@retu{\@ifnextchar({\def\retutansi@s{(}\def\retutansi@e{)}\retu@s}{%
+  \@@retu}}
+\def\@@retu{\@ifnextchar[{\def\retutansi@s{[}\def\retutansi@e{]}\retu@d}{%
+  \@@@retu}}
+\def\@@@retu{\@ifnextchar\{{\def\retutansi@s{\{}\def\retutansi@e{\}}\retu@t}{%
+  \@@@@retu}}
+\def\@@@@retu{\@ifnextchar\langle{\def\retutansi@s{\langle}\def\retutansi@e{\rangle}\retu@a}{%
+  \@@@@@retu}}
+%
+\def\retu@s(#1){\@@@@@retu{#1}}
+\def\retu@d[#1]{\@@@@@retu{#1}}
+\def\retu@t\{#1\}{\@@@@@retu{#1}}
+\def\retu@a\langle#1\rangle{\@@@@@retu{#1}}
+\def\@@@@@retu#1{\def\konmaretu@f{0}\ensuremath{%
+  \ifthenelse{\equal\retutansi@s{.}\and\equal\retutansi@e{.}}{}{%
+    \left\retutansi@s}%
+  \expandafter\@for\expandafter\konmaretu@c\expandafter:\expandafter=#1\do{%
+    \ifnum\konmaretu@f>\z@\retu@kugirisi\fi
+    {\konmaretu@c}%
+    \Incr\konmaretu@f
+  }%
+  \ifthenelse{\equal\retutansi@s{.}\and\equal\retutansi@e{.}}{}{%
+    \right\retutansi@e}%
+  }%
+\egroup
+}
+%
+\def\konmaretu#1{\def\konmaretu@f{0}\ensuremath{%
+  \expandafter\@for\expandafter\konmaretu@c\expandafter:\expandafter=#1\do{%
+    \ifnum\konmaretu@f>\z@ ,\,\fi
+    \konmaretu@c
+    \Incr\konmaretu@f
+  }}%
+}
+\let\commaseq\konmaretu
+\def\seibun{\@ifnextchar'{\@seibun}{\@seibun'()'}}
+\def\@seibun'#1#2'(#3,#4){\ensuremath{\left#1\relax
+  #3\relax
+  \expandafter\@for\expandafter\seibun@c\expandafter:\expandafter=#4\do{%
+    ,\,\seibun@c
+  }%
+  \right#2\relax}%
+}
+%
+% $B@0<0$N=D=q$-3d;;(B
+% \zyohou{$BHo=|?t(B}{$B=|?t(B}{$B>&(B}{$BHo=|?t$N2<$N7W;;<0(B}
+%   $B0z?t$O$9$Y$F9`Kh$K(B , $B$G6h@Z$k!%(B
+%
+\newcount\zyo@@c
+\newcount\hizyo@@c
+\newcount\wari@@cnt
+\newcount\wari@@cmax
+\newcount\gyou@@c
+\newcount\hidari@@p
+\newcount\migi@@p
+%
+\def\zyohou#1#2#3#4{%
+    \def\bunkai##1{\global\wari@@cnt\z@\def\t@{}\wari@prfalse
+\edef\bk@tmp{##1 }%
+       \@for\@c:=\bk@tmp\do{\ifx\empty\@c\else\wari@prtrue\fi
+        \ifnum\wari@@cnt=\z@
+%         \xdef\t@{\t@\@c}%
+          \EMxdefappend\t@{\@c}%
+        \else
+%         \xdef\t@{\t@&\@c}%
+          \EMxdefappend\t@{&{}\@c}%
+        \fi
+        \global\advance\wari@@cnt\@ne
+        \ifnum\wari@@cnt=\wari@@cmax
+        \ifodd\gyou@@c
+            \EMxdef\wari@@hidari{&\wari@@hidari}
+            \ifwari@pr\wari@@hidari\t@\\\fi
+        \else
+            \global\advance\hidari@@p\@ne
+            \ifwari@pr\wari@@hidari\t@\\\cline{\the\hidari@@p-\the\migi@@p}\fi
+        \fi
+        \global\advance\gyou@@c\@ne\def\t@{}\wari@@cnt\z@\fi
+        }}%
+    \gyou@@c\z@\hizyo@@c\z@
+    \@for\@c:=#1\do{\advance\hizyo@@c\@ne}%
+    \zyo@@c\z@
+    \@for\@c:=#2\do{\advance\zyo@@c\@ne}%
+    \hidari@@p\zyo@@c\advance\hidari@@p\@ne
+    \migi@@p\hidari@@p\advance\migi@@p\hizyo@@c
+    \def\wari@@hidari{}\wari@@cnt\m@ne
+    \@whilenum\wari@@cnt<\zyo@@c\do{\edef\wari@@hidari{&\wari@@hidari}%
+        \advance\wari@@cnt\@ne}%
+    \wari@@cmax=100\relax
+\begin{array}[t]{*{\the\zyo@@c}{@{\,}r}@{\,\,}l*{\the\hizyo@@c}{@{\,}r}}
+    \wari@@hidari\bunkai{#3}\t@\\\cline{\the\hidari@@p-\the\migi@@p}
+    \bunkai{#2}\t@&
+    \@ifundefined{varheartsuit}{% cm fonts
+      \kern-.05em\raisebox{.5ex}[0pt][0pt]{$\bigr)$}% cm-fonts
+    }{% txfonts
+      \if@jsclasses% js*.cls
+        \kern-.03em\raisebox{.48ex}[0pt][0pt]{\scalebox{1.2}{$\bigr)$}}%
+      \else%         j*.cls
+        \kern-.03em\raisebox{.48ex}[0pt][0pt]{\scalebox{1.1}{$\bigr)$}}%
+      \fi
+    }%
+    &\bunkai{#1}\t@
+        \\
+    \global\wari@@cmax\zyo@@c\bunkai{#4}
+    \wari@@hidari&\t@
+\end{array}}%
+%
+% $B2C8:K!(B
+% \kagenhou<#1>(#2)[#3]#4#5#6
+%
+%   #1 : M $B$r;XDj$9$k$HLdBjIt$N$_(B
+%       $B$^$?$O(B
+%         key=val
+%           kotae=no (M$B$r;XDj$7$?$N$HF1$8(B)
+%           pos=t/c/b (array$B4D6-$NG[CV%*%W%7%g%s$G%G%U%)%k%H$O(B b$B!K(B
+%           prei=... $B!JBh(B1$B<0A0CVJ8!K(B
+%           preii=...$B!JBh(B2$B<0A0CVJ8!K(B
+%           reverse   $B:8JU$H1&JU$N8r49(B
+%   #2 : array$B4D6-$NG[CV%*%W%7%g%s(B(t/c/b)
+%   #3 : $BL$CN?t(B
+%   #4 : $BBh(B1$B<0$N78?t(B
+%   #5 : + or -
+%   #6 : $BBh(B2$B<0$N78?t(B
+%
+\define@key{emath}{M}[no]{\def\@kotae{#1}}%
+\define@key{emath}{pre}{\def\em@pre{#1}}%
+\define@key{emath}{prei}{\def\kagenhoupre@i{#1}}%
+\define@key{emath}{preii}{\def\kagenhoupre@ii{#1}}%
+\define@key{emath}{reverse}[1]{\edef\reverse@{#1}}%
+\def\kagenhou{\@ifnextchar<{\@kagenhou}{\@kagenhou<\empty>}}
+\def\@kagenhou<#1>{\def\prans@kagen{1}\def\@pos{b}\def\@kotae{yes}%
+  \edef\kagenhoupre@i{\empty}%
+  \edef\kagenhoupre@ii{\empty}%
+  \edef\reverse@{\empty}%
+  \ifx\empty #1\relax\else\setkeys{emath}{#1}\fi
+  \ifthenelse{\equal{\@kotae}{no}}{\def\prans@kagen{0}}{}%
+  \@@kagenhou}
+\def\@@kagenhou{\@ifnextchar[{\@@@kagenhou}{\@@@kagenhou[x,y]}}
+\def\@@@kagenhou[#1]#2#3#4{%
+%
+\def\keisuu@keisan{%
+  \edef\keisuu@{}%
+  \if +#3\relax
+    \Cfor{\edef\@j{0}}{\@j<\@i}{}\do{%
+      \ifnum\@j>0\relax\edefappend\keisuu@{,}\fi
+      \Incr\@j
+      \IAdd{\csname keisuu@i@\romannumeral\@j\endcsname}{%
+        \csname keisuu@ii@\romannumeral\@j\endcsname}\@tmp
+      \edefappend\keisuu@{\@tmp}%
+    }%
+  \else\if -#3\relax
+    \Cfor{\edef\@j{0}}{\@j<\@i}{}\do{%
+      \ifnum\@j>0\relax\edefappend\keisuu@{,}\fi
+      \Incr\@j
+      \ISub{\csname keisuu@i@\romannumeral\@j\endcsname}{%
+        \csname keisuu@ii@\romannumeral\@j\endcsname}\@tmp
+      \edefappend\keisuu@{\@tmp}%
+    }%
+  \fi\fi
+}
+\def\kagenhou@sub##1{%
+  \xdef\sentou@{0}%
+  \ifthenelse{\equal\reverse@\empty}{%
+    \Cfor{\xdef\@i{0}\xdef\@tmp{##1}}{\not\equal{\@tmp}{\@empty}}{}\do{%
+      \ifthenelse{\@i=\@gensuu}{&=}{}%
+      \xIncr\@i
+      &\strsep\@tmp{,}\@a\@b\xdef\@tmp{\@b}%
+      \expandafter\xdef\csname keisuu@\romannumeral\siki@n @\romannumeral\@i
+      \endcsname{\@a}%
+      \ifthenelse{\(\@i>\@gensuu\)\or\(\not\equal\@a{0}\)}{%
+      \headchar\@a\@h\@b
+      \ifthenelse{\equal\@h{+}\or\equal\@h{-}}{\@h\xdef\@a{\@b}}{%
+      \xdef\@a{\@a}\ifthenelse{\sentou@=0}{}{\ifthenelse{\@i>\@gensuu}{}{+}}}%
+      &\ifthenelse{\(\@i>\@gensuu\)\or\(\not\equal\@a{1}\)}{\@a}{}%
+      \csname mitisuu@\romannumeral\@i\endcsname\xdef\sentou@{1}%
+      }{&}
+    }%
+  }{%
+    \strsep{##1}{,}\sa@hen\u@hen\xdef\@tmp{\u@hen}\xdef\sa@hen{\sa@hen}%
+    \expandafter\xdef\csname keisuu@\romannumeral\siki@n @\romannumeral1\endcsname{\sa@hen}%
+    & \sa@hen &\mbox{}\,=
+    \Cfor{\xdef\@i{0}}{\not\equal{\@tmp}{\@empty}}{}\do{%
+%     \ifthenelse{\@i=\@gensuu}{&=}{}%
+      \xIncr\@i
+      &\strsep\@tmp{,}\@a\@b\xdef\@tmp{\@b}%
+      \IAdd\@i{1}\@i@
+      \expandafter\xdef\csname keisuu@\romannumeral\siki@n @\romannumeral\@i@\endcsname{\@a}%
+      \ifthenelse{\(\@i>\@gensuu\)\or\(\not\equal\@a{0}\)}{%
+        \headchar\@a\@h\@b
+        \ifthenelse{\equal\@h{+}\or\equal\@h{-}}{%
+          \@h\xdef\@a{\@b}%
+        }{%
+          \xdef\@a{\@a}%
+          \ifthenelse{\sentou@=0}{}{\ifthenelse{\@i>\@gensuu}{}{+}}%
+        }%
+%        &\ifthenelse{\(\@i>\@gensuu\)\or\(\not\equal\@a{1}\)}{\@a}{}%
+        &
+        \edef\mitisuu@@{\csname mitisuu@\romannumeral\@i\endcsname}%
+        \ifthenelse{\equal\mitisuu@@\empty}{%
+          \@a
+        }{%
+          \ifthenelse{\not\equal\@a{1}}{\@a}{}%
+          \csname mitisuu@\romannumeral\@i\endcsname
+        }%
+        \xdef\sentou@{1}%
+      }{&}
+    }%
+    \xIncr\@i
+  }%
+}%
+  \edef\@gensuu{0}%
+\bgroup
+  \expandafter\@for\expandafter\@@c\expandafter:\expandafter=#1\do{%
+    \Incr\@gensuu
+    \expandafter\edef\csname mitisuu@\romannumeral\@gensuu\endcsname{\@@c}%
+  }%
+  \arraycolsep=2pt\relax
+  \IMul\@gensuu{2}\@tmp\Incr\@tmp
+  \leavevmode
+  \ifthenelse{\equal\kagenhoupre@i\empty\and\equal\kagenhoupre@ii\empty}{%
+    \begin{array}[\@pos]{rr@{}*{\@tmp}{r}@{}r}
+      \xdef\siki@n{1}      \kagenhou@sub{#2}\\
+      \xIncr\siki@n   #3)  \kagenhou@sub{#4}
+      \ifthenelse{\prans@kagen=\@ne}{%
+        \\\hline\keisuu@keisan
+        \kagenhou@sub\keisuu@
+      }{%
+        \\\hline
+      }%
+    \end{array}%
+  }{%
+    \begin{array}[\@pos]{rlr@{}*{\@tmp}{r}@{}r}
+      \xdef\siki@n{1}     & \kagenhoupre@i   \kagenhou@sub{#2}\\
+      \xIncr\siki@n   #3) & \kagenhoupre@ii \kagenhou@sub{#4}
+      \ifthenelse{\prans@kagen=\@ne}{%
+        \\\hline & \keisuu@keisan\kagenhou@sub\keisuu@
+      }{%
+        \\\hline
+      }%
+    \end{array}
+  }%
+\egroup
+}
+%
+% $BAH$_N)$F=|K!(B(synthetic division)
+%   $BJ,?t78?t$O(B \Fsyndiv ---> emathB.sty
+\def\syndiv#1#2{%
+  \def\sd@sub##1{%
+    \xdef\b@i{}\xdef\c@i{\a@i}%
+    \Cfor{\edef\i{1}}{\i<\sd@kousuu}{}\do{%
+      \edef\ii{\i}\Incr\i
+      \IMul{##1}{\csname c@\romannumeral\ii\endcsname}\sd@tmp
+      \expandafter\xdef\csname b@\romannumeral\i\endcsname{\sd@tmp}%
+      \IAdd{\csname a@\romannumeral\i\endcsname}{%
+        \csname b@\romannumeral\i\endcsname}\sd@tmp
+      \expandafter\xdef\csname c@\romannumeral\i\endcsname{\sd@tmp}%
+    }%
+  }%
+  \edef\sd@kousuu{0}%
+  \expandafter\@for\expandafter\@@c\expandafter:\expandafter=#1\do{%
+    \Incr\sd@kousuu
+    \expandafter\edef\csname a@\romannumeral\sd@kousuu\endcsname{\@@c}}%
+  \edef\sd@dansuu{0}%
+  \expandafter\@for\expandafter\@@c\expandafter:\expandafter=#2\do{%
+    \Incr\sd@dansuu
+    \expandafter\edef\csname d@\romannumeral\sd@dansuu\endcsname{\@@c}}%
+  \begin{array}{l*\sd@kousuu{r}}
+    \Cfor{\xdef\j{0}}{\j<\sd@dansuu}{\xDecr\sd@kousuu}\do{%
+      \xIncr\j\csname d@\romannumeral\j\endcsname%
+      \sd@sub{\csname d@\romannumeral\j\endcsname}%
+      \Cfor{\xdef\i{0}}{\i<\sd@kousuu}{}\do{%
+        \xIncr\i
+        \ifthenelse{\i=\@ne}{%
+         & \multicolumn{1}{|r}{\csname a@\romannumeral\i\endcsname}}{%
+         & \csname a@\romannumeral\i\endcsname}}%
+      \ifthenelse{\j>\@ne}{\xIncr\i%
+        &\multicolumn{1}{|r}{\csname c@\romannumeral\i\endcsname}\xIncr\i
+        \\\cline{1-1}\cline{\i-\i}}{\\\cline{1-1}}%
+      \Cfor{\xdef\i{0}}{\i<\sd@kousuu}{}\do{%
+        \xIncr\i & \csname b@\romannumeral\i\endcsname}%
+      \xIncr\i\\\cline{1-\i}
+      \Cfor{\edef\i{0}}{\i<\sd@kousuu}{}\do{\Incr\i
+        \expandafter\xdef\csname a@\romannumeral\i\endcsname{%
+          \csname c@\romannumeral\i\endcsname}}}%
+    \Cfor{\xdef\i{0}}{\i<\sd@kousuu}{}\do{\xIncr\i &
+      \csname c@\romannumeral\i\endcsname}\xIncr\i%
+    &\multicolumn{1}{|r}{\csname c@\romannumeral\i\endcsname}\xIncr\i
+      \\\cline{\i-\i}
+  \end{array}}
+%
+\def\csyndiv{\def\aval@{1}%
+  \@ifnextchar<{\@csyndiv}{\@csyndiv<\empty>}}%
+\def\@csyndiv<#1>#2#3{%
+  \ifx\empty #1\else\setkeys{emath}{#1}\fi
+%  \argsep{#2}{;}{csyndiv@gyou}\csyndiv@gyousuu
+  \csvhairetu[;]{#2}{csyndiv@gyou}\csyndiv@gyousuu
+  \ifthenelse{\equal\aval@{1}}{%
+    \edef\kizyun@gyousuu{3}%
+  }{%
+    \edef\kizyun@gyousuu{4}%
+  }%
+  \ifnum\csyndiv@gyousuu=\kizyun@gyousuu\else
+    \errmessage{csyndiv:illegal argument. \csyndiv@gyousuu/\kizyun@gyousuu}%
+  \fi
+%  \argsep{\hairetu{csyndiv@gyou}{1}}{,}{csyndiv@a}\csyndiv@retusuu
+  \edef\tmp@{\hairetu{csyndiv@gyou}{1}}%
+  \csvhairetu{\tmp@}{csyndiv@a}\csyndiv@retusuu
+%  \argsep{\hairetu{csyndiv@gyou}{2}}{,}{csyndiv@b}\csyndiv@n
+  \edef\tmp@{\hairetu{csyndiv@gyou}{2}}%
+  \csvhairetu{\tmp@}{csyndiv@b}\csyndiv@n
+  \ifnum\csyndiv@retusuu=\csyndiv@n\else\errmessage{csyndiv:illegal argument (the second line)}\fi
+%  \argsep{\hairetu{csyndiv@gyou}{3}}{,}{csyndiv@c}\csyndiv@n
+  \edef\tmp@{\hairetu{csyndiv@gyou}{3}}%
+  \csvhairetu{\tmp@}{csyndiv@c}\csyndiv@n
+  \ifnum\csyndiv@retusuu=\csyndiv@n\else\errmessage{csyndiv:illegal argument (the third line)}\fi
+  \ifthenelse{\equal{\aval@}{1}}{}{%
+%    \argsep{\hairetu{csyndiv@gyou}{4}}{,}{csyndiv@d}\csyndiv@n
+    \edef\tmp@{\hairetu{csyndiv@gyou}{4}}%
+    \csvhairetu{\tmp@}{csyndiv@d}\csyndiv@n
+    \ifnum\csyndiv@retusuu=\csyndiv@n\else\errmessage{csyndiv:illegal argument (the fourth line)}\fi
+  }%
+  \def\csyndiv@gyoui{\multicolumn{1}{c|}{#3}}%
+  \Cfor{\edef\csyndiv@i{0}}{\csyndiv@i<\csyndiv@retusuu}{}\do{%
+    \Incr\csyndiv@i
+    \EMedefappend\csyndiv@gyoui{&\hairetu{csyndiv@a}{\csyndiv@i}}}%
+  \def\csyndiv@gyouii{}%
+  \Cfor{\edef\csyndiv@i{0}}{\csyndiv@i<\csyndiv@retusuu}{}\do{%
+    \Incr\csyndiv@i
+    \EMedefappend\csyndiv@gyouii{&\hairetu{csyndiv@b}{\csyndiv@i}}}%
+  \ifthenelse{\equal\aval@{1}}{%
+    \def\csyndiv@gyouiii{}%
+  }{%
+    \def\csyndiv@gyouiii{\aval@\ \hbox to \z@{\hspace{.25em}$\Bigl)$}}%
+  }%
+  \Cfor{\edef\csyndiv@i{0}}{\csyndiv@i<\csyndiv@retusuu}{}\do{%
+    \Incr\csyndiv@i
+    \ifthenelse{\csyndiv@i<\csyndiv@retusuu}{%
+      \EMedefappend\csyndiv@gyouiii{&\hairetu{csyndiv@c}{\csyndiv@i}}%
+    }{%%
+      \EMedef\csyndiv@lastc{\hairetu{csyndiv@c}{\csyndiv@i}}%
+    }%
+  }%
+  \ifthenelse{\equal\aval@{1}}{}{%
+    \def\csyndiv@gyouiv{}%
+    \Cfor{\edef\csyndiv@i{0}}{\csyndiv@i<\csyndiv@retusuu}{}\do{%
+      \Incr\csyndiv@i
+      \EMedefappend\csyndiv@gyouiv{&\hairetu{csyndiv@d}{\csyndiv@i}}}%
+  }%
+  \Incr\csyndiv@retusuu
+  \ifthenelse{\equal\aval@{1}}{%
+    \begin{array}{*{\csyndiv@retusuu}r}
+      \csyndiv@gyoui \\ \cline{1-1}
+      \csyndiv@gyouii \\ \hline
+      \csyndiv@gyouiii & \multicolumn{1}{|r}{\csyndiv@lastc} 
+        \\ \cline{\csyndiv@retusuu-\csyndiv@retusuu}
+    \end{array}%
+  }{%
+    \ISub\csyndiv@retusuu{2}\tmp@
+    \begin{array}{r>{\kern1em}r*{\tmp@}{r}}
+      \csyndiv@gyoui \\ \cline{1-1}
+      \csyndiv@gyouii \\ \hline
+      \csyndiv@gyouiii & \multicolumn{1}{|r}{\csyndiv@lastc} 
+        \\ \cline{2-\csyndiv@retusuu}
+      \csyndiv@gyouiv
+    \end{array}%
+  }%
+}
+%
+%\def\csyndiv#1#2{%
+%  \argsep{#1}{;}{csyndiv@gyou}\csyndiv@gyousuu
+%  \ifnum\csyndiv@gyousuu=3\else\errmessage{csyndiv:illegal argument.}\fi
+%  \argsep{\hairetu{csyndiv@gyou}{1}}{,}{csyndiv@a}\csyndiv@retusuu
+%  \argsep{\hairetu{csyndiv@gyou}{2}}{,}{csyndiv@b}\csyndiv@n
+%  \ifnum\csyndiv@retusuu=\csyndiv@n\else\errmessage{csyndiv:illegal argument (the second line)}\fi
+%  \argsep{\hairetu{csyndiv@gyou}{3}}{,}{csyndiv@c}\csyndiv@n
+%  \ifnum\csyndiv@retusuu=\csyndiv@n\else\errmessage{csyndiv:illegal argument (the third line)}\fi
+%  \def\csyndiv@gyoui{\multicolumn{1}{c|}{#2}}%
+%  \Cfor{\edef\csyndiv@i{0}}{\csyndiv@i<\csyndiv@retusuu}{}\do{%
+%    \Incr\csyndiv@i
+%    \EMedefappend\csyndiv@gyoui{&\hairetu{csyndiv@a}{\csyndiv@i}}}%
+%  \def\csyndiv@gyouii{}%
+%  \Cfor{\edef\csyndiv@i{0}}{\csyndiv@i<\csyndiv@retusuu}{}\do{%
+%    \Incr\csyndiv@i
+%    \EMedefappend\csyndiv@gyouii{&\hairetu{csyndiv@b}{\csyndiv@i}}}%
+%  \def\csyndiv@gyouiii{}%
+%  \Cfor{\edef\csyndiv@i{0}}{\csyndiv@i<\csyndiv@retusuu}{}\do{%
+%    \Incr\csyndiv@i
+%    \ifthenelse{\csyndiv@i<\csyndiv@retusuu}{%
+%      \EMedefappend\csyndiv@gyouiii{&\hairetu{csyndiv@c}{\csyndiv@i}}%
+%    }{%%
+%      \EMedef\csyndiv@lastc{\hairetu{csyndiv@c}{\csyndiv@i}}%
+%    }%
+%  }%
+%  \Incr\csyndiv@retusuu
+%  \begin{array}{*{\csyndiv@retusuu}r}
+%    \csyndiv@gyoui \\ \cline{1-1}
+%    \csyndiv@gyouii \\ \hline
+%    \csyndiv@gyouiii & \multicolumn{1}{|r}{\csyndiv@lastc} 
+%      \\ \cline{\csyndiv@retusuu-\csyndiv@retusuu}
+%  \end{array}
+%}
+%
+% $BJ#AG?t(B
+\def\Cnum#1#2#3{\ensuremath{#1#2%
+  \ifthenelse{\equal{#3}{1}}{}{#3\,}i}}
+
+% $B6&LrJ#AG?t(B
+%
+%   \kyouyaku<#1>#2
+%   \kyouyaku[#1]#2
+%       <#1> : $B9b$5$N=$@5CM!JA}8:$9$kCM!K(B
+%       [#1] : $B9b$5(B
+%       #2   : $BK\BN(B
+\def\kyouyaku@strut{\mathstrut}%
+\def\kyouyaku{\@ifnextchar<{\kyouyaku@}{\@kyouyaku}}
+\def\kyouyaku@<#1>#2{{\setbox0=\hbox{$#2$}\@tempdima=\ht0
+  \advance\@tempdima#1\ht0=\@tempdima
+  \ensuremath{\overline{\box0}}}}
+\def\@kyouyaku{\@ifnextchar[{\@@kyouyaku}{\@@kyouyaku[\kyouyaku@strut]}}
+\def\@@kyouyaku[#1]#2{\ensuremath{\overline{#1 #2}}}
+%\newcommand{\kyouyaku}[2][\mathstrut]{\ensuremath{\overline{#1 #2}}}%
+\def\kyouyakusturt#1{\def\kyouyaku@sturt{#1}}%
+\def\conjstrut#1{\def\kyouyaku@strut{#1}}%
+%\def\conjugate{\kyouyaku}
+%\def\conj{\kyouyaku}
+%
+% $B<BIt!$5uIt(B
+%\newcommand{\zitubu}[1]{\ensuremath{\text{Re}(#1)}}%
+%\newcommand{\kyobu}[1]{\ensuremath{\text{Im}(#1)}}%
+\@ifundefined{notAMS}{%
+  \DeclareMathOperator{\zitubu}{Re}
+  \DeclareMathOperator{\kyobu}{Im}
+}{}%
+%
+% $B6K7A<0(B
+%   \polar<#1>[#2][#3]#4
+%       #1 : c $B$N$H$-$O!$6&Lr$rI=$9!#(B
+%       #2 : $B@dBPCM(B
+%       #3 : $B%+%C%3$N<oN`(B ( or \{ or [
+%       #4 : $BJP3Q(B
+%   \kyokukeisiki $B$bF15A8l(B
+
+\def\polar{\@ifnextchar<{\cpolar}{\npolar}}
+\def\npolar{\@ifnextchar[{\@polara}{\@polar}}
+\def\@polar#1{%
+  \cos{\@ifundefined{hakobanpush}{}{\hakobanpush}%
+    #1\@ifundefined{hakobanpush}{}{\hakobanpop}}+i\sin{#1}}%
+\def\@polara[#1]{\@ifnextchar[{\@@polara[#1]}{\@@polara[#1][(]}}
+\def\@@polara[#1][#2]#3{#1\relax
+  \ifthenelse{\equal{#2}{(}}{%
+    \left(\@polar{#3}\right)
+  }{%
+  \ifthenelse{\equal{#2}{\{}}{%}
+    \left\{\@polar{#3}\right\}
+  }{%
+  \ifthenelse{\equal{#2}{[}{%
+    \left\[\@polar{#3}\right]
+  }{}}}}%
+}
+\def\cpolar<#1>{\ifthenelse{\equal{#1}{c}}{\cpolar@}{\relax}}
+\def\cpolar@{\@ifnextchar[{\@cpolara}{\@cpolar}}
+\def\@cpolar#1{%
+  \cos{\@ifundefined{hakobanpush}{}{\hakobanpush}%
+    #1\@ifundefined{hakobanpush}{}{\hakobanpop}}-i\sin{#1}}%
+\def\@cpolara[#1]{\@ifnextchar[{\@@cpolara[#1]}{\@@cpolara[#1][(]}}
+\def\@@cpolara[#1][#2]#3{#1\relax
+  \ifthenelse{\equal{#2}{(}}{%
+    \left(\@cpolar{#3}\right)
+  }{%
+  \ifthenelse{\equal{#2}{\{}}{%}
+    \left\{\@cpolar{#3}\right\}
+  }{%
+  \ifthenelse{\equal{#2}{[}{%
+    \left\[\@cpolar{#3}\right]
+  }{}}}}%
+}
+
+\let\kyokukeisiki\polar
+
+
+% $B%Y%/%H%k(B($B%Y%/%H%k(B p)
+%\newcommand{\beku}[1]{\ensuremath{\vec{\vphantom b{#1}}}}%
+\def\beku@sityuu{\vphantom b}
+\def\bekusityuu#1{\def\beku@sityuu{#1}}
+%\def\beku#1{\ensuremath{\vec{\beku@sityuu #1}}}%
+\DeclareRobustCommand\beku[1]{\ensuremath{\vec{\beku@sityuu #1}}}%
+
+% $B%Y%/%H%k(B($B%Y%/%H%k(BAB$B!K(B
+\@ifundefined{bekutoru@sityuu}{%
+  \def\bekutoru@sityuu{\vrule height .9zh width \z@}}{}%
+\newcommand{\bekutorusityuu}[1]{\def\bekutoru@sityuu{#1}}%
+\DeclareRobustCommand\bekutoru{\@ifstar{\bekutoru@m}{\bekutoru@t}}%
+\def\bekutoru@t#1{{%
+  \@ifundefined{bm@style}{%
+    \ensuremath{\displaystyle
+    \overrightarrow{\text{#1}\bekutoru@sityuu}}%
+  }{%
+    \ensuremath{\displaystyle
+    \overrightarrow{\text{\textbf{#1}}\bekutoru@sityuu}}%
+  }%
+}}%
+\def\bekutoru@m{\@ifnextchar[{\bekutoru@@m}{\bekutoru@@m[\empty]}}
+\def\bekutoru@@m[#1]#2{{%
+  \ifx\empty #1\relax\else\setkeys{emath}{#1}\fi
+  \@ifundefined{bm@style}{%
+    \ensuremath{\displaystyle\overrightarrow{#2\bekutoru@sityuu}}%
+  }{%
+    \ensuremath{\displaystyle\overrightarrow{\bm{#2}\bekutoru@sityuu}}%
+  }%
+}}%
+%
+%
+%\def\cmvecrightarrow{%
+% {\smash{\raisebox{-.86ex}{$\vec{\mbox{\smash\space}}$}}}\kern.2em}
+%
+
+
+% $B@~J,$ND9$5(B
+\def\senbun{\@ifstar{\senbun@m}{\senbun@t}}%
+\def\senbun@t#1{\ensuremath{\displaystyle
+\overline{\text{#1}\bekutoru@sityuu}}}%
+\def\senbun@m#1{\ensuremath{\displaystyle%
+    \overline{#1\bekutoru@sityuu}}}%
+%
+%
+% $B@dBPCM5-9f(B
+% \zettaiti[#1][#2]#3
+%   #1 : $BIm2C$9$Y$-9b$5!J%G%U%)%k%HCM(B:0pt$B!K(B
+%   #2 : $BIm2C$9$Y$-?<$5!J%G%U%)%k%HCM(B:#1$B!K(B
+%   #3 : $B@dBPCM5-9f$NCf$N<0(B
+%
+\define@key{emzettaiti}{senhaba}{\def\zettaiti@senhaba{#1}}%
+\define@key{emzettaiti}{kagi}[.25em]{\def\zettaiti@kagi{#1}}%
+%
+\def\zettaiti@sep@{.125em}% LaTex default ?
+%\def\zettaiti@sep{.166667em}%
+%\def\zettaiti@sep{.246em}%
+\def\zettaiti@sep{.121em}%
+\def\zettaitisep#1{\def\zettaiti@sep{#1}}%
+\def\zettaiti@senhaba{.4pt}%
+\DeclareRobustCommand\zettaiti{%
+  \edef\zettaiti@kagi{\empty}%
+  \@ifnextchar<{\@zettaiti}{\@@zettaiti}}%
+\def\@zettaiti<#1>{\setkeys{emzettaiti}{#1}\@@zettaiti}%
+\def\@@zettaiti{\@ifnextchar[{\zett@iti}{\zett@iti[0pt]}}
+\def\zett@iti[#1]{\@ifnextchar[{\zett@@iti[#1]}{\zett@@iti[#1][#1]}}
+\def\zett@@iti[#1][#2]#3{{%
+    \Div{\f@size}{10}\zt@tmp
+    \@tempdima=0.4\p@\@tempdima=\zt@tmp\@tempdima
+    \edef\zettaiti@senhaba{\the\@tempdima}%
+    \setbox0=\hbox{\ensuremath{#3\mathstrut}}%
+    \@tempdima\ht0\advance\@tempdima#1 \relax
+      \edef\tmp@ht@s{\the\@tempdima}%
+    \advance\@tempdima-\zettaiti@senhaba\edef\tmp@ht@ss{\the\@tempdima}%
+    \@tempdima\dp0\advance\@tempdima#2 \relax
+      \edef\tmp@dp@s{\the\@tempdima}%
+    \advance\@tempdima-\zettaiti@senhaba\edef\tmp@dp@ss{\the\@tempdima}%
+    \leavevmode\hbox{\ensuremath{\mskip2mu
+      \mathopen{\vrule height \tmp@ht@s depth \tmp@dp@s width \zettaiti@senhaba
+      \ifx\empty\zettaiti@kagi\else
+        \hbox to \z@{\vrule height \tmp@ht@s depth -\tmp@ht@ss width \zettaiti@kagi}
+        \hbox to \z@{\vrule depth \tmp@dp@s height -\tmp@dp@ss width \zettaiti@kagi}
+      \fi
+    }}%
+ %   \hbox to \templa {\hss\ensuremath{\box0}\hss}%
+    \setlength\@tempdima{\zettaiti@sep+\zettaiti@sep@}%
+    \hspace{\@tempdima}\box0\hspace{\@tempdima}%
+    \ensuremath{\mathclose{%
+      \ifx\empty\zettaiti@kagi\else
+        \kern-\zettaiti@kagi
+        \hbox to \z@{\vrule height \tmp@ht@s depth -\tmp@ht@ss width \zettaiti@kagi}
+        \hbox{\vrule depth \tmp@dp@s height -\tmp@dp@ss width \zettaiti@kagi}
+      \fi
+      \vrule height \tmp@ht@s depth \tmp@dp@s width \zettaiti@senhaba
+      \mskip2.1mu
+      }%
+    }%
+    }%
+}}%
+%
+\newcommand{\bekuzettaiti}[1]{\ensuremath{\raise.25ex\hbox{%
+    $\bigl|$}\hbox to 1em {\hss\beku{#1}\hss}\raise.25ex\hbox{%
+    $\bigr|$}}}%
+\newcommand{\bekutoruzettaiti}[1]{\ensuremath{\raise.4ex\hbox{%
+    $\bigl|$}\hbox to 2em {\hss\bekutoru{#1}\hss}\raise.4ex\hbox{%
+    $\bigr|$}}}%
+\let\EMabs\zettaiti
+%\def\emabs{
+\DeclareRobustCommand\emabs{\@ifnextchar[{\emabs@}{\@emabs}}
+\def\emabs@[#1]{\@ifnextchar[{\@emabs@[#1]}{\@emabs@[#1][#1]}}
+\def\@emabs@[#1][#2]#3{\left\lvert\EMvphantom*[#1][#2]{#3}\right\rvert}
+\def\@emabs#1{\left\lvert #1\right\rvert}
+%
+% $B%Y%/%H%k$NFb@Q(B
+\newcommand{\naiseki}[2]{\ensuremath{#1}\cdot{#2}}%
+\def\vnaiseki{\@ifstar{\vnaiseki@}{\@vnaiseki}}
+\def\@vnaiseki#1#2{\ensuremath{\bekutoru{#1}\cdot\bekutoru{#2}}}
+\def\vnaiseki@#1#2{\ensuremath{\bekutoru*{#1}\cdot\bekutoru*{#2}}}
+%
+\def\bnaiseki#1#2{\ensuremath{\beku{#1}\cdot\beku{#2}}}
+%
+% $B%Y%/%H%k$N@dBPCM(B
+\def\EMvabs#1{\EMabs{\bekutoru{#1}}}
+%
+% $B9TNs(B
+%
+\define@key{emath}{gyoukan}{\edef\gyouretu@gyoukan{#1}}%
+%
+\def\gyouretu@haiti{c}%
+\def\gyouretu@haiti@{\gyouretu@haiti}
+\def\EMmatrixsep{\z@}%
+\renewenvironment{matrix}{%
+  \matrix@check\matrix\env@matrix
+}{%
+  \endarray \hskip -\arraycolsep\hskip\EMmatrixsep
+}
+\def\env@matrix{\hskip -\arraycolsep\hskip\EMmatrixsep
+  \let\@ifnextchar\new@ifnextchar
+  \edef\env@matrix@tmp{{*{\the\c@MaxMatrixCols}\gyouretu@haiti@}}%
+  \expandafter\array\env@matrix@tmp}
+% \array{*\c@MaxMatrixCols \gyouretu@haiti@}}
+\def\gyouretuhaiti#1{\def\gyouretu@haiti{#1}}
+%
+% pmatrix$B4D6-$X$N=$@5$J$I(B
+% $B?t<04D6-Fb$G$O!$2$J8MQ2~9T%T%C%A$rMQ$$$k(B
+%
+\edef\EM@default@normalbaselineskip{\the\normalbaselineskip}%
+\@ifundefined{EM@normallineskip}{%
+  \lineskiplimit=2pt\relax
+  \normallineskiplimit=2pt\relax
+  \lineskip=3pt plus .5pt\relax
+  \normallineskip=3pt plus .5pt\relax
+  \def\EMresetstrutbox{%
+    \@ifundefined{@ptsize}{}{%
+      \@ifundefined{narrowbaselines}{%
+        \ifdim\f@size\p@<10.5\p@\relax
+          \ifdim\f@size\p@=9\p@%%%%%%%%%%%% \small
+            \normalbaselineskip=11\p@
+          \else\if\f@size\p@=8\p@%%%%%%%%%% \footnotesize
+            \normalbaselineskip=9\p@
+          \else
+            \normalbaselineskip=12\p@
+          \fi\fi
+        \else\ifdim\f@size\p@<11.5\p@\relax
+          \normalbaselineskip=13.6\p@
+        \else\ifdim\f@size\p@<12.5\p@\relax
+          \normalbaselineskip=14.5\p@
+        \fi\fi\fi
+        \normallineskiplimit=\z@
+      }{%
+        \normalbaselineskip=12\p@
+        \normallineskiplimit=1\p@
+      }%
+    }%
+    \normallineskip=1\p@
+    \normalbaselines
+    \setbox\strutbox\hbox{%
+      \vrule\@height.7\baselineskip\@depth.3\baselineskip\@width\z@}%
+    \set@fontsize\baselinestretch\f@size\baselineskip
+    \selectfont%
+  }%
+}{\let\EMresetstrutbox\relax}\relax
+%
+\let\everyEMresetstrutbox\EMresetstrutbox
+%
+%\@ifundefined{ifjisfont}{}{\let\EMresetstrutbox\relax}%
+\if@jsclasses
+  \let\EMresetstrutbox\relax
+  \let\everyEMresetstrutbox\relax
+\fi
+%
+%
+\let\amsmatrix\matrix
+\let\amspmatrix\pmatrix
+\let\amsbmatrix\bmatrix
+\let\amsBmatrix\Bmatrix
+\let\amsvmatrix\vmatrix
+\let\amsVmatrix\Vmatrix
+\let\amscases\cases
+\def\matrix{\EMresetstrutbox\amsmatrix}
+\def\pmatrix{\EMresetstrutbox\amspmatrix}
+\def\bmatrix{\EMresetstrutbox\amsbmatrix}
+\def\Bmatrix{\EMresetstrutbox\amsBmatrix}
+\def\vmatrix{\EMresetstrutbox\amsvmatrix}
+\def\Vmatrix{\EMresetstrutbox\amsVmatrix}
+\def\cases{\EMresetstrutbox\amscases}
+%
+\if@jsclasses\else
+      \everydisplay=\@xp{\the\everydisplay \everyEMresetstrutbox}%
+\fi
+\let\resetstrutbox\EMresetstrutbox
+\def\EMjmath{%
+  \let\everyEMresetstrutbox\relax
+  \let\EMresetstrutbox\relax
+  \let\resetstrutbox\relax
+}%
+\def\@setfontsize#1#2#3{%\@nomath#1%
+    \ifx\protect\@typeset@protect
+      \let\@currsize#1%
+    \fi
+    \fontsize{#2}{#3}\selectfont}
+%
+\def\EMintertext#1{%
+  \@ifundefined{EM@normallineskip}{%
+    \ifvmode\else\\\@empty\fi
+    \noalign{%
+      \penalty\postdisplaypenalty\vskip\abovedisplayshortskip%\vskip3\p@
+      \vbox{\normalbaselines
+        \ifdim\linewidth=\columnwidth
+        \else \parshape\@ne \@totalleftmargin \linewidth
+        \fi
+        \noindent#1\par}%
+      \penalty\predisplaypenalty\vskip\abovedisplayshortskip%\vskip-3\p@
+    }%
+  }{%
+    \intertext{#1}%
+  }%
+}%
+%
+% $B#2<!$N@5J}9TNs(B
+%
+\DeclareRobustCommand{\gyouretu}{%
+    \edef\gyouretu@gyoukan{\empty}%
+    \@ifnextchar<{\@gyouretu@}{\@gyouretu}}%
+  \def\@gyouretu@<#1>{\setkeys{emath}{#1}\@gyouretu}%
+  \def\@gyouretu{\@ifnextchar[{\@@gyouretu}{\@@gyouretu[\gyouretu@haiti]}}
+  \def\@@gyouretu[#1]#2#3#4#5{\def\gyouretu@haiti@{#1}{\ensuremath{%
+    \begin{pmatrix}
+      #2 & #3 
+      \ifx\empty\gyouretu@gyoukan
+      \else
+        \vspace{\gyouretu@gyoukan}%
+      \fi
+      \\
+      #4 & #5 
+    \end{pmatrix}}}}%
+% $B2sE>9TNs(B
+\DeclareRobustCommand{\Rgyouretu}{%
+    \edef\em@pre{\empty}%
+    \edef\gyouretu@gyoukan{\empty}%
+    \@ifstar{\@R@gyouretu}{\@Rgyouretu}}%
+  \def\@Rgyouretu{\@ifnextchar<{\@Rgyouretu@}{\@@Rgyouretu}}%
+  \def\@Rgyouretu@<#1>{\setkeys{emath}{#1}\@@Rgyouretu}%
+  \def\@@Rgyouretu{%
+    \@ifnextchar[{\@@@Rgyouretu}{\@@@Rgyouretu[\gyouretu@haiti]}}
+  \def\@@@Rgyouretu[#1]#2{\def\gyouretu@haiti@{#1}{\ensuremath{%
+    \begin{pmatrix}
+      \@ifundefined{hakobanpush}{}{\hakobanpush}%
+      \em@pre\cos#2 
+      \@ifundefined{hakobanpush}{}{\hakobanpop}%
+      &
+      \@ifundefined{hakobanpush}{}{\hakobanpush}%
+      -\em@pre\sin#2 
+      \@ifundefined{hakobanpush}{}{\hakobanpop}%
+      \ifx\empty\gyouretu@gyoukan
+      \else
+        \vspace{\gyouretu@gyoukan}%
+      \fi
+      \\
+      \@ifundefined{hakobanpush}{}{\hakobanpush}%
+      \em@pre\sin#2 
+      \@ifundefined{hakobanpush}{}{\hakobanpop}%
+      &
+      \em@pre\cos#2 
+    \end{pmatrix}}}}%
+  \def\@R@gyouretu{\@ifnextchar<{\@R@gyouretu@}{\@@R@gyouretu}}%
+  \def\@R@gyouretu@<#1>{\setkeys{emath}{#1}\@@R@gyouretu}%
+  \def\@@R@gyouretu{%
+    \@ifnextchar[{\@@@R@gyouretu}{\@@@R@gyouretu[\gyouretu@haiti]}}
+  \def\@@@R@gyouretu[#1]#2{\def\gyouretu@haiti@{#1}{\ensuremath{%
+    \begin{pmatrix}
+      \@ifundefined{hakobanpush}{}{\hakobanpush}%
+      \em@pre\cos#2 
+      \@ifundefined{hakobanpush}{}{\hakobanpop}%
+      &
+      \@ifundefined{hakobanpush}{}{\hakobanpush}%
+      \em@pre\sin#2 
+      \@ifundefined{hakobanpush}{}{\hakobanpop}%
+      \ifx\empty\gyouretu@gyoukan
+      \else
+        \vspace{\gyouretu@gyoukan}%
+      \fi
+      \\
+      \@ifundefined{hakobanpush}{}{\hakobanpush}%
+      -\em@pre\sin#2 
+      \@ifundefined{hakobanpush}{}{\hakobanpop}%
+      &
+      \em@pre\cos#2 
+    \end{pmatrix}}}}%
+%
+% $B#3<!$N@5J}9TNs(B
+%
+  \def\Gyouretu{%
+    \edef\gyouretu@gyoukan{\empty}%
+    \@ifnextchar<{\@Gyouretu@}{\@Gyouretu}}%
+  \def\@Gyouretu@<#1>{\setkeys{emath}{#1}\@Gyouretu}%
+  \def\@Gyouretu{\@ifnextchar[{\@@Gyouretu}{\@@Gyouretu[\gyouretu@haiti]}}
+  \def\@@Gyouretu[#1]{\def\gyouretu@haiti@{#1}\@@@Gyouretu}
+  \def\@@@Gyouretu#1#2#3#4#5#6#7#8#9{\ensuremath{%
+    \begin{pmatrix}
+      #1 & #2 & #3
+      \ifx\empty\gyouretu@gyoukan
+      \else
+        \vspace{\gyouretu@gyoukan}%
+      \fi
+      \\
+      #4 & #5 & #6
+      \ifx\empty\gyouretu@gyoukan
+      \else
+        \vspace{\gyouretu@gyoukan}%
+      \fi
+      \\
+      #7 & #8 & #9
+    \end{pmatrix}
+  }}%
+%
+% $BNs%Y%/%H%k!&9T%Y%/%H%k(B
+%
+\ifx\fmtname\tmpname%
+  \def\retube{%
+    \edef\gyouretu@gyoukan{\empty}%
+    \@ifnextchar<{\@retube@}{\@retube}}%
+  \def\@retube@<#1>{\setkeys{emath}{#1}\@retube}%
+  \def\@retube{\@ifnextchar[{\@@retube}{\@@retube[\gyouretu@haiti]}}
+  \def\@@retube[#1]#2#3{\def\gyouretu@haiti@{#1}{\ensuremath{%
+    \begin{pmatrix} 
+      #2 
+      \ifx\empty\gyouretu@gyoukan
+      \else
+        \vspace{\gyouretu@gyoukan}%
+      \fi
+      \\
+      #3 
+    \end{pmatrix}}}}%
+  \def\Retube{%
+    \edef\gyouretu@gyoukan{\empty}%
+    \@ifnextchar<{\@Retube@}{\@Retube}}%
+  \def\@Retube@<#1>{\setkeys{emath}{#1}\@Retube}%
+  \def\@Retube{\@ifnextchar[{\@@Retube}{\@@Retube[\gyouretu@haiti]}}
+  \def\@@Retube[#1]#2#3#4{\def\gyouretu@haiti@{#1}{\ensuremath{%
+    \begin{pmatrix}
+      #2 
+      \ifx\empty\gyouretu@gyoukan
+      \else
+        \vspace{\gyouretu@gyoukan}%
+      \fi
+      \\
+      #3
+      \ifx\empty\gyouretu@gyoukan
+      \else
+        \vspace{\gyouretu@gyoukan}%
+      \fi
+      \\
+      #4
+    \end{pmatrix}}}}%
+  \def\gyoube#1#2{\ensuremath{\begin{pmatrix} #1 & #2 \end{pmatrix}}\ignorespaces}
+  \def\Gyoube#1#2#3{\ensuremath{\begin{pmatrix} #1 & #2 & #3 \end{pmatrix}}}
+\else%
+\newcommand{\retube}[2]{\mbox{%
+$\left(\!\!\begin{array}{c}#1 \\ #2\end{array}%
+\!\!\right)$}}%
+\newcommand{\Retube}[3]{\mbox{%
+$\left(\!\!\begin{array}{c}#1 \\ #2 \\ #3 \end{array}%
+\!\!\right)$}}%
+\fi
+%
+% $B0lHL$N9TNs(B
+%   ex. \pgyouretu{1,2,3;4,5,6}
+%
+\def\pgyouretu{%
+    \edef\gyouretu@gyoukan{\empty}%
+    \@ifnextchar<{\@pgyouretu@}{\@pgyouretu}}%
+\def\@pgyouretu@<#1>{\setkeys{emath}{#1}\@pgyouretu}%
+\def\@pgyouretu{\@ifnextchar[{\@@pgyouretu}{\@@pgyouretu[\gyouretu@haiti]}}
+\def\@@pgyouretu[#1]#2{{\let\EMdef\gdef
+  \def\gyouretu@haiti@{#1}\ensuremath{%
+  \begin{pmatrix}
+  \Cfor%
+    {\Strsep{#2}{;}\pM@tempa\pM@tempb}%
+    {\not\equal\pM@tempa\empty}%
+    {\Strsep\pM@tempb{;}\pM@tempa\pM@tempb}%
+  \do{%
+    \edef\pM@tmp{}%
+    \expandafter\@for\expandafter\pM@c\expandafter:\expandafter=\pM@tempa\do{%
+      \ifx\empty\pM@tmp
+        \EMedef\pM@tmp{\pM@c}%
+      \else
+        \EMedefappend\pM@tmp{&\pM@c}%
+      \fi
+    }%
+    \pM@tmp
+%      \Cfor%
+%        {\xdef\lntop{0}\Strsep\pM@tempa{,}\pM@tempc\pM@tempd
+%        }%
+%        {\not\equal\pM@tempc\empty}%
+%        {\Strsep\pM@tempd,\pM@tempc\pM@tempd
+%        }%
+%        \do{%
+%          \ifthenelse{\lntop=\z@}{%
+%            \xdef\lntop{1}\pM@tempc
+%          }{%
+%             &\pM@tempc
+%          }%
+%        }
+      \ifthenelse{\equal\pM@tempb\empty}{}{%
+        \ifx\empty\gyouretu@gyoukan
+        \else
+          \vspace{\gyouretu@gyoukan}%
+        \fi
+        \\
+      }%
+    }%
+  \end{pmatrix}
+}}}%
+%
+\def\bgyouretu{\@ifnextchar[{\@bgyouretu}{\@bgyouretu[\gyouretu@haiti]}}
+\def\@bgyouretu[#1]#2{{\let\EMdef\gdef
+  \def\gyouretu@haiti@{#1}\ensuremath{%
+  \begin{bmatrix}
+  \Cfor%
+    {\Strsep{#2}{;}\pM@tempa\pM@tempb}%
+    {\not\equal\pM@tempa\empty}%
+    {\Strsep\pM@tempb{;}\pM@tempa\pM@tempb}%
+    \do{%
+      \Cfor%
+        {\xdef\lntop{0}\Strsep\pM@tempa{,}\pM@tempc\pM@tempd
+        }%
+        {\not\equal\pM@tempc\empty}%
+        {\Strsep\pM@tempd,\pM@tempc\pM@tempd
+        }%
+        \do{%
+          \ifthenelse{\lntop=\z@}{%
+            \xdef\lntop{1}\pM@tempc
+          }{%
+             &\pM@tempc
+          }%
+        }
+      \ifthenelse{\equal\pM@tempb\empty}{}{\\}%
+    }
+  \end{bmatrix}
+}}}
+%
+\def\Bgyouretu{\@ifnextchar[{\@Bgyouretu}{\@Bgyouretu[\gyouretu@haiti]}}
+\def\@Bgyouretu[#1]#2{{\let\EMdef\gdef
+  \def\gyouretu@haiti@{#1}\ensuremath{%
+  \begin{Bmatrix}
+  \Cfor%
+    {\Strsep{#2}{;}\pM@tempa\pM@tempb}%
+    {\not\equal\pM@tempa\empty}%
+    {\Strsep\pM@tempb{;}\pM@tempa\pM@tempb}%
+    \do{%
+      \Cfor%
+        {\xdef\lntop{0}\Strsep\pM@tempa{,}\pM@tempc\pM@tempd
+        }%
+        {\not\equal\pM@tempc\empty}%
+        {\Strsep\pM@tempd,\pM@tempc\pM@tempd
+        }%
+        \do{%
+          \ifthenelse{\lntop=\z@}{%
+            \xdef\lntop{1}\pM@tempc
+          }{%
+             &\pM@tempc
+          }%
+        }
+      \ifthenelse{\equal\pM@tempb\empty}{}{\\}%
+    }
+  \end{Bmatrix}
+}}}
+%
+\def\vgyouretu{\@ifnextchar<{\vgyouretu@}{\@vgyouretu}}
+\def\vgyouretu@<#1>{\setkeys{emath}{#1}\@vgyouretu}%
+\def\@vgyouretu{\@ifnextchar[{\@@vgyouretu}{\@@vgyouretu[\gyouretu@haiti]}}
+\def\@@vgyouretu[#1]#2{{\let\EMdef\gdef
+  \edef\gyouretu@gyoukan{\empty}%
+  \def\gyouretu@haiti@{#1}\ensuremath{%
+  \begin{vmatrix}
+  \Cfor%
+    {\Strsep{#2}{;}\pM@tempa\pM@tempb}%
+    {\not\equal\pM@tempa\empty}%
+    {\Strsep\pM@tempb{;}\pM@tempa\pM@tempb}%
+    \do{%
+      \Cfor%
+        {\xdef\lntop{0}\Strsep\pM@tempa{,}\pM@tempc\pM@tempd
+        }%
+        {\not\equal\pM@tempc\empty}%
+        {\Strsep\pM@tempd,\pM@tempc\pM@tempd
+        }%
+        \do{%
+          \ifthenelse{\lntop=\z@}{%
+            \xdef\lntop{1}\pM@tempc
+          }{%
+             &\pM@tempc
+          }%
+        }
+      \ifthenelse{\equal\pM@tempb\empty}{}{
+        \ifx\empty\gyouretu@gyoukan
+        \else
+          \vspace{\gyouretu@gyoukan}%
+        \fi
+        \\
+      }%
+    }
+  \end{vmatrix}
+}}}
+%
+\def\ngyouretu{\@ifnextchar[{\@ngyouretu}{\@ngyouretu[\gyouretu@haiti]}}
+\def\@ngyouretu[#1]#2{{\let\EMdef\gdef
+  \def\gyouretu@haiti@{#1}\ensuremath{%
+  \edef\gyouretu@gyoukan{\empty}%
+  \begin{matrix}
+  \Cfor%
+    {\Strsep{#2}{;}\pM@tempa\pM@tempb}%
+    {\not\equal\pM@tempa\empty}%
+    {\Strsep\pM@tempb{;}\pM@tempa\pM@tempb}%
+    \do{%
+      \Cfor%
+        {\xdef\lntop{0}\Strsep\pM@tempa{,}\pM@tempc\pM@tempd
+        }%
+        {\not\equal\pM@tempc\empty}%
+        {\Strsep\pM@tempd,\pM@tempc\pM@tempd
+        }%
+        \do{%
+          \ifthenelse{\lntop=\z@}{%
+            \xdef\lntop{1}\pM@tempc
+          }{%
+             &\pM@tempc
+          }%
+        }
+      \ifthenelse{\equal\pM@tempb\empty}{}{\\}%
+    }
+  \end{matrix}
+}}}
+%
+\def\Vgyouretu{\@ifnextchar[{\@Vgyouretu}{\@Vgyouretu[\gyouretu@haiti]}}
+\def\@Vgyouretu[#1]#2{{\let\EMdef\gdef
+  \def\gyouretu@haiti@{#1}\ensuremath{%
+  \edef\gyouretu@gyoukan{\empty}%
+  \begin{Vmatrix}
+  \Cfor%
+    {\Strsep{#2}{;}\pM@tempa\pM@tempb}%
+    {\not\equal\pM@tempa\empty}%
+    {\Strsep\pM@tempb{;}\pM@tempa\pM@tempb}%
+    \do{%
+      \Cfor%
+        {\xdef\lntop{0}\Strsep\pM@tempa{,}\pM@tempc\pM@tempd
+        }%
+        {\not\equal\pM@tempc\empty}%
+        {\Strsep\pM@tempd,\pM@tempc\pM@tempd
+        }%
+        \do{%
+          \ifthenelse{\lntop=\z@}{%
+            \xdef\lntop{1}\pM@tempc
+          }{%
+             &\pM@tempc
+          }%
+        }
+      \ifthenelse{\equal\pM@tempb\empty}{}{\\}%
+    }
+  \end{Vmatrix}
+}}}
+%
+% $B3g8L$N7A>u$r(B plain TeX $BIw$K(B
+%
+\def\sgyouretu@lr{3mu}%
+\def\sgyouretu@kugiri{1em}%
+\def\sgyouretuAki{\@ifnextchar[{\@sgyouretuAki}{\@sgyouretuAki[3]}}
+\def\@sgyouretuAki[#1]#2{%
+  \edef\sgyouretu@lr{#1mu}\edef\sgyouretu@kugiri{#2}}
+\def\orgmatrix#1{\null\mkern\sgyouretu@lr\vcenter{\normalbaselines\m@th
+    \ialign{\hfil$##$\hfil&&\kern\sgyouretu@kugiri\hfil$##$\hfil\crcr
+      \mathstrut\crcr\noalign{\kern-\baselineskip}
+      #1\crcr\mathstrut\crcr\noalign{\kern-\baselineskip}}}\mkern\sgyouretu@lr}
+\def\orgpmatrix#1{\left(\orgmatrix{#1}\right)}
+\def\sgyouretu#1#2#3#4{\ensuremath{\orgpmatrix{#1 & #2 \cr #3 & #4\cr}}}
+\def\sGyouretu#1#2#3#4#5#6#7#8#9{%
+  \ensuremath{\orgpmatrix{#1&#2&#3\cr #4&#5&#6\cr #7&#8&#9\cr}}}
+\def\sretube#1#2{\ensuremath{\orgpmatrix{#1\cr#2\cr}}}
+\def\sRetube#1#2#3{\ensuremath{\orgpmatrix{#1\cr#2\cr#3\cr}}}
+%
+% $B9TNs$N(B trace
+\newcommand{\tr}{\text{tr}}%
+
+% $BBg7?1i;;;R0J30$N$b$N$KBP$9$k!$:81&$N>eIU$-!&2<IU$-(B
+%   \emsideset #1#2#3
+%       #1 : $B:8>eIU$-!&2<IU$-(B
+%       #2 : $B1&>eIU$-!&2<IU$-(B
+%       #3 : $BK\BN(B
+\newcommand{\emsideset}[3]{%
+  \@mathmeasure\z@\displaystyle{#3}%
+  \global\setbox\@ne\vbox to\ht\z@{}\dp\@ne\dp\z@
+  \setbox\tw@\box\@ne
+  \@mathmeasure4\displaystyle{\copy\tw@#1}%
+  \@mathmeasure6\displaystyle{#3#2}%
+  \dimen@-\wd6 \advance\dimen@\wd4 \advance\dimen@\wd\z@
+  \hbox to\dimen@{}\mathop{\kern-\dimen@\box4\box6}%
+}
+
+%------------------------
+% $B4v2?(B
+%------------------------
+
+% $BEY$N5-9f(B($B>.$5$J4](B)
+%\newcommand{\EMdegree}{\mbox{\kern-.2em\char'27\kern-.3em}}%
+\def\EMdegree{\mbox{%
+  \kern-.2em\fontencoding{OT1}\fontfamily{cmr}\fontseries{m}\fontshape{n}\selectfont\char'27\kern-.3em}}%
+\def\Deg{\ensuremath{^{\circ}}}%
+\def\emDEG{\ensuremath{^{\text{o}}}}%
+\@ifundefined{DEG}{\let\DEG\emDEG}{}%
+%
+\def\degC{\mbox{\kern-.2em\char'27\kern-.3em C}}%
+\def\degF{\mbox{\kern-.2em\char'27\kern-.3em F}}%
+%
+% $BJ?9T(B
+\def\EMheikou{\mathrel{/\kern-.25em/}}%
+\def\Heikou{\mathrel{{\unitlength1em
+  \begin{picture}(.5,1)\linethickness{.04em}%
+  \put(0,0){\drawline(0,0)(.3,.7)}\put(.2,0){\drawline(0,0)(.3,.7)}%
+  \end{picture}}}}
+
+% $BJ?9T$NH]Dj(B
+\def\nheikou{\mathrel{\mathpalette\nheikousub\heikou}}%
+    \def\nheikousub#1#2{\m@th\ooalign{\hfil{\raise.09ex\hbox{%
+    $#1\backslash$}}\hfil\crcr$#1#2$}}%
+\def\nHeikou{\mathrel{{\unitlength1em\relax
+  \begin{picture}(.5,0)\linethickness{.04em}%
+  \put(0,0){\drawline(0,0)(.3,.7)}\put(.2,0){\drawline(0,0)(.3,.7)}%
+  \put(0,0){\drawline(.05,.7)(.45,0)}%
+  \end{picture}}}}
+
+% $B3Q!J-w!K(B
+  \def\EMkaku{\@ifstar{\EMkaku@m}{\EMkaku@t}}%
+  \def\EMkaku@t#1{\ensuremath{\angle\mbox{#1}}}%
+  \def\EMkaku@m{
+  \@ifnextchar[{\EMkaku@@m}{\EMkaku@@m[\empty]}}
+  \def\EMkaku@@m[#1]#2{{%
+    \ifx\empty #1\relax\else\setkeys{emath}{#1}\fi
+    \ensuremath{\angle #2}}}%
+% $B;03Q7A(BABC
+\def\EMsankaku{\@ifstar{\EMsankaku@m}{\EMsankaku@t}}%
+\def\EMsankaku@t#1{\ensuremath{\triangle\mbox{#1}}}%
+\def\EMsankaku@m{\@ifnextchar[{\EMsankaku@@m}{\EMsankaku@@m[\empty]}}
+\def\EMsankaku@@m[#1]#2{{%
+  \ifx\empty #1\relax\else\setkeys{emath}{#1}\fi
+  \ensuremath{\triangle #2}}}%
+%\let\sankaku\EMsankaku
+%
+% $B1_8L$rI=$95-9f(B
+\@ifundefined{tate}{%
+  \def\ko{%
+      \@ifnextchar[{\@ko}{\@ko[0pt]}}%
+  \def\@ko[#1]#2{{%
+      \setbox0\hbox{{#2}}%
+      \ifdim\wd0>2.75em%
+          \def\ko@{{\Huge\mbox{$\frown$}}}%
+      \else\ifdim\wd0>1.75em%
+          \def\ko@{{\LARGE\mbox{$\frown$}}}%
+      \else%
+          \def\ko@{\textstyle\frown}%
+      \fi\fi%
+      \ensuremath{\stackrel{\ko@\hspace{#1}}%
+      {\mbox{#2}}}%
+      }}%
+}{%
+  \def\ko{\@ifstar{\ko@m}{\ko@t}}
+  \def\ko@t{%
+      \@ifnextchar[{\@ko@t}{\@ko@t[0pt]}}%
+  \def\@ko@t[#1]#2{{%
+      \setbox0\hbox{{#2}}%
+      \ifdim\wd0>2.75em%
+          \def\ko@{$\bigg($}%
+      \else\ifdim\wd0>1.75em%
+          \def\ko@{$\Big($}%
+      \else%
+          \def\ko@{$\big($}%
+      \fi\fi%
+      \ensuremath{\stackrel{\hbox{\tate\ko@}\hspace{#1}}%
+      {\mbox{#2}}}%
+      }}%
+  \def\ko@m{%
+      \@ifnextchar[{\@ko@m}{\@ko@m[0pt]}}%
+  \def\@ko@m[#1]#2{{%
+      \setbox0\hbox{{$#2$}}%
+      \ifdim\wd0>2.75em%
+          \def\ko@{$\bigg($}%
+      \else\ifdim\wd0>1.75em%
+          \def\ko@{$\Big($}%
+      \else%
+          \def\ko@{$\big($}%
+      \fi\fi%
+      \ensuremath{\stackrel{\hbox{\tate\ko@}\hspace{#1}}{\box0}}%
+  }}%
+}%
+%
+% $BJ?9T;MJU7A(B
+%---------------------------------------------------------------
+% created by $B%H%K%$(B
+%
+\def\shikaku{\ % $BJ?9T;MJU7A(B
+  \begin{picture}(15,9)%
+    \put(0,-1){\line(1,2){5}}%
+    \put(5,9){\line(1,0){10}}%
+    \put(10,-1){\line(1,2){5}}%
+    \put(0,-1){\line(1,0){10}}%
+  \end{picture}}%
+
+\@ifundefined{heikousihenkei}{%
+\ifx\fmtname\tmpname%
+\newcommand{\heikousihenkei}{% $BJ?9T;MJU7A(B epic $B$,I,MW(B
+\unitlength=.11ex%
+  \begin{picture}(17,12)%
+    \drawline(1,2)(6,11)(16,11)(11,2)(1,2)%
+  \end{picture}}%
+\else%
+\newcommand{\heikousihenkei}{\ % $BJ?9T;MJU7A(B epic,eepic $B$,I,MW(B
+  \unitlength=.5pt%
+  \begin{picture}(17,11)%
+    \put(0,1){\line(1,2){5}}%
+    \put(5,11){\line(1,0){10}}%
+    \put(10,1){\line(1,2){5}}%
+    \put(0,1){\line(1,0){10}}%
+  \end{picture}}%
+\fi%
+}{}%
+% $B-y5-9f(B
+\@ifundefined{Deruta}{%
+\def\Deruta{\unitlength=.11ex%
+\begin{picture}(17,17)%
+\@tempdima0.05em\relax
+\linethickness{\the\@tempdima}%
+\put(0,0){\drawline(1,1)(16,16)}%
+\@tempdima=0.1em\relax
+\linethickness{\the\@tempdima}%
+\put(0,0){\drawline(1,1)(12.5,1)(12,1)(16,16)}%
+\end{picture}}}{}%
+%
+%------------------------
+% $B2r@O(B
+%------------------------
+
+% $B?tNs(B ($B?tNs(B {a_n})
+\newcommand{\suuretu}[1]{\ensuremath{\left\{#1\right\}}}%
+%\newcommand{\suuretu}[1]{\retu\{#1\}}%
+\newcommand{\tretuwa}[2]{{\textstyle\retuwa{#1}{#2}}}
+\newcommand{\retuwa}[2]{\sum\limits_{#1}^{#2}}%
+\def\Retuwa{\@ifnextchar[{\@Retuwa}{\@Retuwa[3pt]}}
+\def\@Retuwa[#1]{\@ifnextchar[{\@@Retuwa[#1]}{\@@Retuwa[#1][\z@]}}
+\def\@@Retuwa[#1][#2]#3#4{%
+  \@ifundefined{hakobanpush}{}{\hakobanpush}%
+  \EMvphantom[#2][#1]{\sum\limits_{#3}^{#4}}%
+  \@ifundefined{hakobanpush}{}{\hakobanpop}%
+  \sum\limits_{#3}^{#4}}
+
+% $B=89g5-9f(B
+% {x | condition(x) }
+% \syuugou[#1]#2
+%   #1 : x
+%   #2 : condition(x)
+%
+%\def\syuugou{\@ifnextchar[{\@syuugou}{\suuretu}}
+%\def\@syuugou[#1]#2{%
+%  \ensuremath{\left\{\begin{array}{@{}l|l@{}}#1&#2\end{array}\right\}}}
+%
+\def\syuugou{\@ifnextchar[{\@syuugou}{\suuretu}}
+\def\@syuugou[#1]#2{\ensuremath{\left\{\left.#1\,
+  \@ifundefined{hakobanpush}{}{\hakobanpush}%
+  \vphantom{#2}\@ifundefined{hakobanpush}{}{\hakobanpop}%
+  \right |\,%
+  #2\right\}}}
+%\let\@@syuugou\suuretu
+%
+\DeclareRobustCommand
+  \notni{\mathrel{\m@th\mathpalette\c@ncel\ni}}
+%
+\def\EMnotin{\mathrel{\reflectbox{$\notni$}}}
+\def\EMnotni{\mathrel{\reflectbox{$\notin$}}}
+%
+% $B6K8B(B
+%\newcommand{\dlim}[1]{{\displaystyle \lim_{#1}}}%
+\def\dlim{\@ifnextchar[{\dlim@}{\@dlim}}
+\def\@dlim#1{{\displaystyle\lim_{#1}}}
+\def\dlim@[#1]#2{%
+  \underset{\scalebox{#1}[1]{$\scriptscriptstyle #2$}}{\lim}}
+\let\orgto\to
+\DeclareRobustCommand\to{\@ifnextchar[{\to@}{\orgto}}
+\def\to@[#1]{{\unitlength.75em\relax
+  \def\ArrowHeadSize{.25}%
+  \def\ArrowHeadAngle{30}%
+  \begin{picture}(#1,0)%
+    \Sub{#1}{.1}\To@len
+    \drawline(0.1,.25)(\To@len,.25)%
+    \Sub\To@len{.2}\@x
+    \drawline(\@x,.45)(\To@len,.25)(\@x,.05)%
+  \end{picture}}}
+\def\To#1{\to@[#1]}
+
+% $B@QJ,(B
+%\newcommand{\dint}[2]{{\displaystyle \int_{#1}^{#2}}}%
+\def\dint#1#2{{\displaystyle \int_{#1}^{#2}}}%
+\def\dintrev#1#2{{\displaystyle \int^{#2}_{#1}}}%
+%
+% $BDj@QJ,(B
+% \teisekibun#1#2#3
+%   [ #1 ]_{#2}^{#3}
+%
+\def\teisekibun#1#2#3{\gauss{\vphantom{\dfrac12}#1}_{#2}^{#3}}
+
+% $BA}8:!&1zFL(B
+\ifx\fmtname\tmpname%
+\def\ltxoval(#1,#2){\@ifnextchar[{\ltx@oval(#1,#2)}{\ltx@oval(#1,#2)[]}}%
+\def\ltx@ovhorz{\hb@xt@\@ovxx{\kern \@ovro
+    \if@ovr \else \kern \@ovdx \fi
+    \leaders \hrule \@height \@wholewidth \hfil
+    \if@ovl \else \kern \@ovdx \fi
+    \kern \@ovri}}
+\def\ltx@oval(#1,#2)[#3]{\begingroup\boxmaxdepth \maxdimen
+  \@ovttrue \@ovbtrue \@ovltrue \@ovrtrue
+  \@tfor\reserved@a :=#3\do{\csname @ov\reserved@a false\endcsname}%
+  \@ovxx
+  #1\unitlength \@ovyy #2\unitlength
+  \@tempdimb \ifdim \@ovyy >\@ovxx \@ovxx\else \@ovyy \fi
+  \advance \@tempdimb -2\p@
+  \@getcirc \@tempdimb
+  \@ovro \ht\@tempboxa \@ovri \dp\@tempboxa
+  \@ovdx\@ovxx \advance\@ovdx -\@tempdima \divide\@ovdx \tw@
+  \@ovdy\@ovyy \advance\@ovdy -\@tempdima \divide\@ovdy \tw@
+  \@circlefnt \setbox\@tempboxa
+  \hbox{\if@ovr \@ovvert32\kern -\@tempdima \fi
+  \if@ovl \kern \@ovxx \@ovvert01\kern -\@tempdima \kern -\@ovxx \fi
+  \if@ovt \ltx@ovhorz \kern -\@ovxx \fi
+  \if@ovb \raise \@ovyy \ltx@ovhorz \fi}\advance\@ovdx\@ovro
+  \advance\@ovdy\@ovro \ht\@tempboxa\z@ \dp\@tempboxa\z@
+  \@put{-\@ovdx}{-\@ovdy}{\box\@tempboxa}%
+  \endgroup}%
+
+\newcommand{\nevarrow}{{% $B2<$KFL$GA}2C(B
+  \setlength{\unitlength}{0.075ex}%
+    \begin{picture}(20,20)%
+    \put(0,20){\ltxoval(40,40)[rb]}%
+    \put(20,25){\vector(0,1){0}}%
+    \end{picture}%
+    }}%
+\newcommand{\necarrow}{{% $B>e$KFL$GA}2C(B
+  \setlength{\unitlength}{0.075ex}%
+    \begin{picture}(20,20)%
+    \put(20,0){\ltxoval(40,40)[lt]}%
+    \put(25,20){\vector(1,0){0}}%
+    \end{picture}%
+    }}%
+\newcommand{\sevarrow}{{% $B2<$KFL$G8:>/(B
+  \setlength{\unitlength}{0.075ex}%
+    \begin{picture}(20,20)%
+    \put(20,20){\ltxoval(40,40)[lb]}%
+    \put(25,0){\vector(1,0){0}}%
+    \end{picture}%
+    }}%
+\newcommand{\secarrow}{{% $B>e$KFL$G8:>/(B
+  \setlength{\unitlength}{0.075ex}%
+    \begin{picture}(20,20)%
+    \put(0,0){\ltxoval(40,40)[rt]}%
+    \put(20,-5){\vector(0,-1){0}}%
+    \end{picture}%
+    }}%
+\else
+\newcommand{\nevarrow}{{% $B2<$KFL$GA}2C(B
+    \setlength{\unitlength}{.04zw}%
+    \begin{picture}(20,20)%
+    \put(0,20){\oval(40,40)[rb]}%
+    \put(20,20){\vector(0,1){1}}%
+    \end{picture}%
+    }}%
+\newcommand{\necarrow}{{% $B>e$KFL$GA}2C(B
+    \setlength{\unitlength}{.04zw}%
+    \begin{picture}(20,20)%
+    \put(20,0){\oval(40,40)[lt]}%
+    \put(20,20){\vector(1,0){1}}%
+    \end{picture}%
+    }}%
+\newcommand{\sevarrow}{{% $B2<$KFL$G8:>/(B
+    \setlength{\unitlength}{.04zw}%
+    \begin{picture}(20,20)%
+    \put(20,20){\oval(40,40)[lb]}%
+    \put(20,0){\vector(1,0){1}}%
+    \end{picture}%
+    }}%
+\newcommand{\secarrow}{{% $B>e$KFL$G8:>/(B
+    \setlength{\unitlength}{.04zw}%
+    \begin{picture}(20,20)%
+    \put(0,0){\oval(40,40)[rt]}%
+    \put(20,0){\vector(0,-1){1}}%
+    \end{picture}%
+    }}%
+\fi
+\let\zouka\nearrow
+\let\gensyou\searrow
+\let\totuzou\nevarrow
+\let\ouzou\necarrow
+\let\totugen\sevarrow
+\let\ougen\secarrow
+
+%------------------------
+% $B3NN((B
+%------------------------
+
+% $B3,>h(B
+\def\kaizyou{\ensuremath{\mkern1mu!\mkern1mu}}
+
+%$BAH9g$;(B
+%
+\def\kumiawase{\@ifstar{\kumiawase@}{\@kumiawase}}
+\def\@kumiawase#1#2{%
+    \let\@c=\empty%
+    \let\suu@smac=1%
+    \def\kumiawase@tmp{{}#1}%
+    \@tfor\@c:=\kumiawase@tmp\do{%
+        \ifcat\@c\suu@smac\suuzi@smactrue%
+        \else\suuzi@smacfalse\fi%
+        }%
+    \ensuremath{\mathord{{}_{#1}%
+% $B<!$N(B1$B9T$,!$:82<$NE:;z$H(B C $B$H$N6uGrNL(B
+        \ifsuuzi@smac\kern-.06em\else\kern-.12em\fi%
+        \text{C}_{#2}}}%
+}
+\def\kumiawase@#1#2{%
+  \ensuremath{\mathord{{}_{#1}\kern-.12em\relax\text{C}_{#2}}}%
+}
+%\newcommand{\kumiawase}[2]{%
+%    \let\@c=\empty%
+%    \let\suu@smac=1%
+%    \@tfor\@c:=#1\do{%
+%        \ifcat\@c\suu@smac\suuzi@smactrue%
+%        \else\suuzi@smacfalse\fi%
+%        }%
+%    \ensuremath{{}_{#1}%
+%% $B<!$N(B1$B9T$,!$:82<$NE:;z$H(B C $B$H$N6uGrNL(B
+%        \ifsuuzi@smac\kern-.06em\else\kern-.12em\fi%
+%        \text{C}_{#2}%
+%        }%
+%    }%
+%
+% $B=EJ#AH9g$;(B
+\newcommand{\Kumiawase}[2]{%
+  \ensuremath{\mathord{{}_{#1}\text{H}_{#2}}}%
+}%
+
+%\newcommand{\kumiawase}[2]{%
+%  \@tfor\@c:=#1\do{\edef\@@c{\@c}}%
+%% $B<!$N(B1$B9T$,!$:82<$NE:;z$H(B C $B$H$N6uGrNL(B
+%  \ifcat1\@@c\def\ncr@sp{-.05em}\else\def\ncr@sp{-.12em}\fi%
+%  \ensuremath{\mathord{{}_{#1}\kern\ncr@sp\text{C}_{#2}}}%
+%}%
+
+% $B=gNs(B
+
+\newcommand{\zyunretu}[2]{%
+  \ensuremath{\mathord{{}_{#1}\text{P}_{#2}}}%
+}%
+% $B=EJ#=gNs(B
+\newcommand{\Zyunretu}[2]{%
+  \ensuremath{\mathord{{}_{#1}\Pi_{#2}}}%
+}%
+
+%---------------------------------------------------------------------
+%$B$=$NB>0lHL(B
+%---------------------------------------------------------------------
+%
+%\def\hfilll{\hskip0pt plus 1filll}% --> emathEc.sty
+%
+% $B=PE5$rIU$1$k(B
+\newcommand{\emsyutten}{\emsyutt@n}
+\def\emsyutt@n{%
+  \ifvmode%\vskip-\baselineskip\vskip-\parsep
+  \leavevmode\fi
+  \@ifstar{\emsyutten@}{\@emsyutten}}
+\def\@emsyutten#1{{% TeX $B%V%C%/(B p.149
+  \unskip\nobreak\hfil\penalty50
+  \hskip2zw\hbox{}\nobreak\hfil\inhibitglue $B!L(B#1$B!M(B\inhibitglue\relax
+  \parfillskip=\z@\finalhyphendemerits=0\par}}
+\def\emsyutten@#1{{\unskip\nobreak\hfil\penalty50
+  \hskip2zw\hbox{}\nobreak\hfil #1\parfillskip=\z@\finalhyphendemerits=0\par}}
+%
+\newcommand{\emsyuttenC}{\emsyutt@nC}
+\def\emsyutt@nC{%
+  \ifvmode%\vskip-\baselineskip\vskip-\parsep
+  \leavevmode\fi
+  \@ifstar{\emsyuttenC@}{\@emsyuttenC}}
+\def\@emsyuttenC#1{% TeX $B%V%C%/(B p.149
+  \unskip\nobreak\hfil\penalty50
+  \hskip2zw\hbox{}\nobreak\hfil\inhibitglue $B!L(B#1$B!M(B\inhibitglue\relax
+  \parfillskip=\z@\finalhyphendemerits=0}
+\def\emsyuttenC@#1{\unskip\nobreak\hfil\penalty50
+  \hskip2zw\hbox{}\nobreak\hfil #1\parfillskip=\z@\finalhyphendemerits=0}
+%
+% $B9TKv$K%^!<%/(B
+\DeclareRobustCommand{\kotae}{\@ifstar{\emathKotae@}{\emathKotae}}
+\def\emathKotae{\@ifnextchar[{\emath@kotae}{\emath@kotae[2]}}
+\def\emath@kotae[#1]{\@ifnextchar<{\emath@@kotae[#1]}{%
+  \emath@@kotae[#1]<0pt>}}
+\def\emath@@kotae[#1]<#2>{%
+  \edef\pre@kotae{}\Cfor{\edef\kotae@i{0}}{\kotae@i<#1}{%
+  \Incr\kotae@i}\do{%
+  \edefappend\pre@kotae{$B!D(B}}%
+  \ifdim #2=\z@
+    \EMxdef\kotae@kigou{\pre@kotae\kotaekigou}%
+  \else
+    \EMxdef\kotae@kigou{\pre@kotae\kotaekigou\kern #2\relax}%
+  \fi
+  \emathOwari[\kotae@kigou]}
+\def\emathKotae@{\@ifnextchar[{\emath@kotae@}{\emath@kotae@[2]}}
+\def\emath@kotae@[#1]{\@ifnextchar<{\emath@@kotae@[#1]}{%
+  \emath@@kotae@[#1]<0pt>}}
+\def\emath@@kotae@[#1]<#2>{%
+  \edef\pre@kotae{}\Cfor{\edef\kotae@i{0}}{\kotae@i<#1}{%
+  \Incr\kotae@i}\do{%
+  \edefappend\pre@kotae{$B!D(B}}%
+  \ifdim #2=\z@
+    \EMxdef\kotae@kigou{\pre@kotae\kotaekigou}%
+  \else
+    \EMxdef\kotae@kigou{\pre@kotae\kotaekigou\kern #2\relax}%
+  \fi
+  \emathOwari*[\kotae@kigou]}
+\newcommand{\kotaekigou}{\inhibitglue $B!JEz!K(B\inhibitglue}
+%
+%\let\kotae\emathKotae
+%\def\kotae{\@ifstar{\emathKotae@}{\emathKotae}}%
+%\def\kotae@{%
+%  \tag*{\kotaekigou}%
+%}%
+%
+\DeclareRobustCommand\emathOwari{\@ifstar{\emathOwari@}{\@emathOwari}}%
+\let\owari\emathOwari
+\def\@emathOwari{\@ifnextchar[{\emath@owari}{\emath@owari[\owarikigou]}}%
+\def\emathOwari@{\@ifnextchar[{\emath@owari@}{\emath@owari@[\owarikigou]}}%
+\def\emath@owari@[#1]{%
+  \ifmmode
+    \if@eqnsw
+      \mbox{\qquad #1}%
+    \else
+      \ifx \tag\dft@tag
+        \mbox{\qquad #1}%
+      \else
+         \tag*{#1}%
+      \fi
+    \fi
+  \else
+    \emsyutten*{#1}%
+  \fi}
+\def\emath@owari[#1]{%
+  \ifmmode
+    \quad\hbox{#1}%
+  \else
+    \emsyutten*{#1}%
+%    \leavevmode\unskip\penalty9999 \hbox{}\nobreak\hfill
+%    \quad\hbox{#1}\unskip \par
+  \fi
+}%
+\newcommand{\owarikigou}{$\blacksquare$}%   $B%^!<%/$N%G%U%)%k%H(B
+% $B%j!<%@!<7S(B
+%
+\def\Bcdot{\mathbin{\boldsymbol{\cdotp}}}
+%\newcommand\Cdots{$B!D(B}
+\DeclareRobustCommand
+  \ltxcdots{\mathinner{\cdotp\cdotp\cdotp}}
+%\def\Cdots{\@ifnextchar[{\@Cdots}{$B!D(B}}
+\DeclareRobustCommand\Cdots{\@ifnextchar[{\@Cdots}{$B!D(B}}
+\def\@Cdots[#1]{{\@tempcnta=#1\relax
+  \@whilenum\@tempcnta>\z@\do{$B!D(B\advance\@tempcnta\m@ne}\ignorespaces}}
+\def\cdotskip{1.5mu}
+\def\cdotfill{\@ifnextchar[{\cdotfill@}{\@cdotfill}}
+\def\@cdotfill{\cleaders\hbox{%
+  $\m@th\mkern\cdotskip \cdot \mkern\cdotskip$}\hfill}
+\def\cdotfill@[#1]{\leavevmode\hbox to #1{\cleaders\hbox{%
+  $\m@th\mkern1.5mu \cdot \mkern1.5mu$}\hfill}}
+%
+\def\cdotpfill{\@ifnextchar[{\cdotpfill@}{\@cdotpfill}}
+\def\@cdotpfill{\cleaders\hbox{%
+  $\m@th\mkern\cdotskip \cdotp \mkern\cdotskip$}\hfill}
+\def\cdotpfill@[#1]{\leavevmode\hbox to #1{\cleaders\hbox{%
+  $\m@th\mkern1mu \cdotp \mkern1mu$}\hfill}}
+%
+\def\crulefill{\@ifnextchar[{\crulefill@}{%
+  \leaders\hrule height.65ex depth -.55ex\hfill}}
+\def\crulefill@[#1]{\leavevmode\hbox to #1{%
+  \leaders\hrule height.65ex depth -.55ex\hfill}}
+\def\Cdotfill{\@ifnextchar[{\Cdotfill@}{\@Cdotfill}}
+\def\@Cdotfill{\cleaders\hbox{%
+  $\m@th\mkern\cdotskip \raisebox{.22ex}{$\cdot$} \mkern\cdotskip$}\hfill}
+\def\Cdotfill@[#1]{\leavevmode\hbox to #1{\cleaders\hbox{%
+  $\m@th\mkern1.5mu \raisebox{.22ex}{$\cdot$} \mkern1.5mu$}\hfill}}
+
+%%$B<0$NHV9f(B($B%j!<%@!<7S$r$D$1$k!K(B
+%
+% $B%j!<%@!<7S$rIU$1$?<0HV9f(B($B4]?t;z(B)
+\ifx\fmtname\tmpname%
+    \def\EMleqno{\tagsleft@true%
+      \preEqlabel{}%
+      \def\@eqnnum{\hbox to1sp{}\rlap{\normalfont\normalcolor
+        \hskip -\displaywidth\tagform@\theequation}}
+    }%
+    \def\EMreqno{\tagsleft@false
+      \def\@eqnnum{{\normalfont\normalcolor \tagform@\theequation}}
+    }%
+    \def\endEMleqno{\@ignoretrue}%
+    \def\endEMreqno{\@ignoretrue}%
+    \def\EMsaveeqno{\xdef\EM@save@eqno{\c@equation}}%
+    \def\EMrestoreeqno{\setcounter{equation}{\EM@save@eqno}}%
+    \newcommand{\tagform}[1]{\maru{#1}}%
+    \let\ltxtag\tag
+    \iftagsleft@
+      \def\prel@bel{}%
+      \def\preHl@bel{}%
+      \def\postl@bel{\hspace{1em}}%
+    \else
+      \def\prel@bel{\makebox[0pt][r]{\cdotpfill[8em]~}}%
+%      \def\prel@bel{\cdotpfill[8em]~}%
+      \def\preHl@bel{$\cdotpfill[3em]~$}% v1.36 $B$GJQ99(B
+      \def\postl@bel{}%
+    \fi
+    \def\tagform@#1{%
+        \maketag@@@{\ignorespaces%
+        \protect\prel@bel\tagform{#1}\protect\postl@bel\unskip\@@italiccorr}}%
+\let\amseqref\eqref
+  \def\ref@chk#1{\ifx#1\relax\edef\@miteigi{1}\else\edef\@miteigi{0}\fi}%
+  \@ifpackageloaded{hyperref}{%
+    \def\eqref#1{\leavevmode%\typeout{hyper}%
+      \expandafter\ref@chk\csname r@#1\endcsname
+      \if 1\@miteigi
+        \protect\G@refundefinedtrue
+        \nfss@text{\reset@font\bfseries ??}%
+        \@latex@warning{Reference `#1' on page \thepage \space
+               undefined}%
+      \else
+        {%
+        \EMedef\eqref@tmp{\ltxref{#1}}%
+        \strip@relax\eqref@tmp\to\eqref@a
+        \preEqlabel{}\postEqlabel{}\textup{\tagform@{\eqref@a}}%
+        }%
+      \fi
+    }%
+  }{%
+    \@ifpackageloaded{showkeys}{%
+\ifx\SK@ref\@empty\else
+\@latex@warning{emath.sty $B$H(B showkeys.sty $B$rJ;MQ$9$k$K$O(B showkeys.sty $B$K(B [notref] $B%*%W%7%g%s$rIU2C$7$^$9(B}\fi
+      \def\eqref#1{\leavevmode%
+        \expandafter\ref@chk\csname r@#1\endcsname
+        \if 1\@miteigi
+          \protect\G@refundefinedtrue
+          \nfss@text{\reset@font\bfseries ??}%
+          \@latex@warning{Reference `#1' on page \thepage \space
+               undefined}%
+        \else
+          {%
+            \preEqlabel{}%
+            \amseqref{#1}%
+%            \EMedef\eqref@tmp{\ref{#1}}\relax
+%            \strip@relax\eqref@tmp\to\eqref@a
+%            \preEqlabel{}\postEqlabel{}\textup{\tagform@{\eqref@a}}%
+          }%
+        \fi
+      }%
+    }{%
+      \def\eqref#1{\leavevmode%
+        \expandafter\ref@chk\csname r@#1\endcsname
+        \if 1\@miteigi
+          \protect\G@refundefinedtrue
+          \nfss@text{\reset@font\bfseries ??}%
+          \@latex@warning{Reference `#1' on page \thepage \space
+               undefined}%
+        \else
+          {%
+            \EMedef\eqref@tmp{\ref{#1}}\relax
+            \EMedef\eqref@a{\ref{#1}}\relax
+            \strip@relax\eqref@tmp\to\eqref@a
+            \preEqlabel{}\postEqlabel{}\textup{\tagform@{\eqref@a}}%
+          }%
+        \fi
+      }%
+    }%
+  }%
+%
+\def\pushlasteqnum{\writeLabel{\jobname-lasteqnum}{\arabic{equation}}}%
+\@ifpackageloaded{hyperref}{%
+  \def\poplasteqnum{%
+    \expandafter\ref@chk\csname r@\jobname-lasteqnum\endcsname
+    \if 1\@miteigi 0 \else
+      \edef\popln@tmp@{\ltxref{\jobname-lasteqnum}}%
+      \strip@relax\popln@tmp@\to\popln@tmp
+      \count255=\popln@tmp
+      \setcounter{equation}{\count255}%
+    \fi
+  }%
+}{%
+  \def\poplasteqnum{%
+\@ifundefined{SK@ref}{%
+    \expandafter\ref@chk\csname r@\jobname-lasteqnum\endcsname
+    \if 1\@miteigi 0 \else
+      \edef\popln@tmp{\ref{\jobname-lasteqnum}}%
+%     \setcounter{equation}{\popln@tmp}%
+      \count255=\popln@tmp
+      \setcounter{equation}{\count255}%
+    \fi
+}{%
+\ifx\SK@ref\@empty
+    \expandafter\ref@chk\csname r@\jobname-lasteqnum\endcsname
+    \if 1\@miteigi 0 \else
+      \edef\popln@tmp{\ref{\jobname-lasteqnum}}%
+%     \setcounter{equation}{\popln@tmp}%
+      \count255=\popln@tmp
+      \setcounter{equation}{\count255}%
+    \fi
+\fi
+}%
+  }%
+}%
+%
+% $B%j!<%@!<7S$ND9$5$ND4@0(B($B%j!<%@!<7S$J$7$b4^$a$F(B)
+%   \newcommand{\preEqlabel}[1]{\def\prel@bel{\makebox[0pt][r]{#1}}}%
+    \def\preEqlabel{\@ifstar{\preEqlabel@m}{\preEqlabel@n}}%
+    \def\preEqlabel@m#1{\def\prel@bel{\makebox[0pt][r]{#1}}\ignorespaces}%
+    \def\preEqlabel@n#1{\def\prel@bel{#1}\ignorespaces}%
+    \def\preHEqlabel#1{\def\preHl@bel{#1}}
+    \newcommand{\postEqlabel}[1]{\def\postl@bel{#1}}%
+\else%
+    \newcommand{\preEqlabel}[1]{}%
+    \newcommand{\postEqlabel}[1]{}%
+    \newcommand{\tagform}[1]{}%
+\fi%
+%
+% $B<0HV9f7A<0$N=i4|2=(B
+%
+\newcommand{\resettagform}{%
+    \renewcommand{\tagform}[1]{(##1)}%
+    \preEqlabel{}%
+    \preHEqlabel{}%
+  }%
+%
+
+% $B<0HV9f$N6/@)Im2C(B
+\edef\atag@ed{0}%
+\def\atag{\refstepcounter{equation}%
+  \tag{\number\c@equation}\edef\atag@ed{1}}%\let\label\ltxlabel}%
+\def\ltxlabel#1{%
+  \@bsphack
+  \protected@write\@auxout{}%
+         {\string\newlabel{#1}{{\@currentlabel}{\thepage}}}%%% 
+  \@esphack}
+%
+\def\emKakko#1{(#1)}%
+\let\Kakko\emKakko
+% $B4]?t;z(B
+\ifx\fmtname\tmpname%
+  \newcommand{\EMMaru}[1]{{%
+    \setbox0=\hbox{$\bigcirc$}%
+    \setbox1=\hbox{{#1}}%
+    \edef\maru@w{\strip@pt\wd0}%
+    \@tempdima=.5\wd0%
+    \edef\maru@cx{\strip@pt\@tempdima}%
+    \@tempdima=\ht0%
+%   \advance\@tempdima-\dp0%
+    \divide\@tempdima 2\relax
+    \edef\maru@cy{\strip@pt\@tempdima}%
+%   \@tempdima=.667\wd0%
+    \@tempdima=.6\wd0%
+    \edef\maru@xi{\strip@pt\@tempdima}%
+    \edef\maru@xii{\strip@pt\wd1}%
+    \edef\maru@yii{\strip@pt\ht1}%
+    \edef\maru@zii{\strip@pt\dp1}%
+    \Add\maru@yii\maru@zii\maruyii
+    \ifdim \maru@xii pt < \maru@yii pt\relax\edef\maru@xii{\maru@yii}\fi
+    \Div\maru@xi\maru@xii\@maru@w
+    \begin{picture}(\maru@w,\maru@w)%
+    \put(\maru@cx,\maru@cy){\makebox(0,0){\chgfontsizeratio{\@maru@w}#1}}%
+    \put(\maru@cx,\maru@cy){\makebox(0,0){$\bigcirc$}}%
+    \end{picture}%
+  }}%
+%    \newcommand{\EMmaru}[1]{\raisebox{.15ex}{%
+%        \mathstrut\textcircled{\raisebox{-.05ex}{$\scriptstyle\text{#1}$}}}}%
+  \def\EMmaru#1{\mbox{\EMvphantom[.12zw][-.2zw]{$\bigcirc$}}%
+        {\ooalign{\hfill\raise.12zw\hbox{$\scriptstyle #1$}\hfill\crcr
+            \raise.1zw\hbox{\fontencoding{OMS}\fontfamily{cmsy}\fontseries{m}%
+            \fontshape{n}\selectfont\char"0D}}}}%
+  \def\EMbmaru#1{\mbox{\EMvphantom[.12zw][-.2zw]{$\bigcirc$}}%
+        {\ooalign{\hfill\raise.01zw\hbox{$\scriptstyle{#1}$}\hfill\crcr
+          \raise.01zw\hbox{\fontencoding{OMS}\fontfamily{cmsy}\fontseries{m}%
+          \fontshape{n}\selectfont\char"0D}}}}%
+\else%
+    \newcommand{\maru}[1]{%
+        {\ooalign{\hfill$\scriptstyle{#1}$\hfill\crcr$\bigcirc$}}}%
+\fi%
+\newcommand{\marucnt}[1]{\protect\maru{\arabic{#1}}}%
+\newcommand{\Marucnt}[1]{\protect\EMMaru{\arabic{#1}}}%
+\newcommand{\nagamarucnt}[1]{\protect\nagamaru{\arabic{#1}}}%
+\newcommand{\bnagamarucnt}[1]{\protect\bnagamaru{\arabic{#1}}}%
+\newcommand{\EMnagamarucnt}[1]{\protect\EMnagamaru{\arabic{#1}}}%
+%
+\def\tmaru#1{\EMmaru{\text{#1}}}
+\def\maruKata#1{\maru{\katakana{#1}}}
+%
+% 2$B7e0J>e$OA43Q(B1$BJ8;zI}$K=L>.(B
+%\def\zwmaru#1{{%\maru{\resizebox{1zw}{\height}{#1}}%
+\DeclareRobustCommand\zwmaru[1]{{%
+    \ifthenelse{\not\equal{#1}\empty\and\isodd{0#11}}{%yes
+      \ifthenelse{#1<10}{%
+        \EMmaru{{\chgfontsizeratio{.7}\mbox{#1}}}%
+      }{%
+        \EMmaru{{\chgfontsizeratio{.7}\resizebox{1zw}{\height}{#1}}}%
+      }%
+    }{%no
+        \EMmaru{{\chgfontsizeratio{.7}\mbox{#1}}}%
+    }%
+}}
+%
+% $BBg$-L\$N!{$H$7$F!$(Bifsym $B%Q%C%1!<%8$N(B \BigCircle $B$rMQ$$$k(B
+%     \usepackage[geometry]{ifsym}
+%
+\DeclareRobustCommand\ifsymMaru[1]{%
+    \ooalign{\hfil{\scalebox{.84}{#1}}\hfil\crcr\lower.5ex\hbox{%\BigCircle
+      \fontencoding{U}\fontfamily{ifgeo}\fontseries{m}\fontshape{n}\selectfont\char37}}%
+}%
+%
+% $BGr9uH?E>(B
+\def\maru{\protect\pmaru}
+\def\pmaru{\@ifnextchar[{\kmaru}{\EMmaru}}
+\def\bmaru{\protect\p@bmaru}
+\def\p@bmaru{\@ifnextchar[{\kmaru}{\EMbmaru}}
+\def\kmaru{\@ifnextchar[{\@kmaru}{\@kmaru[1]}}
+\def\@kmaru[#1]#2{{%
+\@tempdima32.516ex\@tempdimb36ex
+\unitlength.001in\begin{picture}(\strip@pt\@tempdima,\strip@pt\@tempdimb)%
+\templa16.258ex\templb10.452ex
+{\ifdim #1 pt>\z@\special{sh #1}\fi
+  \put(\strip@pt\templa,\strip@pt\templb){%
+%   \@tempdima13.936ex\@tempdimb20.903ex
+    \@tempdimb16ex\relax
+    \special{pn 8}\special{%
+    ar 0 0 \@seisuu\@tempdimb\space \@seisuu\@tempdimb\space 0 6.28319}}}%
+  \put(\strip@pt\templa,\strip@pt\templb){%
+    \ifthenelse{\not\equal{#2}\empty\and\isodd{0#21}}{%yes
+      \ifnum#2<10\relax
+        \makebox(0,0){\textcolor{white}{\chgfontsizeratio{.9}\textbf{#2}}}%
+      \else
+        \makebox(0,0){\textcolor{white}{\chgfontsizeratio{.84}\textbf{#2}}}%
+      \fi}{%no
+        \makebox(0,0){\textcolor{white}{#2}}%
+    }%
+  }%
+\end{picture}}}%
+\DeclareRobustCommand\emKuroMaru[1]{\kmaru{#1}}%
+\IfFileExists{ifsym.sty}{}{\let\ifsymMaru\maru}%
+%
+% $B=DD9$N4]?t;z(B
+\def\maru@yokokei{14ex}%
+\def\maru@tatekei{21ex}%
+\def\nagamaruyokohankei#1{\Mul{#1}{14}\maru@y
+  \edef\maru@yokokei{\maru@y ex\relax}}
+\def\nagamarutatehankei#1{\Mul{#1}{14}\maru@t
+  \def\maru@tatekei{\maru@t ex\relax}}
+\def\nagamaruyokoHankei#1{\edef\maru@yokokei{#1\relax}}
+\def\nagamarutateHankei#1{\edef\maru@tatekei{#1\relax}}
+\def\EMnagamaru{\@ifstar{\EMnagamaru@}{\@EMnagamaru}}%
+\def\EMnagamaru@{\@ifnextchar[{\@@EMnagamaru}{\@@EMnagamaru[.5]}}%
+\def\@EMnagamaru{\@ifnextchar[{\@@EMnagamaru}{\@@EMnagamaru[0]}}%
+\def\@@EMnagamaru[#1]#2{{%
+%\@tempdima32.516ex\@tempdimb36ex
+\@tempdima\maru@yokokei\advance\@tempdima2ex\@tempdima2\@tempdima
+\unitlength.001in\relax
+\@tempdimb\maru@tatekei\advance\@tempdimb12.5ex\relax
+\@tempdimc\maru@tatekei\advance\@tempdimc-8.5ex\relax
+\edef\maru@h{\strip@pt\@tempdimb}\@tempdimb\maru@h\unitlength
+\edef\maru@d{\strip@pt\@tempdimc}\@tempdimc\maru@d\unitlength
+\vrule width0pt height \@tempdimb depth \@tempdimc
+\begin{picture}(\strip@pt\@tempdima,0)%
+%\templa16.258ex
+\templb10.452ex\relax
+\templa\maru@yokokei\advance\templa2ex\relax
+{\ifdim #1 pt>\z@\special{sh #1}\fi
+  \put(\strip@pt\templa,\strip@pt\templb){%
+    \@tempdima\maru@yokokei\@tempdimb\maru@tatekei
+    \special{pn 8}%
+    \special{%
+      ar 0 0 \@seisuu\@tempdima\space \@seisuu\@tempdimb\space 0 6.28319}%
+}}%
+  \put(\strip@pt\templa,\strip@pt\templb){\makebox(0,0){#2}}%
+\end{picture}}}%
+
+%\let\nagamaru\EMnagamaru
+\def\knagamaru#1{\nagamaru[1]{\textcolor{white}{#1}}}
+
+% $B2#D9$N4]?t;z(B
+\def\EMynagamaru{\@ifnextchar[{\@EMynagamaru}{\@EMynagamaru[0]}}
+\def\@EMynagamaru[#1]#2{{\def\maru@yokokei{21ex}\def\maru@tatekei{14ex}%
+  \@EMnagamaru[#1]{#2}}}
+
+\let\ynagamaru\EMynagamaru
+\def\kynagamaru#1{\ynagamaru[1]{\textcolor{white}{#1}}}
+
+% $B;2>H$9$k:]$K4]?t;z$K$9$k!%(B
+\newcommand{\maruref}[1]{\maru{\ref{#1}}}%
+\def\marusuuref#1{%
+    \expandafter\ref@chk\csname r@#1\endcsname
+    \if 1\@miteigi
+      \protect\G@refundefinedtrue
+      \nfss@text{\reset@font\bfseries ??}%
+      \@latex@warning{Reference `#1' on page \thepage \space
+             undefined}%
+    \else
+      {\count255=\ref{#1}\maru{\number\count255}}%
+    \fi
+}
+%
+\def\emMaruKata#1{\tmaru{\katakana{#1}}}%
+\def\emMaruKataIroha#1{\tmaru{\iroha{#1}}}%
+\def\emMaruHira#1{\tmaru{\hirakana{#1}}}%
+\def\emMaruHiraIroha#1{\tmaru{\hirakana{\IROHA{#1}}}}%
+\def\emMaruKataAkasa#1{\tmaru{\katakana{\akasatana{#1}}}}%
+\def\emMaruHiraAkasa#1{\tmaru{\hirakana{\akasatana{#1}}}}%
+\let\emAlph\@Alph
+\let\emalph\@alph
+\def\emMaruAlph#1{\tmaru{\@Alph{#1}}}%
+\def\emMarualph#1{\tmaru{\@alph{#1}}}%
+\let\emMaruAlphnum\emMaruAlph
+\let\emMarualphnum\emMarualph
+\def\okuMaruAlph#1{\MARU{\@Alph{#1}}}%
+\def\okuMarualph#1{\MARU{\@alph{#1}}}%
+%\def\emKaku{\@ifstar{\emKakus}{\@emKaku}}%
+\DeclareRobustCommand\emKaku{\@ifstar{\emKakus}{\@emKaku}}%
+\def\@emKaku#1{{%
+    \fboxsep=\p@\fbox{\vrule height.6zw depth .1zw width\z@
+    \makebox[.6zw][c]{\ensuremath{\smash{\scriptstyle\text{\bfseries #1}}}}}%
+  }}%
+\def\emKakus#1{{%
+    \settowidth\@tempdima{9}%
+    \edef\emKaku@a{\strip@pt\@tempdima}%
+    \settowidth\@tempdimb{99}%
+    \edef\emKaku@b{\strip@pt\@tempdimb}%
+    \Div\emKaku@a\emKaku@b\emKaku@r
+    \fbox{\makebox[\emKaku@a\p@][c]{\scalebox{\emKaku@r}[1]{#1}}}%
+}}%
+%
+\DeclareRobustCommand\emKuroKaku{\@ifstar{\emKuroKakus}{\@emKuroKaku}}%
+\def\@emKuroKaku#1{{%
+    \ifnum #1<10\relax
+      \edef\emKK@s{.9}\else\edef\emKK@s{.667}\fi
+    \fboxsep=\p@\colorbox{black}{\vrule height.667zw depth .08zw width\z@
+      \makebox[.8zw][c]{%
+        \color{white}{\bfseries\chgfontsizeratio{\emKK@s}{#1}}}}\ignorespaces%
+  }}%
+%
+\def\emMaruKaku#1{{%
+  \fboxsep=2\p@\emovalbox{\vrule height.5zw depth .05zw width\z@
+  \makebox[.475zw][c]{\ensuremath{\smash{\scriptstyle\text{#1}}}}}}}
+%\def\emKaku#1{\fbox{\vrule height.8zw depth .2zw width\z@\makebox[1zw][c]{#1}}}%
+%\def\emMaruKaku#1{\emovalbox{\vrule height.8zw depth .2zw width0pt\makebox[1.08zw][c]{\ix}}}%
+\def\emKakuKata#1{\emKaku{\katakana{#1}}}
+\def\emKakuHira#1{\emKaku{\hirakana{#1}}}
+\def\emMaruKakuKata#1{\emMaruKaku{\katakana{#1}}}
+\def\emMaruKakuHira#1{\emMaruKaku{\hirakana{#1}}}
+\def\emKakuAlph#1{\emKaku{\emAlph{#1}}}%
+\def\emKakualph#1{\emKaku{\emalph{#1}}}%
+\def\emMaruKakuAlph#1{\emMaruKaku{\emAlph{#1}}}%
+\def\emMaruKakualph#1{\emMaruKaku{\emalph{#1}}}%
+\def\emSankaku#1{%
+  \hskip.02em\relax
+  \begin{picture}(0,0)\relax
+%  \begin{zahyou*}[ul=1zw,haiti=x](0,1)(-.15,.85)%
+  \begin{zahyou*}[ul=1.25zw,haiti=o](0,1)(-.15,.85)%
+    \Strlen{#1}\emSankaku@n
+%    \ifnum\emSankaku@n>\@ne
+%      \Put{(.5,.333333)}(0,-1pt)[c]{$\scriptscriptstyle\text{#1}$}%
+%    \else
+%      \Put{(.5,.333333)}(0,0)[c]{$\scriptstyle\text{#1}$}%
+%    \fi
+    \Takakkei{(0,\ymin)(1,\ymin)(.5,\ymax)}%
+  \end{zahyou*}%
+  \end{picture}%
+  \makebox[1.25zw][c]{$\scriptstyle\text{#1}$}%
+  \hskip.02em\relax
+}%
+\def\emMaruSankaku#1{%
+  \hskip.02em\relax
+  \begin{zahyou*}[ul=1zw](0,1)(0,1)
+    \Strlen{#1}\emSankaku@n
+    \ifnum\emSankaku@n>\@ne
+      \Put{(.5,.333333)}(0,-1pt)[c]{$\scriptscriptstyle\text{#1}$}%
+    \else
+      \Put{(.5,.333333)}(0,0)[c]{$\scriptstyle\text{#1}$}%
+    \fi
+    \ovalTakakkei{.1zw}{(0,0)(1,0)(.5,1)}%
+  \end{zahyou*}%
+  \hskip.02em\relax
+}%
+\def\emGyakuSankaku#1{%
+  \hskip.02em\relax
+  \begin{zahyou*}[ul=1zw](0,1)(0,1)
+    \Strlen{#1}\emSankaku@n
+    \ifnum\emSankaku@n>\@ne
+      \Put{(.5,.666667)}(0,1pt)[c]{$\scriptscriptstyle\text{#1}$}%
+    \else
+      \Put{(.5,.666667)}(0,0)[c]{$\scriptstyle\text{#1}$}%
+    \fi
+    \Takakkei{(0,1)(.5,0)(1,1)}%
+  \end{zahyou*}%
+  \hskip.02em\relax
+}%
+\def\emMaruGyakuSankaku#1{%
+  \hskip.02em\relax
+  \begin{zahyou*}[ul=1zw](0,1)(0,1)
+    \Strlen{#1}\emSankaku@n
+    \ifnum\emSankaku@n>\@ne
+      \Put{(.5,.666667)}(0,1pt)[c]{$\scriptscriptstyle\text{#1}$}%
+    \else
+      \Put{(.5,.666667)}(0,0)[c]{$\scriptstyle\text{#1}$}%
+    \fi
+    \ovalTakakkei{.1zw}{(0,1)(.5,0)(1,1)}%
+  \end{zahyou*}%
+  \hskip.02em\relax
+}%
+%
+%%%%%%%%%%%$B%@%C%7%eIU$-?t<0HV9f(B
+%
+  \edef\measure@type{\empty}%
+  \let\emath@measure@\measure@
+  \def\measure@#1{\edef\measure@type{a}\emath@measure@{#1}}%
+  \let\emath@mmeasure@\mmeasure@
+  \def\mmeasure@#1{\edef\measure@type{m}\emath@mmeasure@{#1}}%
+  \let\emath@gmeasure@\gmeasure@
+  \def\gmeasure@#1{\edef\measure@type{g}\emath@gmeasure@{#1}}%
+%
+%
+\def\dashref{\@ifnextchar({\@dashref}{\@dashref(1)}}%
+\def\@dashref(#1)#2{%
+  \ifthenelse{\isodd{0#11}}{%
+    \ensuremath{\text{\eqref{#2}}\ifcase#1\or'\or''\or'''\or''''\fi}%
+  }{%
+    \ensuremath{\text{\eqref{#2}}^{#1}}%
+  }%
+}%
+% \dashtag($B%@%C%7%e$N8D?t(B){$B85HV9f$N%i%Y%k(B}
+\def\dashtag{\@ifstar{\edef\DT@new{1}\@dashtag}{\edef\DT@new{0}\@dashtag}}%
+\def\@dashtag{\@ifnextchar({\@@dashtag}{\@@dashtag(1)}}%
+\def\@@dashtag(#1)#2{%
+%\typeout{measure@type=\measure@type,arg2=#2,DT@new=\DT@new}%
+\ifx\empty\measure@type
+  \ifnum\DT@new>\z@
+%    \refstepcounter{equation}%
+    \writeLabel{#2}{\theequation}%
+    \refstepcounter{equation}%
+  \fi
+ \if@fleqn
+  \ifthenelse{\isodd{0#11}}{%
+    \tag*{\prel@bel\eqref{#2}\makebox[0pt][l]{\ensuremath{\lefteqn{%
+      \ifcase#1\or'\or''\or'''\or''''\fi}}}}\postl@bel
+  }{%
+    \tag*{\prel@bel\eqref{#2}\ensuremath{\lefteqn{^{#1}}}}\postl@bel
+  }%
+ \else
+  \EMedef\dashtag@tmp{\amseqref{#2}}%
+  \ifthenelse{\isodd{0#11}}{%
+    \tag*{\dashtag@tmp\makebox[0pt][l]{\ensuremath{\lefteqn{%
+      \ifcase#1\or'\or''\or'''\or''''\fi}}}}\postl@bel
+  }{%
+    \tag*{\dashtag@tmp\ensuremath{\lefteqn{^{#1}}}}\postl@bel
+  }%
+ \fi
+\else
+  \ifnum\DT@new>\z@
+    \refstepcounter{equation}%
+    \writeLabel{#2}{\theequation}%
+  \fi
+  \ifthenelse{\isodd{0#11}}{%
+    \tag*{\prel@bel\eqref{#2}\makebox[0pt][l]{\ensuremath{\lefteqn{%
+      \ifcase#1\or'\or''\or'''\or''''\fi}}}}\postl@bel
+  }{%
+    \tag*{\prel@bel\eqref{#2}\ensuremath{\lefteqn{^{#1}}}}\postl@bel
+  }%
+\fi
+}%
+%
+\newcommand{\marudashref}[1]{\ensuremath{\text{\maru{\ref{#1}}}'}}%
+\def\marudashtag{\@ifnextchar({\@marudashtag}{\@marudashtag(1)}}%
+\def\@marudashtag(#1)#2{%
+  \ifthenelse{\isodd{0#11}}{%
+    \tag*{\protect\prel@bel\maru{\ref{#2}}\ensuremath{\lefteqn{%
+      \ifcase#1\or'\or''\or'''\or''''\fi}}}\postl@bel
+  }{%
+    \tag*{\prel@bel\maru{\ref{#2}}\ensuremath{\lefteqn{^{#1}}}}\postl@bel
+  }%
+}%
+%\let\marudashref\dashref
+%\let\marudashtag\dashtag
+%
+% $B%+%&%s%?CM$N%j%;%C%H(B
+%
+%   \resetcounter{foo} $B%+%&%s%?(B foo $B$NCM$r=i4|2=$7$^$9!%(B
+%
+% $B%+%&%s%?$K?F;R4X78$r@_Dj$9$k!%(B
+%
+%   \resetcounter{foo}[FOO] FOO $B$NCM$,99?7$5$l$k$H!$(Bfoo $B$O=i4|2=$5$l$^$9!%(B
+%     $B?F;R4X78$N2r>C$K$O!$(Bremreset.sty $B$rMQ$$$^$9!#(B
+%
+\def\resetcounter#1{\@ifnextchar[{\resetcounter@{#1}}{\@resetcounter{#1}}}%
+\def\resetcounter@#1[#2]{\@addtoreset{#1}{#2}}%
+\def\@resetcounter#1{\setcounter{#1}{0}}%
+
+% fleqn $B$N%*%s!&%*%U(B (cf. nccmath.sty)
+\def\fleqnoff{\@fleqnfalse\@mathmargin\@centering\ignorespaces}%
+\def\fleqnon{\@ifnextchar[{\fleqn@n}{\fleqn@n[\leftmargini]}}%
+\def\fleqn@n[#1]{\@fleqntrue\@mathmargin=#1\relax
+\advance\@mathmargin\leftskip
+  \@ifundefined{mathindent}{\let\mathindent\@mathmargin}{}\ignorespaces}%
+\def\endfleqnon{\@ignoretrue}
+\def\endfleqnoff{\@ignoretrue}
+%
+% $BO"N)J}Dx<0$N?t<0HV9f$r8DJL$KIU$1$k%3%^%s%I(B \renritu[#1](#2)#3
+%         #1 $B$O!$O"N)$N:8$K=q$-$?$$$b$N$,$"$k$H$-$N%*%W%7%g%s(B
+%         #2 $B$O!$?t<0$N:8%^!<%8%s(B
+%         #3 $B$K!$(Balign $B4D6-Fb$K5-=R$9$k$b$N$rM?$($k!%(B
+% $B;HMQ>e$N@)Ls!'(B(1) amsmath $B%Q%C%1!<%8$r;HMQ$9$k$3$H!%(B
+%               (2) fleqn$B%*%W%7%g%s$rIU$1$F$$$J$$$H$-$b!$(B
+%                   $B?t<0$N0LCV$,:84s$;$H$J$k$+$i!$(B
+%                   (..) $B%*%W%7%g%s$G0LCV$rD4@0$9$k!%(B
+%
+\newdimen\renritu@hidariyohaku
+%\newdimen\renritunakayohaku
+%\renritunakayohaku\z@
+%
+\def\trenritu{\@ifnextchar<{\trenritu@}{\@trenritu}}%
+\def\trenritu@<#1>#2{%
+    \setkeys{emath}{#1}%
+    \@ifundefined{array@arg}{%
+      \begin{emcases}[l]
+        #2
+      \end{emcases}
+    }{%
+      \begin{emcases}[l][\array@arg]
+        #2
+      \end{emcases}
+    }%
+}%
+\def\@trenritu#1{%
+    \begin{emcases}[l]
+      #1
+    \end{emcases}
+}%
+%
+\def\renritu{\@ifstar{\def\renritu@ban{0}\renritu@}{%
+    \def\renritu@ban{1}\renritu@}}%
+\def\renritu@{%
+  \@ifnextchar[{\@renritu}{\@renritu[\empty]}}%
+\def\@renritu[#1]{%
+  \@ifnextchar({\@@renritu[#1]}{\@@renritu[#1](\@mathmargin)}}%
+\def\@@renritu[#1](#2)#3{%
+  \vskip\abovedisplayskip\par\noindent%
+  {%
+  \@fleqntrue%
+\@ifundefined{@ptsize}{}{%
+\ifnum\@ptsize>\m@ne
+  \ifnum\@ptsize<3\relax
+    \abovedisplayskip1\@ptsize\p@\relax
+    \belowdisplayskip1\@ptsize\p@\relax
+  \fi
+\else
+  \ifnum\@ptsize=-1\relax
+    \abovedisplayskip9pt\relax
+    \belowdisplayskip9pt\relax
+  \fi
+\fi
+}%
+  \setlength{\renritu@hidariyohaku}{#2}%
+  \hspace*{\renritu@hidariyohaku}%
+  \@mathmargin=.25em
+  \begin{math}%
+    #1%
+    \left\{%%%%%%%%%%%%%%%%%%%%%%}
+    \@tempdima=\linewidth%
+\@ifundefined{EMWR@zuhaba}{}{%
+\ifdim\EMWR@zuhaba>\z@%%%%%%%%%%%% add 2005/08/01
+    \ifnum\EMWR@gyousuu>\@ne\advance\@tempdima-\EMWR@zuhaba
+      \advance\@tempdima-\@mawarikomisep
+      \advance\@tempdima-\@mawarikomisep
+    \fi
+\fi}%
+    \addtolength{\@tempdima}{-.885em}%
+    \addtolength{\@tempdima}{-\renritu@hidariyohaku}%
+    \ifx\empty#1\else%
+      \setbox0=\hbox{{$\displaystyle{}#1{}$}}%
+      \addtolength{\@tempdima}{-\wd0}%
+      \addtolength{\@tempdima}{-1truept}%
+    \fi%
+    \begin{minipage}{\@tempdima}\vskip-\baselineskip\ignorespaces%
+    \if\renritu@ban1\begin{align}#3\end{align}\else%
+    \begin{align*}#3\end{align*}\fi%
+    \ignorespaces%
+    \end{minipage}\ignorespaces
+    \right.\kern-1.25truept%
+  \end{math}%
+  }%
+  \vskip\belowdisplayskip\par\noindent\ignorespaces%
+}%
+%
+\def\Renritu{\bgroup\Renritu@}
+\def\Renritu@{\@ifstar{\def\renritu@@ban{0}\Renritu@@}{%
+    \def\renritu@@ban{1}\Renritu@@}}%
+\def\Renritu@@{%
+  \@ifnextchar[{\@Renritu}{\@Renritu[\empty]}}%
+\def\@Renritu[#1]{%
+  \@ifnextchar({\@@Renritu[#1]}{\@@Renritu[#1](\@mathmargin)}}%
+\def\@@Renritu[#1](#2){%
+  \vskip\abovedisplayskip\par\noindent%
+  \@fleqntrue%
+\@ifundefined{@ptsize}{}{%
+\abovedisplayskip1\@ptsize pt%
+\belowdisplayskip1\@ptsize pt}%
+  \setlength{\renritu@hidariyohaku}{#2}%
+  \leavevmode\hspace*{\renritu@hidariyohaku}%
+  \@mathmargin=.25em
+  \math
+    #1%
+    \left\{%}
+    \@tempdima=\linewidth%
+    \addtolength{\@tempdima}{-.885em}%
+    \addtolength{\@tempdima}{-\renritu@hidariyohaku}%
+    \ifx\empty#1\else%
+      \setbox0=\hbox{$\displaystyle{}#1{}$}%
+      \addtolength{\@tempdima}{-\wd0}%
+      \addtolength{\@tempdima}{-1pt}%
+    \fi%
+    \minipage{\@tempdima}\vskip-1.1\baselineskip\ignorespaces%
+%    \if\renritu@ban1\align\else\align*\fi%
+    \align
+  }%
+\def\endRenritu{%
+    \endalign
+%   \if\renritu@ban1\end{align}\else\endalign*\fi
+    \ignorespaces%
+    \endminipage\ignorespaces
+    \right.\kern-1.25pt%
+  \endmath%
+  \vskip\belowdisplayskip\par\noindent%
+  \egroup
+}
+%
+\@namedef{numcases*}{\def\@eqncr{\nonumber\@seqncr}\numcases}
+\@namedef{endnumcases*}{\nonumber\endnumcases}
+%
+% $BO"N)J}Dx<0$N?t<0HV9f$r8DJL$KIU$1$k%3%^%s%I(B \renrituat[#1](#2)#3#4
+%         #1 $B$O!$O"N)$N:8$K=q$-$?$$$b$N$,$"$k$H$-$N%*%W%7%g%s(B
+%         #2 $B$O!$?t<0$N:8%^!<%8%s(B
+%         #3 $B$K!$(Balignat $B4D6-$K$*$1$k7eB7$($r$9$k0LCV$N8D?t(B
+%         #4 $B$K!$(Balignat $B4D6-Fb$K5-=R$9$k$b$N$rM?$($k!%(B
+% $B;HMQ>e$N@)Ls!'(B(1) amsmath $B%Q%C%1!<%8$r;HMQ$9$k$3$H!%(B
+%               (2) fleqn$B%*%W%7%g%s$rIU$1$F$$$J$$$H$-$b!$(B
+%                   $B?t<0$N0LCV$,:84s$;$H$J$k$+$i!$(B
+%                   (..) $B%*%W%7%g%s$G0LCV$rD4@0$9$k!%(B
+
+\def\renrituat{\@ifstar{\def\renritu@ban{0}\renrituat@}{%
+    \def\renritu@ban{1}\renrituat@}}%
+\def\renrituat@{%
+  \@ifnextchar[{\@renrituat}{\@renrituat[\empty]}}%
+\def\@renrituat[#1]{%
+  \@ifnextchar({\@@renrituat[#1]}{\@@renrituat[#1](\@mathmargin)}}%
+\def\@@renrituat[#1](#2)#3#4{%
+  \vskip\abovedisplayskip\par\noindent%
+  {%
+  \@fleqntrue%
+\@ifundefined{@ptsize}{}{%
+\abovedisplayskip1\@ptsize pt%
+\belowdisplayskip1\@ptsize pt}%
+  \setlength{\renritu@hidariyohaku}{#2}%
+  \hspace*{\renritu@hidariyohaku}%
+  \@mathmargin=.25em
+  \begin{math}%
+    #1%
+    \left\{%
+    \@tempdima=\linewidth%
+    \addtolength{\@tempdima}{-.885em}%
+    \addtolength{\@tempdima}{-\renritu@hidariyohaku}%
+    \ifx\empty#1\else%
+      \setbox0=\hbox{$\displaystyle{}#1{}$}%
+      \addtolength{\@tempdima}{-\wd0}%
+      \addtolength{\@tempdima}{-1pt}%
+    \fi%
+    \begin{minipage}{\@tempdima}\vskip-1.1\baselineskip\ignorespaces%
+    \if\renritu@ban1\begin{alignat}{#3}{#4}\end{alignat}\else%
+    \begin{alignat*}{#3}{#4}\end{alignat*}\fi%
+    \ignorespaces%
+    \end{minipage}\ignorespaces
+    \right.\kern-1.25pt%
+  \end{math}%
+  }%
+  \vskip\belowdisplayskip\par\noindent\ignorespaces%
+}%
+
+\def\baaiwake{\@ifnextchar[{\@baaiwake}{\@baaiwake[l]}}
+\def\@baaiwake[#1]{\ifthenelse{\equal{#1}{r}}{\r@baaiwake}{\l@baaiwake}}
+\def\l@baaiwake#1{\ensuremath{\left\{\,\vcenter{\normalbaselines\m@th
+    \ialign{$##\hfil$&\quad{##}\hfil\crcr#1\crcr}}\right.}}%\}
+\def\r@baaiwake#1{\ensuremath{\left.\,\vcenter{\normalbaselines\m@th%\{
+    \ialign{$##\hfil$&\quad{##}\hfil\crcr#1\crcr}}\right\}}}%
+%
+\def\casesstretch{1}%
+\EMedef\emcasesArrayarg{{@{\kern.6mm}l@{\quad}l@{}}}%
+%\newcolumntype\@emcasesArrayarg{@{\kern.6mm}l@{\quad}l@{}}%
+
+\newenvironment{emcases}{%
+  \EMedef\EMcases@array@arg{\emcasesArrayarg}%
+  \@ifundefined{matrix@check}{}{\matrix@check\emcases}\@emcases
+}{%
+  \endarray\if l\em@cases@lr\right.\else\right\rbrace\fi
+}
+\def\@emcases{\@ifnextchar[{\@@emcases}{\@@emcases[l]}}
+\def\@@emcases[#1]{\def\em@cases@lr{#1}\@ifnextchar[{%
+  \@@emcases@}{\@@@emcases}}
+\def\@@emcases@[#1]{\EMedef\EMcases@array@arg{{#1}}\@@@emcases}
+\def\@@@emcases{%
+  \let\@ifnextchar\new@ifnextchar
+  \def\arraystretch{\casesstretch}%
+  \ifthenelse{\equal{r}{\em@cases@lr}}{%
+    \left.
+    \expandafter\array\EMcases@array@arg
+  }{%
+    \left\{
+    \expandafter\array\EMcases@array@arg
+  }%
+}%
+%
+% EMarray
+\def\EMarray{\@ifnextchar[{\@EMarray@}{\@EMarray}}
+\def\@EMarray@[#1]#2{\edef\EMarray@c{[#1]{#2}}%
+  \expandafter\array\EMarray@c}
+\def\@EMarray#1{\edef\EMarray@c{{#1}}%
+  \expandafter\array\EMarray@c}
+
+\let\endEMarray\endarray
+%
+\DeclareRobustCommand\mathstrut{\vphantom(}
+%
+% EMvphantom
+% \EMvphantom[#1][#2]#3
+%   #3 $B$N9b$5$K(B #1 $B$rIm2C$7!$(B
+%   #3 $B$N?<$5$K(B #2 $B$rIm2C$7$?;YCl$rI=$9!#(B
+%   #1 $B$N%G%U%)%k%HCM$O(B 0pt
+%   #2 $B$N%G%U%)%k%HCM$O(B #1
+
+\def\apnd@ht{\z@}%
+\def\apnd@dp{\z@}%
+\def\EMvphantom{\@ifstar{\EMvphantom@}{\EM@vphantom}}
+\def\EM@vphantom{\@ifnextchar[{\@EMvphantom}{\@EMvphantom[\apnd@ht]}}
+\def\@EMvphantom[#1]{\@ifnextchar[{\@@EMvphantom[#1]}{%
+  \@@EMvphantom[#1][#1]}}
+\def\@@EMvphantom[#1][#2]#3{{%
+%  \edef\apnd@ht{#1}\edef\apnd@dp{#2}%
+  \@ifundefined{hakobanpush}{%
+    \@@@EMvphantom{#3}\ignorespaces
+  }{%
+    \hakobanpush\@@@EMvphantom{#3}\hakobanpop\ignorespaces
+  }%
+  \setlength{\@tempdima}{\ht0+#1}%
+  \setlength{\@tempdimb}{\dp0+#2}%
+  \vrule width \z@ height \@tempdima depth \@tempdimb
+}}
+\def\@@@EMvphantom#1{%
+  \ifmmode
+    \setbox0=\hbox{{$#1$}}%
+  \else
+    \setbox0=\hbox{{#1}}%
+  \fi
+}%
+\def\EMvphantom@{\@ifnextchar[{\@EMvphantom@}{\@EMvphantom@[\apnd@ht]}}
+\def\@EMvphantom@[#1]{\@ifnextchar[{\@@EMvphantom@[#1]}{%
+  \@@EMvphantom@[#1][#1]}}
+\def\@@EMvphantom@[#1][#2]#3{{#3}\@@EMvphantom[#1][#2]{#3}\ignorespaces}
+%
+%\def\finph@nt{%
+%  \setbox\tw@\null
+%  \ifv@\ht\tw@\ht\z@ \dp\tw@\dp\z@\fi
+%  \ifh@ \wd\tw@\wd\z@\fi
+%  \xdef\EMvphantom@h{\the\ht\tw@}%
+%  \xdef\EMvphantom@d{\the\dp\tw@}%
+%\box\tw@}%
+%
+\DeclareRobustCommand{\bsityuu}{\@ifnextchar[{\@bsityuu}{\@bsityuu[4pt]}}%
+\def\@bsityuu[#1]{\@ifnextchar[{\@@bsityuu[#1]}{\@@bsityuu[#1][3pt]}}
+\def\@@bsityuu[#1][#2]{\EMvphantom[#1][#2]{\ensuremath{\bunsuu12}}}%
+%\DeclareRobustCommand{\fstrut}{\@ifnextchar[{\@fstrut}{\@fstrut[3pt]}}%
+%\def\@fstrut[#1]{\@ifnextchar[{\@@fstrut[#1]}{\@@fstrut[#1][2pt]}}
+%\def\@@fstrut[#1][#2]{\EMvphantom[#1][#2]{\ensuremath{\bunsuu ff}}}%
+%
+\setbox\bsityuubox=\hbox{$\bsityuu$}%
+\let\ltxsmall\small
+\def\small{\ltxsmall\setbox\bsityuubox=\hbox{$\bsityuu$}}%
+%
+% $BK\J8Cf$NJ}Dx<0$K?t<0HV9f$rIUM?$9$k%3%^%s%I!%(B
+%
+%   \houteisiki($BM>Gr(B)<$B>eM>Gr(B>[tag $B%i%Y%k(B]{$B?t<0(B \label{$B%i%Y%k(B}}
+%        $B$3$N%3%^%s%I$N0z?t$O(B equation $B4D6-$NCf$KF~$j$^$9$+$i!$(B
+%            $B<+F0E*$K?t<0%b!<%I$K$J$j$^$9!%(B
+%        <$B>eM>Gr(B>$B$K$*$$$F!$Id9f$r$D$1$?>l9g$O!$(B
+%             $B%G%U%)%k%HCM$KBP$9$kAjBPCM!J8=:_J]N1!K(B
+%
+\define@key{emath}{W}{\def\emath@W{#1}}%
+\define@key{emath}{label}{\edef\h@label{#1}}%
+\define@key{emath}{EMlabel}{\edef\h@EMlabel{#1}}%
+\def\emath@W@default{0pt}%
+\def\sethouteisikiWidth#1{\settowidth{\@tempdima}{\ensuremath{#1}\,}\edef\emath@W@default{\the\@tempdima}}%
+\def\houteisikiWidth#1{\edef\emath@W@default{#1}}%
+%
+\def\EMhouteisiki{\@ifnextchar({\@EMhouteisiki}{\@EMhouteisiki(0pt)}}%
+\def\@EMhouteisiki(#1){\@ifnextchar<{\@@EMhouteisiki(#1)}{%
+  \@@EMhouteisiki(#1)<\z@>}}%
+\def\@@EMhouteisiki(#1)<#2>{\@ifnextchar[{%
+    \if@jsclasses
+      \edef\houteisiki@tmp{13}%
+    \else
+      \Mul{1.3}{1\@ptsize}\houteisiki@tmp%      2003/10/15
+    \fi
+    \@@amshouteisiki(#1)<\houteisiki@tmp\p@>%
+  }{%
+    \@@@EMhouteisiki(#1)<#2>[\empty]}}%
+\def\@@@EMhouteisiki(#1)<#2>[#3]#4{{\def\emath@W{\emath@W@default}%
+  \def\EMhouteisiki@Y{0pt}%
+  \edef\h@label{\empty}%
+  \edef\h@EMlabel{\empty}%
+  \Strchr{#1}{=}\EMhouteisiki@tmp
+  \ifnum\EMhouteisiki@tmp>\z@
+    \setkeys{emath}{#1}%
+  \else
+    \def\EMhouteisiki@Y{#1}%
+  \fi
+  \ifdim\emath@W=\z@
+    \mbox{\preEqlabel{\preHl@bel}%\hskip\xkanjiskip
+      \ensuremath{%
+      \refstepcounter{equation}#4\hspace{\EMhouteisiki@Y}~%
+      \ifx\empty\h@label\else\ltxlabel{\h@label}\fi
+      \ifx\empty\h@EMlabel\else\ltxlabel{\prelabel\h@EMlabel}\fi
+      \tagform@{\the\value{equation}}}%\hskip\xkanjiskip
+    }%
+  \else
+    \makebox[\emath@W][l]{\preEqlabel{\preHl@bel}%\hskip\xkanjiskip
+      \ensuremath{%
+      \refstepcounter{equation}#4\hfill%\hspace{\EMhouteisiki@Y}%
+      \ifx\empty\h@label\else\ltxlabel{\h@label}\fi
+      ~\tagform@{\the\value{equation}}}%\hskip\xkanjiskip
+    \,}%
+  \fi
+% \ifx\empty\h@label\else\ltxlabel{\h@label}\fi
+}}%
+%
+\def\ltxhouteisiki{\@ifnextchar({\@ltxhouteisiki}{\@ltxhouteisiki(0pt)}}%
+\def\@ltxhouteisiki(#1){\@ifnextchar<{\@@ltxhouteisiki(#1)}{%
+  \if@jsclasses
+      \edef\ltxhouteisiki@tmp{13}%
+  \else
+      \Mul{1.3}{1\@ptsize}\ltxhouteisiki@tmp%      2003/10/15
+  \fi
+  \@@ltxhouteisiki(#1)<\ltxhouteisiki@tmp\p@>}}%
+\def\@@ltxhouteisiki(#1)<#2>{\@ifnextchar[{\@@@amshouteisiki(#1)<#2>}{%
+    \@@@ltxhouteisiki(#1)<#2>[\empty]}}%
+\def\@@@ltxhouteisiki(#1)<#2>[#3]#4{{\def\emath@W{\emath@W@default}%
+  \def\ltxhouteisiki@Y{0pt}%
+  \Strchr{#1}{=}\ltxhouteisiki@tmp
+  \ifnum\ltxhouteisiki@tmp>\z@
+    \setkeys{emath}{#1}%
+  \else
+    \def\ltxhouteisiki@Y{#1}%
+  \fi
+  \ifx\empty#3\relax
+    \@ifundefined{notAMS}{%
+      \@fleqntrue%
+      \fleqnon[0pt]\relax
+    }{%
+      \setlength{\mathindent}{0pt}%
+    }%
+    \preEqlabel{\preHl@bel}%
+    \@ifundefined{hakobanpush}{}{\hakobanpush}%
+    \ifdim\emath@W>\z@
+      \setlength{\templa}{\emath@W}%
+    \else
+      \setbox1=\hbox{$#4$}\templa=\wd1%
+      \setbox0=\hbox{{\prel@bel}}%
+      \addtolength{\templa}{\wd0}\addtolength{\templa}{1.75zw}%
+      \addtolength{\templa}{\ltxhouteisiki@Y}%
+    \fi
+    \@ifundefined{hakobanpop}{}{\hakobanpop}%
+    \@ifundefined{notAMS}{\@mathmargin=0zw}{}%
+    \makebox[\templa][l]{%
+      \begin{minipage}[b]{\templa}%
+      \begin{ltxequation}#4\end{ltxequation}%
+    \end{minipage}}%
+  \else\@@@amshouteisiki(#1)<#2>[#3]{#4}\fi
+    \ignorespaces}\ignorespaces
+}%
+%
+\def\amshouteisiki{%
+  \@ifnextchar({\@amshouteisiki}{\@amshouteisiki(0pt)}}%
+\def\@amshouteisiki(#1){\@ifnextchar<{\@@amshouteisiki(#1)}{%
+  \if@jsclasses
+      \edef\houteisiki@tmp{13}%
+  \else
+      \Mul{1.3}{1\@ptsize}\houteisiki@tmp%      2003/10/15
+  \fi
+  \@@amshouteisiki(#1)<\houteisiki@tmp\p@>}}%
+\def\@@amshouteisiki(#1)<#2>{\@ifnextchar[{\@@@amshouteisiki(#1)<#2>}{%
+    \@@@amshouteisiki(#1)<#2>[\empty]}}%
+\def\@@@amshouteisiki(#1)<#2>[#3]#4{{%
+  \def\emath@W{\emath@W@default}%
+  \Strchr{#1}{=}\ltxhouteisiki@tmp
+  \ifnum\ltxhouteisiki@tmp>\z@
+    \setkeys{emath}{#1}%
+  \else
+    \def\ltxhouteisiki@Y{#1}%
+  \fi
+  \ifx\empty#3\else
+    \def\@marudashtag(##1)##2{\tag*{\prel@bel\maru{\ref{##2}}%
+        \ensuremath{\ifcase##1\or'\or''\or'''\or''''\fi}\postl@bel}}%
+%    \def\dashtag{\@ifnextchar({\@dashtag}{\@dashtag(1)}}%
+%    \def\@dashtag(##1)##2{\tag*{\prel@bel\eqref{##2}%
+%        \ensuremath{\ifcase##1\or'\or''\or'''\or''''\fi}\postl@bel}}%
+  \fi%
+  \@fleqntrue%
+  \preEqlabel{\preHl@bel}%
+  \@ifundefined{hakobanpush}{}{\hakobanpush}%
+  \ifdim\emath@W>\z@
+      \setlength{\templa}{\emath@W}%
+  \else
+      \setbox1=\hbox{{\def\@marudashtag(##1)##2{\relax}\def\@@dashtag(##1)##2{\relax}$#4$}}\templa=\wd1%
+      \setbox0=\hbox{{\prel@bel}}%
+      \addtolength{\templa}{\wd0}\addtolength{\templa}{1.75zw}%
+      \addtolength{\templa}{\ltxhouteisiki@Y}%
+      \ifx \empty #3\else\addtolength{\templa}{.9zw}\fi%
+  \fi
+  \@mathmargin=0zw%
+  \@ifundefined{hakobanpop}{}{\hakobanpop}%
+  \@ifundefined{@ptsize}{}{%
+    \headchar{#2}\amshouteisiki@h\amshouteisiki@dmy
+    \ifthenelse{\equal\amshouteisiki@h+\or\equal\amshouteisiki@h-}{%
+      \if@jsclasses
+        \edef\houteisiki@tmp{13}%
+      \else
+        \Mul{1.3}{1\@ptsize}\houteisiki@tmp%      2003/10/15
+      \fi
+      \setlength{\@tempdima}{\houteisiki@tmp\p@ #2}%
+      \abovedisplayskip\@tempdima
+    }{\abovedisplayskip#2}%
+    \if@jsclasses
+      \belowdisplayskip10\p@
+    \else
+      \belowdisplayskip1\@ptsize \p@%        1998/5/10
+    \fi
+  }%
+  \makebox[\templa][l]{%
+    \begin{minipage}{\templa}\vskip-1.25\baselineskip%
+    \begin{equation}#4#3\end{equation}%
+    \end{minipage}%
+  }%
+}\ignorespaces}%
+%
+%\let\houteisiki\ltxhouteisiki
+\let\houteisiki\EMhouteisiki
+%
+% $BJL9TN)$F?t<0$KJ8>O$rA0CV$9$k!#(B
+%
+\def\preEq{%
+  \@ifundefined{mathindent}{\fleqnon[\z@]}{\mathindent=\z@}%
+  \alignat{2}}%
+\def\endpreEq{%
+  \endalignat
+}%
+\expandafter\def\csname preEq*\endcsname{%
+  \@ifundefined{mathindent}{\fleqnon[\z@]}{\mathindent=\z@}%
+  \csname alignat*\endcsname{2}}%
+\expandafter\def\csname endpreEq*\endcsname{%
+  \csname endalignat*\endcsname
+}%
+%
+%  \def\preEq{\@ifnextchar<{\@preEq}{\@preEq<\empty>}}
+%  \def\@preEq<#1>#2{{% #1 : $B:8$X$NHyD4@0NL(B
+%    \hspace*{-\mathindent}%
+%    \setbox0=\hbox{#2}%
+%    \@tempdima=\wd0
+%\ifx\empty #1\else\advance\@tempdima #1\relax\fi
+%    \advance\@tempdima 1em\relax
+%    \ifdim\@tempdima>\mathindent
+%      \makebox[\@tempdima][l]{#2}%
+%    \else
+%      \makebox[\mathindent][l]{#2}%
+%    \fi
+%    \mathopen{}%
+%  }}%
+%%
+%\def\preEq@env{gather}
+%\define@key{preEq}{mathindent}{\mathindent=#1}%
+%\define@key{preEq}{mathenv}{\def\preEq@env{#1}}%
+%\def\preEqenv{\@ifnextchar<{\@preEqenv}{\@preEqenv<\empty>}}
+%\def\@preEqenv<#1>{%
+%  \def\pre##1{%
+%    \hspace*{-\mathindent}%
+%    \makebox[\mathindent][l]{##1}%
+%    \mathopen{}%
+%  }%
+%  \ifx\empty#1\else\setkeys{preEq}{#1}\fi
+%  \csname \preEq@env\endcsname
+%}
+%\def\endpreEqenv{\csname end\preEq@env\endcsname}
+%
+% ovalbox
+%
+\newdimen\@ltxlinelen
+\gdef\ltxline(#1,#2)#3{\@xarg #1\relax \@yarg #2\relax
+  \@ltxlinelen #3\unitlength
+  \ifdim\@ltxlinelen<\z@\@badlinearg\else
+    \ifnum\@xarg =\z@ \@vltxline
+      \else \ifnum\@yarg =\z@ \@hltxline \else \@sltxline\fi
+    \fi
+  \fi}
+\gdef\@sltxline{%
+  \ifnum\@xarg<\z@ \@negargtrue \@xarg -\@xarg \@yyarg -\@yarg
+  \else \@negargfalse \@yyarg \@yarg \fi
+\ifnum \@yyarg >\z@ \@tempcnta\@yyarg \else \@tempcnta -\@yyarg \fi
+\ifnum\@tempcnta>6 \@badlinearg\@tempcnta\z@ \fi
+\ifnum\@xarg>6 \@badlinearg\@xarg \@ne \fi
+\setbox\@ltxlinechar\hbox{\@ltxlinefnt\@getltxlinechar(\@xarg,\@yyarg)}%
+\ifdim\wd\@ltxlinechar=\z@
+   \setbox\@ltxlinechar\hbox{.}%
+   \@badlinearg
+\fi
+\ifnum \@yarg >\z@ \let\@upordown\raise \@clnht\z@
+   \else\let\@upordown\lower \@clnht \ht\@ltxlinechar\fi
+\@clnwd \wd\@ltxlinechar
+\if@negarg
+  \hskip -\wd\@ltxlinechar \def\reserved@a{\hskip -2\wd\@ltxlinechar}%
+\else
+     \let\reserved@a\relax
+\fi
+\@whiledim \@clnwd <\@ltxlinelen \do
+  {\@upordown\@clnht\copy\@ltxlinechar
+   \reserved@a
+   \advance\@clnht \ht\@ltxlinechar
+   \advance\@clnwd \wd\@ltxlinechar}%
+\advance\@clnht -\ht\@ltxlinechar
+\advance\@clnwd -\wd\@ltxlinechar
+\@tempdima\@ltxlinelen\advance\@tempdima -\@clnwd
+\@tempdimb\@tempdima\advance\@tempdimb -\wd\@ltxlinechar
+\if@negarg \hskip -\@tempdimb \else \hskip \@tempdimb \fi
+\multiply\@tempdima \@m
+\@tempcnta \@tempdima
+\@tempdima \wd\@ltxlinechar \divide\@tempcnta \@tempdima
+\@tempdima \ht\@ltxlinechar \multiply\@tempdima \@tempcnta
+\divide\@tempdima \@m
+\advance\@clnht \@tempdima
+\ifdim \@ltxlinelen <\wd\@ltxlinechar
+   \hskip \wd\@ltxlinechar
+   \ifdim \@ltxlinelen = \z@
+   \else
+     \@picture@warn
+   \fi
+   \else\@upordown\@clnht\copy\@ltxlinechar\fi}
+\gdef\@hltxline{\ifnum \@xarg <\z@ \hskip -\@ltxlinelen \fi
+\vrule \@height \@halfwidth \@depth \@halfwidth \@width \@ltxlinelen
+\ifnum \@xarg <\z@ \hskip -\@ltxlinelen \fi}
+\gdef\@vltxline{\ifnum \@yarg <\z@ \@downltxline \else \@upltxline\fi}
+\gdef\@upltxline{%
+  \hb@xt@\z@{\hskip -\@halfwidth \vrule \@width \@wholewidth
+   \@height \@ltxlinelen \@depth \z@\hss}}
+\gdef\@downltxline{%
+  \hb@xt@\z@{\hskip -\@halfwidth \vrule \@width \@wholewidth
+   \@height \z@ \@depth \@ltxlinelen \hss}}
+%
+\define@key{emath}{kuikomi}{\def\oval@kuikomi{#1}}%
+\def\emovalbox{\@ifnextchar<{\@emovalbox}{\@emovalbox<\empty>}}
+\def\@emovalbox<#1>{\@ifnextchar[{\@@emovalbox<#1>}{%
+                    \@@emovalbox<#1>[\fboxsep]}}
+\def\@@emovalbox<#1>[#2]#3{{%
+  \def\oval@kuikomi{0pt}%
+  \ifx\empty #1\else\setkeys{emath}{#1}\fi
+  \setbox0=\hbox{{#3}}%
+  \@tempdima=#2\relax\edef\emoval@r{\strip@pt\@tempdima}%
+    \multiply\@tempdima\tw@\edef\emoval@d{\strip@pt\@tempdima}%
+  \@tempdima\wd0\advance\@tempdima \fboxsep
+    \edef\emoval@xmax{\strip@pt\@tempdima}%
+  \@tempdima\ht0\advance\@tempdima \fboxsep
+    \edef\emoval@ymax{\strip@pt\@tempdima}%
+  \@tempdima\dp0\advance\@tempdima \fboxsep
+    \edef\emoval@ymin{\strip@pt\@tempdima}%
+  \@tempdima \fboxsep\relax\edef\emoval@xmin{\strip@pt\@tempdima}%
+  \hspace*{\fboxsep}%
+  \@tempdima-\emoval@xmin\p@\advance\@tempdima #2\relax
+    \edef\emoval@xo{\strip@pt\@tempdima}%
+  \@tempdima-\emoval@ymin\p@\advance\@tempdima #2\relax
+    \edef\emoval@yo{\strip@pt\@tempdima}%
+  \@tempdima\emoval@xmax\p@\advance\@tempdima -#2\relax
+    \edef\emoval@x{\strip@pt\@tempdima}%
+  \@tempdima\emoval@ymax\p@\advance\@tempdima -#2\relax
+    \edef\emoval@y{\strip@pt\@tempdima}%
+  \unitlength=\p@
+  \begin{picture}(0,0)%
+    \Sub\emoval@x\emoval@xo\emoval@lx
+    \put(\emoval@xo,-\emoval@ymin){\ltxline(1,0)\emoval@lx}%
+    \put(\emoval@xo,\emoval@ymax){\ltxline(1,0)\emoval@lx}%
+    \Sub\emoval@y\emoval@yo\emoval@ly
+    \put(-\emoval@xmin,\emoval@yo){\ltxline(0,1)\emoval@ly}%
+    \put(\emoval@xmax,\emoval@yo){\ltxline(0,1)\emoval@ly}%
+    \put(\emoval@xo,\emoval@y){\ltx@oval(\emoval@d,\emoval@d)[lt]}%
+    \put(\emoval@xo,\emoval@yo){\ltx@oval(\emoval@d,\emoval@d)[lb]}%
+    \put(\emoval@x,\emoval@y){\ltx@oval(\emoval@d,\emoval@d)[rt]}%
+    \put(\emoval@x,\emoval@yo){\ltx@oval(\emoval@d,\emoval@d)[rb]}%
+  \end{picture}\vrule height \emoval@ymax\p@ depth \emoval@ymin\p@ width \z@
+  \box0\hspace{\fboxsep}%
+}}
+%
+% $B?t<0%b!<%I$K$*$$$F!$1QBgJ8;z$r(B $BN)BN(B($B%m!<%^%sBN(B)$B$K$9$k4D6-(B caprm
+%
+\def\mitA{\ensuremath{{\mathnormal A}}}
+\def\mitB{\ensuremath{{\mathnormal B}}}
+\def\mitC{\ensuremath{{\mathnormal C}}}
+\def\mitD{\ensuremath{{\mathnormal D}}}
+\def\mitE{\ensuremath{{\mathnormal E}}}
+\def\mitF{\ensuremath{{\mathnormal F}}}
+\def\mitG{\ensuremath{{\mathnormal G}}}
+\def\mitH{\ensuremath{{\mathnormal H}}}
+\def\mitI{\ensuremath{{\mathnormal I}}}
+\def\mitJ{\ensuremath{{\mathnormal J}}}
+\def\mitK{\ensuremath{{\mathnormal K}}}
+\def\mitL{\ensuremath{{\mathnormal L}}}
+\def\mitM{\ensuremath{{\mathnormal M}}}
+\def\mitN{\ensuremath{{\mathnormal N}}}
+\def\mitO{\ensuremath{{\mathnormal O}}}
+\def\mitP{\ensuremath{{\mathnormal P}}}
+\def\mitQ{\ensuremath{{\mathnormal Q}}}
+\def\mitR{\ensuremath{{\mathnormal R}}}
+\def\mitS{\ensuremath{{\mathnormal S}}}
+\def\mitT{\ensuremath{{\mathnormal T}}}
+\def\mitU{\ensuremath{{\mathnormal U}}}
+\def\mitV{\ensuremath{{\mathnormal V}}}
+\def\mitW{\ensuremath{{\mathnormal W}}}
+\def\mitX{\ensuremath{{\mathnormal X}}}
+\def\mitY{\ensuremath{{\mathnormal Y}}}
+\def\mitZ{\ensuremath{{\mathnormal Z}}}
+%\newenvironment{caprm}{%
+%  \in@caprmtrue%
+%  \@tempcnta="41\relax%
+%  \@tempcntb="7041\relax%
+%  \loop\ifnum\@tempcnta<"5B\relax%
+%    \mathcode\@tempcnta=\@tempcntb%
+%    \advance\@tempcnta by1\relax%
+%    \advance\@tempcntb by1\relax%
+%  \repeat}{\in@caprmfalse}%
+
+\def\caprm{\@ifnextchar[{\@caprm}{\@caprm[u]}}%
+\def\@caprm[#1]{%
+  \in@caprmtrue%
+  \@tempcnta="41\relax%
+  \@tempcntb="7041\relax%
+  \loop\ifnum\@tempcnta<"5B\relax%
+    \mathcode\@tempcnta=\@tempcntb%
+    \advance\@tempcnta by1\relax%
+    \advance\@tempcntb by1\relax%
+  \repeat
+  \if u#1\else\if l#1\relax
+  \@tempcnta="61\relax%
+  \@tempcntb="7061\relax%
+  \loop\ifnum\@tempcnta<"7B\relax%
+    \mathcode\@tempcnta=\@tempcntb%
+    \advance\@tempcnta by1\relax%
+    \advance\@tempcntb by1\relax%
+  \repeat
+  \else\if o#1\relax\in@caprmfalse
+  \@tempcnta="41\relax%
+  \@tempcntb="7141\relax%
+  \loop\ifnum\@tempcnta<"5B\relax%
+    \mathcode\@tempcnta=\@tempcntb%
+    \advance\@tempcnta by1\relax%
+    \advance\@tempcntb by1\relax%
+  \repeat
+  \@tempcnta="61\relax%
+  \@tempcntb="7161\relax%
+  \loop\ifnum\@tempcnta<"7B\relax%
+    \mathcode\@tempcnta=\@tempcntb%
+    \advance\@tempcnta by1\relax%
+    \advance\@tempcntb by1\relax%
+  \repeat
+  \fi\fi\fi
+  }%
+\def\endcaprm{\in@caprmfalse\@ignoretrue}%
+
+\newcommand{\mathRM}[1]{{\caprm\ensuremath{#1}}}%
+
+%%% $BB@;z!J?t<0%b!<%I!K(B
+%%%
+\@ifundefined{bm}{%
+  \DeclareRobustCommand\bm[1]{{\def\bm@style{}\boldsymbol{#1}}}%
+}{}%
+% \let\bm\boldsymbol}{}
+
+
+% \fboxnil#1\nil
+%   enumerate $B4D6-$G(B \fbox $BIU$N%J%s%P%j%s%0(B
+\def\fboxnil#1\nil{\fbox{#1}}
+%
+% getflext#1#2#3
+%   #1: $B%U%!%$%kL>!J%Q%9L>!$%N!<%I!$3HD%;R!K(B
+%   #2: $B%Q%9L>!\%N!<%I(B
+%   #3: $B3HD%;R(B
+%
+\def\getflext#1#2#3{%
+  \edef\gf@n{0}%
+  \edef\gf@i{0}%
+  \hairetusyokika{gf@s}%
+  \expandafter\@tfor\expandafter\gf@c\expandafter:\expandafter=#1\do{%
+    \Incr\gf@i
+    \edefhairetu{gf@s}{\gf@i}{\gf@c}%
+    \if .\gf@c\edef\gf@n{\gf@i}%
+    \else\if /\gf@c\edef\gf@n{0}%
+    \fi\fi
+  }%
+  \edef\gf@sN{\gf@i}%
+  \ifnum\gf@n=\z@
+    \edef#2{#1}%
+    \edef#3{}%
+  \else
+    \edef#2{}%
+    \Ifor\gf@i{1}{\gf@n}\Do{%
+      \edefappend#2{\hairetu{gf@s}{\gf@i}}%
+    }%
+    \Incr\gf@i
+    \edef#3{}%
+    \Ifor*\gf@j\gf@i\gf@sN\Do{%
+      \edefappend#3{\hairetu{gf@s}{\gf@j}}%
+    }%
+  \fi
+}%
+%\def\getflext#1#2#3{%
+%  \csvhairetu*[.]{#1}{node@ext}%
+%  \edef#2{\hairetu{node@ext}{1}}%
+%  \ifnum\node@extN=\@ne
+%    \edef#3{}%
+%  \else
+%    \edef#3{\hairetu{node@ext}{\node@extN}}%
+%    \Ifor\node@ext@i{2}{\node@extN}\Do{%
+%      \edefappend#2{.\hairetu{node@ext}{\node@ext@i}}%
+%    }%
+%  \fi
+%\ignorespaces
+%}%
+%
+%%% GIF $B%U%!%$%k<h$j9~$_(B
+%%% \inputgif#1#2
+%%%     #1 : $B=D%5%$%:(B
+%%%     #2 : gif $B%U%!%$%kL>!J3HD%;R$J$7!K(B
+%
+\def\getflnode#1#2{%
+  \Cfor{\strsep{#1}{/}\fl@path\fl@node}{\not\equal\fl@node\empty}{%
+    \strsep\fl@node{/}\fl@path\fl@node}\do{%
+    }\strsep{\fl@path}{.}#2\@ext}
+%    \edef\innode{1}\edef\n@de{}%
+%    \@tfor\@c:=#1\do{\ifnum\innode>\z@\if\@c .\edef\innode{0}\else
+%        \if\@c /\edef\n@de{}\else
+%        \edef\n@de{\n@de\@c}\fi\fi\fi}%
+%    \edef#2{\n@de}}%
+
+\newcommand{\inputgif}[2]{}%
+\newcommand{\inputans}{%
+        \IfFileExists{\jobname afig.tex}{%
+            \vspace{.5ex}\par\hfill\kaitou{\input{\jobname afig}}}{}%
+
+}%
+%
+%%% $B;YCl(B
+%%% \sityuu{$B9b$5(B}
+%%%
+\def\sityuu{\@ifnextchar[{\@sityuu}{\@sityuu[0zh]}}
+\def\@sityuu[#1]#2{\vrule width\z@ height #2 depth #1}
+%\newcommand{\sityuu}[2][0zh]{\vrule width\z@ height #2 depth #1}
+%
+%
+% $B%?%9%-(B
+\newcommand{\tasukikata}{0}%
+\newcommand{\tasukimozihaiti}{rrrcr}
+%\def\Tasukimozihaiti#1{\edef\tasukimozihaiti{{#1}}}
+\def\tasuki{\@ifnextchar[{\@tasuki}{\@tasuki[\empty]}}%
+\def\@tasuki[#1]#2#3#4#5{{%
+\unitlength\baselineskip
+\ifx l#1\@@tasuki{#2}{#3}{#4}{#5}\else
+\@tasuki@{#2}{#3}{#4}{#5}\fi}}%
+\def\@@tasuki#1#2#3#4{%
+\begin{array}{rrr}
+#1 & & #3\\
+#2 &\begin{picture}(2,0)(0,-.2)%
+        \put(0,0){\line(2,1){2}}%
+        \put(0,1){\line(2,-1){2}}%
+        \end{picture}%
+& #4
+\end{array}}%
+\def\@tasuki@#1#2#3#4{%
+\IMul{#2}{#3}\@ue
+\IMul{#1}{#4}\@sita
+\IMul{#1}{#2}\@hidari%  added
+\IMul{#3}{#4}\@migi%    added
+\IAdd\@ue\@sita\@tasukiwa
+\ifnum\tasukikata=\z@\def\tasuki@line{\cline{5-5}}\else
+\def\tasuki@line{\hline}\fi
+%\expandafter\array\tasukimozihaiti
+\begin{EMarray}{\tasukimozihaiti}
+#1 & & #3 & \longrightarrow & \@ue\\
+#2 &\begin{picture}(2,0)(0,-.2)%
+        \put(0,0){\line(2,1){2}}%
+        \put(0,1){\line(2,-1){2}}%
+        \end{picture}%
+        & #4 & \longrightarrow & \@sita\\\tasuki@line
+\ifnum\tasukikata=\tw@\@hidari\fi&& \ifnum\tasukikata=\tw@\@migi\fi
+&& \@tasukiwa
+\end{EMarray}}%
+
+% $BC;$$$?$9$-(B
+\def\stasuki{\@ifnextchar[{\@stasuki}{\@stasuki[\empty]}}%
+\def\@stasuki[#1]#2#3#4#5{{%
+\unitlength\baselineskip
+\ifx l#1\@@stasuki{#2}{#3}{#4}{#5}\else
+\@stasuki@{#2}{#3}{#4}{#5}\fi}}%
+\def\@@stasuki#1#2#3#4{%
+\begin{array}{rrr}
+#1 & & #3\\
+#2 &\begin{picture}(1,0)(0,-.2)%
+        \put(0,0){\line(1,1){1}}%
+        \put(0,1){\line(1,-1){1}}%
+        \end{picture}%
+& #4
+\end{array}}%
+\def\@stasuki@#1#2#3#4{%
+\IMul{#2}{#3}\@ue
+\IMul{#1}{#4}\@sita
+\IMul{#1}{#2}\@hidari%  added
+\IMul{#3}{#4}\@migi%    added
+\IAdd\@ue\@sita\@stasukiwa
+\ifnum\tasukikata=\z@\def\stasuki@line{\cline{5-5}}\else
+\def\stasuki@line{\hline}\fi
+%\expandafter\array\tasukimozihaiti
+\begin{EMarray}{\tasukimozihaiti}
+#1 & & #3 & \longrightarrow & \@ue\\
+#2 &\begin{picture}(1,0)(0,-.2)%
+        \put(0,0){\line(1,1){1}}%
+        \put(0,1){\line(1,-1){1}}%
+        \end{picture}%
+        & #4 & \longrightarrow & \@sita\\\stasuki@line
+\ifnum\tasukikata=\tw@\@hidari\fi&& \ifnum\tasukikata=\tw@\@migi\fi
+&& \@stasukiwa
+\end{EMarray}}%
+%
+\def\Tasuki#1#2{\@ifnextchar[{\@Tasuki{#1}{#2}}{%
+  \@Tasuki{#1}{#2}[\empty]}}
+\def\@Tasuki#1#2[#3]#4#5{\@ifnextchar[{%
+  \@@Tasuki{#1}{#2}[#3]{#4}{#5}}{%
+  \@@Tasuki{#1}{#2}[#3]{#4}{#5}[\empty]}}
+\def\@@Tasuki#1#2[#3]#4#5[#6]#7#8#9{%
+\unitlength\baselineskip
+\ifnum\tasukikata=\z@\def\tasuki@line{\cline{5-5}}\else
+\def\tasuki@line{\hline}\fi
+%\expandafter\array\tasukimozihaiti
+\begin{EMarray}{\tasukimozihaiti}
+#1 & & #4 & \longrightarrow & #7\\
+#2 &\begin{picture}(2,0)(0,-.2)%
+        \put(0,0){\line(2,1){2}}%
+        \put(0,1){\line(2,-1){2}}%
+        \end{picture}%
+     & #5 & \longrightarrow & #8\\\tasuki@line
+#3 & & #6 &                 & #9
+%\endarray
+\end{EMarray}}
+%
+\def\sTasuki#1#2{\@ifnextchar[{\@sTasuki{#1}{#2}}{%
+  \@sTasuki{#1}{#2}[\empty]}}
+\def\@sTasuki#1#2[#3]#4#5{\@ifnextchar[{%
+  \@@sTasuki{#1}{#2}[#3]{#4}{#5}}{%
+  \@@sTasuki{#1}{#2}[#3]{#4}{#5}[\empty]}}
+\def\@@sTasuki#1#2[#3]#4#5[#6]#7#8#9{%
+\unitlength\baselineskip
+\ifnum\tasukikata=\z@\def\tasuki@line{\cline{5-5}}\else
+\def\tasuki@line{\hline}\fi
+%\expandafter\array\tasukimozihaiti
+\begin{EMarray}{\tasukimozihaiti}
+#1 & & #4 & \longrightarrow & #7\\
+#2 &\begin{picture}(1,0)(0,-.2)%
+        \put(0,0){\line(1,1){1}}%
+        \put(0,1){\line(1,-1){1}}%
+        \end{picture}%
+     & #5 & \longrightarrow & #8\\\tasuki@line
+#3 & & #6 &                 & #9
+%\endarray
+\end{EMarray}}
+%
+%
+\def\dumypar{\@ifstar{\edef\dumypar@a{1}\@dumypar}{\edef\dumypar@a{0}\@dumypar}}
+\def\@dumypar{\@ifnextchar[{\@@dumypar}{\@@dumypar[\empty]}}
+\def\@@dumypar[#1]{{\leavevmode\@tempdima=-\baselineskip
+  \ifx\empty #1\else\setlength{\@tempdimb}{#1}\advance\@tempdima\@tempdimb\fi
+  \vspace{\@tempdima}%
+  \ifnum\dumypar@a=\z@\par\fi}}
+%
+% $B%U%!%$%k=hM}(B
+\newread\fileophndl
+%
+\edef\EMATH@DIR{}
+\edef\Perl@Name{perl}
+%
+\def\setEMATHDIR#1{\edef\EMATH@DIR{#1}}%
+\def\setPerlName#1{\edef\Perl@Name{#1}%
+%  \expandafter\edef\csname Perl@Name@ii\endcsname{#1ii}%
+}%
+\def\setPerlNameE#1{\edef\Perl@NameE{#1}%
+%  \expandafter\edef\csname Perl@Name@Eii\endcsname{#1Eii}%
+}%
+%
+\tailchar\@currdir\pathnm@tmp\kugirisi
+\def\getTEXMFDIR#1{%
+  \immediate\EMsystem{kpsewhich -expand-var $TEXMFMAIN >temp.tmp}%
+  \openin\fileophndl=temp.tmp
+  \read\fileophndl to \getTEXMFDIR@t
+  \trim\getTEXMFDIR@t\to#1\relax
+  \closein\fileophndl\delfile{temp.tmp}}
+\def\getEMATHDIR#1{\if /\kugirisi
+  \immediate\EMsystem{kpsewhich -format=tex emath.sty >temp.tmp}%
+  \openin\fileophndl=temp.tmp
+  \read\fileophndl to \getEMATHDIR@t
+  \trim\getEMATHDIR@t\to\getEMATHDIR@tt
+  \getpathname\getEMATHDIR@tt#1\relax
+  \closein\fileophndl\delfile{temp.tmp}\fi}
+\def\getpathname#1#2{%
+  \edef\pathnm@{}%
+  \edef\pathnm@@{}%
+  \expandafter\@tfor\expandafter\@c\expandafter:\expandafter=#1\do{%
+    \if\@c\kugirisi\edefappend\pathnm@{\pathnm@@}\edef\pathnm@@{\kugirisi}\else
+      \edefappend\pathnm@@{\@c}\fi
+  }%
+  \edef#2{\pathnm@}}
+%
+% $B<+A3D9$N(B parbox
+%
+\def\EMparbox{\@ifnextchar<{\@EMparbox}{\@EMparbox<\empty>}}
+\def\@EMparbox<#1>{\@ifnextchar[{\@@EMparbox<#1>}{\@@EMparbox<#1>[c]}}
+\long\def\@@EMparbox<#1>[#2]#3{%
+  \leavevmode%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \@ifundefined{hakobanpush}{}{\hakobanpush}%
+%  \setbox0=\hbox{#3}%
+%  \edef\EMparboxwidth{\the\wd0}%
+  \Settowidth{\@tempdima}{#3}%
+  \edef\EMparboxwidth{\the\@tempdima}%
+%\typeout{EMparboxwidth=\EMparboxwidth}%
+  \@ifundefined{hakobanpush}{}{\hakobanpop}%
+  \ifthenelse{\equal{#1}\empty}{%
+    \parbox[#2]{\@tempdima}{\leavevmode #3}%
+  }{%
+    \parbox<#1>[#2]{\@tempdima}{\leavevmode #3}%
+  }%
+  \ignorespaces
+}
+%
+\def\checkedaenum#1{%
+  \@ifundefined{ifedaenum}{}{%
+  \ifedaenum
+    \ifuseitem
+      \errmessage{can not use #1 in edaenumerate-environment}
+    \fi
+  \fi}}%
+%
+% \lastlinewidth
+%QA#53425
+%
+\def\lastlinewidth#1{{%
+   \predisplaypenalty=10000
+\@ifundefined{EM@normallineskip}{%
+   \abovedisplayskip=3\p@ \abovedisplayshortskip=3\p@
+}{%
+   \abovedisplayskip=\z@ \abovedisplayshortskip=\z@
+}%
+   \belowdisplayskip=0pt \belowdisplayshortskip=0pt
+   $$\dimen0=\predisplaysize \advance\dimen0 by -2em\relax
+    \xdef#1{\the\dimen0}$$\par
+   \nobreak \vskip-2\baselineskip
+}}%
+%
+\let\ltxbecause\because
+\def\because{\@ifstar{$B"h(B}{\ltxbecause}}%
+\let\ltxtherefore\therefore
+\def\therefore{\@ifstar{$B!h(B}{\ltxtherefore}}%
+%
+\edef\EM@workfiledir{\@currdir}%
+\def\EMworkfiledir#1{%
+  \edef\EM@workfiledir@{#1}%
+  \edef\EM@workfiledir{#1\kugirisi}%
+  \edef\EMps@filedir{#1\kugirisi}%
+  \edef\perl@datafiledir{#1\kugirisi}%
+}%
+% $B%U%!%$%k$N:o=|(B
+\def\@delfile#1{%
+  \@ifundefined{emathpl}{\relax}{%
+    \IfFileExists{#1}{\immediate\EMsystem{del #1}}{\relax}}}
+\def\delfile#1{\relax}
+
+% $B%?%$%`%9%?%s%W(B
+% \gettimestamp#1#2#3
+%   #1 $B$GM?$($i$l$?%U%!%$%k$N%?%$%`%9%?%s%W$N$&$A(B
+%   #2 $B$KF|IU(B
+%   #3 $B$K;~9o$rJV$9!%(B
+%
+\def\gettimestamp#1#2#3{%
+  \edef\@flnm{timestmp.@@@}
+% \immediate\EMsystem{%
+%  dir #1 | jgawk -f \EMATH@DIR /timestmp.awk > \@flnm}%
+  \immediate\write18{%
+%    dir #1 | jgawk '/[0-9]+-[0-9]+-[0-9]+/{print $4 "," $5}' > \@flnm}%
+    dir #1  > \@flnm}%
+  \openin\fileophndl=\@flnm
+  \read\fileophndl to \gettimestamp@a
+  \closein\fileophndl\delfile{\@flnm}%
+  \strsep\gettimestamp@a{,}#2#3}
+
+
+%\IfFileExists{emathO.sty}{\usepackage{emathO}}{}%
+
+%\getEMATHDIR\EMATH@DIR
+
+%\AtBeginDocument{\edef\mainjobname{\jobname}}
+%
+%\@ifundefined{em@fonts}{%
+%%  \let\degree\EMdegree
+%}{%
+%  \ifnum\em@fonts=4\relax
+%    \let\cmsum\sum
+%    \let\cmintop\intop
+%    \def\cmint{\cmintop\nolimits}
+%    \RequirePackage{mathabx}%
+%%    \DeclareMathRadical{\sqrtsign}        {mathx}{"60}{mathx}{"61}
+%%    \DeclareRobustCommand\sqrt{\@ifnextchar[\@sqrt\sqrtsign}
+%    \bekutorusityuu{\vrule height .75zh width \z@}%
+%  \else
+%%    \let\degree\EMdegree
+%  \fi
+%}%
+%
+\ifpapersize
+  \if@jsclasses\else
+    \setlength{\@tempdima}{\paperwidth}
+    \setlength{\@tempdimb}{\paperheight}
+    \iftombow
+      \advance \@tempdima 2in
+      \advance \@tempdimb 2in
+    \fi
+    \AtBeginDvi{\special{papersize=\the\@tempdima,\the\@tempdimb}}
+  \fi
+\fi
+%%
+%%\chardef\@@percent=`\%
+%%\chardef\@perl@sharp=`\#
+%%\chardef\@lbrace=`\{
+%%\chardef\@rbrace=`\}
+%\bgroup
+%\catcode37=11
+%\gdef\@percent{%}
+%\egroup
+%\bgroup
+%\catcode35=11
+%\gdef\perl@sharp{#}
+%\egroup
+%\bgroup
+%\catcode123=11
+%\catcode40=1
+%\catcode41=2
+%\gdef\@lbrace({)
+%\egroup
+%\bgroup
+%\catcode125=11
+%\catcode40=1
+%\catcode41=2
+%\gdef\@rbrace(})
+%\egroup
+%\let\EMpercentchar\@percent
+%
+  \@ifundefined{em@fonts}{%
+      \let\kaku\EMkaku
+      \let\sankaku\EMsankaku
+      \let\heikou\EMheikou
+      \let\syutten\emsyutten
+      \let\syuttenC\emsyuttenC
+%      \let\Maru\EMMaru
+      \let\Maru\EMMaru
+      \let\mathruby\EMmathruby
+      \let\mathrubystrut\EMmathrubystrut
+      \let\vabs\zettaiti
+  }{%
+    \ifnum\em@fonts=5\relax
+      \let\kaku\EMkaku
+      \let\sankaku\EMsankaku
+      \let\heikou\EMheikou
+      \let\syutten\emsyutten
+      \let\syuttenC\emsyuttenC
+%      \let\Maru\EMMaru
+      \let\Maru\EMMaru
+      \let\mathruby\EMmathruby
+      \let\mathrubystrut\EMmathrubystrut
+      \let\vabs\zettaiti
+    \else
+      \let\kaku\EMkaku
+      \let\sankaku\EMsankaku
+      \let\heikou\EMheikou
+      \let\syutten\emsyutten
+      \let\Maru\EMMaru
+      \let\mathruby\EMmathruby
+      \let\mathrubystrut\EMmathrubystrut
+      \let\vabs\zettaiti
+    \fi
+  }%
+%
+\let\everyzahyou\relax
+%
+\@ifundefined{EMsystem}{\def\EMsystem#1{\relax}}{}%
+%
+%\let\equation\gather
+%\let\endequation\endgather
+%
+\AtBeginDocument{%
+  \def\EM@begindocument{}%
+  \@ifundefined{degree}{\let\degree\EMdegree}{}%
+%  \@ifundefined{Maru}{\let\Maru\EMMaru}{}%
+  \@ifundefined{substitute}{\let\substitute\okikae}{}%
+  \@ifundefined{nagamaru}{%
+    \@ifundefined{emNagamaru}{%
+      \let\nagamaru\EMnagamaru
+    }{%
+      \let\nagamaru\emNagamaru
+    }%
+  }{%
+%    \end{document}%
+  }%
+  \@ifundefined{conjugate}{\let\conjugate\kyouyaku}{}%
+  \@ifundefined{conj}{\let\conj\kyouyaku}{}%
+  \@ifundefined{Fld@menulength}{%
+  }{%
+    \@latex@warning{emath $B$H(B hyperref $B$H$NJ;MQ$O!$86B'$H$7$F$G$-$^$;$s!#(B
+    $B0J2<4JN,2=$7$?BP1~$H$J$j$^$9!#(B}
+  }%
+  \@ifundefined{not@My}{%
+    \IfFileExists{emathMy.sty}{\RequirePackage{emathMy}}{}}{}%
+%
+%
+% $B1|B<@h@8$N(B okumacro.sty $B$h$j<ZMQ(B
+%
+\@ifundefined{MARU}{%
+\newcommand{\MARU}[1]{{%
+    \ooalign{\hfil
+      \@ifundefined{scalebox}{%
+        #1\/\hfil\crcr\raise.167ex}{\raise.1zw\hbox{\scalebox{0.8}{#1\/}}\hfil\crcr\raise.1zw}%
+      \hbox{\fontencoding{OMS}\fontfamily{cmsy}\fontseries{m}\fontshape{n}\selectfont
+        \char"0D}}}}}{}%
+%
+\@ifundefined{EM@normallineskip}{%
+  \advance\abovedisplayskip-3\p@
+  \advance\belowdisplayskip-3\p@
+  \abovedisplayshortskip3\p@ plus 2\p@ minus 1\p@
+%
+  \let\EMsmall\small
+  \def\small{%
+    \EMsmall
+    \advance\abovedisplayskip-2.5\p@
+    \advance\belowdisplayskip-2.5\p@
+    \abovedisplayshortskip3\p@ plus 2\p@ minus 1\p@
+  }%
+}{}%
+}%
+%\newenvironment{jquote}
+%               {\begin{list}{}{\setlength{\leftmargin}{4zw}}%
+%                \item[]\relax}
+%               {\end{list}}
+%
+\def\keisoku{%
+\AtBeginDocument{\calcval[s]{time}\keisokuhazime}
+\AtEndDocument{\calcval[s]{time}\keisokuowari
+\calcval[d]{\keisokuowari-\keisokuhazime}\ttt
+\typeout{$B=jMW;~4V!'(B\ttt}%
+}}
+\endinput
+%%% end of emath.sty

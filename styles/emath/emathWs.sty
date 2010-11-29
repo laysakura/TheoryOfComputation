@@ -1,0 +1,443 @@
+% emathWs.sty by tDB(CQB00260@nifty.ne.jp) 
+%   筆算形式の四則演算（小数点付き数）
+%
+% 加法 \Rtasizan<#1>#2#3
+% 減法 \Rhikizan<#1>#2#3
+% 乗法 \Rkakezan<#1>#2#3
+%       <#1>: <M> を指定すると，問題のみを表示するオプション引数
+%           : <A> を指定すると，解答を巻末に
+%        #2, #3 : 実数
+% 除法 \Rwarizan[#1]<#2>#3#4
+%       [#1] : 小数以下，桁数の追加
+%       <#2> : <M> を指定すると，問題のみを表示するオプション引数
+%            : <A> を指定すると，解答を巻末に
+%       #3   : 被除数（実数）
+%       #4   : 除数（整数）
+%
+  \ProvidesPackage{emathWs}[2010/02/25 v 0.09 beta]%
+%
+\RequirePackage{fp-basic}
+\RequirePackage{fp-snap}
+\FPmessagesfalse
+%
+\RequirePackage{emath}
+%
+%\@ifundefined{zyo@hndl}{\newwrite\zyo@hndl}{}%
+\@ifundefined{em@whndl}{\newwrite\em@whndl}{}%
+\def\hissankakko{\ensuremath{\Big )\,}}%
+\def\warikakko{\hissankakko}%
+%
+\def\Rtasizan{\@ifnextchar<{\Rtasizan@}{\@Rtasizan<\empty>}}
+\def\Rtasizan@<#1>#2#3{%
+  \ifx #1A\relax
+      \immediate\openout\em@whndl=zyo.tmp%
+      \immediate\write\em@whndl{#2}%
+      \immediate\write\em@whndl{+}%
+      \immediate\write\em@whndl{#3}%
+      \immediate\write\em@whndl{%
+        $\string\kaitou {\string\Rtasizan {#2}{#3}}$ }%
+      \immediate\closeout\em@whndl%
+            \input{zyo.tmp}
+  \else\@Rtasizan<#1>{#2}{#3}
+  \fi
+}%
+\def\@Rtasizan<#1>#2#3{%
+  \strsep{#2}{.}\a@seisubu\a@syosubu
+  \strsep{#3}{.}\b@seisubu\b@syosubu
+  \FPadd\@tmp{#2}{#3}%
+  \FPclip\@ans\@tmp
+  \strsep\@ans{.}\c@seisubu\c@syosubu
+  \Strlen\a@seisubu\alen@seisubu
+  \Strlen\a@syosubu\alen@syosubu
+  \Strlen\b@syosubu\blen@syosubu
+  \Strlen\b@seisubu\blen@seisubu
+  \Strlen\c@syosubu\clen@syosubu
+  \Strlen\c@seisubu\clen@seisubu
+  \IMax{\alen@seisubu,\blen@seisubu,\clen@seisubu}\len@seisubu%
+  \IMax{\alen@syosubu,\blen@syosubu,\clen@syosubu}\len@syosubu%
+  \IAdd\len@seisubu\len@syosubu\@ketasu
+  \ifnum\len@syosubu>\z@\Incr\@ketasu\fi\IAdd\@ketasu{1}\@ransu
+  \ensuremath{%
+  \begin{array}[t]{*{\@ransu}{@{\,}l}}
+    \emW@dpiline{#2}\\
+    +\hissankakko\emW@dpiline{#3}\\\hline
+  \ifthenelse{\equal{#1}{M}}{}{\emW@dpiline{\@ans}}
+  \end{array}}%
+}
+%
+\def\Rhikizan{\@ifnextchar<{\Rhikizan@}{\@Rhikizan<\empty>}}
+\def\Rhikizan@<#1>#2#3{%
+  \ifx #1A\relax
+      \immediate\openout\em@whndl=zyo.tmp%
+      \immediate\write\em@whndl{#2}%
+      \immediate\write\em@whndl{-}%
+      \immediate\write\em@whndl{#3}%
+      \immediate\write\em@whndl{%
+        $\string\kaitou {\string\Rhikizan {#2}{#3}}$ }%
+      \immediate\closeout\em@whndl%
+            \input{zyo.tmp}
+  \else\@Rhikizan<#1>{#2}{#3}
+  \fi
+}%
+\def\@Rhikizan<#1>#2#3{%
+  \FPsub\@tmp{#2}{#3}%
+  \FPclip\@ans\@tmp
+  \strsep{#2}{.}\a@seisubu\a@syosubu
+  \strsep{#3}{.}\b@seisubu\b@syosubu
+  \strsep\@ans{.}\c@seisubu\c@syosubu
+  \Strlen\a@seisubu\alen@seisubu
+  \Strlen\a@syosubu\alen@syosubu
+  \Strlen\b@syosubu\blen@syosubu
+  \Strlen\b@seisubu\blen@seisubu
+  \Strlen\c@syosubu\clen@syosubu
+  \Strlen\c@seisubu\clen@seisubu
+  \IMax{\alen@seisubu,\blen@seisubu,\clen@seisubu}\len@seisubu%
+  \IMax{\alen@syosubu,\blen@syosubu,\clen@syosubu}\len@syosubu%
+  \IAdd\len@seisubu\len@syosubu\@ketasu
+  \ifnum\len@syosubu>\z@\Incr\@ketasu\fi\IAdd\@ketasu{1}\@ransu
+  \ensuremath{%
+  \begin{array}[t]{*{\@ransu}{@{\,}l}}
+    \emW@dpiline{#2}\\
+    -\hissankakko\emW@dpiline{#3}\\\hline
+  \ifthenelse{\equal{#1}{M}}{}{\emW@dpiline{\@ans}}
+  \end{array}}%
+}
+%
+    \def\emW@dpiline#1{%
+      \strsep{#1}{.}\@seisubu\@syosubu
+      \xdef\@seisubu{\@seisubu}%
+      \xdef\@syosubu{\@syosubu}%
+        \Strlen\@seisubu\l@seisu\xdef\l@seisu{\l@seisu}%
+      \Strlen\@syosubu\l@syosu\xdef\l@syosu{\l@syosu}%
+      \Cfor{\xdef\@i{\len@seisubu}}{\@i>\z@}{\xDecr\@i}\do{%
+        &\ifnum\@i>\l@seisu\else
+          \xheadchar\@seisubu\@h\@seisubu\@h\fi
+      }%
+      &\ifnum\l@syosu>\z@ .\fi
+      \Cfor{\xdef\@i{0}}{\@i<\len@syosubu}{}\do{%
+        \xIncr\@i
+        &\ifnum\@i>\l@syosu\else
+          \xheadchar\@syosubu\@h\@syosubu\@h\fi
+      }%
+    }%
+%
+\def\Rkakezan{\@ifnextchar<{\Rkakezan@}{\@Rkakezan<\empty>}}
+\def\Rkakezan@<#1>#2#3{%
+  \ifx #1A\relax
+      \immediate\openout\em@whndl=zyo.tmp%
+      \immediate\write\em@whndl{#2}%
+      \immediate\write\em@whndl{\times}%
+      \immediate\write\em@whndl{#3}%
+      \immediate\write\em@whndl{%
+        $\string\kaitou {\string\Rkakezan {#2}{#3}}$ }%
+      \immediate\closeout\em@whndl%
+      \input{zyo.tmp}
+  \else\@Rkakezan<#1>{#2}{#3}
+  \fi
+}%
+\def\@Rkakezan<#1>#2#3{%
+  \FPmul\@tmp{#2}{#3}%
+  \FPclip\@ans\@tmp
+  \strsep{#2}{.}\a@seisubu\a@syosubu
+  \strsep{#3}{.}\b@seisubu\b@syosubu
+  \strsep\@ans{.}\c@seisubu\c@syosubu
+  \Strlen\a@seisubu\alen@seisubu
+  \Strlen\a@syosubu\alen@syosubu
+  \Strlen\b@syosubu\blen@syosubu
+  \Strlen\b@seisubu\blen@seisubu
+  \Strlen\c@syosubu\clen@syosubu
+  \Strlen\c@seisubu\clen@seisubu
+  \IMax{\alen@seisubu,\blen@seisubu,\clen@seisubu}\len@seisubu%
+  \IMax{\alen@syosubu,\blen@syosubu,\clen@syosubu}\len@syosubu%
+  \IAdd\alen@syosubu\blen@syosubu\@ketasu
+  \IAdd\@ketasu\clen@seisubu\@ketasu
+  \IAdd\@ketasu{1}\@ransu
+  \edef\@ikou{\a@seisubu\a@syosubu}%
+  \xdef\@migiaki{0}%
+  \edef\save@blskip{\the\baselineskip}%
+  \ensuremath{%
+  \begin{array}[t]{*{\@ransu}{@{\,}l}}
+    \emW@rdpiline{#2}\\
+    \times\hissankakko\emW@rdpiline{#3}\\\hline
+    \Strsep{#3}{.}\Rk@tmp@a\Rk@tmp@b
+    \edef\Rk@tmp@al{0}%
+    \ifthenelse{\equal{\Rk@tmp@a}{0}}{}{%
+%     \strlen\Rk@tmp@a\Rk@tmp@al
+      \expandafter\@tfor\expandafter\c@\expandafter:\expandafter=\Rk@tmp@a\do{%
+        \ifnum\c@>\z@\Incr\Rk@tmp@al\fi
+      }%
+    }%
+%   \strlen\Rk@tmp@b\Rk@tmp@bl
+    \edef\Rk@tmp@bl{0}%
+    \expandafter\@tfor\expandafter\c@\expandafter:\expandafter=\Rk@tmp@b\do{%
+        \ifnum\c@>\z@\Incr\Rk@tmp@bl\fi
+    }%
+    \IAddself\Rk@tmp@al\Rk@tmp@bl
+    \xdef\Rkakezan@l{\Rk@tmp@al}%
+    \ifthenelse{\equal{#1}{M}}{}{%
+        \Cfor{\tailchar{#3}\@rmn\@tl\xdef\@rmn{\@rmn}}{%
+          \not\equal\@tl\empty}{%
+          \tailchar\@rmn\@@rmn\@tl\xdef\@rmn{\@@rmn}\xdef\@tl{\@tl}}\do{%
+          \ifthenelse{\equal{\@tl}{.}}{}{%
+            \ifthenelse{\@tl=0}{}{%
+            \FPmul\@@tmp\@ikou\@tl
+            \FPclip\@tmp\@@tmp
+            \ifthenelse{\Rkakezan@l=\@ne}{}{\emW@rdpiline[\@migiaki]\@tmp\\}}%
+            \xIncr\@migiaki
+        }}%
+        \\[-\save@blskip]\hline
+        \IAdd\alen@syosubu\blen@syosubu\@migiaki
+        \ISub\@migiaki\clen@syosubu\@migiaki
+        \emW@rdpiline[\@migiaki]{\@ans}
+    }%
+  \end{array}}%
+}
+%
+    \def\emW@rdpiline{\@ifnextchar[{\@emW@rdpiline}{\@emW@rdpiline[0]}}
+    \def\@emW@rdpiline[#1]#2{%
+      \strsep{#2}{.}\@seisubu\@syosubu
+      \Strlen\@seisubu\l@seisu
+      \Strlen\@syosubu\l@syosu
+      \xIAdd\l@seisu\l@syosu\@ln
+      \ISub\@ketasu{#1}\@@ketasu
+      \Cfor{\xdef\@i{\@@ketasu}\xdef\@str{#2}}{\@i>\z@}{\xDecr\@i}\do{%
+        \ifthenelse{\@i>\@ln}{&}{%
+          \xheadchar\@str\@h\@str
+          \ifthenelse{\equal{\@h}{.}}{.&\xheadchar\@str\@h\@str\@h}{%
+            \phantom{.}&\@h}%
+        }%
+      }%
+    }%
+%
+    \def\emW@zdpiline#1{%
+      \strsep{#1}{.}\@seisubu\@syosubu
+      \xdef\@seisubu{\@seisubu}%
+      \xdef\@syosubu{\@syosubu}%
+      \Strlen\@seisubu\l@seisu\xdef\l@seisu{\l@seisu}%
+      \Strlen\@syosubu\l@syosu\xdef\l@syosu{\l@syosu}%
+      \Cfor{\xdef\@i{\l@seisu}}{\@i>\z@}{\xDecr\@i}\do{%
+        &\ifnum\@i>\l@seisu\else
+          \xheadchar\@seisubu\@h\@seisubu\@h\fi
+      }%
+      \xdef\stop@pos{0}%
+      \Cfor{\xdef\@i{0}\xdef\@@syosubu{\@syosubu}}{\@i<\l@syosu}{%
+      }\do{%
+        \xIncr\@i
+        \ifnum\@i>\l@syosu\else
+          \xheadchar\@@syosubu\@h\@@syosubu
+          \ifnum\@h=\z@\else\xdef\stop@pos{\@i}\fi
+        \fi
+      }%
+      \ifnum\stop@pos>\z@ .\fi
+      \Cfor{\xdef\@i{0}}{\@i<\stop@pos}{}\do{%
+        \xIncr\@i
+        &\ifnum\@i>\l@syosu\else
+          \xheadchar\@syosubu\@h\@syosubu\@h\fi
+      }%
+    }%
+%
+%
+%
+\edef\prQRflg{0}%
+\def\QR@format{%
+    \\[-.75\baselineskip]%
+    \hspace*{1em}%
+    \wariQ~\cdots~\wariR
+}%
+\def\QRformat#1{\def\QR@format{#1}}
+%
+\def\Rwarizan{\edef\M@flg{0}\@ifnextchar[{\@Rwarizan}{\@Rwarizan[0]}}
+\def\@Rwarizan[#1]{\@ifnextchar<{\@@Rwarizan[#1]}{\@@Rwarizan[#1]<\empty>}}
+\def\@@Rwarizan[#1]<#2>#3#4{%
+  \ifx #2M\relax\def\M@flg{1}\@@@Rwarizan[#1]{#3}{#4}%
+  \else\ifx #2A\relax
+    \ensuremath{%
+      #3 \div #4
+      \ifnum #1=\z@
+      \else
+        \strsep{#3}{.}\a@seisubu\a@syosubu
+        \Strlen\a@syosubu\Rw@keta
+        \IAddself\Rw@keta{#1}%
+        （小数第\Rw@keta 位まで）
+      \fi
+    }%
+    \immediate\openout\em@whndl=zyo.tmp%
+    \immediate\write\em@whndl{%
+        $\string\kaitou {\string\Rwarizan[#1]{#3}{#4}}$ }%
+    \immediate\closeout\em@whndl%
+    \input{zyo.tmp}
+  \else\ifx #2D\relax
+    \ensuremath{%
+      #3 \div #4
+      \ifnum #1=\z@
+      \else
+        \strsep{#3}{.}\a@seisubu\a@syosubu
+        \Strlen\a@syosubu\Rw@keta
+        \IAddself\Rw@keta{#1}%
+        （小数第\Rw@keta 位まで）
+      \fi
+    }%
+    \immediate\openout\em@whndl=zyo.tmp%
+    \immediate\write\em@whndl{%
+        $\string\kaitou{\string\edef\string\prQRflg{1}\string\Rwarizan[#1]{#3}{#4}}$}%
+    \immediate\closeout\em@whndl%
+    \input{zyo.tmp}%
+  \else\ifx #2d\relax
+      \Rwarizan[#1]<M>{#3}{#4}%
+      \ifnum #1=\z@
+      \else
+        \strsep{#3}{.}\a@seisubu\a@syosubu
+        \Strlen\a@syosubu\Rw@keta
+        \IAddself\Rw@keta{#1}%
+        \\[-.75\baselineskip]（小数第\Rw@keta 位まで）
+      \fi
+    \immediate\openout\em@whndl=zyo.tmp%
+    \immediate\write\em@whndl{%
+        $\string\kaitou{\string\edef\string\prQRflg{1}\string\Rwarizan[#1]{#3}{#4}}$}%
+    \immediate\closeout\em@whndl%
+    \input{zyo.tmp}%
+  \else\ifx #2a\relax
+    \ensuremath{%
+      \ensuremath{\Rwarizan[#1]<M>{#3}{#4}}%
+      \ifnum #1=\z@
+      \else
+        \strsep{#3}{.}\a@seisubu\a@syosubu
+        \Strlen\a@syosubu\Rw@keta
+        \IAddself\Rw@keta{#1}%
+        \\[-.75\baselineskip]（小数第\Rw@keta 位まで）
+      \fi
+    }%
+    \immediate\openout\em@whndl=zyo.tmp%
+    \immediate\write\em@whndl{%
+        $\string\kaitou {\string\Rwarizan[#1]{#3}{#4}}$ }%
+    \immediate\closeout\em@whndl%
+    \input{zyo.tmp}
+  \else
+    \@@@Rwarizan[#1]{#3}{#4}%
+  \fi\fi\fi\fi\fi
+}%
+\def\@@@Rwarizan[#1]#2#3{%
+  \strsep{#2}{.}\a@seisubu\a@syosubu
+  \edef\tuika@keta{#1}%
+  \Cfor{\edef\Rw@i{0}}{\Rw@i<\tuika@keta}{}\do{%
+    \Incr\Rw@i
+    \edefappend\a@syosubu{0}%
+  }%
+  \edef\wari@a{\a@seisubu\a@syosubu}%
+  \mkstrbuf[hizyosuu@]\wari@a\hizyosuu@ketasuu
+  \Strlen\a@seisubu\alen@seisubu
+  \Strlen\a@syosubu\alen@syosubu
+  \FPdiv\@tmp{#2}{#3}%
+  \FPtrunc\@ans\@tmp\alen@syosubu
+  \strsep{\@ans}{.}\ans@seisubu\ans@syosubu
+  \edef\tmp@str{\ans@seisubu\ans@syosubu}%
+  \mkstrbuf[syou@]\tmp@str\syou@ketasuu
+  \Strlen\ans@seisubu\anslen@seisubu
+  \Strlen\ans@syosubu\anslen@syosubu
+  \IAdd\alen@seisubu\alen@syosubu\a@len
+  \Strlen{#3}\b@len
+  \IAdd\a@len\b@len\@ransu\Incr[2]\@ransu
+  \IAdd\b@len{2}\b@@len
+  \ISub\@ransu{1}\@ketasu
+  \ensuremath{%
+   \begin{array}[t]{@{}l*\@ketasu{@{\,}l@{\,}}}
+    \xISub\@ransu{1}\@ketasu
+    \ifthenelse{\M@flg=\z@}{%
+      \emW@rdpiline\@ans
+    }{\emW@rdpiline{}}%
+    \\\cline{\b@@len-\@ransu}
+    \xdef\@ketasu{\b@len}\emW@rdpiline{#3}%
+    \kern.25em&\warikakko
+    \xdef\@ketasu{\a@len}\emW@zdpiline{#2}\\
+    \ifthenelse{\M@flg=\z@}{%
+      \xdef\@migiaki{\syou@ketasuu}%
+      \ISub\hizyosuu@ketasuu\syou@ketasuu\keta@sa
+      \Cfor{\xdef\wari@c{}\xdef\i@a{0}}{\i@a<\keta@sa}{}\do{%
+        \xIncr\i@a
+        \xdef\wari@c{\wari@c\csname hizyosuu@\romannumeral\i@a\endcsname}%
+      }%
+      \xIncr\i@a
+      \xdef\wari@c{\wari@c\csname hizyosuu@\romannumeral\i@a\endcsname}%
+%\typeout{migiaki=\@migiaki}%
+      \Cfor{\xdef\i@q{1}}{\@migiaki>\z@}{}\do{%\headchar\tmp@str\@a\@b
+%\typeout{tmp@str=\tmp@str,wari@c=\wari@c}%
+%    \xdef\tmp@str{\@b}%
+        \xDecr\@migiaki
+        \ifthenelse{\csname syou@\romannumeral\i@q\endcsname=\z@}{\keta@rosi}{%
+        \xIMul{\csname syou@\romannumeral\i@q\endcsname}{#3}\tmp@b
+        \Cfor{\xdef\@c{\b@len}}{\@c>0}{\xDecr\@c}\do{&}%
+        &\emW@rdpiline[\@migiaki]\tmp@b\\\cline{\b@@len-\@ransu}%
+        \xISub\wari@c\tmp@b\wari@c
+        \keta@rosi
+        \Cfor{\xdef\@c{\b@len}}{\@c>0}{\xDecr\@c}\do{&}%
+        &
+        \emW@rdpiline[\@migiakii]\wari@c\\
+        }%
+      }%
+    }{}%
+  \end{array}
+  \ifthenelse{\prQRflg>\z@}{%
+    \edef\amari@{}%
+    \edef\tmp@s{\wari@c}%
+    \Ifor\i@val{0}\alen@syosubu\Do{%
+      \tailchar\tmp@s\tmp@a\tmp@b
+      \ifx\empty\tmp@b
+        \edeffrontappend\amari@{0}%
+      \else
+        \edeffrontappend\amari@{\tmp@b}%
+      \fi
+      \edef\tmp@s{\tmp@a}%
+    }%
+    \ifx\empty\tmp@s
+      \edeffrontappend\amari@{0.}%
+    \else
+      \edeffrontappend\amari@{\tmp@s.}%
+    \fi
+    \edef\wariQ{\@ans}%
+    \edef\wariR{\amari@}%
+    \QR@format
+  }{}%
+  }%
+}
+%
+\def\keta@rosi{%
+    \ifnum\@migiaki>\z@
+    \xIncr\i@a
+    \xIncr\i@q
+    \xdef\wari@c{\wari@c\csname hizyosuu@\romannumeral\i@a\endcsname}%
+    \Cfor{}{\i@q<\syou@ketasuu \and
+      \csname syou@\romannumeral\i@q\endcsname=\z@}{}\do{%
+      \xIncr\i@q
+      \xIncr\i@a
+      \xDecr\@migiaki
+      \xdef\wari@c{\wari@c\csname hizyosuu@\romannumeral\i@a\endcsname}%
+    }%
+    \xISub\@migiaki{1}\@migiakii
+    \mkstrbuf[keta@rosi@]\wari@c\keta@rosi@n
+    \Cfor{\edef\@i{0}\edef\@found{0}}{\@found=0 \and \@i<\keta@rosi@n}{}\do{%
+      \Incr\@i
+      \ifnum\csname keta@rosi@\romannumeral\@i\endcsname=\z@\else
+      \edef\@found{\@ne}\fi
+    }
+    \Cfor{\xdef\wari@c{}}{\not\@i>\keta@rosi@n}{\Incr\@i}\do{%
+      \xdef\wari@c{\wari@c\csname keta@rosi@\romannumeral\@i\endcsname}}%
+    \ifthenelse{\equal\wari@c{}}{\xdef\wari@c{0}}{}%
+    \fi
+}
+\let\tasizan\Rtasizan
+\let\hikizan\Rhikizan
+\let\kakezan\Rkakezan
+\let\warizan\Rwarizan
+\endinput
+%
+v 0.06β 2007/05/02
+  \warizan ---> \Rwarizan
+  \Iwarizan : [追加桁数]オプション
+% 0.07 2008/06/30
+%   \big) \Big) を \hissankakko に統一 (BBS #7182)
+% 0.08 2010/02/23
+%   乗数が1桁の場合 (BBS #8628)
+%   \warikakko (BBS #8636)
+% 0.09 2010/02/25
+%   \Rwarizan: ) 左の空き調整 (BBS #8660)
+%     <D> オプション

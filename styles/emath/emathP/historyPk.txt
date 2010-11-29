@@ -1,0 +1,117 @@
+% v 0.58 2001/05/19
+%     座標軸を描画しない Zahyou* 環境
+% v 0.59 2001/07/11
+%     \iiiHasen
+%     \Tensen, \iiiTensen を Hasen に変更
+%     \iiikuromaru
+%     Zahyou 環境に [Ex=...,Ey=...,Ez=...]
+%         単位ベクトルを変更するオプションを附加
+% v 0.60 2001/07/11
+%     \iiiArrowLine [#1]オプション附加
+% v 0.63 2001/10/03
+%     \syanuri@kankaku の初期値設定
+% v 0.64 2002/02/15
+%     \iiiBKinziOresen
+  v 0.65 2002/04/23
+      \def\O{(0,0,0)}を附加
+  v 0.66 2002/07/24
+      ロードオプションを有効に
+  v 0.67 emathPs.sty との調整
+  v 0.68 \iiiTakakkei
+  v 0.69 Zahyou環境のオプションキー Ex, Ey, Ezについて，
+         右辺値の頭にrを付けたときは，極形式とみなす。
+  v 0.70 描画領域をきちんと求める。
+  v 0.71 2003/02/18
+      \xRotvec, \yRotvec, \zRotvec
+        座標軸を回転軸とする回転
+  v 0.72 2003/02/27
+      \iiiHatchPolygon 斜線間隔の指定法のバグ修正
+  v 0.73 2003/03/16
+      \iiiyasen
+      arrowheadsize=... を有効に
+  v 0.74 2003/04/03-19
+    \iiiHasens    : 新設
+    \iiiZyuusin   : 新設
+    \iiiArrowLine : <..>オプションを有効に
+  v 0.75 2003/05/23
+    \iiiTouhenkigou, \iiitouhenkigou
+  v 0.76 2003/06/03
+    \iiiBGurafu(#1)(#2)に対しては
+      \iiiclipDrawline に代えて \iiiclipdrawline を使用する。
+  v 0.77 2003/06/19
+    \O@@@ : 原点
+    \iiictenretu : 円柱座標で点列を定義
+  v 0.78 2003/08/08
+    Zahyou環境で，Migiyohaku=..オプションなどを有効とする。
+  v 0.80 2004/03/05
+    \iiiHenKo
+  v 0.81 2004/03/20
+    \iiiNuritubusi : <#2>オプションを有効とする。
+  v 0.82 2004/06/15
+    \iiiDrawline, \iiiDrawlines : <...> オプションを有効とする。
+  v 0.83 2004/08/07
+    \iiiBKinziOresen : 刻み値が負の場合にも対応
+  v 0.85 2005/01/09
+    ロードオプション papersize
+  v 0.86 2005/02/16
+    座標軸の端点 \iiiXMAX, \iiiYMAX, \iiiZMAX
+  v 0.87 2005/02/17
+    \iiiBGurafu [iro=..]オプションを有効
+  v 0.88 2005/05/21
+    \iiiXMIN, \iiiYMIN, \iiiZMIN
+  v 0.89 2005/06/03
+    \iiiTyuuten : 中点
+  v 0.90 2005/06/20
+    \iiiPutStri : \PutStr を呼び出す
+  v 0.91 2005/06/27
+    \endZahyou(*) : 空白の混入排除
+  v 0.92 2005/09/19
+    ロードオプション dvipdfmx
+  v 0.93 2005/09/28
+    Zahyou に [ExO=..] オプション
+  v 0.94 2005/10/10
+    Zahyou に [ExR=..] オプション ---> isikawa.tex
+  v 0.95 2006/06/05
+    \iiiDottedline
+  v 0.96 2006/06/06
+    \Ex, \Ey, \Ez が既定義の時はそれを用いる
+  v 0.97 2006/06/13
+    \iiihamidasisenbun, \iiiHamidasisenbun
+  v 0.98 2006/07/25
+    \Zahyou : 座標軸の描画を \endZahyou に移す
+  v 0.99 2006/10/28
+    \xmax --> \EMxmax など
+    \iiiHasen : \Hasen を \begingroup---\endgroup としたことに対応
+  v 1.00 2007/01/19
+    \iiiHatchpolygon : <key=val> を有効に
+  v 1.01 2007/02/03
+    \iiitenretu* : 方位オプションなど無視
+  v 1.02 2007/03/07
+    \iiiPutStr*
+  v 1.03 2007/06/09
+    \iiiTakakkei : <...> オプションを有効に
+  v 1.04 2007/08/07
+    \begin{Zahyou}[ExO=..] : 修正
+  v 1.05 2007/11/01
+    \iiiHasen : \gsave が落ちていた。
+  v 1.08 2008/04/16
+    \iiiHamidasisenbun: <..>オプション
+  v 1.10 2008/07/24
+    \iiitenNahuda
+  v 1.11 2008/10/29
+    \iiiHeikoukigou, \iiiheikoukigou
+    \iiiBunten: * を使用可能とする
+    \iiiBxminmax, \iiiByminmax
+  v 1.12 2008/10/31
+    \iiiBGurafu: 空白の混入対策 (末尾に \ignorespaces)
+  v 1.13 2008/11/11
+    描画枠を表示する [frame] オプション
+  v 1.14 2009/01/21
+    \iiiKuromaru: 点列を許容
+  v 1.15 2009/03/23
+    \iiiParamC, \iiiParamP
+  v 1.16 2009/04/28
+    \Kyuu
+  v 1.18 2009/12/27
+    \SandS, \SandSandS
+    \xytoiii

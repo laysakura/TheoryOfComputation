@@ -1,0 +1,1218 @@
+\documentclass[a4j,fleqn]{jarticle}
+%\usepackage[dvips]{hyperref}
+%dvipsk -Ppdf -z -o -f samplepp |bkmk2uni -e >samplepp.ps
+    \usepackage{color}
+    \usepackage[tpic]{arhako}
+    \usepackage{emathEy}
+    \usepackage{array}
+    \usepackage[debug]{emathAe}
+    \usepackage{showexample}
+
+\def\ttyen{{\ttfamily Y\llap=}}%
+\def\cmd#1{\ttyen{\ttfamily #1}}%
+\makeatletter
+\def\showexample{\@ifnextchar[{\showexample@}{\@showexample}}%
+\def\@showexample#1{%
+  \noindent
+  \begin{screen}\input{#1}\end{screen}%
+  をタイプセットすると\medskip\par\noindent
+  {\renewenvironment{verbatim}{}{}%
+  \begin{shadebox}\input{#1}\end{shadebox}}%
+  \medskip
+  
+  \noindent となります．}%
+\def\showexample@[#1]#2{%
+  \noindent
+  \begin{itembox}{\textbf{#1}}\input{#2}\end{itembox}%
+  をタイプセットすると\medskip\par\noindent
+  {\renewenvironment{verbatim}{}{}%
+  \begin{shadebox}\input{#2}\end{shadebox}}%
+  \medskip
+  
+  \noindent となります．}%
+\makeatother
+
+\title{{\Huge hako.sty} {\normalsize ver. 1.13}\\
+{\large
+arhako.sty {\normalsize ver.0.88}\\
+}
+使用例}
+\author{tDB}
+\date{2004/12/25}
+
+\begin{document}
+\maketitle\thispagestyle{empty}
+\begin{abstract}%
+\parindent1zw%
+ センター試験の問題で使われている解答を記入すべきハコを作るための
+ パッケージです．
+
+このマクロ集のマクロについてのご質問，バグ報告，修正・追加の提案等は
+\begin{center}
+http://emath.s40.xrea.com/
+\end{center}
+の掲示板へどうぞ。
+\end{abstract}
+\clearpage
+\pagenumbering{roman}%
+
+\section*{はじめに}
+\hakosyokika
+センター試験では $1024=2^{\protect\Hako<2>(0zw)}$ のように，
+解答を書くべき所に必要な桁数分の文字を含んだハコを用意する，
+という方法が採られています．このハコを \TeX で記述するのに
+私は \verb/\hako{アイ}/ などと引数の中にハコに入れる文字を
+記述していました．Waver さんがこれを見かねて，
+ハコの中の文字を自動的にインクリメントし，それを相互参照する
+マクロを作ってくださいました．そのマクロをもとにいろいろな機能を
+付け加えて，現在の \verb/hako.sty/ ができ上がってきました．
+Waver さんのお陰で，大変楽ができるようになりました．
+
+有り難うございます．＞ Waver さん．
+\clearpage
+
+\tableofcontents
+
+\clearpage
+\pagenumbering{arabic}
+\hakosyokika
+\section{基本的用法}
+まずは，基本的な使い方です．
+このスタイルファイルは初期化が必要です．\verb/\begin{document}/ の直後に
+\begin{verbatim}
+    \hakosyokika
+\end{verbatim}
+という一行を書きます．これで内部変数などが初期化され，
+\texttt{hako.sty}が使用可能になります．あとは，
+ハコを作りたい所で，\verb/\Hako/ と書くだけです．例えば，
+
+\ifx\fmtname\tmpname%
+\begin{itembox}{基本的用法}\begin{verbatim}
+\documentclass{jarticle}
+\usepackage{emath,hako}
+
+\begin{document}
+\hakosyokika
+二次不等式$(x-1)(x-2)<0$の解は$\Hako{}<x<\Hako$である．
+\end{document}
+\end{verbatim}
+\end{itembox}
+\else
+\begin{itembox}{基本的用法}\begin{verbatim}
+\documentstyle[emath,hako]{jarticle}
+
+\begin{document}
+\hakosyokika
+二次不等式$(x-1)(x-2)<0$の解は$\Hako{}<x<\Hako$である．
+\end{document}
+\end{verbatim}
+\end{itembox}
+\fi
+
+をタイプセットすると
+
+\begin{shadebox}
+\hakosyokika
+二次不等式$(x-1)(x-2)<0$の解は $\Hako{}<x<\Hako$である．
+\end{shadebox}
+
+となります．
+
+すなわち，コマンド \verb/\Hako/ が登場するたびにハコが作られ，
+その中の文字が
+\begin{quote}
+  ア,イ,ウ,エ,オ,カ,キ,・・・・
+\end{quote}
+と五十音順にインクリメントされていきます．
+\begin{itemize}
+\item[\bfseries 注1 ] 上の例で，コマンド \verb/\Hako/ と
+不等号 \texttt{<} の間に
+\texttt{\{\}} がありますが，この意味について説明します．
+
+コマンド\verb/\Hako/はオプション引数を取りますが，そのオプション文字として
+\begin{verbatim}
+  [, <, (, /, ",'
+\end{verbatim}
+が使われています．したがって，\verb/\Hako<x/ と書きますと，
+不等号\texttt{<}が，コマンド\verb/\Hako/のオプション引数の記号と
+解釈されてしまいます．
+それを防ぐために \verb/\Hako/ と不等号\texttt{<}の間に
+\texttt{\{\}}を入れています．
+さぼって，\verb/\Hako/ と不等号の間に半角のスペースを入れても
+たいていは大丈夫なようにしてありますが，特殊な場面で
+不都合が生ずることがありますので，\texttt{\{\}}をお勧めします．
+
+\item[\bfseries 注2 ] \verb/\hakosyokika/ は必ず実行してください．
+これを実行していない場合は，エラー
+\begin{quote}
+\begin{verbatim}
+! コマンド：hakosyokika が実行されていません.
+\end{verbatim}
+\end{quote}
+が発生します．
+
+\item[\bfseries 注3 ] 古いバージョン(\texttt{ver.0.63}より前)では，
+\begin{quote}
+\verb/\hakosyokika/ ではなく，\verb/\hakobansyokika/ 
+\end{quote}
+でした．
+\texttt{ver.0.63}以降では，\verb/\hakobansyokika/ では，ハコの
+カウンタのみを初期化することとし，\verb/\hakosyokika/ ですべての
+内部変数を初期化すると，使い分けることになりました．ただし，
+\verb/\hakobansyokika/ が文書の最初に
+呼ばれたときは \verb/\hakosyokika/ と同じ働きをする
+ようにしてありますから，今まで作成された文書を書き換える必要は
+少ないでしょう．
+
+\item[\bfseries 注4 ] 以下，具体例を挙げている部分は，
+\begin{jquote}
+  角の丸い囲みの中に
+
+  \begin{screen}
+  ソースリスト
+  \end{screen}
+  
+  影つきの囲みの中に 
+
+  \leavevmode\begin{shadebox}
+  それをタイプセットした結果
+  \end{shadebox}
+\end{jquote}
+を記述します．
+\end{itemize}
+\pagebreak
+
+\section{相互参照}
+\hakobansyokika
+二次方程式$x^2-3x+2=0$の解は$x=\Hako[L020a],\ \Hako[L020i]$である．\par
+\noindent という問題では，解が一意に定まりません．そこで，
+\begin{quote}
+  ただし$\refHako*{L020a}<\refHako*{L020i}$とする．
+\end{quote}
+というただし書きをつけたくなります．
+これを実現するために，ハコにラベルを付け，それを参照する機能があります．
+
+まず，ラベルを付けるには \verb/\Hako/ にオプション引数で
+ラベル名を指定します：
+\begin{verbatim}
+        \Hako[ラベル名]
+\end{verbatim}
+
+次にそれを参照するには，コマンド
+\begin{verbatim}
+        \refHako{ラベル名}
+     または
+        \refHako*{ラベル名}
+\end{verbatim}
+を用います．両者の違いは，前者がハコの中の文字だけを，
+後者は枠を付けて参照します．先の例を完成させます．
+\hakobansyokika
+\showexample[\texttt{[..]}オプションと\cmd{refHako*}]{example/ex02.tex}
+\clearpage
+
+\section{ハコの中に複数の文字}
+センター試験では，2桁以上の答を要求するハコでは，
+ハコの中に桁数分の文字を用意する方法が採られています．
+例えば，
+\hakobansyokika
+\begin{jquote}
+  $2^{50}$ は \Hako<2>桁の整数である．ただし，$\log_{10}2=0.3010$ とする．
+\end{jquote}
+これを実現するために，\verb/\Hako/ にオプション引数でハコの中に入れる
+文字数を指定する機能があります．
+今度のオプションはオプション文字が前節のものとは異なります．
+\begin{verbatim}
+       \Hako<文字数>
+\end{verbatim}
+次のように使います．
+\hakobansyokika
+\showexample[\texttt{<..>}オプション]{example/ex03.tex}
+
+\section{複数の文字ハコへの相互参照}
+複数の文字をもつハコに付けたラベルによる参照は，
+ハコの中の文字全体への参照となります．
+しかし，ときにはハコの個別の文字への参照をしたいこともあります．
+その機能は第2の \verb/[..]/ オプションで実現されます．すなわち，
+\begin{verbatim}
+        \Hako<文字数>[全体ラベル][個別ラベル]
+\end{verbatim}
+という書式です．
+個別ラベルは，文字数分のラベルをコンマで区切って記述します．
+例えば
+\begin{verbatim}
+        \Hako<3>[Lbl][L1,L2,L3]
+と記述すると
+        \refHako{Lbl} → アイウ
+        \refHako{L1}  → ア
+        \refHako{L2}  → イ
+        \refHako{L3}  → ウ
+と，参照されます．
+\end{verbatim}
+具体例を挙げます．
+これは1997年度の大学入試センター試験の問題です．
+\hakobansyokika
+{\hakoxyohaku{0pt}%
+\showexample[複数文字の箱への参照]{example/ex04.tex}}
+
+\begin{itemize}
+\item[注] 個別ラベルをつけるときは，必ず全体ラベルをつけなければなりません．
+\end{itemize}
+\clearpage
+
+\section{ハコの文字種(1)}\label{sec:mozisyu}
+ハコの中の文字は，デフォルトでは
+\begin{quote}
+  ア,イ,ウ,エ,オ,カ,キ,....
+\end{quote}
+と，カタカナが五十音順に現れます．
+これを 
+\begin{quote}
+  a,b,c,d,e,...
+\end{quote}
+などと英字をアルファベット順に並べたいといった，
+ハコの中の文字種を変更するためにコマンド \verb/\hakomozisyu{..}/ が
+用意してあります．このコマンドの引数として使える文字は次の通りです．
+\bigskip
+
+\begin{tabular}{*2{r@{\ ：\ }l}}
+     ア  &  ア,イ,ウ,エ,オ,.....
+&　　あ  &  あ,い,う,え,お,.....\\
+　　 イ  &  イ,ロ,ハ,ニ,ホ,.....
+&    い &   い,ろ,は,に,ほ,.....\\
+      1  &   1, 2, 3, 4, 5,.....
+&     m  &   \maru1,\maru2,\maru3,\maru4,\maru5...\\ 
+      i  &   i, ii, iii, iv, v,.....
+&     I  &   I, II, III, IV, V,.....\\
+      a  &   a, b, c, d, e,.....
+&     A  &   A, B, C, D, E,....\\
+\end{tabular}
+
+\begin{itemize}
+\item[\bfseries 注 ] その他の文字はそのまま出力されますから，
+引数に `(1)' と指定すれば，
+\begin{quote}
+  (1),(2),(3),(4),(5),.....
+\end{quote}
+と，ナンバリングされます．一例を挙げます．
+\end{itemize} 
+\ifx\fmtname\tmpname\enlargethispage{2\baselineskip}\fi%
+\showexample[\cmd{hakomozisyu}]{example/ex05.tex}
+
+\begin{itemize}
+\item[注] アイウ．．． は，49文字しかありません．これを越えて
+\verb/\Hako/を
+使用すると
+\begin{quote}\begin{verbatim}
+! Undefined control sequence.
+\GenericError  ...                                
+                                 #4  \errhelp \@err@     ...
+あるいは
+! LaTeX Error: Counter too large.
+\end{verbatim}
+\end{quote}
+等のエラーが発生します．
+\end{itemize}
+\clearpage
+
+\section{ハコの文字種(2)}
+一文書中ですべてのハコの文字種が一種類のときは，
+前節の方法で処理できますが，
+一つの問題で2種類以上の文字種を用いる場合の対策です．
+
+このときは，メインの方の文字種を前節の方法で指定します．
+他の系列の文字種が登場するハコに対しては，\verb/\Hako/ の
+オプションで処理します．
+\begin{verbatim}
+        \Hako/文字種/
+\end{verbatim}
+\texttt{/../} の引数は前節の \verb/\hakomozisyu/ の引数と同じです．
+少し長い例です．
+\clearpage
+
+\showexample[\texttt{/../}オプション]{example/ex052.tex}
+
+\section{ハコの文字の初期値変更}
+デフォルトでは，ハコの中の文字は五十音順に先頭の `ア' から出現します．
+これを途中の `ケ' から始めて
+\begin{quote}
+ケ,コ,サ,シ,ス,セ,ソ,タ,.....
+\end{quote}
+としたいときの話です．ハコの中の文字をインクリメントするのに \LaTeX の
+カウンタを用いています．デフォルトのカウンタ名は \texttt{hakobanaiu}
+です．
+この値を変更することでハコの中の文字を自由に変更することができます．
+先の例では，`ケ' は五十音の9番目の文字ですから，
+\begin{verbatim}
+        \setcounter{hakobanaiu}{8}%
+\end{verbatim}
+と，１つ小さい値を指定します．（ \verb/\Hako/ が呼び出されるときに，
+カウンタは1つ増やされてからそれを文字に翻訳します．
+カウンタについての詳しいことは，
+\LaTeX についての参考文献をご覧ください．)
+
+ハコのカウンタは前節の文字種ごとに別のものが用意されています．
+\bigskip
+
+\ifx\fmtname\tmpname%
+\begin{tabular}{r@{\ ：\ }>{\ttfamily }l}
+\else%
+\begin{tabular}{r@{\ ：\ }l}
+\fi%
+     文字種 & カウンタ名 \\
+        ア  &  hakobanaiu \\
+        イ  &  hakobaniro \\
+        あ  &  hakobanAIU \\
+        い &   hakobanIRO \\
+        1  &   hakobanara \\
+        i  &   hakobanrma \\
+        I  &   hakobanRMA \\
+        a  &   hakobanalp \\
+        A  &   hakobanALP \\
+        m  &   hakobanmar \\
+\end{tabular}\bigskip
+
+一例を挙げます．
+\showexample[ハコ文字のカウンタ]{example/ex06.tex}
+
+\section{ハコの文字の書体変更}
+ハコの中の文字は，デフォルトではゴシックという書体を用いています．
+これを別の書体に変更するには，コマンド \verb/\hakosyotai{..}/ を
+用います．例えば，明朝体にしてみましょう．
+\showexample[\cmd{hakosyotai}]{example/ex07.tex}
+\clearpage
+
+\section{ハコの枠線太さの変更}
+ハコの枠線の太さは，デフォルトでは \texttt{1pt} としてあります．
+これを変更するにはコマンド \verb/\hakosenhaba/ を用います．
+\LaTeX の \verb/\framebox/ のデフォルト値は \texttt{0.4pt} です．
+
+\showexample[\cmd{hakosenhaba}]{example/ex08.tex}
+\clearpage
+
+\section{ハコの横巾変更(1)}
+ハコの中の文字と枠線との間はデフォルトで \texttt{3pt} の余白が取られる他に，
+左右あわせて約 \verb/1zw/（全角1文字分），
+正しくは可変長で 
+\begin{quote}
+\verb/1zw plus .5zw minus .05zw/
+\end{quote}
+の余白を付けています．
+これを変更するには，コマンド \verb/\hakoxyohaku{..}/ を用います．
+デフォルトの状態と，この余白を取り去った状態を比較してみます．
+
+\hakosyokika
+\showexample[\cmd{hakoxyohaku}]{example/ex10.tex}
+
+\begin{itemize}
+\item[注] ハコの横巾の指定には，グルーが含まれています．
+グルーについて詳しいことは，参考文献---例えば，「LaTeX自由自在」
+等を参照してください．
+\end{itemize}
+\clearpage
+
+\section{ハコの横巾変更(2)}
+文書中のすべてのハコの横巾を変更するには，前節の方法を採りますが，
+一部のハコの横巾を変更したいときは \texttt{(..)} オプションを用います．
+\begin{verbatim}
+       \Hako(横余白サイズ)
+\end{verbatim}
+分数で，分母と分子の桁数が違うときは，ハコの横巾が違ってしまいます．
+このようなとき，
+このオプションを用いて分母子のハコの横巾を揃えることができます．
+\hakosyokika
+\showexample[\texttt{(..)}オプション]{example/ex11.tex}
+\clearpage
+
+\section{ハコの文字位置}
+ハコの中の文字位置はデフォルトでは「中央」となっています．
+これを変更するコマンドは \verb/\hakomoziiti{..}/ です．
+引数は次のものが有効です．
+\begin{quote}\begin{verbatim}
+  l : 左寄せ
+  c : 中央（デフォルト）
+% r : 右寄せ
+  ^ : 左寄せ，かつ上付き
+  L : 左外，かつ上付き
+\end{verbatim}
+\end{quote}
+一例を示します．
+\showexample[\cmd{hakomoziiti}]{example/ex07l.tex}
+
+なお，特定のハコだけ文字位置を指定したいときは，第2の(..)オプションを用います．
+このときは第1の(..)オプションは必ずつけなければなりません．例えば
+\showexample[第2の\texttt{(..)}オプション]{example/ex072.tex}
+%\clearpage
+
+\section{ハコの高さ変更}
+ハコの高さはデフォルトでは
+\begin{jquote}
+\verb+\vphantom{あ}+
+\end{jquote}
+すなわち全角文字の高さ，となっています．さらに，その上下に各\texttt{3pt}
+の余白がつきます．
+これを変更するには，\verb/\hakosityuu/コマンドを使用します．
+例えば
+\showexample[\cmd{hakosityuu}]{example/ex09.tex}
+
+直接高さを指定するには，
+\showexample[\cmd{hakotakasa}]{example/ex09a.tex}
+
+\clearpage
+\section{中が空白のハコ（ハコの文字を直接指定）}
+\begin{jquote}
+次の \Hako(2zw minus 0pt)"" を補え．
+\end{jquote}
+などと，中が空白のハコを作りたいときもあります．
+上のハコは
+\begin{verbatim}
+       \Hako(2zw minus 0pt)""
+\end{verbatim}
+として "" オプションを
+用いています．
+ハコの横巾を調整するには，(..)オプションを使用します．
+
+"..." オプションは Ver.0.64 から追加されたオプションで，
+ハコの文字を直接指定したいときに用います．
+例えば
+\showexample[\texttt{".."}オプション]{example/ex13.tex}
+
+中が空白のハコを作る別法として，\cmd{karaHako} コマンドを用いることもできます．
+（後述）
+\clearpage
+
+\section{答を埋め込む（1）}
+箱の答を本文中に書いておき，問題の後にまとめてタイプセットすることができます．
+これは '...'オプションで，'...' の中に答を記入しておきます．
+ただし，答は数式モードになります．
+
+まずは，一例をごらん頂きましょう．
+\showexample[\texttt{'..'}オプション]{example/ex14.tex}
+
+すなわち，問題の中で，コマンド \cmd{Hako} のオプション引数 '...' の中に
+記述された答が問題の後にタイプセットされます．
+
+\begin{itemize}
+\item[注1．] 答は，別ファイル（同一ファイル名で，拡張子が .hka）に
+書き出されます．それを\par
+\centerline{\cmd{inputHakoKaiFile}}
+というコマンドで読み込みます．
+
+\end{itemize}
+
+\section{答を埋め込む（2）}
+センター試験では，答の桁数分だけハコの中に文字が現れます．これを\par
+\centerline{\cmd{Hako}\texttt{<2>'43'}}
+等のように答と桁数の両方を記述するのは無駄ですね．
+そこで，\texttt{'...'} オプションをつけてその内容から桁数がカウントできる
+場合は\texttt{<..>}オプションを省略することができるようにしました．
+そのおまじないが\par
+\centerline{\cmd{centermodetrue}}
+です．その例をごらん頂きましょう．
+\showexample[\cmd{centermodetrue}]{example/ex15.tex}
+
+すなわち \cmd{hakosyokika} に続けて，\cmd{centermodetrue} としますと，
+ハコに入れるべき文字数は，\texttt{'..'}オプションで与えられる
+答の文字数となります．
+この場合，\texttt{<...>}オプションをつけても無視されます．
+
+なお，デフォルトは \cmd{centermodefalse} の状態です．
+前節の例は，この状態で実行されています．
+
+\section{埋め込んだ答えの表示形式}
+埋め込んだ答えを表示する形式は
+  \begin{jquote}
+    ア = 1, イウ = 23
+  \end{jquote}
+という行形式のほか，
+  \begin{jquote}
+  \begin{tabular}{|c|c|}\hline
+    ア & イウ \\\hline
+    1  &  23  \\\hline
+  \end{tabular}
+  \end{jquote}
+という表形式を新設したことにあります。
+
+この形式を利用するには，
+\begin{jquote}
+\begin{verbatim}
+\HakoKaiKata{t}
+\end{verbatim}
+\end{jquote}
+と宣言します。
+
+次に一例です。
+
+まず，今までの形式から
+
+\begin{showEx}{従来の形式}
+\hakosyokika
+\centermodetrue
+\openHakoKaiFile
+\[ y=\Hako'2'x+\Hako'34' \]
+\closeHakoKaiFile
+\begin{Kaitou}
+\inputHakoKaiFile
+\end{Kaitou}
+\end{showEx}
+
+解答を表形式にするには\verb/\HakoKaiKata{t}/を宣言します。
+下の例では，\verb/\inputHakoKaiFile/の直前に宣言していますが，
+文書全体でこの形式をとるときは，文書の冒頭で
+\begin{jquote}
+\begin{verbatim}
+  \hakosyokika
+  \HakoKaiKata{t}
+\end{verbatim}
+\end{jquote}
+などとすればよいでしょう。
+
+\begin{showEx}{表形式}
+\hakosyokika
+\centermodetrue
+\openHakoKaiFile
+\[ y=\Hako'2'x+\Hako'34' \]
+\closeHakoKaiFile
+\begin{Kaitou}
+\HakoKaiKata{t}
+\inputHakoKaiFile
+\end{Kaitou}
+\end{showEx}
+
+\clearpage
+
+答えに分数などが含まれ，高さが異なるときはその調整が必要です。
+
+\begin{showEx}(.55,.39){高さが異なる場合}
+\hakosyokika
+\openHakoKaiFile
+\[ a=\Hako'\bunsuu12',~b=\Hako'\sqrt3' \]
+\closeHakoKaiFile
+\begin{Kaitou}
+\HakoKaiKata{t}
+\inputHakoKaiFile
+\end{Kaitou}
+\end{showEx}
+
+対策は支柱を立てることです。書式は
+\begin{jquote}
+\begin{verbatim}
+\HakoKaiSityuu[深さ]{高さ}
+\end{verbatim}
+\end{jquote}
+です。上の例で支柱を立ててみます。
+
+\begin{showEx}(.55,.39){高さが異なる場合の調整}
+\hakosyokika
+\openHakoKaiFile
+\[ a=\Hako'\bunsuu12',~b=\Hako'\sqrt3' \]
+\closeHakoKaiFile
+\begin{Kaitou}
+\HakoKaiKata{t}
+\HakoKaiSityuu[1zh]{1.5zh}
+\inputHakoKaiFile
+\end{Kaitou}
+\end{showEx}
+
+\cmd{Hako}の答え文字列を修飾するには，\cmd{hakokaisyotai}を用います。
+
+\begin{showEx}(.54,.4){答えを赤で}
+\openHakoKaiFile
+$(x+a)^2=x^2+\Hako'2a'x+\Hako'a^2'$
+\closeHakoKaiFile
+
+\hakokaisyotai{\color{red}\ensuremath}
+【答】
+\inputHakoKaiFile
+\end{showEx}
+
+デフォルトは
+\begin{jquote}
+\begin{verbatim}
+\hakokaisyotai{\ensuremath}
+\end{verbatim}
+\end{jquote}
+が実行された状態で，答えは数式モードに入る，というのは今まで通りです。
+
+この\cmd{ensuremath}を外してしまえば，答えはテキストモードで表されます。
+
+\begin{showEx}(.54,.4){答えを\cmd{texttt}で}
+\openHakoKaiFile
+つぎの\karaHako に下の選択肢の中から
+最も適切なものを選び，記号で答えよ。
+\[ (x+t)^2=x^2+\Hako'(c)'x+\Hako'(d)' \]
+
+選択肢：
+\begin{jquote}
+\begin{edaenumerate}[\ttfamily(a)]
+  \item 0
+  \item $t$
+  \item $2t$
+  \item $t^2$
+\end{edaenumerate}
+\end{jquote}
+\closeHakoKaiFile
+
+\hakokaisyotai{\ttfamily}
+【答】
+\HakoKaiKata{t}
+\inputHakoKaiFile
+\end{showEx}
+
+\section{ハコの中を網掛け}
+ハコを2種類区別したいときに，一方を網掛けする，
+という出題をする大学もあります．
+
+そのために，\verb/\amiHako/ というコマンドを作りました．
+ただし，これは \verb/hako.sty/ ではなく，
+\verb/arhako.sty/ という別ファイルにしていますから，
+それを読み込む必要があります．
+また，読み込む順序も問題で \verb/hako.sty/ を先に，
+\verb/arhako.sty/ をその後に読み込む必要があります．
+さらに，このパッケージは
+\verb/ascmac.sty/を必要とします．
+
+一例を挙げます．
+
+\begin{itembox}{\cmd{amiHako}}
+\ifx\fmtname\tmpname%
+\begin{verbatim}
+\documentclass{jarticle}
+\usepackage{amssymb,ascmac,emath,hako,arhako}
+\end{verbatim}
+\else
+\begin{verbatim}
+\documentstyle[ascmac,emath,hako,arhako]{jarticle}
+\end{verbatim}
+\fi%
+\begin{verbatim}
+\begin{document}
+\hakosyokika
+次の\Hako/　/にあてはまる数値を答えよ．
+また，\amiHako/　/にあてはまる記号を下の選択肢から選び，
+その番号を答えよ．
+
+$x$についての方程式$4x^2-2ax+\sqrt{3}=0$の2つの解が
+$\sin\theta$, $\cos\theta$であるという．
+ただし，$0\Deg\leqq \theta\leqq 45\Deg$で，$a$は定数である．
+このとき
+\[ a^2=\Hako\amiHako\Hako\sqrt{\Hako} \]
+したがって，$0\Deg\leqq \theta\leqq 45\Deg$に注意すると
+\[a=\Hako\amiHako\Hako\sqrt{\Hako},
+\quad\theta={\Hako\Hako}\Deg\]
+である．
+
+\begin{itemize}\itemindent2zw\item[【選択肢】]
+\renewcommand{\labelenumi}{\maru{\theenumi}}%
+\begin{edaenumerate}<4>
+\ttfamily\edaitemindent2zw%
+\edaitem{+}
+\edaitem{-}
+\edaitem{$\times$}
+\edaitem{$\div$}
+\end{edaenumerate}
+\end{itemize}
+\end{document}
+\end{verbatim}
+\end{itembox}
+
+をタイプセットすると
+
+\begin{shadebox}
+\hakosyokika
+次の\Hako/　/にあてはまる数値を答えよ．
+また，\amiHako/　/にあてはまる記号を下の選択肢から選び，
+その番号を答えよ．
+
+$x$についての方程式$4x^2-2ax+\sqrt{3}=0$の2つの解が
+$\sin\theta$, $\cos\theta$であるという．
+ただし，$0\Deg\leqq \theta\leqq 45\Deg$で，$a$は定数である．
+このとき
+\[ a^2=\Hako\amiHako\Hako\sqrt{\Hako} \]
+したがって，$0\Deg\leqq \theta\leqq 45\Deg$に注意すると
+\[a=\Hako\amiHako\Hako\sqrt{\Hako},
+\quad\theta={\Hako\Hako}{\Deg}\]
+である．
+
+\begin{itemize}\itemindent2zw\item[【選択肢】]　
+\renewcommand{\labelenumi}{\maru{\theenumi}}%
+
+\begin{edaenumerate}<4>
+\ttfamily\edaitemindent2zw%
+\edaitem{+}
+\edaitem{-}
+\edaitem{$\times$}
+\edaitem{$\div$}
+\end{edaenumerate}
+\end{itemize}
+\end{shadebox}
+
+となります．
+
+コマンド \verb/\amiHako/ は，網掛けフラッグを立てて，
+\verb/\Hako/ を呼び出しています．
+従って，オプション引数の使い方等は \verb/\Hako/ と同様で，
+相互参照なども可能ですが，参照も網掛けのハコにしたいときは
+\verb/\refamiHako*/ を用います．
+
+\section{ハコいろいろ}
+\subsection{ハコの文字の間に縦仕切線}
+ハコの中に複数の文字が入るとき，その文字の間に縦の仕切線を入れる
+流儀もあります．そのためのコマンドが \verb/\renHako<文字数>/ 
+です．例えば，
+\hakosyokika
+\showexample[\cmd{renHako}]{example/ex12.tex}
+このコマンドの用い方は，\verb/\Hako/ とほぼ同様です．
+ただし，このコマンドは \texttt{hako.sty} ではなく，
+\texttt{arhako.sty} で定義されていますから，
+\texttt{hako.sty} に引き続き \texttt{arhako.sty} を
+読み込む必要があります．
+なお，このコマンドは \verb/\hakoxyohaku{0pt}/ を内部で実行します．
+%\fi
+\clearpage
+
+\subsection{破線の仕切}
+仕切り線を破線にすることも可能です。
+
+\begin{showEx}{\cmd{sikirisen}}
+\hakosyokika
+\sikirisen{\hasen}{0.4pt}{あ}
+\renHako<3>
+\end{showEx}
+
+新機能を利用するには，まず，\textsf{arhako.sty}を\verb+[tpic]+オプションを
+つけて読み込みます：
+\begin{jquote}
+\begin{verbatim}
+\usepackage[tpic]{arhako}
+\end{verbatim}
+\end{jquote}
+
+次いで，コマンド\cmd{sikirisen}により，仕切り線の形状を指定します。
+\cmd{sikirisen}の書式は：
+
+\begin{boxnote}
+\begin{verbatim}
+\sikirisen#1#2#3
+  #1 : 仕切り線を引く描画関数
+        ex: \drawline(default), \hasen, \hasen[L=2pt,G=1pt],....
+  #2 : 仕切り線の太さ
+  #3 : ハコに入る，最大の高さ・深さを持つ文字
+\end{verbatim}
+\end{boxnote}
+
+破線をもう少し細かくしてみます。
+
+\begin{showEx}(.7,.24){破線を細かく}
+\hakosyokika
+\hakosyotai{\normalfont}
+\hakomozisyu{(1)}
+\sikirisen{\hasen[L=1.5pt,G=1.5pt]}{.2pt}{(1)}
+\renHako<3>
+\end{showEx}
+
+
+\begin{description}
+\item [注　]この機能は\texttt{tpic-specials}を用いています。
+  したがって，これをサポートしていない\texttt{dvi-ware}では使用できません。
+\end{description}
+
+\subsection{先頭文字を○で囲む}
+まずは，具体例をご覧ください。
+\bigskip
+
+\begin{shadebox}
+\ReadTeXFile{2114200510.tex}
+\syutten{2005 東洋大学}
+\end{shadebox}
+\bigskip
+
+\verb+\centermodetrue+のとき，
+\begin{jquote}
+ハコに入る文字列の先頭を○で囲み，\\
+ここには符号など数字以外のものが入ることを明示する
+\end{jquote}
+という表現法に対応するためのコマンドが\verb+\tmHako+です。
+
+\begin{showEx}{\cmd{tmHako}}
+\hakosyokika
+\centermodetrue
+\openHakoKaiFile
+\Hako'12'
+
+\tmHako'-345'
+
+\Hako'-67'
+\closeKaiFile
+
+\verb+------------------------+
+
+\HakoKaiKata{t}
+\inputHakoKaiFile
+\end{showEx}
+
+\subsection{角の丸いハコ}
+ハコ枠線のコーナーを丸くするには，\cmd{ovalHako}を用います。
+
+詳しくは emathWiki/ovalHako をご覧ください。
+
+\subsection{白線を破線に}
+ハコ枠線を破線とするには，\cmd{dashHako}を用います。
+
+詳しくは emathWiki/dashHako をご覧ください。
+
+\section{\cmd{HAKO} --- 高速版 \cmd{Hako} }
+\cmd{Hako} が多くのオプション引数をとるようになったため，
+処理速度が低下してきました．そこで使用頻度の高いオプションだけ
+をとるコマンド \cmd{HAKO} を作りました．つけることのできるオプションは
+\begin{itemize}
+  \item \texttt{<..>} 文字個数オプション
+  \item \texttt{[..]} ラベルオプション（全体ラベルのみ）
+  \item \texttt{(..)} 横巾変更オプション
+\end{itemize}
+の3個だけです．その他のオプションをつけたいときは，
+従来の \cmd{Hako} を使用してください．
+
+\cmd{HAKO} と \cmd{Hako} の混在使用は可能で，
+番号は両者で共通にインクリメントされます．
+その一例を見ていただきましょう．
+下の例は，2文字を含むハコにおいて，個別ラベル（第2の \texttt{[...]}オプション）
+を付ける2個所だけ \cmd{Hako} を使用し，他のハコには \cmd{HAKO} を用いています．
+また，\cmd{HAKO} で付けたラベルを用いての参照は，\cmd{Hako} に対すると同じく
+\cmd{refHako} または \cmd{refHako*} を用います．
+
+\showexample[\cmd{HAKO} と \cmd{Hako} の混用]{example/exHAKO.tex}
+
+\clearpage
+
+\section{コマンドリファレンス(1)}
+\begin{verbatim}
+ \Hako<ハコの中の文字数>(ハコの幅)(位置指定)
+       [全体ラベル][個別ラベル]"ハコの中の文字"
+       'ハコの答'/ハコの中の文字種/
+\end{verbatim}
+\renewcommand{\labelenumi}{第\arabic{enumi}引数\ }
+\begin{jquote}(6zw)
+\begin{enumerate}
+  \item \texttt{<}ハコの中の文字数(デフォルトは１)\texttt{>}
+  \item (ハコの横幅の余白サイズ)
+  \item (位置指定)\par
+     \begin{tabular}{l@{~:~}l}
+               \texttt{c} & 中央(デフォルト)\\
+               \texttt{l} & 左寄せ\\
+               \texttt{\char'136} & 上付き(必然的に左寄せ)\\
+               \texttt{|} & 文字の右に縦罫線(必然的に左寄せ)\\
+               \texttt{L} & 左外上付き\\
+               \texttt{b} & ハコの baseline をハコの下枠線とする．\\
+               \texttt{t} & ハコの baseline をハコの上枠線とする．
+    \end{tabular}
+
+   \item{} [全体ラベル]
+
+   \item{} [個別ラベル]\par
+               第1引数で複数の文字を指定した場合，
+               その数だけラベルを , で区切って並べる．
+   \item "ハコの中の文字"\par
+               カウンタの値とは無関係に，ハコの中に入る文字を
+               直接指定する．
+   \item 'ハコの答'\par
+               ハコに入れるべき答を記述しておいて，
+               問題の後ろにタイプセットする．
+   \item /ハコの中の文字種/\par
+      \begin{tabular}{c@{~:~}l}
+               ア & ア,イ,ウ,エ,オ,..... (デフォルト)\\
+               イ & イ,ロ,ハ,ニ,ホ,.....\\
+               あ & あ,い,う,え,お,.....\\
+               い & い,ろ,は,に,ほ,.....\\
+               1  & 1, 2, 3, 4, 5,.....\\
+               i  & i, ii, iii, iv, v,.....\\
+               I  & I, II, III, IV, V,.....\\
+               a  & a, b, c, d, e,.....\\
+               A  & A, B, C, D, E,....\\
+               m  & 丸付き数字\\
+               一 & 一,二,三,四,五,....
+      \end{tabular}
+\renewcommand{\labelenumii}{注\arabic{enumii}．\ }
+      \begin{enumerate}
+        \item その他の文字はそのまま出力されますから，\\
+              \hspace{2zw}/(1)/ と指定すれば，\\
+              \hspace{4zw}(1),(2),(3),(4),(5),.....\\
+                   と，ナンバリングされます．
+        \item デフォルトは /ア/ ですが，
+              \begin{jquote}
+                \verb/\hakomozisyu{い}/
+              \end{jquote}
+              などと，宣言すれば，
+              以降デフォルトの文字種が /い/ に変更されます．\par
+              すなわち，単に \verb/\Hako/ で
+              \begin{jquote}
+                   い,ろ,は,に,ほ,....
+              \end{jquote}
+              と出力されます．
+%        \item \texttt{/m/}（丸付き数字）の場合は，
+%          \texttt{< >} オプションは無効です．
+       \end{enumerate}
+ \end{enumerate}
+\end{jquote}
+ 
+\verb+\refHako/ハコの中の文字種/{ラベル}+
+  \begin{jquote}(3zw)
+       \verb/\Hako/ でつけた"ラベル"を取り出します．
+%      / / オプションは，丸付き数字の場合だけ必要です．
+  \end{jquote}
+
+\verb+\refHako*(ハコの幅)(位置指定)/ハコの中の文字種/{ラベル}+
+  \begin{jquote}(3zw)
+       \verb/\Hako/ でつけた"ラベル"をハコの枠をつけた形で取り出します．
+       (ハコの幅)(位置指定)オプションは \verb/\Hako/ と同様です．
+%       / / オプションは，丸付き数字の場合だけ必要です．
+  \end{jquote}
+\clearpage
+
+\section{コマンドリファレンス(2)}
+\verb/\hakosyokika/
+  \begin{jquote}(3zw)
+    hako.sty の内部変数などを初期化します．
+    このパッケージを使用するときは，最初に呼ぶ必要があります．
+  \end{jquote}
+
+\verb/\hakobansyokika/
+  \begin{jquote}(3zw)
+    ハコのカウンタをすべて初期化(0)します．
+  \end{jquote}
+
+\verb/\hakomozisyu{..}/
+  \begin{jquote}(3zw)
+    ハコの中の文字種を変更します．（第5節参照）
+  \end{jquote}
+
+\verb/\hakosenhaba{..}/
+  \begin{jquote}(3zw)
+    ハコの枠線の太さを変更します．（第9節参照）
+  \end{jquote}
+
+\verb/\hakosityuu{..}/
+  \begin{jquote}(3zw)
+    ハコの高さを指定します．(第13節参照))
+  \end{jquote}
+
+\verb/\hakosyotai{..}/
+  \begin{jquote}(3zw)
+    ハコの中の文字の書体を設定します．（第8節参照）
+  \end{jquote}
+
+\verb/\hakoxyohaku{..}/
+  \begin{jquote}(3zw)
+    ハコの横余白量を設定します．（第10節参照）
+  \end{jquote}
+
+\verb/\hakoyohaku{..}/
+  \begin{jquote}(3zw)
+    ハコの中の文字と枠線の間（上下左右）の余白量を設定します．
+    デフォルト値は，\verb/\fboxsep/ と同じく \texttt{3pt} です．
+  \end{jquote}
+
+\section{附 記号を付与しないハコ}
+\textsf{hako.sty}では，ハコに
+\begin{jquote}
+\begin{verbatim}
+ア，イ，ウ，・・・・・
+\end{verbatim}
+\end{jquote}
+と記号を付与し，それを相互参照することを目的としていますが，
+空のハコを使いたい，あるいは答えを埋め込みたいというご要望もあります。
+それに答えるのが
+\begin{jquote}
+\begin{verbatim}
+\karaHako
+\maskHako
+\end{verbatim}
+\end{jquote}
+です。
+
+\subsection{\cmd{karaHako}}
+\showexample[\cmd{karaHako}]{example/karaHako.tex}
+
+\cmd{karaHako} の書式は
+\begin{boxnote}
+\begin{verbatim}
+\karaHako(#1)[#2][#3]
+    #1 : 横幅 （デフォルト = 2zw）
+    #2 : 高さ （デフォルト = 1zh）
+    #3 : 深さ （デフォルト = 0zh）
+\end{verbatim}
+\end{boxnote}
+
+\subsection{\cmd{maskHako}}
+\cmd{karaHako}では，空白のハコを表示するだけですが，
+答えを埋め込んで置き，
+ハコの中を空白にしておくか，答えを表示するかは，
+\cmd{ifmaskhako}の真偽値でコントロールしよう，
+というのが\cmd{maskHako}です。
+ただし，このコマンドは \textsf{color}パッケージを必要とします。
+
+\abovedisplayskip=0pt
+\belowdisplayskip=0pt
+\begin{showEx}(.6,.34){\cmd{maskHako}}
+次の\karaHako を補え。
+
+$f(x)=x^n$の導関数は
+\[f'(x)=\maskHako(4zw)[2zh][1zh]{nx^{n-1}}\]
+である。
+\end{showEx}
+
+新しいコマンドは \cmd{maskHako}で，その書式は
+\begin{boxnote}
+\begin{verbatim}
+\maskHako(#1)[#2][#3]#4
+  #1 : ハコの横幅
+  #2 : ハコの高さ
+  #3 : ハコの深さ
+  #4 : 答え（数式モード内と仮定されています）
+
+\ifmaskhako
+  \maskhakotrue （デフォルト）のときは
+    #1,#2,#3 で指定されたサイズの空ハコを作る。
+    #1,#2,#3 を指定しないときは #4 が納まるハコを作る。
+  \maskhakofalse とすると
+    #1,#2,#3 で指定されたサイズのハコ中央に #4 を示す。
+\end{verbatim}
+\end{boxnote}
+です。デフォルトでは \cmd{maskhakotrue} すなわち，答えは表示せず，
+ハコの枠のみを示します。
+
+\cmd{maskhakofalse}と宣言しますと
+
+\begin{showEx}(.6,.34){\cmd{ifmaskhako}}
+\maskhakofalse
+次の\karaHako を補え。
+
+$f(x)=x^n$の導関数は
+\[f'(x)=\maskHako(4zw)[2zh][1zh]{nx^{n-1}}\]
+である。
+\end{showEx}
+と，ハコの中に答えが表示されます。
+
+答えを赤で表示したい，というとき \verb+\color+文で指定します。
+
+\begin{showEx}(.8,.8){解答を赤で埋め込む}
+  \maskhakofalse
+  ${(x^2)}'=\maskHako(4zw)[2zh][1zh]{\color{red}2x}$
+\end{showEx}
+
+\iffalse
+よさそうですが，\cmd{maskhakotrue}としても，
+解答が赤で出てしまいます。
+
+\begin{showEx}(.8,.8){マスクできない}
+  \maskhakotrue
+  ${(x^2)}'=\maskHako(4zw)[2zh][1zh]{\color{red}2x}$
+\end{showEx}
+
+対応法は「赤を白と言いくるめる」というのがあります。
+
+\begin{showEx}(.9,.8){赤とは白のことなり ？}
+  \maskhakotrue
+  \ifmaskhako% maskhakotrue のときは
+    \definecolor{red}{rgb}{1,1,1}% redの定義をwhiteの定義と同じに
+  \fi
+  ${(x^2)}'=\maskHako(4zw)[2zh][1zh]{\color{red}2x}$
+\end{showEx}
+
+ちと強弁ですね。
+ということで，
+\fi
+いちいち \verb+\color{red}+と記述するのは面倒だというなら，
+\cmd{everymaskHako}を用います。
+
+\begin{showEx}(.8,.8){\cmd{everymaskHako}}
+\maskhakofalse
+\everymaskHako{\color{red}}
+次の\karaHako を補え。
+\begin{align*}
+  {(x^2)}'&=\maskHako(4zw)[2zh][1zh]{2x}\\
+  {(x^3)}'&=\maskHako(4zw)[2zh][1zh]{3x^2}
+\end{align*}
+\end{showEx}
+
+この指定法はすべての\cmd{maskHako}に対して働きます。
+デフォルト状態に戻したいときは
+\begin{jquote}
+\begin{verbatim}
+\everymaskHako{\relax}
+\end{verbatim}
+\end{jquote}
+とします。
+
+さて，マスクできるでしょうか。
+
+\begin{showEx}(.8,.8){\cmd{maskhakotrue}も有効}
+\maskhakotrue
+\everymaskHako{\color{red}}
+次の\karaHako を補え。
+\begin{align*}
+  {(x^2)}'&=\maskHako(4zw)[2zh][1zh]{2x}\\
+  {(x^3)}'&=\maskHako(4zw)[2zh][1zh]{3x^2}
+\end{align*}
+\end{showEx}
+
+蛇足ながら\cmd{color}を使用するには，\textsf{color}パッケージが必要です。
+
+\clearpage
+
+太字指定（\cmd{bm}）は，少々面倒です。
+
+\begin{showEx}(.8,.8){\cmd{bm}指定}
+\maskhakofalse
+\everymaskHako[$]{$\bm}
+次の\karaHako を補え。
+\begin{align*}
+  {(x^2)}'&=\maskHako(4zw)[2zh][1zh]{2x}\\
+  {(x^3)}'&=\maskHako(4zw)[2zh][1zh]{3x^2}
+\end{align*}
+\end{showEx}
+
+すなわち
+\begin{jquote}
+\begin{verbatim}
+\everymaskHako[#1]#2
+\maskHako{なんたら}
+\end{verbatim}
+\end{jquote}
+は次のように展開されます：
+\begin{jquote}
+\begin{verbatim}
+#2{\ensuremath{なんたら}}#1
+\end{verbatim}
+\end{jquote}
+すなわち，上の例では
+\begin{jquote}
+\begin{verbatim}
+$\bm{\ensuremath{2x}}$
+\end{verbatim}
+\end{jquote}
+と展開されます。
+
+最後に，赤で太字の指定です。
+
+\begin{showEx}(.8,.8){赤で太字}
+\maskhakofalse
+\everymaskHako[$]{\color{red}$\bm}
+次の\karaHako を補え。
+\begin{align*}
+  {(x^2)}'&=\maskHako(4zw)[2zh][1zh]{2x}\\
+  {(x^3)}'&=\maskHako(4zw)[2zh][1zh]{3x^2}
+\end{align*}
+\end{showEx}
+
+マスクの確認をしましょうか。
+
+\begin{showEx}(.8,.8){赤で太字}
+\maskhakotrue
+\everymaskHako[$]{\color{red}$\bm}
+次の\karaHako を補え。
+\begin{align*}
+  {(x^2)}'&=\maskHako(4zw)[2zh][1zh]{2x}\\
+  {(x^3)}'&=\maskHako(4zw)[2zh][1zh]{3x^2}
+\end{align*}
+\end{showEx}
+\end{document}

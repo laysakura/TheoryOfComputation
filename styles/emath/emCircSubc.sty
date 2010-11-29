@@ -1,0 +1,39 @@
+% emCircSubc.sty v 0.01 2008/08/29
+%
+\edef\emCtype@i{coil}%            0
+\edef\emCtype@ii{resistor}%       1
+\edef\emCtype@iii{condenser}%     2
+\edef\emCtype@iv{battery}%        3
+\edef\emCtype@v{switch}%          4
+\edef\emCtype@vi{meter}%          5
+\edef\emCtype@vii{current}%       6
+\edef\emCtype@viii{oldresistor}%  7
+\edef\emCtype@ix{diode}%          8
+\edef\emCtype@x{transistor}%      9
+\edef\emCtype@xi{earphone}%       10
+\edef\emCtype@xii{earth}%         11
+\edef\emCtype@xiii{antenna}%      12
+\edef\emCtype@xiv{bresistor}%     13
+\edef\emCtype@xv{lamp}%           14
+\edef\emCtype@N{15}%
+%
+\def\emCtype#1{%
+%
+    \def\emCtype@sep##1<##2>\@nil{%
+      \edef\parts@type{##1}\edef\parts@option{##2}%
+    }%
+%
+  \Strchr{#1}{<}\emCtype@tmp
+  \ifnum\emCtype@tmp>\z@
+    \emCtype@sep#1\@nil%\parts@type\parts@option
+  \else
+    \EMedef\parts@type{#1}%
+    \edef\parts@option{\empty}%
+  \fi
+  \srchhairetu{emCtype@}{\parts@type}\emC@type
+  \ifnum\emC@type=\z@
+    \errmessage{パーツの名前：\parts@type は未定義です}%
+  \fi
+  \Decr\emC@type
+}%
+\endinput

@@ -1,0 +1,398 @@
+% EMcolor.sty by tDB (emath@nifty.com)
+%
+\NeedsTeXFormat{LaTeX2e}%
+\def\EMcolor@version{0.00}%
+\ProvidesPackage{EMcolor}[2010/06/20 v \EMcolor@version ]%
+%
+%
+  \DeclareOption{cmyk}{\def\EMcolor@type{cmyk}}%
+  \ProcessOptions\relax
+%
+\@ifundefined{EMcolor@type}{\def\EMcolor@type{rgb}}{}%
+%
+\@ifundefined{color}{\errmessage{EMcolor.sty needs color.sty}}{}%
+\RequirePackage{emath}
+%
+%
+% 色
+%
+\edef\iro@{\empty}%
+\edef\nuri@iro@{\empty}%
+\edef\nuri@iro{\empty}%
+%
+\def\EMpsIrositei#1{%
+%
+  \def\Irositei@sub[##1]##2\@nil{%
+    \edef\Irositei@syu{##1}%
+    \edef\Irositei@noudo{##2}%
+  }%
+%
+  \edef\Irositei@tmp{#1}%
+  \headchar{\Irositei@tmp}\Irositei@a\Irositei@b
+  \ifthenelse{\equal{\Irositei@a}{[}}{%
+    \expandafter\Irositei@sub\Irositei@tmp\@nil%
+    \ifthenelse{\equal{\Irositei@syu}{gray}}{%
+      \writeEPS{\Irositei@noudo\space setgray}%
+    }{%
+      \errmessage{undefined color : #1}%
+    }%
+  }{%
+    \ifthenelse{\equal{\Irositei@a}{<}}{%
+      \strsep\Irositei@b{>}\Irositei@c\Irositei@d
+      \EMdilutecolor\Irositei@d\Irositei@c{Iscolor}%
+      \writeEPS{\csname EMps@Iscolor\endcsname\space \EMsetcolor}%
+    }{%
+      \@ifundefined{EMps@#1}{%
+        \errmessage{undefined color : #1}%
+      }{%
+        \writeEPS{\csname EMps@#1\endcsname\space \EMsetcolor}%
+      }%
+    }%
+  }%
+}%
+%
+\edef\EMsetcolor{set\EMcolor@type color}%
+%
+\def\defineEMpsCMYKcolor#1#2#3#4#5{%
+% #1 : 色名
+% #2 : C
+% #3 : M
+% #4 : Y
+% #5 : K
+  \expandafter\def\csname EMps@#1\endcsname{#2\space#3\space#4\space#5}%
+  \definecolor{#1}{cmyk}{#2,#3,#4,#5}}%
+\def\defineEMpsRGBcolor#1#2#3#4{%
+  \expandafter\def\csname EMps@#1\endcsname{#2\space#3\space#4}%
+  \definecolor{#1}{rgb}{#2,#3,#4}%
+}%
+%
+\ifthenelse{\equal\EMcolor@type{rgb}}{%
+%
+%
+% 色(RGB)
+%
+\let\defineEMpscolor\defineEMpsRGBcolor
+\def\rgbbunkai#1#2#3#4{%
+  \Strsep{#1}{ }#2\rgbbunkai@tmp
+  \Strsep{\rgbbunkai@tmp}{ }#3#4\relax
+}%
+  \input{EMrgbcolornam.def}%
+%
+%
+}{%
+%
+% 色(CMYK)
+%
+  \let\defineEMpscolor\defineEMpsCMYKcolor
+  \def\cmykBunkai#1{%
+    \edef\cmykBunkai@tmp{\csname EMps@#1\endcsname}%
+    \cmykbunkai\cmykBunkai@tmp}%
+  \def\cmykbunkai#1#2#3#4#5{%
+    \Strsep{#1}{ }#2\cmykbunkai@tmp
+    \Strsep{\cmykbunkai@tmp}{ }#3\cmykbunkai@tmp
+    \Strsep{\cmykbunkai@tmp}{ }#4#5\relax
+  }%
+  \input{EMpscolornam.def}%
+  \edef\EM@white{White}%
+}%
+%
+\def\Fdilutecolor{1-X}%
+%
+% 減色
+%
+\def\EMdilutecolor{%
+  \@ifstar{\edef\EM@dilute@byF{1}\@EMdilutecolor}{\edef\EM@dilute@byF{0}\@EMdilutecolor}}%
+\def\@EMdilutecolor#1#2#3{%
+% #1 : カラー名
+% #2 : 比率 (0〜1)
+% #3 : 減色したカラー名
+%\@ifundefined{color}{\errmessage{EMdilutecolor: needs color.sty}}{}%
+  \ifnum\EM@dilute@byF>\z@
+    \funcval\Fdilutecolor{#2}\EMdilute@r
+  \else
+    \edef\EMdilute@r{#2}%
+  \fi
+  \edef\dilutecolor@tmp{\csname EMps@#1\endcsname}%
+  \ifthenelse{\equal\EMcolor@type{rgb}}{%
+    \rgbbunkai\dilutecolor@tmp\rc@r\rc@g\rc@b
+    \Sub{1}\rc@r\rc@r\Mulself\rc@r{\EMdilute@r}\Sub{1}\rc@r\rc@r%
+    \Sub{1}\rc@g\rc@g\Mulself\rc@g{\EMdilute@r}\Sub{1}\rc@g\rc@g%
+    \Sub{1}\rc@b\rc@b\Mulself\rc@b{\EMdilute@r}\Sub{1}\rc@b\rc@b%
+    \expandafter\edef\csname #3@r\endcsname{\rc@r}%
+    \expandafter\edef\csname #3@g\endcsname{\rc@g}%
+    \expandafter\edef\csname #3@b\endcsname{\rc@b}%
+    \defineEMpscolor{#3}{\csname #3@r\endcsname}{\csname #3@g\endcsname}{\csname #3@b\endcsname}%
+  }{%
+    \cmykbunkai\dilutecolor@tmp\rc@c\rc@m\rc@y\rc@k
+%    \Sub{1}\rc@c\rc@c\Mulself\rc@c{\EMdilute@r}\Sub{1}\rc@c\rc@c%
+%    \Sub{1}\rc@m\rc@m\Mulself\rc@m{\EMdilute@r}\Sub{1}\rc@m\rc@m%
+%    \Sub{1}\rc@y\rc@y\Mulself\rc@y{\EMdilute@r}\Sub{1}\rc@y\rc@y%
+%    \Sub{1}\rc@k\rc@k\Mulself\rc@k{\EMdilute@r}\Sub{1}\rc@k\rc@k%
+    \Mulself\rc@c{\EMdilute@r}%
+    \Mulself\rc@m{\EMdilute@r}%
+    \Mulself\rc@y{\EMdilute@r}%
+    \Mulself\rc@k{\EMdilute@r}%
+    \expandafter\edef\csname #3@c\endcsname{\rc@c}%
+    \expandafter\edef\csname #3@m\endcsname{\rc@m}%
+    \expandafter\edef\csname #3@y\endcsname{\rc@y}%
+    \expandafter\edef\csname #3@k\endcsname{\rc@k}%
+    \defineEMpscolor{#3}{\csname #3@c\endcsname}{\csname #3@m\endcsname}{\csname #3@y\endcsname}{\csname #3@k\endcsname}%
+  }%
+}%
+\let\dilutecolor\EMdilutecolor
+\let\EMreductcolor\EMdilutecolor
+%
+\def\EMmixedcolor{\@ifnextchar[{\@EMmixedcolor}{\@EMmixedcolor[1]}}%
+\def\@EMmixedcolor[#1]#2#3{%
+% #1 : 減色比
+% #2 : カラー名のcsv列
+% #3 : 合成したカラー名
+%
+  \ifthenelse{\equal\EMcolor@type{rgb}}{%
+    \edef\mixed@i{0}%
+    \edef\mixed@r{0}%
+    \edef\mixed@g{0}%
+    \edef\mixed@b{0}%
+    \expandafter\@for\expandafter\mixed@c\expandafter:\expandafter=#2\do{%
+      \Incr\mixed@i
+      \edef\mixed@tmpc{\csname EMps@\mixed@c\endcsname}%
+      \rgbbunkai\mixed@tmpc\rc@r\rc@g\rc@b
+      \Addself\mixed@r\rc@r
+      \Addself\mixed@g\rc@g
+      \Addself\mixed@b\rc@b
+    }%
+    \Max{\mixed@r,\mixed@g,\mixed@b,1}\mixed@tmp
+    \Divself\mixed@r\mixed@tmp
+    \Divself\mixed@g\mixed@tmp
+    \Divself\mixed@b\mixed@tmp
+    \expandafter\edef\csname #3@r\endcsname{\mixed@r}%
+    \expandafter\edef\csname #3@g\endcsname{\mixed@g}%
+    \expandafter\edef\csname #3@b\endcsname{\mixed@b}%
+    \defineEMpscolor{#3}%
+      {\csname #3@r\endcsname}%
+      {\csname #3@g\endcsname}%
+      {\csname #3@b\endcsname}%
+  }{%
+    \edef\mixed@i{0}%
+    \edef\mixed@c{0}%
+    \edef\mixed@m{0}%
+    \edef\mixed@y{0}%
+    \edef\mixed@k{0}%
+    \expandafter\@for\expandafter\mixed@c@\expandafter:\expandafter=#2\do{%
+      \Incr\mixed@i
+      \edef\mixed@tmpc{\csname EMps@\mixed@c@\endcsname}%
+      \cmykbunkai\mixed@tmpc\rc@c\rc@m\rc@y\rc@k
+      \Addself\mixed@c\rc@c
+      \Addself\mixed@m\rc@m
+      \Addself\mixed@y\rc@y
+      \Addself\mixed@k\rc@k
+    }%
+    \Max{\mixed@c,\mixed@m,\mixed@y,\mixed@k,1}\mixed@tmp
+    \Divself\mixed@c\mixed@tmp
+    \Divself\mixed@m\mixed@tmp
+    \Divself\mixed@y\mixed@tmp
+    \Divself\mixed@k\mixed@tmp
+    \expandafter\edef\csname #3@c\endcsname{\mixed@c}%
+    \expandafter\edef\csname #3@m\endcsname{\mixed@m}%
+    \expandafter\edef\csname #3@y\endcsname{\mixed@y}%
+    \expandafter\edef\csname #3@k\endcsname{\mixed@k}%
+    \defineEMpscolor{#3}%
+      {\csname #3@c\endcsname}%
+      {\csname #3@m\endcsname}%
+      {\csname #3@y\endcsname}%
+      {\csname #3@k\endcsname}%
+  }%
+\dilutecolor{#3}{#1}{#3}%
+}%
+\let\mixedcolor\EMmixedcolor
+\let\endmixedcolor\endEMmixedcolor
+%
+%\def\EMmixcolor#1#2#3{%
+%% #1 : カラー名1
+%% #2 : カラー名1
+%% #3 : 合成したカラー名
+%%
+%  \edef\mixcolor@tmpi{\csname EMps@#1\endcsname}%
+%  \edef\mixcolor@tmpii{\csname EMps@#2\endcsname}%
+%  \ifthenelse{\equal\EMcolor@type{rgb}}{%
+%    \rgbbunkai\mixcolor@tmpi\rc@ri\rc@gi\rc@bi
+%    \rgbbunkai\mixcolor@tmpii\rc@rii\rc@gii\rc@bii
+%    \Sub{1}\rc@ri\rc@ri\Sub{1}\rc@rii\rc@rii
+%    \Sub{1}\rc@gi\rc@gi\Sub{1}\rc@gii\rc@gii
+%    \Sub{1}\rc@bi\rc@bi\Sub{1}\rc@bii\rc@bii
+%    \Add\rc@ri\rc@rii\rc@r\Mulself\rc@r{.5}%
+%    \Add\rc@gi\rc@gii\rc@g\Mulself\rc@g{.5}%
+%    \Add\rc@bi\rc@bii\rc@b\Mulself\rc@b{.5}%
+%    \Sub{1}\rc@r\rc@r
+%    \Sub{1}\rc@g\rc@g
+%    \Sub{1}\rc@b\rc@b
+%    \expandafter\edef\csname #3@r\endcsname{\rc@r}%
+%    \expandafter\edef\csname #3@g\endcsname{\rc@g}%
+%    \expandafter\edef\csname #3@b\endcsname{\rc@b}%
+%    \defineEMpscolor{#3}{\csname #3@r\endcsname}{\csname #3@g\endcsname}{\csname #3@b\endcsname}%
+%  }{%
+%    \cmykbunkai\mixcolor@tmpi\rc@ci\rc@mi\rc@yi\rc@ki
+%    \cmykbunkai\mixcolor@tmpii\rc@cii\rc@mii\rc@yii\rc@kii
+%    \Add\rc@ci\rc@cii\rc@c\Mulself\rc@c{.5}%
+%    \Add\rc@mi\rc@mii\rc@m\Mulself\rc@m{.5}%
+%    \Add\rc@yi\rc@yii\rc@y\Mulself\rc@y{.5}%
+%    \Add\rc@ki\rc@kii\rc@k\Mulself\rc@k{.5}%
+%    \expandafter\edef\csname #3@c\endcsname{\rc@c}%
+%    \expandafter\edef\csname #3@m\endcsname{\rc@m}%
+%    \expandafter\edef\csname #3@y\endcsname{\rc@y}%
+%    \expandafter\edef\csname #3@k\endcsname{\rc@k}%
+%    \defineEMpscolor{#3}{\csname #3@c\endcsname}{\csname #3@m\endcsname}{\csname #3@y\endcsname}{\csname #3@k\endcsname}%
+%  }%
+%}%
+%
+\def\EMmixcolor#1#2#3#4#5{%
+%% #1 : カラー名1
+%% #2 : カラー名2
+%% #3 : 比率1 (0〜1)
+%% #4 : 比率2 (0〜1) (#3)+(#4)≦1
+%% #5 : 混色したカラー名
+%%
+  \edef\hiritu@a{#3}%
+  \edef\hiritu@b{#4}%
+  \ifthenelse{\equal{#3}{*}}{\Sub{1}\hiritu@b\hiritu@a}{}%
+  \ifthenelse{\equal{#4}{*}}{\Sub{1}\hiritu@a\hiritu@b}{}%
+  \Add\hiritu@a\hiritu@b\hiritu@s
+  \ifdim\hiritu@s\p@>\@ne\p@
+    \Divself\hiritu@a\hiritu@s
+    \Divself\hiritu@b\hiritu@s
+  \fi
+%
+  \edef\mixc@tmpa{\csname EMps@#1\endcsname}%
+  \edef\mixc@tmpb{\csname EMps@#2\endcsname}%
+  \ifthenelse{\equal\EMcolor@type{rgb}}{%
+    \rgbbunkai\mixc@tmpa\mix@Ra\mix@Ga\mix@Ba
+    \rgbbunkai\mixc@tmpb\mix@Rb\mix@Gb\mix@Bb
+    \Mul\hiritu@a\mix@Ra\mixc@tmpa
+          \Mul\hiritu@b\mix@Rb\mixc@tmpb
+          \Add\mixc@tmpa\mixc@tmpb\mix@R
+    \Mul\hiritu@a\mix@Ga\mixc@tmpa
+          \Mul\hiritu@b\mix@Gb\mixc@tmpb
+          \Add\mixc@tmpa\mixc@tmpb\mix@G
+    \Mul\hiritu@a\mix@Ba\mixc@tmpa
+          \Mul\hiritu@b\mix@Bb\mixc@tmpb
+          \Add\mixc@tmpa\mixc@tmpb\mix@B
+    \defineEMpscolor{#5}\mix@R\mix@G\mix@B
+  }{%
+    \cmykbunkai\mixc@tmpa\mix@Ca\mix@Ma\mix@Ya\mix@Ka
+    \cmykbunkai\mixc@tmpb\mix@Cb\mix@Mb\mix@Yb\mix@Kb
+    \Mul\hiritu@a\mix@Ca\mixc@tmpa
+          \Mul\hiritu@b\mix@Cb\mixc@tmpb
+          \Add\mixc@tmpa\mixc@tmpb\mix@C
+    \Mul\hiritu@a\mix@Ma\mixc@tmpa
+          \Mul\hiritu@b\mix@Mb\mixc@tmpb
+          \Add\mixc@tmpa\mixc@tmpb\mix@M
+    \Mul\hiritu@a\mix@Ya\mixc@tmpa
+          \Mul\hiritu@b\mix@Yb\mixc@tmpb
+          \Add\mixc@tmpa\mixc@tmpb\mix@Y
+    \Mul\hiritu@a\mix@Ka\mixc@tmpa
+          \Mul\hiritu@b\mix@Kb\mixc@tmpb
+          \Add\mixc@tmpa\mixc@tmpb\mix@K
+    \defineEMpscolor{#5}\mix@C\mix@M\mix@Y\mix@K
+  }%
+}%
+%
+% iro=... 右辺値に
+%    [named]{....}
+%    <dilute>{....}
+% が使えるように
+%
+\def\@iro#1{%
+  \ifx\empty #1\relax\else
+    \headchar{#1}\iro@h\iro@r
+    \ifthenelse{\equal\iro@h{[}}{%
+      \expandafter\color#1\relax
+    }{%
+      \ifthenelse{\equal\iro@h{<}}{%
+        \strsep\iro@r{>}\iro@d\iro@c
+        \dilutecolor{\iro@c}{\iro@d}{iro@tmpcolor}%
+        \color{iro@tmpcolor}%
+      }{%
+        \color{#1}%
+      }%
+    }%
+  \fi
+  \ignorespaces}%
+%
+      \definecolor{gray}{gray}{.5}%
+      \definecolor{lightgray}{gray}{.8}%
+      \definecolor{lightlightgray}{gray}{.88}%
+      \definecolor{darkgray}{gray}{.2}%
+      \definecolor{skyblue}{rgb}{0.529412,0.807843,0.921569}%
+      \definecolor{gold}{rgb}{1.000000,0.843137,0.000000}%
+      \definecolor{yellowgreen}{rgb}{0.603922,0.803922,0.196078}%
+      \definecolor{teal}{rgb}{0.000000,0.501961,0.501961}%
+      \definecolor{forestgreen}{rgb}{0.133333,0.545098,0.133333}%
+      \definecolor{seagreen}{rgb}{0.180392,0.545098,0.341176}%
+      \definecolor{maroon}{rgb}{0.501961,0.000000,0.000000}%
+      \definecolor{olive}{rgb}{0.501961,0.501961,0.000000}%
+      \definecolor{navy}{rgb}{0.000000,0.000000,0.501961}%
+      \definecolor{purple}{rgb}{0.501961,0.000000,0.501961}%
+      \definecolor{royalblue}{rgb}{0.254902,0.411765,0.882353}%
+      \definecolor{plum}{rgb}{0.866667,0.627451,0.866667}%
+      \definecolor{lavender}{rgb}{0.901961,0.901961,0.980392}%
+      \definecolor{orchid}{rgb}{0.854902,0.439216,0.839216}%
+      \definecolor{violet}{rgb}{0.933333,0.509804,0.933333}%
+      \definecolor{indigo}{rgb}{0.294118,0.000000,0.509804}%
+      \definecolor{pink}{rgb}{1.000000,0.752941,0.796078}%
+      \definecolor{linen}{rgb}{0.980392,0.941176,0.901961}%
+      \definecolor{ivory}{rgb}{1.000000,1.000000,0.941176}%
+      \definecolor{snow}{rgb}{1.000000,0.980392,0.980392}%
+      \definecolor{silver}{rgb}{0.752941,0.752941,0.752941}%
+      \definecolor{crimson}{rgb}{0.862745,0.078431,0.235294}%
+      \definecolor{brown}{rgb}{0.647059,0.164706,0.164706}%
+      \definecolor{salmon}{rgb}{0.980392,0.501961,0.447059}%
+      \definecolor{coral}{rgb}{1.000000,0.498039,0.313725}%
+      \definecolor{tomato}{rgb}{1.000000,0.388235,0.278431}%
+      \definecolor{chocolate}{rgb}{0.823529,0.411765,0.117647}%
+      \definecolor{orange}{rgb}{1.000000,0.647059,0.000000}%
+      \definecolor{khaki}{rgb}{0.941176,0.901961,0.549020}%
+      \definecolor{darkgreen}{rgb}{0.000000,0.392157,0.000000}%
+      \definecolor{lightgreen}{rgb}{0.564706,0.933333,0.564706}%
+      \definecolor{darkcyan}{rgb}{0.000000,0.545098,0.545098}%
+%
+      \definecolor{Cyan}{cmyk}{1,0,0,0}%
+      \definecolor{PastelBlue}{cmyk}{0.5,0,0,0}%
+      \definecolor{CobaltBlue}{cmyk}{0.88,0.43,0.20,0.11}%
+      \definecolor{SailorBlue}{cmyk}{0.8,0.4,0,0}%
+      \definecolor{ForgetMeNot}{cmyk}{0.56,0.11,0.05,0}%
+%
+%      \@ifpackageloaded{hyperref}{%
+%      }{%
+%        \DeclareRobustCommand\color{%
+%          \@ifnextchar[\@EMundeclaredcolor\@EMdeclaredcolor}%
+%        \def\@EMundeclaredcolor[#1]#2{%
+%          \@ifundefined{color@#1}%
+%            {\c@lor@error{model `#1'}}%
+%            {%
+%              \ifthenelse{\equal{#2}{black}}{%
+%                \edef\iro@{\empty}\edef\nuri@iro@{\empty}%
+%              }{%
+%                \edef\iro@{#2}\edef\nuri@iro@{#2}%
+%              }%
+%              \csname color@#1\endcsname\current@color{#2}%
+%              \set@color
+%            }%
+%            \ignorespaces
+%        }%
+%        \def\@EMdeclaredcolor#1{%
+%          \@ifundefined{\string\color @#1}%
+%            {\c@lor@error{`#1'}}%
+%            {%
+%              \ifthenelse{\equal{#1}{black}}{%
+%                \edef\iro@{\empty}\edef\nuri@iro@{\empty}%
+%              }{%
+%                \edef\iro@{#1}\edef\nuri@iro@{#1}%
+%              }%
+%              \expandafter\let\expandafter\current@color
+%              \csname\string\color @#1\endcsname
+%              \set@color
+%            }%
+%            \ignorespaces
+%        }%
+%      }%
+\endinput

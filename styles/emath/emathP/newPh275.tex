@@ -1,0 +1,80 @@
+\documentclass[a4j]{jarticle}
+\usepackage{color}
+\usepackage{emathPh}
+\usepackage{emathCap}
+\IfFileExists{bs2yen.sty}{\usepackage{bs2yen}}{}
+
+\pagestyle{empty}
+\begin{document}
+図が込み入ってくると，\verb+\HenKo+で配置する文字列を動かしたくなることがあります。
+掲示板\texttt{No.5229}に投稿された例です。
+
+下の図\ref{fig1}で，文字$x$を動かしたい，という問題提起でした。
+\begin{center}
+  \begin{zahyou*}[ul=18mm](-1.2,1.2)(-1,1.2)
+    \rtenretu{A(1,120)n;B(1,215)sw;C(1,330)se;D(1,45)ne}
+    \HenKo[0]\A\B{$a$}
+    \HenKo[0]\B\C{$b$}
+    \HenKo[0]<henkoH=2mm>\C\D{$c$}
+    \HenKo[0]<henkoH=2mm>\D\A{$d$}
+    \HenKo\A\C{$x$}
+    \HenKo\D\B{$y$}%
+    {\thicklines  
+     \Takakkei{\A\B\C\D}
+     \En\O1
+     \Drawline{\A\C}
+     \Drawline{\B\D}
+    }%
+  \end{zahyou*}
+  \fgEMcaption{}\label{fig1}
+  \vskip\intextsep
+\end{center}
+掲示板では2つの方法を提案しましたが，\textsf{emathPh.sty v 2.75}で
+\verb+\HenKo+に対するオプションで実現する方法を取り入れることとしました。
+\begin{jquote}
+\begin{verbatim}
+\HenKo<putpos=..>{端点1}{端点2}{配置文字列}
+\end{verbatim}
+\end{jquote}
+において，\texttt{putpos=..}の右辺値は0〜1の数値で
+\begin{jquote}
+0のとき，端点1\\
+1のとき，端点2\\
+デフォルトは0.5で，配置文字列は円弧の中点に置かれます。
+\end{jquote}
+下の図\ref{fig2}では
+\begin{jquote}
+\begin{verbatim}
+    \HenKo<putpos=.6>\A\C{$x$}
+    \HenKo<putpos=.55>\D\B{$y$}%
+\end{verbatim}
+\end{jquote}
+として，$x$, $y$を動かしています。
+\begin{center}
+  \begin{zahyou*}[ul=18mm](-1.2,1.2)(-1,1.2)
+    \rtenretu{A(1,120)n;B(1,215)sw;C(1,330)se;D(1,45)ne}
+    \HenKo[0]\A\B{$a$}
+    \HenKo[0]\B\C{$b$}
+    \HenKo[0]<henkoH=2mm>\C\D{$c$}
+    \HenKo[0]<henkoH=2mm>\D\A{$d$}
+    \HenKo<putpos=.6>\A\C{$x$}
+    \HenKo<putpos=.55>\D\B{$y$}%
+    {\thicklines  
+     \Takakkei{\A\B\C\D}
+     \En\O1
+     \Drawline{\A\C}
+     \Drawline{\B\D}
+    }%
+  \end{zahyou*}
+  \fgEMcaption{}\label{fig2}
+  \vskip\intextsep
+\end{center}
+
+なお，\verb+<putpos=..>+オプションは
+\begin{jquote}
+\begin{verbatim}
+henkotype=arc(デフォルト), triangle, parallel, bracket
+\end{verbatim}
+\end{jquote}
+に対して有効です。
+\end{document}

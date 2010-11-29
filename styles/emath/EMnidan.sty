@@ -1,0 +1,64 @@
+% EMnidan.sty by tDB (emath@nifty.com)
+%
+  \NeedsTeXFormat{LaTeX2e}
+  \ProvidesPackage{EMnidan}[2008/12/28 v 0.01]%
+%
+%%%
+%%% 部分的二段組
+%%%
+%\newdimen\nidanmigihaba
+\newdimen\nidansep
+\newdimen\nidanseprule
+%\setlength{\nidansep}{2pt}%
+\setlength{\nidansep}{8truept}%
+\newsavebox{\nidan@boxi}%
+\newsavebox{\nidan@boxii}%
+
+\def\nidan{\@ifnextchar<{\nidan@}{\nidan@<r>}}%
+\def\nidan@<#1>{\@ifnextchar<{\nidan@@<#1>}{\nidan@@<#1><\z@>}}%
+\def\nidan@@<#1><#2>{\@ifnextchar({\@nidan<#1><#2>}{\@nidan<#1><#2>(\empty)}}%
+\def\@nidan<#1><#2>(#3){\@ifnextchar[{\@@nidan<#1><#2>(#3)}{%
+  \@@nidan<#1><#2>(#3)[t]}}%
+\def\@@nidan<#1><#2>(#3)[#4]{\@ifnextchar[{\@@@nidan<#1><#2>(#3)[#4]}{%
+  \@@@nidan<#1><#2>(#3)[#4][t]}}%
+\long\def\@@@nidan<#1><#2>(#3)[#4][#5]#6#7{%
+%   #1 : l|r 図の位置 t|y|z 右段の縦組/横組指定（デフォルトは r）
+%   #2 : #1=t の場合の minipage のサイズ
+%   #3 : そのまま実行します．
+%   #4 : 左段 minipage の配置オプション
+%   #5 : 右段 〃
+%   #6 : 右段の横巾
+%   #7 : 右段
+  \par
+% \setlength{\nidanmigihaba}{#3}%
+  \noindent
+  #3\relax%
+  \ifthenelse{\equal{#1}{l}}{\edef\fig@placement{l}}{\edef\fig@placement{r}}%
+  \setlength{\templa}{\linewidth}%
+  \ifthenelse{\equal{#6}\empty}{\settowidth\templb{#7}}{\setlength{\templb}{#6}}%
+\typeout{nidan:図幅=\the\templb}%
+  \addtolength{\templa}{-\templb}%
+  \addtolength{\templa}{-\nidansep}%
+  \addtolength{\templa}{-\nidansep}%
+  \addtolength{\templa}{-\nidanseprule}%
+  \global\setbox\nidan@boxii=\hbox{%
+    \ifx l#1\begin{minipage}[#5]{\templb}\dmyln #7\end{minipage}\else%
+    \ifx r#1\begin{minipage}[#5]{\templb}\dmyln #7\end{minipage}\else%
+    \begin{minipage}<#1>[#5]{#2}\dmyln #7\end{minipage}\fi\fi
+  }%
+  \global\setbox\nidan@boxi=\hbox\bgroup%
+  \begin{minipage}[#4]{\templa}\setlength{\parindent}{1zw}}%
+
+\def\endnidan{\end{minipage}\egroup\noindent
+  \if r\fig@placement
+    \leavevmode\box\nidan@boxi
+  \else
+    \raisebox{.5\baselineskip}{\box\nidan@boxii}%
+  \fi
+  \hspace{\nidansep}\vrule width \nidanseprule\hspace{\nidansep}%
+  \if r\fig@placement\raisebox{.5\baselineskip}{\box\nidan@boxii}\else
+    \box\nidan@boxi\fi
+  \vskip\topsep\vskip\parskip\endtrivlist}%
+\endinput
+
+v 0.01 \nidansep: \mawarikomikankaku と揃える。

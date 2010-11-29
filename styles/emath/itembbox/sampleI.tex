@@ -1,0 +1,382 @@
+\documentclass[a4j]{jarticle}
+  \usepackage{okumacro}
+  \let\okukeytop\keytop
+  \usepackage{itembbox}
+  \usepackage{showexample}
+  \usepackage{emathPh}
+
+\begin{document}
+\section*{タイトル付き罫線ボックス}
+このスタイルファイルでは，
+\verb/ascmac.sty/ で定義されている \verb/itembox/ 環境の変形を
+いくつか用意しました．その一覧です．
+\begin{center}
+\begin{tabular}{|l|c|l|l|l|}\hline
+環境名 & コーナーの形状 & 見出し & デフォルト位置 & 備考 \\\hline
+(\tt itembox  & 丸           & 上枠   & 中央       & ascmac.sty) \\\hline
+\tt itembbox  & 丸            & 下枠   & 右 & \\\hline
+\tt itemtbbox  & 丸         & 上枠と下枠 & 上枠は左，下枠は右 & \\\hline
+\tt itemsquarebox  & 角     & 上枠   & 中央 & \\\hline
+\tt itembsquarebox  & 角      & 下枠   & 右 & \\\hline
+\tt itemtbsquarebox  & 角   & 上枠と下枠 & 上枠は左，下枠は右 & \\\hline
+\tt itemshadebox  & 角      & 上枠  & 中央 & 影つき \\\hline
+%\hline
+%\tt  squarebox & 角  & なし  & −  &  \\\hline
+%\tt dblbox   & 角  & なし  & −  & 二重枠 \\\hline
+\end{tabular}
+\end{center}
+なお，これらの環境は ascmac.sty の機能を使用しますから，
+ascmac.sty を使用することが前提となります．
+
+では，それぞれの使用例をごらん頂きましょう．
+
+\section{itembox family}
+\subsection{itembbox}
+見出しを下枠につけます．\verb/item/ と \verb/box/ の間の \verb/b/ は
+\verb/bottom/ の頭文字の積りです．
+
+\begin{itembbox}{1998 凸凹大学}
+次の各問に答えよ．
+\end{itembbox}
+
+これは
+
+\begin{quote}\begin{verbatim}
+  \documentclass{jarticle}
+  \usepackage{ascmac,itembbox}
+  \begin{document}
+  \begin{itembbox}{1998 凸凹大学}
+    次の各問に答えよ．
+  \end{itembbox}
+  \end{document}
+\end{verbatim}
+\end{quote}
+
+というリストをタイプセットして得られます．\verb/itembbox/ の書式は
+
+\begin{quote}\begin{verbatim}
+  \begin{itembbox}[配置オプション]{下枠の見出し}
+で
+  配置オプションは
+      l : 左    c : 中央    r : 右(デフォルト)
+のいずれかです．
+\end{verbatim}
+\end{quote}
+
+\pagebreak
+\subsection{itemtbbox}
+次は，上枠にも下枠にも見出しを付ける環境 \verb/itemtbbox/ です．
+\verb/item/ と \verb/box/ の間の \verb/tb/ は
+\verb/top & bottom/ の頭文字の積りです．
+
+例えば，
+
+\begin{itemtbbox}{例題1}{1998 凹凸大学}
+次の設問に答えよ．
+\begin{enumerate}
+  \item うんたら
+  \item かんたら
+\end{enumerate}
+\end{itemtbbox}
+
+これは
+\begin{quote}\begin{verbatim}
+  \documentclass{jarticle}
+  \usepackage{ascmac,itembbox}
+  \begin{document}
+  \begin{itemtbbox}{例題1}{1998 凹凸大学}
+    次の設問に答えよ．
+    \begin{enumerate}
+      \item うんたら
+      \item かんたら
+    \end{enumerate}
+  \end{itemtbbox}
+  \end{document}
+\end{verbatim}
+\end{quote}
+というリストをタイプセットして得られます．\verb/itemtbbox/ の書式は
+
+\begin{quote}\begin{verbatim}
+  \begin{itemtbbox}<上枠の配置>[下枠の配置]{上枠の見出し}{下枠の見出し}
+            <上枠の配置> は省略可能なオプション引数で， 
+                 l(左), c(中央), r(右) のいずれかです．デフォルトは l
+            [下枠の配置] も省略可能なオプション引数で， 
+                 l(左), c(中央), r(右) のいずれかです．デフォルトは r
+\end{verbatim}
+\end{quote}
+\pagebreak
+
+\section{itemsquarebox family}
+\setcounter{subsection}{-1}%
+\verb/itembox family/ はコーナーが円いボックスでした．\par\noindent
+これを直角にしたものが\verb/itemsquarebox family/ です．
+\subsection{itemsquarebox}
+まずは，上枠に見出しをつけます．
+
+\begin{itemsquarebox}{例題}
+次の設問に答えよ．
+\end{itemsquarebox}
+
+これは
+\begin{quote}\begin{verbatim}
+  \documentclass{jarticle}
+  \usepackage{ascmac,itembbox}
+  \begin{document}
+  \begin{itemsquarebox}{例題}
+    次の設問に答えよ．
+  \end{itemsquarebox}
+  \end{document}
+\end{verbatim}
+\end{quote}
+というリストをタイプセットして得られます．\verb/itemsquarebox/ の書式は
+\begin{quote}\begin{verbatim}
+  \begin{itemsquarebox}[配置オプション]{上枠の見出し}
+で
+  配置オプションは
+      l : 左    c : 中央(デフォルト)    r : 右
+のいずれかです．
+\end{verbatim}
+\end{quote}
+\pagebreak
+
+\subsection{itembsquarebox}
+次は見出しを下枠につけます．
+\begin{itembsquarebox}{1998 凸凹大学}
+次の設問に答えよ．
+\end{itembsquarebox}
+
+これは
+\begin{quote}\begin{verbatim}
+  \documentclass{jarticle}
+  \usepackage{ascmac,itembbox}
+  \begin{document}
+  \begin{itembsquarebox}{1998 凸凹大学}
+    次の設問に答えよ．
+  \end{itembsquarebox}
+  \end{document}
+\end{verbatim}
+\end{quote}
+というリストをタイプセットして得られます．\verb/itembsquarebox/ の書式は
+\begin{quote}\begin{verbatim}
+  \begin{itembsquarebox}[配置オプション]{下枠の見出し}
+で
+  配置オプションは
+      l : 左    c : 中央    r : 右(デフォルト)
+のいずれかです．
+\end{verbatim}
+\end{quote}
+
+\subsection{itemtbsquarebox}
+三番目は，上枠・下枠両方に見出しをつけます．
+
+\begin{itemtbsquarebox}{例題1}{1998 凹凸大学}
+次の設問に答えよ．
+\end{itemtbsquarebox}
+
+これは
+\begin{quote}\begin{verbatim}
+  \documentclass{jarticle}
+  \usepackage{ascmac,itembbox}
+  \begin{document}
+  \begin{itemtbsquarebox}{例題1}{1998 凹凸大学}
+    次の設問に答えよ．
+  \end{itemtbsquarebox}
+  \end{document}
+\end{verbatim}
+\end{quote}
+というリストをタイプセットして得られます．\verb/itemtbsquarebox/ の書式は
+
+\begin{quote}\begin{verbatim}
+  \begin{itemtbsquarebox}<上枠の配置>[下枠の配置]{上枠の見出し}{下枠の見出し}
+            <上枠の配置> は省略可能なオプション引数で， 
+                 l(左), c(中央), r(右) のいずれかです．デフォルトは l
+            [下枠の配置] も省略可能なオプション引数で， 
+                 l(左), c(中央), r(右) のいずれかです．デフォルトは r
+\end{verbatim}
+\end{quote}
+\pagebreak
+
+\section{itemshadebox}
+影つきボックスの上枠に見出しをつけます．
+
+  \begin{itemshadebox}[r]{\gt 重複順列}
+    $n$個のものから$r$個をとった重複順列の総数は$n^r$である．
+  \end{itemshadebox}
+
+これは
+\begin{quote}\begin{verbatim}
+  \documentclass{jarticle}
+  \usepackage{ascmac,itembbox}
+  \begin{document}
+  \begin{itemshadebox}[r]{\gt 重複順列}
+    $n$個のものから$r$個をとった重複順列の総数は$n^r$である．
+  \end{itemshadebox}
+  \end{document}
+\end{verbatim}
+\end{quote}
+というリストをタイプセットして得られます．\verb/itemshadebox/ の書式は
+\begin{quote}\begin{verbatim}
+  \begin{itemshadebox}[配置オプション]{上枠の見出し}
+で
+  配置オプションは
+      l : 左    c : 中央(デフォルト)    r : 右
+のいずれかです．
+\end{verbatim}
+\end{quote}
+
+\section{\cmd{EMkeytop}}
+\subsection{\textsf{ascmac.sty}の\cmd{keytop}}
+\textsf{ascmac.sty}で定義されている\cmd{keytop}は，枠線蓋の部分と
+左右の縦罫線が少し離れてしまいます。
+この現象は，\textsf{emath.sty}を用いない場合でも発生します。
+
+\begin{showEx}(.7,.24){\textsf{ascmac.sty}の\cmd{keytop}}
+\asckeytop{A}
+\end{showEx}
+
+（注） \textsf{itembbox.sty}では，\textsf{ascmac.sty}の\cmd{keytop}を
+\cmd{asckeytop}と改名しています。
+
+\subsection{\textsf{okumacro.sty}の\cmd{keytop}}
+\cmd{keytop}というコマンドは，奥村先生の\textsf{okumacro.sty}でも
+定義されています。こちらは枠線は綺麗につながっていますが，
+\textsf{emath}パッケージが殆ど必須としている\textsf{eepic.sty}とは相性が悪く，
+枠線が乱れます。
+
+\begin{showEx}(.7,.24){\textsf{okumacro.sty}の\cmd{keytop}}
+\okukeytop{A}
+\end{showEx}
+
+\subsection{\textsf{itembbox.sty}の\cmd{keytop}}
+前節で指摘した枠線の乱れは，\textsf{eepic.sty}と\textsf{screen}環境などとの
+関係として知られているもので，\textsf{itembbox.sty}では，奥村先生の
+\cmd{keytop}に対して修正を施しています。その結果は
+
+\begin{showEx}(.7,.24){\textsf{itembbox.sty}の\cmd{keytop}}
+\keytop{A}
+\end{showEx}
+
+\noindent
+枠線も綺麗につながっており，目出度し目出度しと思ったのですが．．．．．
+\clearpage
+
+\subsection{\cmd{keytop}のサイズ}
+\cmd{keytop}の中身のサイズが変わりますと，横方向は大丈夫です。
+
+\begin{showEx}(.7,.24){\textsf{itembbox.sty}の\cmd{keytop}}
+\keytop{Enter}
+\end{showEx}
+
+縦方向が問題で
+
+\begin{showEx}(.78,.16){\textsf{itembbox.sty}の\cmd{keytop}}
+\keytop{$\stackrel{\textstyle\mathsf{ROLL}}{\mathsf{UP}}$}
+\end{showEx}
+
+文字サイズを小さくしてみましょう。
+
+\begin{showEx}(.78,.16){\textsf{itembbox.sty}の\cmd{keytop}}
+\keytop{$\stackrel{\scriptscriptstyle\mathsf{ROLL}}{%
+  \scriptscriptstyle\mathsf{UP}}$}
+\end{showEx}
+
+\noindent
+やっと収まりましたが，天がやや窮屈です。
+
+\subsection{\cmd{EMkeytop}}
+前節でみたように，\textsf{okumacro.sty}の\cmd{keytop}は，
+縦方向のサイズは固定となっているようです。
+
+そこで，縦方向も可変となるように修正したものを
+\cmd{EMkeytop}と称することとしました。
+
+\begin{showEx}(.78,.16){\textsf{itembbox.sty}の\cmd{keytop}}
+\EMkeytop{$\stackrel{\scriptscriptstyle\mathsf{ROLL}}{%
+  \scriptscriptstyle\mathsf{UP}}$}
+\end{showEx}
+
+通常の文字サイズに対しても
+
+\begin{showEx}(.78,.16){\textsf{itembbox.sty}の\cmd{keytop}}
+\EMkeytop{$\stackrel{\textstyle\mathsf{ROLL}}{\mathsf{UP}}$}
+\end{showEx}
+
+もっとも，縦サイズを可変とすることが善とは言えません。
+下の2つを比較してください。
+
+\begin{showEx}(.78,.16){縦サイズ可変}
+\EMkeytop{\textsf{A}}
+\EMkeytop{$\stackrel{\scriptscriptstyle\mathsf{ROLL}}{%
+  \scriptscriptstyle\mathsf{UP}}$}
+\end{showEx}
+
+\begin{showEx}(.78,.16){縦サイズ固定}
+\keytop{A}
+\keytop{$\stackrel{\scriptscriptstyle\mathsf{ROLL}}{%
+  \scriptscriptstyle\mathsf{UP}}$}
+\end{showEx}
+
+固定の方が望ましいでしょう。可変としたいときのために
+\cmd{EMkeytop}を用意したということです。
+
+\subsection{\cmd{keytop}の書体}
+奥村先生の\cmd{keytop}の書体は\verb+\normalfont\sffamily+となっています。
+一方，\cmd{EMkeytop}は\verb+\normalfont+です。
+
+\begin{showEx}(.7,.24){書体の比較}
+\keytop{A}\par
+\EMkeytop{A}
+\end{showEx}
+
+\cmd{EMkeytop}の書体を変更するには
+\cmd{EMkeytopfont}を用います。
+
+\begin{showEx}(.7,.24){書体の変更}
+\keytop{A}\par
+\EMkeytopfont{\sffamily}
+\EMkeytop{A}\par
+\EMkeytopfont{\ttfamily}
+\EMkeytop{A}
+\end{showEx}
+
+\subsection{コーナーサイズの変更}
+\cmd{EMkeytop}では，コーナーサイズを\cmd{EMkeytopcornersize}で
+指定可能としてあります。
+引数は4〜20で，20とすると，\textsf{screen}環境のコーナーと同じ形となります。
+デフォルト値は4です。
+
+\begin{showEx}(.7,.24){\cmd{EMkeytopcornersize}}
+\EMkeytop{A}\par
+\EMkeytopcornersize{12}
+\EMkeytop{A}
+\end{showEx}
+
+\subsection{\cmd{keytop}左右のアキ}
+奥村先生の\cmd{keytop}は，左右それぞれ\texttt{1pt}のアキが入ります。
+一方，\cmd{EMkeytop}はアキナシです。
+
+\begin{showEx}(.7,.24){左右のアキ}
+abc\keytop{A}xyz\par
+abc\EMkeytop{A}xyz
+\end{showEx}
+
+\if0
+アキを除去したのは，次のような使用を想定したからです。
+
+\begin{showEx}(.9,.9){使用例}
+\begin{zahyou}[ul=10mm,Sitayohaku=10mm](-1,7)(-.2,2.5)
+  \footnotesize
+  \def\Ft{T-sin(T)}
+  \def\Gt{1-cos(T)}
+  \PutStr{(.5,-.5)}(0,0)[l]{\EMkeytop{$t=0$}}to[-3]\O
+  \BTen\Ft\Gt{$pi/2}\P
+  \PutStr{(1.5,.5)}(0,0)[l]{\EMkeytop{$t=\bunsuu\pi2$}}to[-2]\P
+  \BTen\Ft\Gt{$pi}\P
+  \PutStr{(3.5,1.5)}(0,0)[t]{\EMkeytop{$t=\pi$}}to[-3]\P
+  \BTen\Ft\Gt{2*$pi}\P
+  \PutStr{(6,-.5)}(0,0)[r]{\EMkeytop{$t=2\pi$}}to[3]\P
+  {\thicklines\BGurafu\Ft\Gt{-3}{9}}%
+\end{zahyou}
+\end{showEx}
+\fi
+\end{document}

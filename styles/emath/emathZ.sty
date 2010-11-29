@@ -1,0 +1,436 @@
+% emathZ.sty by tDB(CQB00260@nifty.ne.jp)
+
+\def\tmpname{LaTeX2e}%
+\ifx\fmtname\tmpname%
+  \NeedsTeXFormat{pLaTeX2e}
+  \ProvidesPackage{emathZ}[2010/03/02 v0.24]%
+  \DeclareOption{onlyZ}{\def\Z@nly{}}%
+  \DeclareOption{times}{\def\em@fonts{1}}%
+  \DeclareOption{txfonts}{\def\em@fonts{2}}%
+  \DeclareOption{pxfonts}{\def\em@fonts{3}}%
+  \DeclareOption{mathabx}{\def\em@fonts{4}}%
+  \DeclareOption{varg}{\def\@varg{}}%
+  \DeclareOption{dviout}{\def\em@grdrv{dviout}}%
+  \DeclareOption{dvips}{\def\em@grdrv{dvips}}%
+  \DeclareOption{dvipdfm}{\def\em@grdrv{dvipdfm}}%
+  \DeclareOption{dvipdfmx}{\def\em@grdrv{dvipdfmx}}%
+  \DeclareOption{EMdvipsk}{\def\em@dvipsk{}}%
+  \DeclareOption{EMdvipdfm}{\def\em@dvipdfm{}}%
+  \DeclareOption{EMdvipdfmx}{\def\em@dvipdfm{x}}%
+  \DeclareOption{emsyasen}{\def\@em@syasen{}}%
+  \ProcessOptions\relax
+  \@ifundefined{Z@nly}{%
+    \RequirePackage{emathPh}%
+  }{}%
+\fi
+
+\newskip\emZ@baselineskip
+%
+\@ifundefined{@em@syasen}{%
+  \let\zyukeizu@sensyu\sensyu
+}{%
+  \let\zyukeizu@sensyu\rotateline
+}%
+%
+\edef\zyukeizu@kata{s}% s = 斜線（デフォルト）
+%                       k = 縦横線（角型）
+\def\zyukeizuKata#1{\edef\eda@hukasa{0}\edef\zyukeizu@kata{#1}}%
+%
+\def\eda@vpitch{0}% 枝の縦間隔増量
+\def\zyukeizuEdaVpitch#1{\uptkansan{#1}\eda@vpitch}%
+%
+\define@key{emZ}{hutosa}{\def\edahutosa@@{#1}}%
+\define@key{emZ}{entyou}{\uptkansan{#1}\edaentyou@@}%
+\define@key{emZ}{linethickness}{\def\edahutosa@@{#1}}%
+\define@key{emZ}{allinethickness}{\def\edahutosa@@{#1}}%
+\define@key{emZ}{iti}{\def\eda@tyuu@iti{#1}}%
+\define@key{emZ}{EdaNagasa}{%
+  \headchar{#1}\EdaN@h\EdaN@tmp
+  \if [\EdaN@h
+    \Strsep\EdaN@tmp{]}\EdaN@a\EdaN@b
+    \uptkansan\EdaN@a\z@Eda@
+    \uptkansan\EdaN@b\z@Edaii@
+  \else
+    \uptkansan{#1}\z@Edaii@\Div\z@Edaii@{2}\z@Eda@
+  \fi
+  }%
+\define@key{emZ}{EdaNagasaL}{\uptkansan{#1}\z@Eda@}%
+\define@key{emZ}{W}{%
+  \Strchr{#1}{,}\emZ@tmp
+  \ifnum\emZ@tmp>\z@
+    \edef\emZ@i{0}%
+    \expandafter\@for\expandafter\emZ@tmp\expandafter:\expandafter=#1\do{%
+      \Incr\emZ@i
+      \uptkansan{\emZ@tmp}\emZ@tmp@
+      \expandafter\edef\csname retuhaba@\romannumeral\emZ@i\endcsname{%
+        \emZ@tmp@}%
+    }%
+    \edef\retuhaba@{\emZ@tmp@}%
+  \else
+    \uptkansan{#1}\retuhaba@
+  \fi
+}%
+%
+\edef\edahutosa@{0.4pt}% 枝の太さ
+\edef\edaentyou@{0}% 枝の延長量
+\def\edahutosa#1{\edef\edahutosa@{#1}}%
+\def\z@Eda{15}%     角型の場合，枝の左半分の長さ
+\def\z@Edaii{30}%   枝の長さ
+\def\zyukeizuEdaNagasa{\@ifnextchar[{\zyukeizu@EdaNagasa}{%
+    \@zyukeizuEdaNagasa}}%
+\def\@zyukeizuEdaNagasa#1{%
+  \uptkansan{#1}\z@Edaii
+  \Div{\z@Edaii}{2}\z@Eda
+}%
+\def\zyukeizu@EdaNagasa[#1]#2{%
+  \uptkansan{#2}\z@Edaii\uptkansan{#1}\z@Eda}%
+\edef\eda@tyuu@iti@{.5}%
+\def\zyukeizuEdaTyuuIti#1{\edef\eda@tyuu@iti@{#1}}%
+%
+% \eda[#1]<#2>(#3,#4)[#5]#6
+%   #1      : 枝の傍に置く文字列（デフォルトは空文字列）
+%   #2      : #1 の文字列を置く位置 (0 〜 1) （デフォルトは 0.5）
+%   (#3,#4) : 文字列を置く位置の修正ベクトル （デフォルトは (0,0)）
+%   #5      : 文字列の配置
+%   #6      : 枝の末端に置く文字列
+%       (\sPut[#2]{枝の左端}{枝の右端}(#3,#4)[#5]{#1} として\sPutを呼び出す．)
+%
+\def\eda{%
+  \xdef\Eda@use{0}%
+  \@ifnextchar[{\eda@}{\eda@[\empty]}}%
+\def\eda@[#1]{\@ifnextchar<{\eda@@[#1]}{\eda@@[#1]<\eda@tyuu@iti@>}}%
+\def\eda@@[#1]<#2>{\@ifnextchar({\@eda[#1]<#2>}{\@eda[#1]<#2>(0,0)}}%
+\def\@eda[#1]<#2>(#3,#4){\@ifnextchar[{\@@eda[#1]<#2>(#3,#4)}{%
+    \@@eda[#1]<#2>(#3,#4)[c]}}%
+\def\@@eda[#1]<#2>(#3,#4)[#5]#6{%
+  \ifnum\eda@hukasa>0\relax%
+    \edef\eda@suu@{eda@suu\romannumeral \eda@hukasa}%
+    \ifnum\@nameuse{\eda@suu@}>0\relax
+        \vskip\eda@vpitch pt%
+    \fi%
+    \IAdd{\@nameuse{\eda@suu@}}{1}\@tmp\edef\@@tmp{\@tmp}%
+    \def\edahutosa@@{\edahutosa@}%
+    \def\edaentyou@@{\edaentyou@}%
+    \def\eda@tyuu@iti{\eda@tyuu@iti@}%
+    \Strchr{#2}{=}\eda@opt
+    \ifnum\eda@opt>\z@\setkeys{emZ}{#2}\else\def\eda@tyuu@iti{#2}\fi
+%
+    \expandafter\xdef\csname eda@suu\romannumeral\eda@hukasa\endcsname{%
+      \@@tmp}%
+    \expandafter\gdef\csname eda@tyuu\romannumeral\eda@hukasa @\romannumeral\@@tmp\endcsname{%
+      #1}% 2002/06/15 xdef --> gdef
+    \expandafter\xdef\csname eda@tyuu@iti\romannumeral\eda@hukasa @\romannumeral\@@tmp\endcsname{\eda@tyuu@iti}%
+    \expandafter\xdef\csname eda@hutosa\romannumeral\eda@hukasa @\romannumeral\@@tmp\endcsname{\edahutosa@@}%  2002/06/16
+    \expandafter\xdef\csname eda@entyou\romannumeral\eda@hukasa @\romannumeral\@@tmp\endcsname{\edaentyou@@}% 
+    \expandafter\xdef\csname eda@tyuu@haiti\romannumeral\eda@hukasa @\romannumeral\@@tmp\endcsname{%
+      (#3,#4)[#5]}%
+  \fi%
+  \setbox1=\hbox{\strut #6}%
+  \@tempdima\ht1\advance\@tempdima\dp1\relax%
+  \ifdim\@tempdima<\emZ@baselineskip\@tempdima=\emZ@baselineskip
+%  \else%
+%    \advance\@tempdima1pt%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 2007/07/15 コメント化
+  \fi
+  \expandafter\xdef\csname z@ht\romannumeral\eda@hukasa @\romannumeral%
+    \@@tmp\endcsname{\strip@pt\@tempdima}%
+  \hbox{\hspace{\edaentyou@@\p@}\box1}%
+}%
+%
+\define@key{emZ}{nextOpt}{\def\nxt@opt{#1}}%
+\define@key{emZ}{tyuu}{\def\eda@tyuu@str{#1}}%
+\def\Eda{%
+  \xdef\Eda@use{1}%
+  \edef\eda@tyuu@str{\empty}%
+  \edef\nxt@opt{\empty}%
+  \def\edahutosa@@{\edahutosa@}%
+  \def\edaentyou@@{\edaentyou@}%
+  \def\eda@tyuu@iti{\eda@tyuu@iti@}%
+  \@ifnextchar<{\@Eda}{\@Eda<\empty>}}%
+\def\@Eda<#1>#2#3{%
+  \ifx\empty #1\else\setkeys{emZ}{#1}\fi
+  \ifx\empty #3
+    \ifx\empty\retuhaba@
+      \@@Eda{#2}%
+    \else
+      \@@Eda{\hbox to \retuhaba@\unitlength{#2\hfil}}%
+    \fi
+  \else
+    \EMedef\Eda@tmp{<\nxt@opt>}%
+    \ifx\empty\retuhaba@
+      \@@Eda{#2\bgroup\expandafter\zyukeizu\Eda@tmp#3\endzyukeizu\egroup}%
+    \else
+      \@@Eda{\hbox to \retuhaba@\unitlength{#2\hfil}\bgroup\expandafter\zyukeizu\Eda@tmp#3\endzyukeizu\egroup}%
+    \fi
+  \fi
+}%
+\def\@@Eda#1{%
+  \ifnum\eda@hukasa>0\relax%
+    \edef\eda@suu@{eda@suu\romannumeral \eda@hukasa}%
+    \ifnum\@nameuse{\eda@suu@}>0\relax
+        \vskip\eda@vpitch pt%
+    \fi%
+%\typeout{eda@tyuu@str=\eda@tyuu@str,tyuu@iti=\eda@tyuu@iti}%
+    \IAdd{\@nameuse{\eda@suu@}}{1}\@tmp\edef\@@tmp{\@tmp}%
+%
+    \expandafter\xdef\csname eda@suu\romannumeral\eda@hukasa\endcsname{%
+      \@@tmp}%
+    \expandafter\xdef\csname eda@tyuu@iti\romannumeral\eda@hukasa @\romannumeral\@@tmp\endcsname{\eda@tyuu@iti}%
+    \expandafter\EMxdef\csname eda@tyuu@str\romannumeral\eda@hukasa @\romannumeral\@@tmp\endcsname{\eda@tyuu@str}% 
+    \expandafter\xdef\csname eda@hutosa\romannumeral\eda@hukasa @\romannumeral\@@tmp\endcsname{\edahutosa@@}%
+    \expandafter\xdef\csname eda@entyou\romannumeral\eda@hukasa @\romannumeral\@@tmp\endcsname{\edaentyou@@}%
+    \expandafter\xdef\csname eda@tyuu@haiti\romannumeral\eda@hukasa @\romannumeral\@@tmp\endcsname{\empty}%
+  \fi%
+  \setbox1=\hbox{\strut #1}%
+  \@tempdima\ht1\advance\@tempdima\dp1\relax%
+  \ifdim\@tempdima<\emZ@baselineskip
+    \@tempdima=\emZ@baselineskip
+  \fi
+  \expandafter\xdef\csname z@ht\romannumeral\eda@hukasa @\romannumeral%
+    \@@tmp\endcsname{\strip@pt\@tempdima}%
+  \hbox{\hspace{\edaentyou@@\p@}\box1}%
+}%
+%
+\edef\retuhaba@{\empty}%
+\def\zyukeizu{\edef\z@Edaii@{\z@Edaii}\edef\z@Eda@{\z@Eda}%
+  \@ifnextchar<{\zyukeizu@}{\@zyukeizu}}%
+\def\zyukeizu@<#1>{\ifx\empty #1\else\setkeys{emZ}{#1}\fi\@zyukeizu}
+\def\@zyukeizu{%
+\@ifundefined{eda@hukasa}{\xdef\eda@hukasa{0}}{}%
+\offinterlineskip
+\emZ@baselineskip=\ht\strutbox\relax
+\IAdd\eda@hukasa{1}\eda@hukasa%
+\ifnum\eda@hukasa>0\relax%
+  \expandafter\xdef\csname eda@suu\romannumeral \eda@hukasa\endcsname{0}%
+\fi%
+\setbox0=\vbox\bgroup%
+\vskip.25\emZ@baselineskip%
+}%
+
+\def\endzyukeizu{\vskip.25\emZ@baselineskip\egroup%
+  \iftdir\edef\crct@baseln{0}\else\edef\crct@baseln{3}\fi%
+  \ifnum\eda@hukasa>\z@%
+    {\unitlength1pt\relax%
+    \begin{picture}(\z@Edaii@,0)%
+    \edef\@c{0}\edef\total@ht{0}%
+    \edef\eda@suu@{eda@suu\romannumeral\eda@hukasa}%
+    \@whilenum\@c<\@nameuse{\eda@suu@}\do{\IAdd\@c{1}\@c%
+    \xdef\z@ht@{z@ht\romannumeral\eda@hukasa @\romannumeral\@c}%
+    \Add\total@ht{\@nameuse{\z@ht@}}\total@ht%
+    \Add\total@ht{\eda@vpitch}\total@ht}%
+    \Sub\total@ht{\eda@vpitch}\total@ht%
+    \Div\total@ht{2}\total@ht%
+    \edef\@c{0}\edef\z@sum{0}%
+    \@whilenum\@c<\@nameuse{\eda@suu@}\do{\IAdd\@c{1}\@c%
+        \xdef\z@ht@{z@ht\romannumeral\eda@hukasa @\romannumeral\@c}%
+        \Add\z@sum{\@nameuse{\z@ht@}}\z@sum%
+        \Sub\z@sum\total@ht\z@y%
+        \Add\z@sum{\eda@vpitch}\z@sum
+        \Div{\@nameuse{\z@ht@}}{2}\z@yy\Sub\z@y\z@yy\z@y%
+\Mul\z@y{-1}\z@y@
+%\typeout{z@y=\z@y,z@y@=\z@y@}%
+        \ifnum\Eda@use=\z@
+          \edef\@n{eda@tyuu\romannumeral\eda@hukasa @\romannumeral\@c}%
+        \else
+          \edef\@n{eda@tyuu@str\romannumeral\eda@hukasa @\romannumeral\@c}%
+        \fi
+        \edef\@p{eda@tyuu@haiti\romannumeral\eda@hukasa @\romannumeral\@c}%
+        \edef\@r{eda@tyuu@iti\romannumeral\eda@hukasa @\romannumeral\@c}%
+        \edef\@w{eda@hutosa\romannumeral\eda@hukasa @\romannumeral\@c}%
+        \edef\@e{eda@entyou\romannumeral\eda@hukasa @\romannumeral\@c}%
+        \linethickness{\@nameuse{\@w}}% 2002/06/16
+        \Add\z@Edaii@{\@nameuse{\@e}}\z@Edaii@@
+        \if\zyukeizu@kata k\relax%
+          \ifnum\@c=1\relax
+            \edef\org@p{\z@y@}%
+          \fi%
+          \ifdim\@nameuse{\@w}>\z@
+            \put(0,\crct@baseln){\zyukeizu@sensyu(\z@Eda@,\z@y@)(\z@Edaii@@,\z@y@)}%
+            \put(0,\crct@baseln){\zyukeizu@sensyu(0,0)(\z@Eda@,0)}%
+            \put(0,\crct@baseln){\zyukeizu@sensyu(\z@Eda@,0)(\z@Eda@,\z@y@)}%
+          \fi
+          \edef\@tmp{{(\z@Eda@,\z@y@)}\@nameuse{\@p}}%
+          \put(0,\crct@baseln){%
+            \iftdir
+              \expandafter\emathPut\@tmp{\rensuji{\@nameuse{\@n}}}%
+            \else%
+              \expandafter\emathPut\@tmp{\@nameuse{\@n}}%
+            \fi%
+          }%
+        \else
+          \ifdim\z@Edaii@\p@>\z@
+            \ifdim\@nameuse{\@w}>\z@
+              \put(0,\crct@baseln){\zyukeizu@sensyu(0,0)(\z@Edaii@@,\z@y@)}%
+            \fi
+          \fi
+          \edef\@tmp{%
+            [\@nameuse{\@r}]{(0,0)}{(\z@Edaii@@,\z@y@)}\@nameuse{\@p}}%
+          \put(0,\crct@baseln){%
+            \iftdir
+              \expandafter\sPut\@tmp{\rensuji{\@nameuse{\@n}}}%
+            \else
+              \Bunten{(0,0)}{(\z@Edaii@@,\z@y@)}{\@nameuse{\@r}}{*}\tyuu@P
+              \ifnum\Eda@use=\z@
+                \EMedef\@tmp{{\tyuu@P}\@nameuse{\@p}{\@nameuse{\@n}}}%
+              \else
+                \EMedef\@tmp{{\tyuu@P}\@nameuse{\@n}}%
+              \fi
+              \expandafter\emathPut\@tmp{}%
+            \fi
+          }%
+        \fi%
+    }%
+    \end{picture}}%
+  \fi%
+  {\@tempdima.5\ht0\relax
+  \iftdir%\advance\@tempdima-.05\emZ@baselineskip%
+    \else\advance\@tempdima-.25\emZ@baselineskip\fi
+  \leavevmode
+  \lower\@tempdima\hbox{\box0}%
+  }%
+  \ISub\eda@hukasa{1}\eda@hukasa%
+}%
+%%%
+%%% EMxymatrix
+%%%
+\@ifpackageloaded{EMxymatrix}{}{%
+\define@key{EMxymatrix}{Ws}{\settowidth\@tempdima{#1}\edef\EMxy@ws{\the\@tempdima}%
+  \settototalheight\@tempdima{#1}\@tempdima.5\@tempdima\edef\EMxy@yb{\the\@tempdima}%
+}%
+\define@key{EMxymatrix}{Wa}{\edef\EMxy@wa{#1}}%
+\define@key{EMxymatrix}{yul}{\setlength{\yunitlength}{#1}}%
+%
+\newdimen\mydimena
+%\def\EMxymatrix{\@ifnextchar<{\@EMxymatrix}{\@EMxymatrix<\empty>}}
+\DeclareRobustCommand\EMxymatrix{\@ifnextchar<{\@EMxymatrix}{\@EMxymatrix<\empty>}}
+\def\@EMxymatrix<#1>#2{{%
+%
+  \yunitlength=2\baselineskip
+  \edef\EMxy@ws{1em}%
+  \def\EMxy@wa{3em}%
+  \def\EMxy@yb{.75ex}%
+  \def\ar@by{1pt}%
+  \ifx\empty #1\else\setkeys{EMxymatrix}{#1}\fi
+  \xunitlength\EMxy@ws\advance\xunitlength\EMxy@wa\advance\xunitlength2\arraycolsep
+%
+\def\ar{\relax}%
+\def\\{\relax}%
+%
+  \def\@ar{\@ifnextchar[{\@@ar}{\@@ar[\empty]}}
+  \def\@@ar[##1]##2{%
+    \Sub{1}\EMxy@g\ar@xo
+    \def\ar@x{0}%
+    \uykansan\EMxy@yb\ar@yo
+    \def\ar@y{\ar@yo}%
+    \expandafter\@tfor\expandafter\@c\expandafter:\expandafter=##1\do{%
+      \if r\@c\Addself\ar@x{1}%
+      \else\if d\@c\Subself\ar@y{1}%
+      \else\if u\@c\Addself\ar@y{1}%
+      \fi\fi\fi
+    }%
+    \tenretu*{ar@P(\ar@xo,\ar@yo);ar@Q(\ar@x,\ar@y)}%
+    \ifdim\ar@yo\p@>\ar@y\p@
+%     \Addvec*\ar@P{(0,-\ar@by)}\ar@P
+      \Addvec*\ar@Q{(0,\ar@by)}\ar@Q
+    \else\ifdim\ar@yo\p@<\ar@y\p@
+%     \Addvec*\ar@P{(0,\ar@by)}\ar@P
+      \Addvec*\ar@Q{(0,-\ar@by)}\ar@Q
+    \fi\fi
+    \Put{(\EMmx@x,\EMmx@y)}{\ArrowLine\ar@P\ar@Q}%
+    \Cfor{\Strsep{##2};\ar@str@a\ar@str@b}{\not\equal\ar@str@a\empty\or\not\equal\ar@str@b\empty}%
+        {\Strsep\ar@str@b;\ar@str@a\ar@str@b}\do{%
+      \expandafter\@ar@sub\ar@str@a\@nil
+    }%
+  }%
+  \def\@ar@sub{\@ifnextchar<{\@@ar@sub}{\@@ar@sub<.5>}}
+  \def\@@ar@sub<##1>##2\@nil{%
+    \Sub{1}{##1}\ar@tmp
+    \Bunten\ar@P\ar@Q{##1}\ar@tmp\ar@M
+    \EMedef\ar@str{[mathmode]{\ar@M}##2}%
+    \Put{(\EMmx@x,\EMmx@y)}{\scriptsize\expandafter\Put\ar@str}%
+  }%
+%
+  \begin{zahyou*}[ul=10mm,xul=\xunitlength,yul=\yunitlength](0,0)(0,0)
+%    \zahyouMemori[g]
+    \uxkansan\EMxy@wa\EMxy@g
+    \edef\EMxy@gyousuu{-1}%
+    \edef\EMxy@retusuu{0}%
+    \edef\EMxy@retusuu@{0}%
+    \Cfor{\edef\EMmx@y{0}\Strsep{#2}\\\EMmx@a\EMmx@b}{\not\equal\EMmx@a\empty}%
+        {\Strsep\EMmx@b\\\EMmx@a\EMmx@b}\do{%
+      \Cfor{\edef\EMmx@x{0}\Strsep\EMmx@a{&}\EMmx@c\EMmx@d}{\not\equal\EMmx@c\empty\or\not\equal\EMmx@d\empty}%
+          {\Strsep\EMmx@d{&}\EMmx@c\EMmx@d}\do{%
+        \Strsep\EMmx@c{\ar}\EMmx@c\EMmx@arg
+        \Put{(\EMmx@x,\EMmx@y)}(\arraycolsep,0)[lb]{\ensuremath{\EMmx@c}}%
+        \Cfor{\Strsep\EMmx@arg\ar\EMmx@arg\EMmx@nxt}{\not\equal\EMmx@arg\empty}{%
+            \Strsep\EMmx@nxt\ar\EMmx@arg\EMmx@nxt}\do{%
+          \expandafter\@ar\EMmx@arg
+        }%
+        \Incr\EMmx@x
+      }%
+      \Decr\EMmx@y
+      \Incr\EMxy@gyousuu
+    }%
+    \xdef\EMxy@gyousuu{\EMxy@gyousuu}%
+    \global\mydimena=\EMxy@gyousuu\yunitlength
+  \end{zahyou*}%
+  \advance\mydimena\dp\strutbox
+  \strut\vrule width\z@ height\baselineskip depth \mydimena
+}}
+%%%
+}%
+%%%
+\def\zyukeizusyokika#1{}%
+%%%
+\endinput
+%
+% 0.01β    1999/07/12-20
+%   角型（縦横線）
+%   縦組対応
+%   sPut 使用
+% 0.02β2   1999/07/22-24
+%   pLaTeX2.09 対応
+%   minipage に代えて \vbox 使用
+% 0.03      2000/07/12
+%   tabular 環境中では \baselineskip が使えないので，
+%   \strut を用いるように変更した。
+% 0.05      2002/06/15
+%   角型も，枝の傍に文字列を置くことを可能とする。
+% 0.06      2002/06/16
+%   枝の太さを可変とする。
+% 0.07      2002/08/16
+%   \sensyu で線の種類を点線などにすることを可能とする。
+% 0.08      2002/11/20
+%   ロードオプションを emathP* とそろえる。
+% 0.09      2005/09/19
+    ロードオプション dvipdfmx
+  0.10      2006/02/07
+    枝の太さが 0 のときは，枝を描画しない （emathPs 対策）
+  0.11      2007/07/05
+    \EMxymatrix
+  0.12      2007/11/21
+    \offinterlineskip とする
+  0.13      2008/01/28
+    \Eda: 列幅指定
+  0.14      2008/02/17
+    \Eda: 下層の zyukeizu環境に付加する<...>オプション
+  0.15      2008/04/01
+    \EMxymatrix: EMxymatrix.sty として独立
+  0.16      2008/12/04
+    \eda: 閉じていない \if... (BBS #7718)
+  0.17      2008/12/05
+    0.16 の修正
+  0.18      2009/02/23
+    \eda: <entyou=..> オプションで枝の長さ（水平方向）を増減
+  0.19      2009/03/01
+    \eda: 角型の場合，tyuuiti は折れ点とする。
+  0.21      2009/06/16
+    \sensyu --> \zyukeizu@sensyu
+       Mac など古い dvipdfmx で \eda の線に色をつけたい場合
+       　　\let\zyukeuzu@sensyu=\em@syasen
+       とする。(BBS #8200)
+  0.22      2009/11/08
+    ロードオプション [emsyasen]
+  0.23      2009/12/07
+    \Eda@use (BBS #8464)
+  0.24      2010/03/02
+    <W=..> オプション

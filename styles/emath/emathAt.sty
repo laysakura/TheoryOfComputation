@@ -1,0 +1,132 @@
+% emathAt.sty by tDB (CQB00260@nifty.ne.jp)
+
+  \NeedsTeXFormat{LaTeX2e}
+  \ProvidesPackage{emathAt}[2010/02/11 v 0.04β]%
+  \RequirePackage{verbatim}%
+  \RequirePackage{emath}%
+
+\newif\iftyuukeisen\tyuukeisentrue
+\newif\ifhidarityuukeisen\hidarityuukeisenfalse
+%\newwrite\tyuukai@out%
+\@ifundefined{em@whndl}{\newwrite\em@whndl}{}%
+\newdimen\tyuuhaba
+\newdimen\hidari@hskip
+\tyuuhaba=0.3\textwidth
+\def\tyuuitemizeoption{\footnotesize}
+
+%\def\adjtyuukai#1{\@tempdima=#1\relax\vspace{\@tempdima}%
+%  \@tempdima-\@tempdima\advance\@tempdima-\baselineskip
+%  \edef\aftertyuukai{\the\@tempdima}}
+
+
+% 行頭，左欄外にマークを置く。
+\let\ltx@noindent\noindent
+\let\ltx@indent\indent
+\edef\noindentflg{0}%
+\def\noindent{\edef\noindentflg{1}\ltx@noindent}
+\def\indent{\edef\noindentflg{0}\ltx@indent}
+\newcommand{\tyuumark}{$\longleftarrow$}
+
+\def\gyoutou{\@ifnextchar<{\@gyoutou}{\@gyoutou<0pt>}}
+\def\@gyoutou<#1>#2{%
+  \hidari@hskip=\marginparsep%
+  \ifnum\@listdepth>\z@
+    \advance\hidari@hskip\@totalleftmargin
+  \fi
+  \ifnum\noindentflg>\z@
+    \edef\noindentflg{0}%
+  \else
+    \advance\hidari@hskip\parindent
+  \fi
+  \ifdim#1>\z@
+    \bgroup
+    \unitlength\p@
+    \begin{picture}(0,0)%
+      \@tempdima#1\relax
+      \@tempdima=-\@tempdima
+      \put(0,\strip@pt\@tempdima){%
+        \makebox[0pt][r]{#2\hspace*{\hidari@hskip}}}%
+    \end{picture}%
+    \egroup
+  \else
+    \makebox[0pt][r]{#2\hspace*{\hidari@hskip}}\ignorespaces
+  \fi
+}
+
+\def\tyuukai{%
+% \def\aftertyuukai{\empty}%
+  \def\hidarityuu##1{\reversemarginpar\marginpar{\footnotesize ##1}}
+  \def\tyuu{\@ifnextchar<{\@tyuu}{\@tyuu<\z@>}}
+  \def\@tyuu<##1>##2{\normalmarginpar
+    {%
+      \def\labelitemi{\tyuumark}\marginpar{%
+        \ifthenelse{\equal\tyuuitemizeoption\empty}{}{%
+          \apnlist{\tyuuitemizeoption}}%
+        \hspace*{-\tyuuhaba}\hspace{-\marginparsep}%
+        \parbox[t]{\tyuuhaba}{%
+          \ifdim##1=\z@\else\vspace{##1}\fi
+          \itemize\item ##2\enditemize
+        }%
+      }%
+    }%
+    \ignorespaces
+  }%
+  \@tempdima\tyuuhaba\relax
+  \advance\@tempdima\marginparsep
+  \jquotation(0pt)(\@tempdima)%\noindent
+%   \edef\noindentflg{0}%
+%    \edef\@cureqn{\theequation}%
+    \edef\@cureqn{\arabic{equation}}%
+    \bgroup\immediate\openout\em@whndl=tyuukai.tmp%
+    \@bsphack\let\do\@makeother\dospecials
+    \catcode`\^^M\active
+    \def\verbatim@processline{%
+        \immediate\write\em@whndl{\the\verbatim@line}}%
+    \verbatim@start
+}
+\def\endtyuukai{%
+  \@esphack\immediate\closeout\em@whndl\egroup
+  \iftyuukeisen
+    {\def\@tyuu<##1>##2{}%
+     \def\hidarityuu##1{}%
+     \def\@gyoutou<##1>##2{}%
+     \expandafter\def\csname endEnumerate*\endcsname{%    2002/08/09
+     \csname endenumerate*\endcsname}%                    2002/08/09
+      \setbox0=\hbox{%
+        \begin{minipage}[t]{\linewidth}%
+        \input{tyuukai.tmp}%
+        \end{minipage}}%
+      \unitlength1pt\relax
+      \noindent
+      \ifhidarityuukeisen
+        \begin{picture}(0,0)%
+          \@tempdima=.5\marginparsep
+%         \advance\@tempdima\parindent
+          \put(-\strip@pt\@tempdima,0){\vrule\hspace{.5\marginparsep}%
+            \phantom{\box0}\hspace{.5\marginparsep}\vrule}%
+        \end{picture}%
+      \else
+        \begin{picture}(0,0)%
+          \put(0,0){\phantom{\box0}\hspace{.5\marginparsep}\vrule}%
+        \end{picture}%
+      \fi
+    }%
+  \fi
+  \setcounter{equation}{\@cureqn}%
+  \input{tyuukai.tmp}%
+  \endjquotation
+%  \ifthenelse{\equal\aftertyuukai\empty}{}{%
+%  \mbox{}\vspace{\aftertyuukai}\par}%
+  }
+\endinput
+ver 0.00 2002/03/02
+ver 0.01 2002/03/03
+      \tyuumark で\itemize 環境の label を指定する
+      \hidarityuu 左注もつける
+ver 0.02 2002/03/06
+      \gyoutou 段落冒頭，左欄外に簡単なマークなどを置く
+      jquote ---> jquotation
+ver 0.03 2002/08/09
+      Enumerate* 環境で番号が飛ぶバグを修正
+ver 0.04 2010/02/11
+      equation の保存法 (BBS #8599)

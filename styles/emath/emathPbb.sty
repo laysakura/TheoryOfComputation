@@ -1,0 +1,826 @@
+% emathPbb.sty by tDB(emath@nifty.com)
+%
+  \NeedsTeXFormat{LaTeX2e}%
+  \ProvidesPackage{emathPbb}[2010/08/24 v 0.13α]%
+%
+\RequirePackage{emathBk}%
+%
+\define@key{emPbb}{LRonly}[B]{\def\rectbox@LR{#1}}%
+\define@key{emPbb}{Lonly}[L]{\def\rectbox@LR{#1}}%
+\define@key{emPbb}{Ronly}[R]{\def\rectbox@LR{#1}}%
+%
+\define@key{emPbb}{rectboxoval}[10pt]{\def\by@vrule{0}\edef\rectbox@oval{#1}}%
+\define@key{emPbb}{rectboxoct}[10pt]{\def\by@vrule{0}\edef\rectbox@oval{#1}\edef\rectbox@oct{#1}}%
+\define@key{emPbb}{rectboxcorner}[1]{\def\rect@corner{}}%
+\define@key{emPbb}{linewidth}{\edef\default@linewidth{#1}\def\frame@linewidth{#1}}%
+\define@key{emPbb}{linethickness}{\edef\default@linewidth{#1}\def\frame@linewidth{#1}}%
+\define@key{emPbb}{kagi}[3pt]{\def\by@vrule{0}\def\rectbox@kagi{#1}}%
+%\define@key{emPbb}{dash}{\edef\rectbox@dash{#1}}%
+\define@key{emPbb}{borderwidth}{\edef\border@width{#1}}%
+\define@key{emPbb}{item}{\def\rectbox@item{#1}}%
+\define@key{emPbb}{bitem}{\def\rectbox@bitem{#1}}%
+\define@key{emPbb}{pos}{\def\@pos{#1}}%
+\define@key{emPbb}{itempos}{\def\rectbox@item@pos{#1}}%
+\define@key{emPbb}{bitempos}{\def\rectbox@bitem@pos{#1}}%
+\define@key{emPbb}{rectboxparindent}{\edef\rectbox@parindent{#1}}%
+%\define@key{emPbb}{rectboxwidth}[0pt]{\setlength{\@tempdima}{#1}\edef\rectbox@width{\the\@tempdima}}%
+%\define@key{emPbb}{rectboxWidth}[0pt]{\setlength{\@tempdima}{#1}\edef\rectbox@Width{\the\@tempdima}}%
+\define@key{emPbb}{fboxsep}{\setlength\fboxsep{#1}}%
+\define@key{emPbb}{hsep}{\def\h@sep{#1}}%
+\define@key{emPbb}{vsep}{\def\v@sep{#1}}%
+\define@key{emPbb}{hvsep}{\def\h@sep{#1}\def\v@sep{#1}}%
+\define@key{emPbb}{shade}[5pt]{\def\shade@rule{#1}}%
+\define@key{emPbb}{fboxrule}{\setlength\fboxrule{#1}}%
+%\define@key{emPbb}{pszoption}{\def\psz@option{#1}}%
+%\define@key{emPbb}{waku}[1]{\def\ps@drawwaku{#1}}%
+%\define@key{emPbb}{wakuhutosa}[1]{\def\waku@hutosa{#1}}%
+\define@key{emPbb}{sensyu}{\def\sensyu{#1}}%
+%\define@key{emPbb}{allinethickness}{\allinethickness{#1}}%
+\define@key{emPbb}{allinethickness}{\def\frame@linewidth{#1}}%
+\define@key{emPbb}{framelinewidth}{\def\frame@linewidth{#1}}%
+\define@key{emPbb}{framethickness}{\edef\frame@linewidth{#1}}%
+\define@key{emPbb}{framecolor}{\def\frame@color{#1}}%
+\define@key{emPbb}{shadecolor}{\def\shade@color{#1}}%
+\define@key{emPbb}{midasibackgroundcolor}{\def\midasi@background@color{#1}}%
+\define@key{emPbb}{backgroundcolor}{\edef\background@color{#1}}%
+\define@key{emPbb}{bgcolor}{\edef\background@color{#1}}%
+\define@key{emPbb}{liningcolor}{\def\lining@color{#1}}%
+%\define@key{emPbb}{henvi}{\def\hen@i{#1}}%
+%\define@key{emPbb}{Henvi}{\vecXY{#1}\henv@x\henv@y\ukansan\henv@x\henv@x\ukansan\henv@y\henv@y
+%                        \edef\hen@i{(\henv@x,\henv@y)}}%
+%
+\@ifundefined{rectbox@item@box}{\newbox\rectbox@item@box}{}%
+\@ifundefined{rectbox@bitem@box}{\newbox\rectbox@bitem@box}{}%
+%
+\def\default@hsep{\the\fboxsep}%
+\def\default@vsep{\the\fboxsep}%
+\def\HVsep#1#2{\edef\default@hsep{#1}\edef\default@vsep{#2}}%
+\edef\rectbox@parindent@{0pt}%
+\edef\rectbox@oval@{0pt}%
+\def\nest@box{0}%
+\def\rectbox@nest{0}%
+\edef\shade@color{\empty}%
+\def\EMminipagefootnote{\def\EMminipage@footnote{}}%
+%
+\edef\nest@box{0}%
+\def\EMbreakrectbox{%
+  \@ifundefined{EMminipage@footnote}{%
+    \ifnum\nest@box=\z@
+%     \let\rectbox@footnote\footnote
+      \let\ltxfootnote\footnote
+      \xdef\RB@footnote@o{\arabic{footnote}}%
+      \xdef\RB@footnote{\arabic{footnote}}%
+      \def\footnote##1{%
+        \footnotemark
+        \xIncr\RB@footnote
+        \EMedef\@currentlabel{\RB@footnote}%
+        \expandafter\xdef\csname RB@footnotetext@\romannumeral\RB@footnote\endcsname{##1}%
+      }%
+    \fi
+  }{}%
+%
+  \Incr\nest@box
+  \edef\rectbox@parindent{\rectbox@parindent@}%
+  \edef\rectbox@item{\empty}\def\@pos{c}%
+  \edef\rectbox@bitem{\empty}%
+  \edef\bkrb@opt{\empty}%
+  \edef\frame@linewidth{\the\fboxrule}%
+  \def\rectbox@oval{\rectbox@oval@}%
+  \def\rectbox@oct{\z@}%
+  \def\by@vrule{1}%
+  \edef\shade@rule{0pt}%
+  \edef\rectbox@width{\the\linewidth}\edef\rectbox@Width{\empty}%
+  \edef\h@sep{\empty}\edef\v@sep{\empty}\def\rectbox@item@pos{l}%
+  \edef\h@sep{\empty}\edef\v@sep{\empty}\def\rectbox@bitem@pos{r}%
+  \edef\frame@color{\empty}%
+  \edef\background@color{\empty}\edef\midasi@background@color{\empty}%
+  \edef\background@color{\empty}%
+  \edef\frame@color{\empty}%
+  \@ifnextchar[{\EMbreakrectbox@}{\@EMbreakrectbox}}%
+%
+\def\EMbreakrectbox@[#1]{\EMedef\bkrb@opt{[#1]}\setkeys{emPbb}{#1}\@EMbreakrectbox}%
+\def\@EMbreakrectbox{%
+  \edef\ln@wd{\strip@pt\linewidth}%
+  \@tempdima=\frame@linewidth
+  \edef\frame@w{\strip@pt\@tempdima}%
+  \@tempdima=.5\@tempdima
+  \edef\frame@hw{\strip@pt\@tempdima}%
+  \edef\frame@halflinewidth{\the\@tempdima}%
+  \Sub\ln@wd\frame@hw\ln@wd@
+  \ukansan\rectbox@oval\r@@
+  \Add\r@@\frame@hw\oval@cxl
+  \Sub\ln@wd@\r@@\oval@cxr
+  \@tempdima\shade@rule
+  \edef\shade@w{\strip@pt\@tempdima}%
+  \@tempdima=.5\@tempdima
+  \edef\shade@hw{\strip@pt\@tempdima}%
+  \ifthenelse{\equal\h@sep\empty}{%
+    \ifthenelse{\lengthtest{\rectbox@oval<\default@hsep}}{%
+      \edef\h@sep{\default@hsep}%
+    }{%
+      \edef\h@sep{\rectbox@oval}%
+    }%
+  }{}%
+  \ifthenelse{\equal\v@sep\empty}{%
+    \ifthenelse{\lengthtest{\rectbox@oval<\default@vsep}}{%
+      \edef\v@sep{\default@vsep}%
+    }{%
+      \edef\v@sep{\rectbox@oval}%
+    }%
+  }{}%
+  \edef\h@Lsep{\h@sep}%
+  \edef\h@Rsep{\h@sep}%
+  \@ifundefined{rectbox@LR}{}{%
+    \ifthenelse{\equal\rectbox@LR{L}}{\edef\h@Rsep{0pt}}{}%
+    \ifthenelse{\equal\rectbox@LR{R}}{\edef\h@Lsep{0pt}}{}%
+  }%
+%
+  \@ifundefined{rectbox@kagi}{}{%
+    \setlength{\@tempdima}{\frame@hw\p@+\rectbox@kagi}%
+    \ukansan\@tempdima\kagi@l
+  }%
+%
+  \ifthenelse{\equal\rectbox@item\empty}{%
+    \def\item@ht{0pt}%
+  }{%
+    \setbox\rectbox@item@box=\hbox{\rectbox@item}%
+    \@tempdima=\ht\rectbox@item@box\advance\@tempdima\dp\rectbox@item@box
+    \vspace\@tempdima
+    \divide\@tempdima\tw@
+    \edef\item@ht{\the\@tempdima}%
+  }%
+%
+\edef\draw@L{0}%
+\edef\draw@R{0}%
+\@ifundefined{rectbox@LR}{%
+  \edef\draw@L{1}\edef\draw@R{1}%
+}{%
+  \if L\rectbox@LR
+    \edef\draw@L{1}%
+  \else\if R\rectbox@LR
+    \edef\draw@R{1}%
+  \else\if B\rectbox@LR
+    \edef\draw@L{1}%
+    \edef\draw@R{1}%
+  \fi\fi\fi
+}%
+%
+\ifnum\nest@box=\@ne\vskip\fboxsep\fi
+\ifhmode\par\fi\noindent
+\noindent
+  \ifnum\nest@box=\@ne
+    \vskip\breakboxskip\relax
+  \fi
+\ifdim\item@ht>\z@\vskip\item@ht\fi
+  \setbox\bk@bxb\vbox\bgroup
+  \setlength{\linewidth}{%
+    \linewidth-\h@Lsep-\h@Rsep-\frame@linewidth-\frame@linewidth-\shade@rule}%
+  \hsize\linewidth\@parboxrestore
+  \@setminipage%%% added
+  \setlength{\parindent}{\rectbox@parindent}%
+%  \ifdim\item@ht>\z@\vskip\item@ht\fi
+% \parindent\breakboxparindent\relax
+}%
+%
+\def\endEMbreakrectbox{%
+%  \ifvmode \vskip-\lastskip \fi%%% added
+  \ifthenelse{\equal\rectbox@bitem\empty}{%
+    \xdef\bitem@ht{0pt}\xdef\w@rectbox@bitem{0pt}%
+  }{%
+    \setbox0=\hbox{\rectbox@bitem}%
+    \xdef\w@rectbox@bitem{\the\wd0}%
+    \@tempdima=\ht0\advance\@tempdima\dp0
+    \divide\@tempdima\tw@
+    \xdef\bitem@ht{\the\@tempdima}%
+  }%
+  \vspace\bitem@ht
+  \egroup
+%
+  \def\bk@addfsepht{%
+    \setbox\bk@bxa\vbox{\vskip\v@sep\box\bk@bxa}%
+  }%
+  \def\bk@addfsepdp{%
+    \@tempdima\dp\bk@bxa
+    \advance\@tempdima\v@sep
+    \dp\bk@bxa\@tempdima
+  }%
+  \def\bk@top@line{%
+    \hbox to \linewidth{%
+      \ifbkcount\smash{\llap{\the\bk@lcnt\ }}\fi
+%      \edef\ln@ht{\strip@pt\ht\bk@bxa}%
+      \@tempdima\ht\bk@bxa\advance\@tempdima\item@ht
+      \edef\ln@ht{\strip@pt\@tempdima}%
+      \edef\ln@dp{\strip@pt\dp\bk@bxa}%
+      \begin{picture}(\frame@w,0)%   top line
+        \Sub\ln@ht\r@@\y@@
+        \Sub\ln@wd\r@@\x@@
+% 上背景色
+        \ifx\empty\background@color\else
+          \ifdim\rectbox@oval=\z@
+            {%
+              \@tempdima=\ln@wd@\p@
+              \advance\@tempdima-\shade@rule
+              \edef\ln@wd@{\strip@pt\@tempdima}%
+              \Nuritubusi[nuriiro=\background@color]{%
+                (\frame@hw,-\ln@dp)(\ln@wd@,-\ln@dp)%
+                (\ln@wd@,\ln@ht)(\frame@hw,\ln@ht)%
+              }%
+            }%
+          \else\ifdim\rectbox@oct>\z@
+            \Nuritubusi[nuriiro=\background@color]{(0,-\ln@dp)%
+                (\ln@wd,-\ln@dp)(\ln@wd,\y@@)(\x@@,\ln@ht)%
+                (\r@@,\ln@ht)(0,\y@@)(0,-\ln@dp)%
+            }%
+          \else
+            \KinziEnko{(\oval@cxl,\y@@)}\r@@{90}{180}\oresen@i
+            \KinziEnko{(\oval@cxr,\y@@)}\r@@{0}{90}\oresen@ii
+            \Nuritubusi[nuriiro=\background@color]{%
+              \oresen@i(\frame@hw,-\ln@dp)(\ln@wd@,-\ln@dp)\oresen@ii
+            }%
+          \fi\fi
+        \fi
+% 上見出し
+        \setbox\rectbox@item@box=\hbox{\rectbox@item}%
+        \ukansan{\wd\rectbox@item@box}\wd@rectbox@item@box
+        \@tempdimc\rectbox@oval\edef\hasenbox@l{\strip@pt\@tempdimc}%
+        \@tempdimc\linewidth\edef\hasenbox@w{\strip@pt\@tempdimc}%
+        \edef\hasenbox@h{\ln@ht}%
+        \advance\@tempdimc-\rectbox@oval\edef\hasenbox@r{\strip@pt\@tempdimc}%
+        \Add\hasenbox@l\frame@hw\hasenbox@l@
+        \Sub\hasenbox@r\frame@hw\hasenbox@r@
+        \ifthenelse{\equal\rectbox@item\empty}{%
+          \edef\item@l{20}%
+          \edef\item@r{20}%
+        }{%
+          \if r\rectbox@item@pos
+            \Sub\ln@wd{10}\item@p
+            \Sub\item@p\r@@\item@p
+            \Sub\item@p\frame@hw\item@r
+            \Sub\item@r\wd@rectbox@item@box\item@l
+            \Put{(\item@r,\ln@ht)}(0,0)[rc]{{%
+              \fboxsep=\z@
+              \ifx\empty\midasi@background@color
+                \box\rectbox@item@box
+              \else
+                \colorbox{\midasi@background@color}{\box\rectbox@item@box}%
+              \fi
+            }}%
+          \else\if c\rectbox@item@pos
+            \Div\ln@wd{2}\item@p
+            \Div\wd@rectbox@item@box{2}\item@hw
+            \Add\item@p\item@hw\item@r
+            \Sub\item@p\item@hw\item@l
+            \Put{(\item@p,\ln@ht)}(0,0)[cc]{{%
+                \fboxsep=\z@
+                \ifx\empty\midasi@background@color
+                  \box\rectbox@item@box
+                \else
+                  \colorbox{\midasi@background@color}{\box\rectbox@item@box}%
+                \fi
+            }}%
+          \else
+            \Add\frame@hw{10}\item@l
+            \Add\item@l\r@@\item@l
+            \Add\item@l\wd@rectbox@item@box\item@r
+            \Put{(\item@l,\ln@ht)}(0,0)[lc]{{%
+              \fboxsep=\z@
+              \ifx\empty\midasi@background@color
+                \box\rectbox@item@box
+              \else
+                \colorbox{\midasi@background@color}{\box\rectbox@item@box}%
+              \fi
+            }}%
+          \fi\fi
+        }%
+% 上枠線
+\ifnum\by@vrule>\z@
+  \@ifundefined{rectbox@LR}{%
+    \put(0,\ln@ht){{%
+      \ifthenelse{\equal\frame@color\empty}{}{\@iro{\frame@color}}%
+      \vrule\@height\@wholewidth\@depth\z@\@width\item@l\p@
+    }}%
+    \Sub\ln@wd\item@r\tmp@w
+    \ifdim\shade@rule>\z@
+      \@tempdima\tmp@w\p@
+      \advance\@tempdima-\shade@rule
+      \edef\tmp@w{\strip@pt\@tempdima}%
+    \fi
+    \put(\item@r,\ln@ht){{%
+      \ifthenelse{\equal\frame@color\empty}{}{\@iro{\frame@color}}%
+      \rule{\tmp@w\p@}{\frame@linewidth}%
+    }}%
+  }{}%
+  \ifnum\draw@L>\z@
+    \put(0,0){{%
+      \ifthenelse{\equal\frame@color\empty}{}{\@iro{\frame@color}}%
+      \vrule \@height\ln@ht\p@ \@depth\ln@dp\p@ \@width \frame@linewidth
+    }}%
+  \fi
+  \ifnum\draw@R>\z@
+    \put(\ln@wd,0){{%
+      \hskip-\frame@linewidth
+      \bgroup
+        \ifx\empty\frame@color\else\@iro{\frame@color}\fi
+        \ifdim\shade@rule>\z@\hskip-\shade@rule\fi
+        \vrule \@height\ln@ht\p@ \@depth\ln@dp\p@ \@width \frame@linewidth
+      \egroup
+      \ifdim\shade@rule>\z@
+          \@tempdima\ln@ht\p@
+          \advance\@tempdima-\shade@rule
+          \edef\ln@ht@tmp{\strip@pt\@tempdima}%
+          \ifx\empty\shade@color\else\@iro{\shade@color}\fi
+          \vrule \@height\ln@ht@tmp\p@ \@depth\ln@dp\p@ \@width \shade@rule
+      \fi
+    }}%
+  \fi
+\else
+        \put(0,0){{%
+          \ifthenelse{\equal\frame@color\empty}{}{\@iro{\frame@color}}%
+          \@ifundefined{rectbox@LR}{%
+            \ifdim\rectbox@oval=\z@
+             \Drawlines{%
+                  (\frame@hw,-\ln@dp)(\frame@hw,\ln@ht)(\item@l,\ln@ht);%
+                  (\item@r,\ln@ht)(\ln@wd@,\ln@ht)(\ln@wd@,-\ln@dp)%
+              }%
+            \else\ifdim\rectbox@oct>\z@
+              \Sub\ln@ht\r@@\y@@
+              \Drawlines{(\frame@hw,-\ln@dp)(\frame@hw,\y@@)%
+                (\oval@cxl,\ln@ht)(\item@l,\ln@ht);%
+                (\item@r,\ln@ht)(\oval@cxr,\ln@ht)%
+                (\ln@wd@,\y@@)(\ln@wd@,-\ln@dp)%
+              }%
+            \else
+              \Enko{(\oval@cxl,\y@@)}\r@@{90}{180}%
+              \Enko{(\oval@cxr,\y@@)}\r@@{0}{90}%
+              \Drawlines{(\frame@hw,-\ln@dp)(\frame@hw,\y@@);%
+                  (\ln@wd@,-\ln@dp)(\ln@wd@,\y@@);%
+                  (\oval@cxl,\ln@ht)(\item@l,\ln@ht);
+                  (\oval@cxr,\ln@ht)(\item@r,\ln@ht)
+              }%
+            \fi\fi
+          }{%
+            \if L\rectbox@LR
+              \ifdim\rectbox@oval=\z@
+                \@ifundefined{rectbox@kagi}{%
+                  \Drawline{(\frame@hw,-\ln@dp)(\frame@hw,\ln@ht)}%
+                }{%
+                  \Drawline{%
+                    (\frame@hw,-\ln@dp)(\frame@hw,\ln@ht)(\kagi@l,\ln@ht)%
+                  }%
+                }%
+              \else\ifdim\rectbox@oct>\z@
+                \Sub\ln@ht\r@@\y@@
+                \Drawline{%
+                  (\frame@hw,-\ln@dp)(\frame@hw,\y@@)(\oval@cxl,\ln@ht)%
+                }%
+              \else
+                \Enko{(\oval@cxl,\y@@)}\r@@{90}{180}%
+                \Drawline{(\frame@hw,-\ln@dp)(\frame@hw,\y@@)}%
+              \fi\fi
+            \else\if R\rectbox@LR
+              \ifdim\rectbox@oval=\z@
+                \Drawlines{(\ln@wd@,\ln@ht)(\ln@wd@,-\ln@dp)}%
+              \else\ifdim\rectbox@oct>\z@
+                \Sub\ln@ht\r@@\y@@
+                \Drawlines{%
+                  (\oval@cxr,\ln@ht)(\ln@wd@,\y@@)(\ln@wd@,-\ln@dp)%
+                }%
+              \else
+                \Enko{(\oval@cxr,\y@@)}\r@@{0}{90}%
+                \Drawlines{(\ln@wd@,-\ln@dp)(\ln@wd@,\y@@)}%
+              \fi\fi
+            \else\if B\rectbox@LR
+              \ifdim\rectbox@oval=\z@
+                \Drawlines{%
+                  (\frame@hw,-\ln@dp)(\frame@hw,\ln@ht);%
+                  (\ln@wd@,\ln@ht)(\ln@wd@,-\ln@dp)%
+                }%
+              \else\ifdim\rectbox@oct>\z@
+                \Sub\ln@ht\r@@\y@@
+                \Drawlines{%
+                  (\oval@cxl,\ln@ht)(\frame@hw,\y@@)(\frame@hw,-\ln@dp)%
+                  (\oval@cxr,\ln@ht)(\ln@wd@,\y@@)(\ln@wd@,-\ln@dp)%
+                }%
+              \else
+                \Enko{(\oval@cxl,\y@@)}\r@@{90}{180}%
+                \Enko{(\oval@cxr,\y@@)}\r@@{0}{90}%
+                \Drawlines{(\frame@hw,-\ln@dp)(\frame@hw,\y@@);%
+                  (\ln@wd@,-\ln@dp)(\ln@wd@,\y@@)%
+                }%
+              \fi\fi
+            \fi\fi\fi
+          }%
+        }}%
+\fi
+      \end{picture}%
+%      \@tempdima\ht\bk@bxa
+%      \advance\@tempdima\item@ht
+%      \advance\@tempdima\item@ht
+%      \edef\tmp@H{\the\@tempdima}%
+      \leavevmode
+%      \vrule \@width\z@\@height\tmp@H
+      \hskip\h@Lsep\box\bk@bxa\hfil
+    }%
+  }%
+%
+  \def\bk@line{%
+    \hbox to \linewidth{%
+      \ifbkcount\smash{\llap{\the\bk@lcnt\ }}\fi
+      \edef\ln@ht{\strip@pt\ht\bk@bxa}%
+      \edef\ln@dp{\strip@pt\dp\bk@bxa}%
+      \begin{picture}(\frame@w,0)%   top line
+%
+% 中背景色
+%
+        \ifx\empty\background@color\else
+          \Nuritubusi<nuriiro=\background@color>{%
+            (\frame@hw,-\ln@dp)(\ln@wd@,-\ln@dp)(\ln@wd@,\ln@ht)%
+            (\frame@hw,\ln@ht)%
+          }%
+        \fi
+% 左右の罫線
+\ifnum\by@vrule>\z@
+  \edef\tmp@h{\the\ht\bk@bxa}%
+  \edef\tmp@d{\the\dp\bk@bxa}%
+\ifnum\draw@L>\z@
+  \put(0,0){{%
+    \ifthenelse{\equal\frame@color\empty}{}{\@iro{\frame@color}}%
+    \vrule \@height\tmp@h \@depth\tmp@d \@width \frame@linewidth
+  }}%
+\fi
+\ifnum\draw@R>\z@
+  \put(\ln@wd,0){{%
+    \hskip-\frame@linewidth
+    \ifdim\shade@rule>\z@\hskip-\shade@rule\fi
+    \bgroup
+      \ifthenelse{\equal\frame@color\empty}{}{\@iro{\frame@color}}%
+      \vrule \@height\tmp@h \@depth\tmp@d \@width \frame@linewidth
+    \egroup
+    \ifdim\shade@rule>\z@
+      \ifx\empty\shade@color\else\@iro{\shade@color}\fi
+      \vrule \@height\tmp@h \@depth\tmp@d \@width \shade@rule
+    \fi
+  }}%
+\fi
+\else
+        \put(0,0){{%
+          \ifthenelse{\equal\frame@color\empty}{}{\@iro{\frame@color}}%
+          \@ifundefined{rectbox@LR}{%
+            \ifdim\rectbox@oval=\z@\else
+              \@ifundefined{EMpsrectbox@over@dp}{}{%
+                \ifdim\EMpsrectbox@over@dp\p@>\z@
+                  \Subself\ln@ht\EMpsrectbox@over@dp
+                  \xdef\EMpsrectbox@over@dp{0}%
+                \fi
+              }%
+            \fi
+            \Drawline{(\frame@hw,\ln@ht)(\frame@hw,-\ln@dp)}%
+            \Drawline{(\ln@wd@,\ln@ht)(\ln@wd@,-\ln@dp)}%
+          }{%
+            \ifthenelse{\equal{\rectbox@LR}{L}}{%
+              \Drawline{(\frame@hw,\ln@ht)(\frame@hw,-\ln@dp)}%
+            }{%
+              \ifthenelse{\equal\rectbox@LR{R}}{%
+                \Drawline{(\ln@wd@,\ln@ht)(\ln@wd@,-\ln@dp)}%
+              }{%
+                \Drawline{(\frame@hw,\ln@ht)(\frame@hw,-\ln@dp)}%
+                \Drawline{(\ln@wd@,\ln@ht)(\ln@wd@,-\ln@dp)}%
+              }%
+            }%
+          }%
+        }}%
+\fi
+      \end{picture}%
+      \leavevmode\hskip\h@Lsep\box\bk@bxa \hfil
+    }%
+  }%
+%
+  \def\bk@bottom@line{%
+    \hbox to \linewidth{%
+      \ifbkcount\smash{\llap{\the\bk@lcnt\ }}\fi
+      \edef\ln@ht{\strip@pt\ht\bk@bxa}%
+      \edef\ln@dp{\strip@pt\dp\bk@bxa}%
+      \begin{picture}(\frame@w,0)%   top line
+% 下背景色
+        \ifx\empty\background@color
+        \else
+          \ifdim\rectbox@oval=\z@
+            \Nuritubusi[nuriiro=\background@color]{%
+              (\frame@hw,-\ln@dp)(\ln@wd@,-\ln@dp)%
+              (\ln@wd@,\ln@ht)(\frame@hw,\ln@ht)}%
+          \else\ifdim\rectbox@oct=\z@
+            \Sub\r@@\ln@dp\y@@
+            \Sub\ln@wd\r@@\x@@
+            \KinziEnko{(\oval@cxl,\y@@)}\r@@{-180}{-90}\oresen@i
+            \KinziEnko{(\oval@cxr,\y@@)}\r@@{-90}{0}\oresen@ii
+            \Nuritubusi[nuriiro=\background@color]{%
+              (\frame@hw,\ln@ht)\oresen@i\oresen@ii(\ln@wd@,\ln@ht)%
+            }%
+          \else
+            \Sub\r@@\ln@dp\y@@
+            \Add{-\ln@dp}\r@@\y@@
+            \Nuritubusi[nuriiro=\background@color]{%
+              (\frame@hw,\ln@ht)(\frame@hw,\y@@)(\oval@cxl,-\ln@dp)%
+              (\oval@cxr,-\ln@dp)(\ln@wd@,\y@@)(\ln@wd@,\ln@ht)%
+            }%
+          \fi\fi
+        \fi
+% 下見出し
+        \setbox\rectbox@bitem@box=\hbox{\rectbox@bitem}%
+        \ukansan{\wd\rectbox@bitem@box}\wd@rectbox@bitem@box
+        \ifthenelse{\equal\rectbox@bitem\empty}{%
+          \edef\item@l{20}%
+          \edef\item@r{20}%
+        }{%
+          \if r\rectbox@bitem@pos
+            \Sub\ln@wd{10}\item@p
+            \Sub\item@p\r@@\item@p
+            \Sub\item@p\frame@hw\item@r
+            \Sub\item@r\wd@rectbox@bitem@box\item@l
+            \Put{(\item@r,-\ln@dp)}(0,0)[rc]{{%
+              \fboxsep=\z@
+              \ifx\empty\midasi@background@color
+                \box\rectbox@bitem@box
+              \else
+                \colorbox{\midasi@background@color}{\box\rectbox@bitem@box}%
+              \fi
+            }}%
+          \else\if c\rectbox@bitem@pos
+            \Div\ln@wd{2}\item@p
+            \Div\wd@rectbox@bitem@box{2}\item@hw
+            \Add\item@p\item@hw\item@r
+            \Sub\item@p\item@hw\item@l
+            \Put{(\item@p,-\ln@dp)}(0,0)[cc]{{%
+              \fboxsep=\z@
+              \ifx\empty\midasi@background@color
+                \box\rectbox@bitem@box
+              \else
+                \colorbox{\midasi@background@color}{\box\rectbox@bitem@box}%
+              \fi
+            }}%
+          \else
+            \Add\frame@hw{10}\item@l
+            \Add\item@l\r@@\item@l
+            \Add\item@l\wd@rectbox@bitem@box\item@r
+            \Put{(\item@l,-\ln@dp)}(0,0)[lc]{{%
+              \fboxsep=\z@
+              \ifx\empty\midasi@background@color
+                \box\rectbox@bitem@box
+              \else
+                \colorbox{\midasi@background@color}{\box\rectbox@bitem@box}%
+              \fi
+            }}%
+          \fi\fi
+        }%
+% 下枠線
+\ifnum\by@vrule>\z@
+  \@ifundefined{rectbox@LR}{%
+    \put(0,-\ln@dp){{%
+      \ifthenelse{\equal\frame@color\empty}{}{\@iro{\frame@color}}%
+      \vrule\@height\frame@hw\p@\@depth\frame@hw\p@\@width\item@l\p@
+    }}%
+    \ifdim\shade@rule>\z@
+      \@tempdima\shade@rule
+      \edef\brr@tmp{\strip@pt\@tempdima}%
+      \Add\ln@dp\frame@hw\ln@dp@
+      \put(\brr@tmp,-\ln@dp@){{%
+        \ifthenelse{\equal\shade@color\empty}{}{\@iro{\shade@color}}%
+        \Sub\item@l\brr@tmp\item@ll
+        \vrule\@height\z@\@depth\shade@rule\@width\item@ll\p@
+      }}%
+    \fi
+    \Sub\ln@wd\item@r\tmp@w
+    \Sub\tmp@w\shade@w\tmp@w@
+    \put(\item@r,-\ln@dp){{%
+      \ifthenelse{\equal\frame@color\empty}{}{\@iro{\frame@color}}%
+      \vrule\@height\frame@hw\p@\@depth\frame@hw\p@\@width\tmp@w@\p@
+    }}%
+    \ifdim\shade@rule>\z@
+      \Add\ln@dp\frame@hw\ln@dp@
+      \put(\item@r,-\ln@dp@){{%
+        \ifthenelse{\equal\shade@color\empty}{}{\@iro{\shade@color}}%
+        \@tempdima\shade@rule
+        \edef\brr@tmp{\strip@pt\@tempdima}%
+        \Add\tmp@w\brr@tmp\item@ll
+        \vrule\@height\z@\@depth\shade@rule\@width\tmp@w\p@
+      }}%
+    \fi
+  }{}%
+  \ifnum\draw@L>\z@
+    \put(0,0){{%
+      \ifthenelse{\equal\frame@color\empty}{}{\@iro{\frame@color}}%
+      \vrule \@height\ln@ht\p@ \@depth\ln@dp\p@ \@width \frame@linewidth
+    }}%
+  \fi
+  \ifnum\draw@R>\z@
+    \put(\ln@wd,0){{%
+      \hskip-\frame@linewidth
+      \ifdim\shade@rule>\z@\hskip-\shade@rule\fi
+      \bgroup
+        \ifthenelse{\equal\frame@color\empty}{}{\@iro{\frame@color}}%
+        \vrule \@height\ln@ht\p@ \@depth\ln@dp\p@ \@width \frame@linewidth
+      \egroup
+      \ifdim\shade@rule>\z@
+        \Add\ln@dp\frame@w\ln@dp@
+        \ifthenelse{\equal\shade@color\empty}{}{\@iro{\shade@color}}%
+        \vrule \@height\ln@ht\p@ \@depth\ln@dp@\p@ \@width \shade@rule
+      \fi
+    }}%
+  \fi
+\else
+        \put(0,0){{%
+          \ifthenelse{\equal\frame@color\empty}{}{\@iro{\frame@color}}%
+          \@ifundefined{rectbox@LR}{%
+            \ifdim\rectbox@oval=\z@
+              \Drawlines{%
+                (\frame@hw,\ln@ht)(\frame@hw,-\ln@dp)(\item@l,-\ln@dp);
+                (\item@r,-\ln@dp)(\ln@wd@,-\ln@dp)(\ln@wd@,\ln@ht)%
+              }%
+            \else\ifdim\rectbox@oct>\z@
+              \Sub\r@@\ln@dp\y@@
+              \Drawlines{%
+                (\frame@hw,\ln@ht)(\frame@hw,\y@@)%
+                (\oval@cxl,-\ln@dp)(\item@l,-\ln@dp);
+                (\item@r,-\ln@dp)(\oval@cxr,-\ln@dp)%
+                (\ln@wd@,\y@@)(\ln@wd@,\ln@ht)%
+              }%
+            \else
+              \Sub\r@@\ln@dp\y@@
+              \Drawlines{(\frame@hw,\ln@ht)(\frame@hw,\y@@);
+                (\oval@cxl,-\ln@dp)(\item@l,-\ln@dp);
+                (\item@r,-\ln@dp)(\oval@cxr,-\ln@dp);
+                (\ln@wd@,\y@@)(\ln@wd@,\ln@ht)%
+              }%
+              \Enko{(\oval@cxl,\y@@)}\r@@{-180}{-90}%
+              \Enko{(\oval@cxr,\y@@)}\r@@{-90}{0}%
+            \fi\fi
+          }{%
+            \if L\rectbox@LR
+              \ifdim\rectbox@oval=\z@
+                \@ifundefined{rectbox@kagi}{%
+                  \Drawlines{(\frame@hw,\ln@ht)(\frame@hw,-\ln@dp)}%
+                }{%
+                  \Drawlines{%
+                    (\frame@hw,\ln@ht)(\frame@hw,-\ln@dp)(\kagi@l,-\ln@dp)%
+                  }%
+                }%
+              \else\ifdim\rectbox@oct>\z@
+                \Sub\r@@\ln@dp\y@@
+                \Drawlines{%
+                  (\frame@hw,\ln@ht)(\frame@hw,\y@@)(\oval@cxl,-\ln@dp)%
+                }%
+              \else
+                \Sub\r@@\ln@dp\y@@
+%                \KinziEnko{(\oval@cxl,\y@@)}\r@@{-180}{-90}\oreseni%
+%                \Drawlines{(\frame@hw,\ln@ht)\oreseni}%
+                \Drawlines{(\frame@hw,\ln@ht)(\frame@hw,\y@@)}%
+                \Enko{(\oval@cxl,\y@@)}\r@@{-180}{-90}%
+              \fi\fi
+            \else\if R\rectbox@LR
+              \ifdim\rectbox@oval=\z@
+                \Drawlines{(\ln@wd@,-\ln@dp)(\ln@wd@,\ln@ht)}%
+              \else\ifdim\rectbox@oct>\z@
+                \Sub\r@@\ln@dp\y@@
+                \Drawlines{%
+                  (\oval@cxr,-\ln@dp)(\ln@wd@,\y@@)(\ln@wd@,\ln@ht)%
+                }%
+              \else
+                \Sub\r@@\ln@dp\y@@
+                \Drawlines{(\ln@wd@,\y@@)(\ln@wd@,\ln@ht)}%
+                \Enko{(\oval@cxr,\y@@)}\r@@{-90}{0}%
+              \fi\fi
+            \else\if B\rectbox@LR
+              \ifdim\rectbox@oval=\z@
+                \Drawlines{%
+                  (\frame@hw,\ln@ht)(\frame@hw,-\ln@dp);
+                  (\ln@wd@,-\ln@dp)(\ln@wd@,\ln@ht)%
+                }%
+              \else\ifdim\rectbox@oct>\z@
+                \Sub\r@@\ln@dp\y@@
+                \Drawlines{%
+                  (\frame@hw,\ln@ht)(\frame@hw,\y@@)(\oval@cxl,-\ln@dp)%
+                  (\oval@cxr,-\ln@dp)(\ln@wd@,\y@@)(\ln@wd@,\ln@ht)%
+                }%
+              \else
+                \Sub\r@@\ln@dp\y@@
+                \Drawlines{(\frame@hw,\ln@ht)(\frame@hw,\y@@);
+                  (\ln@wd@,\y@@)(\ln@wd@,\ln@ht)%
+                }%
+                \Enko{(\oval@cxl,\y@@)}\r@@{-180}{-90}%
+                \Enko{(\oval@cxr,\y@@)}\r@@{-90}{0}%
+              \fi\fi
+            \fi\fi\fi
+          }%
+        }}%
+\fi
+      \end{picture}%
+      \leavevmode
+    \@tempdima=\dp\bk@bxa
+    \advance\@tempdima\bitem@ht
+    \advance\@tempdima\shade@rule
+    \vrule depth \@tempdima width \z@
+      \hskip\h@Lsep\box\bk@bxa\hfil
+    }%
+  }%
+%
+%
+%
+%
+%
+%
+%
+%  \ifhmode\par\fi
+  {%
+    \noindent\bk@lcnt\@ne
+    \ifx\empty\frame@linewidth\else\allinethickness{\frame@linewidth}\fi
+    \@bkconttrue\baselineskip\z@\lineskiplimit\z@
+    \lineskip\z@\vfuzz\maxdimen
+    \bk@split\bk@addfsepht\bk@addskipdp
+    \setlength{\unitlength}{\p@}%
+    \ifvoid\bk@bxb      % Only one line
+      \def\bk@fstln{%
+\@warning{breakrectbox: 枠内が1行だけです。rectbox環境を使用しましょう。}
+        \bk@addfsepdp
+%        \vbox{\hrule\@height\fboxrule\bk@line\hrule\@height\fboxrule}%
+\ifthenelse{\equal\bkrb@opt\empty}{%
+  \begin{rectbox}\relax
+\leavevmode\box\bk@bxa
+  \end{rectbox}\relax
+}{%
+  \expandafter\rectbox\bkrb@opt\relax
+\leavevmode\box\bk@bxa
+  \endrectbox\relax
+}%
+}%
+    \else               % More than one line
+      \def\bk@fstln{%
+        \vbox{\bk@top@line}\hfil
+          \advance\bk@lcnt\@ne
+          \loop
+            \bk@split\bk@addskipdp\leavevmode
+            \ifvoid\bk@bxb      % The last line
+              \@bkcontfalse\bk@addfsepdp
+              \vtop{\bk@bottom@line}%
+            \else               % 2,...,(n-1)
+              \bk@line
+            \fi
+            \hfil\advance\bk@lcnt\@ne
+          \if@bkcont\repeat
+       }%
+    \fi
+    \leavevmode
+    \bk@fstln
+    \par
+  }%
+  \ifnum\nest@box=\@ne
+    \vskip\breakboxskip\relax
+  \fi
+  \vskip\frame@hw\p@
+  \Decr\nest@box
+  \@ifundefined{EMminipage@footnote}{%
+    \ifnum\nest@box=\z@
+      \Cfor{}{\RB@footnote@o<\RB@footnote}{}\do{%
+        \Incr\RB@footnote@o
+        \footnotetext[\RB@footnote@o]{\csname RB@footnotetext@\romannumeral\RB@footnote@o\endcsname
+        }%
+      }%
+    \fi
+  }{}%
+}%
+%
+\let\breakrectbox\EMbreakrectbox
+\let\endbreakrectbox\endEMbreakrectbox
+%
+\def\itembreakrectbox{%
+  \@ifnextchar[{\@itembreakrectbox}{\@itembreakrectbox[\empty]}}%
+\def\@itembreakrectbox[#1]#2{%
+  \ifthenelse{\equal{#1}{c}}{%
+    \edef\arg@i{\empty}%
+  }{%
+    \edef\arg@i{#1}%
+  }%
+  \ifx\empty\arg@i
+    \EMedef\nxt@opt{[item=#2]}%
+  \else
+    \EMedef\nxt@opt{[item=#2,\arg@i]}%
+  \fi
+  \noindent
+  \expandafter\breakrectbox\nxt@opt
+}%
+\let\enditembreakrectbox\endbreakrectbox
+%
+\endinput
+%
+v 0.00α 2007/07/09
+v 0.02α 2008/04/29
+v 0.03α 2008/05/12
+           framethickness=.. 
+v 0.04α 2008/09/04 空白の混入対策
+v 0.05α 2008/11/04 Lonly を有効に
+v 0.06α 2009/05/24 rectboxoval は emathPsbb で
+v 0.08α 2009/06/15 下見出しがある場合，下見出しと次の段落との間隔
+v 0.09α 2010/02/10 \EMminipagefootnote
+v 0.10α 2010/04/27 \EMminipagefootnote 修正 (BBS #8800)
+v 0.11α 2010/05/17 [shade=..] オプション
+v 0.12α 2010/07/31 \HVsep
+v 0.13α 2010/08/24 itembreakrectbox環境

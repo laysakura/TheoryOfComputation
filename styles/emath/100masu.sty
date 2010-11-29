@@ -1,0 +1,71 @@
+% 100masu.sty by tDB(emath@nifty.ne.jp)
+%
+%
+\ProvidesPackage{100masu}[2008/09/04 v0.01]%
+%
+\RequirePackage{emathT}
+%
+  \edef\hm@kotae{\empty}%
+  \edef\hm@op{+}%
+  \def\hm@strut{\strut}%
+  \def\hm@columnwidth{1.5em}%
+\define@key{100masu}{kotae}[y]{\edef\hm@kotae{y}}%
+\define@key{100masu}{enzan}{\edef\hm@op{#1}}%
+\define@key{100masu}{sityuu}{\def\hm@strut{#1}}%
+\define@key{100masu}{ranhaba}{\edef\hm@columnwidth{#1}}%
+\def\hyakumasu{\@ifnextchar<{\@hyakumasu}{\@hyakumasu<\empty>}}%
+\def\@hyakumasu<#1>#2#3{{%
+  \ifx\empty #1\else\setkeys{100masu}{#1}\fi
+  \setbox0=\hbox{\hm@strut}%
+  \@tempdima=\ht0
+  \advance\@tempdima\dp0
+  \advance\@tempdima-\doublerulesep
+  \edef\hm@doublerulesep{\the\@tempdima}%
+  \csvhairetu{#2}{gyou@}\@dmy
+  \csvhairetu{#3}{retu@}\@dmy
+  \if *\hm@op\EMedef\gyou@mds{\times}\else
+  \edef\gyou@mds{\hm@op}\fi%
+  \Ifor*\hm@i{1}\gyou@N\Do{%
+    \EMedefappend\gyou@mds{&\csname gyou@\romannumeral\hm@i\endcsname}%
+  }%
+  \EMedefappend\gyou@mds{\noexpand\\ \noexpand\hline}%
+  \Ifor*\hm@i{1}\gyou@N\Do{%
+    \EMedefappend\gyou@mds{&}%
+  }%
+  \EMedefappend\gyou@mds{\noexpand\\[-\hm@doublerulesep]\noexpand\hline}%
+  \edef\hm@tbl{\empty}%
+  \Ifor*\hm@j{1}{\retu@N}\Do{%
+    \EMedefappend\hm@tbl{\csname retu@\romannumeral\hm@j\endcsname}%
+    \Ifor*\hm@i{1}{\gyou@N}\Do{%
+      \EMedefappend\hm@tbl{&}%
+      \ifx\empty\hm@kotae\else
+        \if +\hm@op
+          \IAdd{\csname gyou@\romannumeral\hm@i\endcsname}%
+            {\csname retu@\romannumeral\hm@j\endcsname}\hm@tmp
+        \else\if -\hm@op
+          \ISub{\csname gyou@\romannumeral\hm@i\endcsname}%
+            {\csname retu@\romannumeral\hm@j\endcsname}\hm@tmp
+        \else\if *\hm@op
+          \IMul{\csname gyou@\romannumeral\hm@i\endcsname}%
+            {\csname retu@\romannumeral\hm@j\endcsname}\hm@tmp
+        \fi\fi\fi
+        \EMedefappend\hm@tbl{\hm@tmp}%
+      \fi
+    }%
+    \ifnum\hm@j=\retu@N
+      \EMedefappend\hm@tbl{\noexpand\\ \noexpand\hlineb}%
+    \else
+      \EMedefappend\hm@tbl{\noexpand\\ \noexpand\hline}%
+    \fi
+  }%
+  \ensuremath{%
+    \begin{array}{I>{\hm@strut}C{\hm@columnwidth}|*{\gyou@N}{|C{\hm@columnwidth}}I}\hlineb
+      \gyou@mds 
+      \hm@tbl
+    \end{array}%
+  }%
+}}%
+\endinput
+%
+v 0.00 2008/06/29
+v 0.01 2008/09/04 空白の混入対策

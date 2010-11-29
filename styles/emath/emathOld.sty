@@ -1,0 +1,349 @@
+% emathOld.sty ver0.08a 2008/01/27 by tDB (emath@nifty.com)
+%
+\RequirePackage{emathEy}
+\RequirePackage{emathMw}
+\RequirePackage{emathLb}
+\RequirePackage{emathCap}
+\RequirePackage{EMnidan}
+%\@ifpackageloaded{EMesvec}{}{\RequirePackage{bekutorukata}}%
+\@ifundefined{zahyou}{}{%
+  \RequirePackage{emathPb}
+  \RequirePackage{emathPg}
+  \RequirePackage{emathPsiki}
+}%
+%
+% edaMon
+%
+\newcounter{edaban}[enumi]%
+
+\def\ow@ri@s{ow@ri@s}%
+\def\pre@edaMon{\par}
+\newcommand{\syouMonLabel}{\edaMonLabel}%
+\newcommand{\edaMonLabel}[1]{\def\edaMonLabel@s{#1}}%
+\newcommand{\preedaMon}[1]{\def\pre@edaMon{#1}}%
+\def\edaMonLabel@s{(\roman{edaban})\ }%
+
+\def\edaMon{%
+    \@ifnextchar[{\@edaMon@}{\@edaMon@[2]}%
+    }%
+\def\@edaMon@[#1]{%
+    \@ifnextchar({\@edaMon[#1]}{\@edaMon[#1](0pt)}%
+    }%
+\def\@edaMon[#1](#2){%
+    \@ifnextchar"{\@@edaMon[#1](#2)}{\@@edaMon[#1](#2)"ow@ri@s"}%
+    }%
+\def\@@edaMon[#1](#2)"#3"{%
+    \@ifnextchar"{\@@@edaMon[#1](#2)"#3"}{\@@@edaMon[#1](#2)"#3""ow@ri@s"}%
+    }%
+\def\@@@edaMon[#1](#2)"#3""#4"{%
+    \@ifnextchar"{\@@@@edaMon[#1](#2)"#3""#4"}%
+    {\@@@@edaMon[#1](#2)"#3""#4""ow@ri@s"}%
+    }%
+\def\@@@@edaMon[#1](#2)"#3""#4""#5"{%
+    \@ifnextchar"{\@@@@@edaMon[#1](#2)"#3""#4""#5"}%
+    {\@@@@@edaMon[#1](#2)"#3""#4""#5""ow@ri@s"}%
+    }%
+\def\@@@@@edaMon[#1](#2)"#3""#4""#5""#6"{%
+    \@ifnextchar"{\@@@@@@edaMon[#1](#2)"#3""#4""#5""#6"}%
+    {\@@@@@@edaMon[#1](#2)"#3""#4""#5""#6""ow@ri@s"}%
+    }%
+\def\@@@@@@edaMon[#1](#2)"#3""#4""#5""#6""#7"{%
+    \pre@edaMon
+    \ifdim#2>0pt%
+        \templa=#2%
+    \else
+        \templa=\linewidth%
+        \addtolength{\templa}{-\columnsep}%
+        \divide\templa by #1%
+    \fi%
+    \def\tmp{#3}%
+    \ifx\tmp\ow@ri@s\else\edaMon@sub%
+    \def\tmp{#4}%
+    \ifx\tmp\ow@ri@s\else\edaMon@sub%
+    \def\tmp{#5}%
+    \ifx\tmp\ow@ri@s\else\edaMon@sub%
+    \def\tmp{#6}%
+    \ifx\tmp\ow@ri@s\else\edaMon@sub%
+    \def\tmp{#7}%
+    \ifx\tmp\ow@ri@s\else\edaMon@sub%
+    \fi\fi\fi\fi\fi%
+    }%
+\def\edaMon@sub{%
+        \begin{minipage}[t]{\templa}\stepcounter{edaban}\edaMonLabel@s%
+        \tmp\end{minipage}%
+    }%
+%
+% list 環境下における図の回り込み
+%
+% \Nidan[#1]#2#3
+%   #1 : 回り込み行数
+%   #2 : 図の横幅
+%   #3 : 図
+%
+
+%\edef\ND@lvl{0}%
+\def\Nidan{\@ifstar{\Nidan@}{\@Nidan}}
+\def\@Nidan{\@ifnextchar[{\@@Nidan}{\@@Nidan[\empty]}}
+\long\def\@@Nidan[#1]#2#3{\mbox{}%
+%
+\global\let\ND@par\par
+\long\def\par{\ND@par
+  \xISub\ND@gyousuu{\the\prevgraf}\ND@gyousuu
+  \ifnum\ND@gyousuu>\z@
+    \edef\zu@shape{\ND@gyousuu}%
+    \if r\@lr
+      \Cfor{\edef\zu@i{1}}{\zu@i<\ND@gyousuu}{\Incr\zu@i}\do{%
+        \edefappend\zu@shape{ \@totalleftmargin \@tempdima}}%
+      \edefappend\zu@shape{ \@totalleftmargin \linewidth}%
+    \else
+      \@tempdimb\@totalleftmargin\advance\@tempdimb\nidan@zuhaba
+      \advance\@tempdimb\nidansep\advance\@tempdimb\nidansep
+      \Cfor{\edef\zu@i{1}}{\zu@i<\ND@gyousuu}{\Incr\zu@i}\do{%
+        \edefappend\zu@shape{ \@tempdimb \@tempdima}}%
+      \edefappend\zu@shape{ \@totalleftmargin \linewidth}%
+    \fi
+    \if l\@lr\mbox{}\vspace{-\baselineskip}\par\fi
+    \parshape\zu@shape
+  \else
+    \parshape 1 \@totalleftmargin \linewidth
+  \fi
+  \ignorespaces}%
+%\xIncr\ND@lvl
+  \IFempty{#2}{}{\xdef\nidan@zuhaba{#2}}%
+  \@tempdima\linewidth\advance\@tempdima-\nidan@zuhaba\relax
+  \@tempdimc\@tempdima
+  \advance\@tempdima-\nidansep\advance\@tempdima-\nidansep
+  \setbox0=\hbox{\begin{minipage}{\nidan@zuhaba}#3\end{minipage}}%
+\headchar{#1}\@lr\ND@@gyousuu
+\edef\ND@tyouseigyou{0}%
+\ifthenelse{\equal\@lr{+}}{\edef\ND@tyouseigyou{\ND@@gyousuu}%
+    \edef\@lr{r}\edef\ND@@gyousuu{\empty}}{%
+  \ifthenelse{\equal\@lr{-}}{\edef\ND@tyouseigyou{#1}%
+    \edef\@lr{r}\edef\ND@@gyousuu{\empty}}{%
+  \ifthenelse{\equal{\@lr}{l}}{}{\edef\@lr{r}\edef\ND@@gyousuu{#1}}}}%
+ \ifx \ND@@gyousuu\empty
+    \@tempdimb\ht0\advance\@tempdimb\dp0\relax
+    \Div{\strip@pt\@tempdimb}{\strip@pt\baselineskip}\ND@gyousuu@
+    \strsep\ND@gyousuu@{.}\ND@gyousuu\@tmp
+    \IAdd\ND@gyousuu\ND@tyouseigyou\ND@gyousuu
+    \xIncr[2]\ND@gyousuu
+  \else
+  \edef\ND@gyousuu{\ND@@gyousuu}\xIncr\ND@gyousuu
+  \fi
+  \unitlength1pt%
+  \@tempdimb\ht0\advance\@tempdimb\dp0\advance\@tempdimb-1zh\relax
+\vrule height \z@ depth \@tempdimb width\z@
+{\advance\@tempdimb 1.4zh\relax
+\vspace{-\@tempdimb}\ND@par}%
+\if r\@lr
+  \begin{picture}(0,0)%
+    \put(\strip@pt\@tempdimc,-\strip@pt\@tempdimb){\makebox(0,0)[lb]{\box0}}%
+  \end{picture}%
+\else
+  \begin{picture}(0,0)%
+    \put(0,-\strip@pt\@tempdimb){\makebox(0,0)[lb]{\box0}}%
+  \end{picture}%
+\fi
+  \edef\zu@shape{\ND@gyousuu}%
+  \if r\@lr
+    \Cfor{\edef\zu@i{1}}{\zu@i<\ND@gyousuu}{\Incr\zu@i}\do{%
+      \edefappend\zu@shape{ \@totalleftmargin \@tempdima}}%
+    \edefappend\zu@shape{ \@totalleftmargin \linewidth}%
+  \else
+    \@tempdimb\@totalleftmargin\advance\@tempdimb\nidan@zuhaba
+    \advance\@tempdimb\nidansep\advance\@tempdimb\nidansep
+    \Cfor{\edef\zu@i{1}}{\zu@i<\ND@gyousuu}{\Incr\zu@i}\do{%
+      \edefappend\zu@shape{ \@tempdimb \@tempdima}}%
+    \edefappend\zu@shape{ \@totalleftmargin \linewidth}%
+  \fi
+  \if l\@lr\mbox{}\vspace{-\baselineskip}\par\fi
+  \parshape\zu@shape
+  \ignorespaces}
+\def\endNidan{%\xDecr\ND@lvl
+  \par\parshape 1\@totalleftmargin \linewidth}
+
+% 右空けの継続
+\expandafter\def\csname Nidan*\endcsname{%
+  \@ifnextchar[{\@cNidan}{\@cNidan[\empty]}}
+\def\@cNidan[#1]{%
+\ifnum\ND@gyousuu>\z@
+ \long\def\par{%
+  \ltx@par
+  \xISub\ND@gyousuu{\the\prevgraf}\ND@gyousuu
+  \ifnum\ND@gyousuu>\z@
+    \edef\zu@shape{\ND@gyousuu}%
+    \if r\@lr
+      \Cfor{\edef\zu@i{1}}{\zu@i<\ND@gyousuu}{\Incr\zu@i}\do{%
+        \edefappend\zu@shape{ \@totalleftmargin \@tempdima}}%
+      \edefappend\zu@shape{ \@totalleftmargin \linewidth}%
+    \else
+      \@tempdimb\@totalleftmargin\advance\@tempdimb\nidan@zuhaba
+      \advance\@tempdimb\nidansep\advance\@tempdimb\nidansep
+      \Cfor{\edef\zu@i{1}}{\zu@i<\ND@gyousuu}{\Incr\zu@i}\do{%
+        \edefappend\zu@shape{ \@tempdimb \@tempdima}}%
+      \edefappend\zu@shape{ \@totalleftmargin \linewidth}%
+    \fi
+    \if l\@lr\mbox{}\vspace{-\baselineskip}\par\fi
+    \parshape\zu@shape
+  \else
+    \parshape 1 \@totalleftmargin \linewidth
+  \fi
+  \ignorespaces}%
+%
+  \@tempdima\linewidth\advance\@tempdima-\nidan@zuhaba\relax
+  \@tempdimc\@tempdima
+  \advance\@tempdima-\nidansep\advance\@tempdima-\nidansep
+  \setbox0=\hbox{}
+\headchar{#1}\@lr\ND@@gyousuu
+\ifthenelse{\equal{\@lr}{l}}{}{\edef\@lr{r}\edef\ND@@gyousuu{#1}}%
+ \ifx \ND@@gyousuu\empty\else
+ \edef\ND@gyousuu{\ND@@gyousuu}\xIncr\ND@gyousuu\fi
+  \edef\zu@shape{\ND@gyousuu}%
+  \if r\@lr
+    \Cfor{\edef\zu@i{1}}{\zu@i<\ND@gyousuu}{\Incr\zu@i}\do{%
+      \edefappend\zu@shape{ \@totalleftmargin \@tempdima}}%
+    \edefappend\zu@shape{ \@totalleftmargin \linewidth}%
+  \else
+    \@tempdimb\@totalleftmargin\advance\@tempdimb\nidan@zuhaba
+    \advance\@tempdimb\nidansep\advance\@tempdimb\nidansep
+    \Cfor{\edef\zu@i{1}}{\zu@i<\ND@gyousuu}{\Incr\zu@i}\do{%
+      \edefappend\zu@shape{ \@tempdimb \@tempdima}}%
+    \edefappend\zu@shape{ \@totalleftmargin \linewidth}%
+  \fi
+  \if l\@lr\mbox{}\vspace{-\baselineskip}\par\fi
+  \parshape\zu@shape
+  \ignorespaces\fi
+%  \xIncr\ND@lvl
+}
+
+\expandafter\def\csname endNidan*\endcsname{\endNidan}
+%
+% \xMemori, \yMemori
+%
+\def\xMemori{\@ifnextchar[{\x@Memori}{\x@Memori[t]}}%
+%\def\x@Memori[#1]{\@ifnextchar<{\x@@Memori[#1]}{\x@@Memori[#1]<\empty>}}%
+%\def\x@Memori[#1]{\@ifnextchar<{\x@@Memori[#1]}{\x@@Memori[#1]<\empty>}}%
+%\def\x@@Memori[#1]<#2>{%
+%  \Strchr{#2}{=}\xMemori@tmp
+%  \ifthenelse{\xMemori@tmp>\z@}{\@xMemori<#2>}{\@x@@Memori[#1]<#2>}}
+\def\x@Memori[#1]{\@ifnextchar<{\@x@@Memori[#1]}{\@x@@Memori[#1]<\empty>}}%
+\def\@x@@Memori[#1]<#2>{%
+  \@ifnextchar({\x@@@Memori[#1]<#2>}{%
+    \x@@@Memori[#1]<#2>(\zM@dx)}}
+\def\x@@@Memori[#1]<#2>(#3)#4{%
+  \ifx\empty#2\def\Memori@lbl{$#4$}\else\def\Memori@lbl{$#2$}\fi%
+  \Div{1}{\strip@pt\unitlength}\Memori@u@pt%
+  \Div\Memori@u@pt\@yscale\Memori@u@pty
+    \Mul{#4}{#3}\xMemori@x\Add\xMemori@x\zM@xo\xMemori@x
+    \put(0,0){\drawline(\xMemori@x,-\Memori@u@pty)(\xMemori@x,\Memori@u@pty)}%
+    \ifx#1t\relax
+      \emathPut{(\xMemori@x,-\Memori@u@pty)}(0,-2pt)[t]\Memori@lbl
+    \else\ifx#1b\relax
+      \emathPut{(\xMemori@x,\Memori@u@pty)}(0,2pt)[b]\Memori@lbl
+    \else
+      \edef\xmemori@str{{(\xMemori@x,0)}#1}%
+      \expandafter\emathPut\xmemori@str\Memori@lbl
+    \fi\fi
+}%
+%
+\def\@xMemori<#1>#2{{%
+  \define@key{emPzM}{label}{\def\xM@lbl{##1}}%
+  \define@key{emPzM}{memoriiti}{\edef\x@memoriiti{##1}}%
+  \define@key{emPzM}{memorinagasa}{%
+    \Strsep{##1}{,}\memori@nagasai\memori@nagasaii
+    \uykansan\memori@nagasai\memori@nagasayi
+    \ifx\empty\memori@nagasaii
+          \let\memori@nagasayii\memori@nagasayi
+          \edef\memori@nagasayi{-\memori@nagasayii}%
+    \else
+          \uykansan\memori@nagasaii\memori@nagasayii
+    \fi
+  }%
+%
+  \edef\xM@lbl{#2}%
+  \Strsep{\def@xmemori@nagasa}{,}\memori@nagasai\memori@nagasaii
+  \uykansan\memori@nagasai\memori@nagasayi
+  \ifx\empty\memori@nagasaii
+        \let\memori@nagasayii\memori@nagasayi
+        \edef\memori@nagasayi{-\memori@nagasayii}%
+  \else
+        \uykansan\memori@nagasaii\memori@nagasayii
+  \fi
+  \setkeys{emPzM}{#1}%
+  \@ifundefined{by@perl}{\edef\xM@x{#2}}{\calcval{#2}\xM@x}%
+  \edef\xM@tmp{{(\xM@x,0)}\x@memoriiti}%
+  \expandafter\emathPut\xM@tmp{\ensuremath{\xM@lbl}}%
+  \put(\xM@x,0){\drawline(0,\memori@nagasayi)(0,\memori@nagasayii)}%
+}}
+%
+\def\yMemori{\@ifnextchar[{\y@Memori}{\y@Memori[r]}}%
+%\def\y@Memori[#1]{\@ifnextchar<{\y@@Memori[#1]}{\y@@Memori[#1]<\empty>}}%
+%\def\y@@Memori[#1]<#2>{%
+%  \Strchr{#2}{=}\yMemori@tmp
+%  \ifthenelse{\yMemori@tmp>\z@}{\@yMemori<#2>}{\@y@@Memori[#1]<#2>}}
+\def\y@Memori[#1]{\@ifnextchar<{\@y@@Memori[#1]}{\@y@@Memori[#1]<\empty>}}%
+\def\@y@@Memori[#1]<#2>{\@ifnextchar({\y@@@Memori[#1]<#2>}{%
+  \y@@@Memori[#1]<#2>(\zM@dy)}}
+\def\y@@@Memori[#1]<#2>(#3)#4{%
+    \ifx\empty#2\def\Memori@lbl{$#4$}\else\def\Memori@lbl{$#2$}\fi%
+  \Div{1}{\strip@pt\unitlength}\Memori@u@pt%
+  \Div\Memori@u@pt\@xscale\Memori@u@ptx
+    \Mul{#4}{#3}\yMemori@y\Add\yMemori@y\zM@yo\yMemori@y
+    \put(0,0){\drawline(-\Memori@u@ptx,\yMemori@y)(\Memori@u@ptx,\yMemori@y)}%
+    \ifx #1r\relax
+      \emathPut{(-\Memori@u@ptx,\yMemori@y)}(-2pt,0)[r]\Memori@lbl
+    \else\ifx #1l\relax
+      \emathPut{(\Memori@u@ptx,\yMemori@y)}(2pt,0)[l]\Memori@lbl
+    \else
+      \edef\ymemori@str{{(0,\yMemori@y)}#1}%
+      \expandafter\emathPut\ymemori@str\Memori@lbl
+    \fi\fi
+}%
+%
+\def\@yMemori<#1>#2{{%
+  \define@key{emPzM}{label}{\def\yM@lbl{##1}}%
+  \define@key{emPzM}{memoriiti}{\edef\y@memoriiti{##1}}%
+  \define@key{emPzM}{memorinagasa}{%
+    \Strsep{##1}{,}\memori@nagasai\memori@nagasaii
+    \uxkansan\memori@nagasai\memori@nagasaxi
+    \ifx\empty\memori@nagasaii
+          \let\memori@nagasaxii\memori@nagasaxi
+          \edef\memori@nagasaxi{-\memori@nagasaxii}%
+    \else
+          \uxkansan\memori@nagasaii\memori@nagasaxii
+    \fi
+  }%
+%
+  \edef\yM@lbl{#2}%
+  \Strsep{\def@ymemori@nagasa}{,}\memori@nagasai\memori@nagasaii
+  \uxkansan\memori@nagasai\memori@nagasaxi
+  \ifx\empty\memori@nagasaii
+        \let\memori@nagasaxii\memori@nagasaxi
+        \edef\memori@nagasaxi{-\memori@nagasaxii}%
+  \else
+        \uxkansan\memori@nagasaii\memori@nagasaxii
+  \fi
+  \setkeys{emPzM}{#1}%
+  \@ifundefined{by@perl}{\edef\yM@y{#2}}{\calcval{#2}\yM@y}%
+  \edef\yM@tmp{{(0,\yM@y)}\y@memoriiti}%
+  \expandafter\emathPut\yM@tmp{\ensuremath{\yM@lbl}}%
+  \put(0,\yM@y){\drawline(\memori@nagasaxi,0)(\memori@nagasaxii,0)}%
+}}
+%
+\def\bako#1#2{\bunsuu{\hako{#1}}{\hako{#2}}}
+%
+%\let\Henko\HenKo
+%
+%%% 乙部 pLaTeX2e for Windows Another Manual Vol.1   p.226
+\newcommand{\tabtopsp}[1]{\vbox{\vbox to #1{}\vbox to1zw{}}}
+%
+\endinput
+
+
+ver 0.01 nidan, Nidan
+ver 0.02 \tabtopsep
+ver 0.04 emathEy.sty emathMw.sty 独立対策
+ver 0.05 emathPsiki.sty などの独立対策
+ver 0.06 \bekutorukata ---> bekutorukata.sty に伴い，\usepackage{bekutorukata}
+ver 0.07 nidan環境 ---> EMnidan.sty
+ver 0.08 EMesvect.sty をロードしたときは，bekutorukata.sty をロードしない

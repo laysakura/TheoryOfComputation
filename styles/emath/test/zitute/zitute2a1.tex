@@ -1,0 +1,165 @@
+\documentclass[b4j,fleqn]{jarticle}
+\usepackage{multicol}
+\usepackage[papersize]{emathT}
+%\usepackage[maskAnstrue]{emathAe}
+\usepackage[maskAnsfalse]{emathAe}
+
+\makeatletter
+\def\yokosikiri{\@ifnextchar[{\@yokosikiri}{\@yokosikiri[\empty]}}
+\def\@yokosikiri[#1]#2{{\setlength{\@tempdima}{#2}\relax
+\Div{\strip@pt\@tempdima}{\strip@pt\unitlength}\yokosikiri@l
+\noindent
+\begin{picture}(0,0)%
+\Drawline{(-.5,0)(\yokosikiri@l,0)}%
+\ifx\empty #1\else
+  \Put{(\yokosikiri@l,0)}{%
+    {\thicklines\Drawline{(0,0)(-2.5,0)(-2.5,2)(0,2)(0,0)}}%
+    \Drawline{(0,.8)(-.8,0)}\Put{(0,0)}[nw]{#1}}%
+\fi
+\end{picture}
+}}
+\makeatother
+
+%%% 版面の指定です．
+\setlength{\oddsidemargin}{-0.5cm}
+\setlength{\evensidemargin}{-0.5cm}
+\setlength{\topmargin}{-20mm}
+\setlength{\headheight}{15pt}
+\setlength{\headsep}{15pt}
+\setlength{\textwidth}{21.5cm}
+\setlength{\textheight}{33cm}
+\AtBeginDvi{\special{papersize=25.7cm,36.4cm}}
+
+\pagestyle{empty}
+
+
+\begin{document}
+\begin{Large}
+\hfill （2年数学）解　答　用　紙　その1\hfill2002(H14)年9月
+\end{Large}
+
+\bigskip
+\unitlength10mm
+\begin{picture}(0,0)
+\Hasen{(10.75,-6)(10.75,-28.5)}
+\end{picture}
+\abovedisplayskip=0pt
+\belowdisplayskip=0pt
+\raggedcolumns
+
+\begin{Enumerate}[\large\protect\expandafter\fbox1]
+\item 
+  \def\KaitouTTL{\relax}
+  $\begin{hyou}[t]{|L{60zw}|}\hline
+  \sityuu[2zh]{3zh}\makebox[36zw][l]{~(1)~
+  \begin{Kaitou}
+    $(ab+1)(a+b-1)$
+  \end{Kaitou}
+  }
+  \vrule ~{\mbox{(2)}}~
+  \begin{Kaitou}
+  12
+  \end{Kaitou}
+  \\\hline
+  \sityuu[2zh]{3zh}\makebox[20zw][l]{~(3)~ $k=$
+  \begin{Kaitou}
+  2
+  \end{Kaitou}
+  }\vrule~{\mbox{(4)}~\makebox[20zw][l]{~ $a=$
+  \begin{Kaitou}
+  $-1$
+  \end{Kaitou}
+  }
+  ~\makebox[20zw][l]{~ $b=$~
+  \begin{Kaitou}
+    1
+  \end{Kaitou}}
+  }
+  \\\hline
+  \sityuu[2zh]{3zh}\makebox[36zw][l]{~{(5)}~
+  \begin{Kaitou}
+  $2^{n-1}-1$
+  \end{Kaitou}
+  }
+  \vrule width1pt ~（採点欄）\hfill /25
+  \\\hline
+\end{hyou}$
+
+\def\KaitouTTL{\small}
+\item 
+  \begin{Kaitou}
+  \begin{multicols}{2}
+  \begin{enumerate}[(1)]
+  \item \mbox{}
+      $\kumiawase62\times\kumiawase62=\bm{225}$
+    \vskip 4.5cm
+
+  \item \mbox{}
+    「4名とも男子が選ばれる」場合の余事象であるから
+    \[ 1-\bunsuu{\kumiawase64}{\kumiawase{12}{4}}=1-\bunsuu{1}{33}
+      =\bm{\bunsuu{32}{33}} \]
+  \vskip 2cm
+\columnbreak
+
+  \item \mbox{}
+    女子3人，男子1人または女子4人が選ばれる場合だから
+    \[ \bunsuu{\kumiawase63\times\kumiawase61}{\kumiawase{12}{4}}
+      +\bunsuu{\kumiawase64}{\kumiawase{12}{4}}=\bm{\bunsuu{3}{11}} \]
+  \end{enumerate}
+\end{multicols}
+\end{Kaitou}
+\vfill
+\vfill
+\yokosikiri[15]{\linewidth+0.5cm}%
+
+\item 
+\begin{Kaitou}
+\begin{multicols}{2}
+\begin{enumerate}[(1)]
+  \item \mbox{}
+      $k^2-(k-1)k+k^2-2=0$より
+      \begin{gather*}
+        k^2+k-2=0\\
+        (k+2)(k-1)=0\\
+        \bm{k=-2}, ~\bm{1}
+      \end{gather*}
+\vskip2.5cm
+
+  \item \mbox{}
+    $k=-2$のとき，与式は
+      \begin{gather*}
+        x^2+3x+2=0\\
+        (x+2)(x+1)=0\\
+        x=-2,~-1
+      \end{gather*}
+    
+    $k=1$のとき，与式は
+      \begin{gather*}
+        x^2-1=0\\
+        x=\pm1
+      \end{gather*}
+    よって他の解は$\bm{x=-1}$
+  \columnbreak
+  \item \mbox{}
+      判別式$D>0$より
+      \begin{gather*}
+        (k-1)^2-4(k^2-2)>0\\
+        -3k^2-2k+9>0\\
+        3k^2+2k-9<0\\
+        3k^2+2k-9=0~とおくと\\
+        k=\bunsuu{-1\pm2\sqrt{7}}{3}\\
+        \mbox{よって}\\
+        \bm{\bunsuu{-1-2\sqrt{7}}{3}<k<\bunsuu{-1+2\sqrt{7}}{3}}
+      \end{gather*}
+\end{enumerate}
+\end{multicols}
+\end{Kaitou}
+\vfill
+\yokosikiri[15]{\linewidth+0.5cm}%
+\end{Enumerate}
+
+\Large\fboxsep=0pt\fboxrule=1pt
+\hfill 第2学年（　　）組（　　）番 氏名（　　　　　　　　　　　　）\hfill 
+\fbox{\sityuu[1zh]{1.5zh}~\hbox{\tate 　得　点\hfill}~\vrule\hspace*{6zw}}
+
+\end{document}

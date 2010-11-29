@@ -1,0 +1,305 @@
+%%% emathA.sty ver.0.05 2000/09/01
+%%% by tDB
+%%%
+
+\def\tmpname{LaTeX2e}%
+
+%   解答を置く位置の指定
+\@ifundefined{c@kaitou@syorihou}{\newcounter{kaitou@syorihou}}{}%
+%                               0: デフォルトは巻末にまとめる．
+% continue                      1: 問題に続けて
+% ignore                        2: まったく無視する(コメント扱い)
+% debug                         3: デバッグ用 (\kaitou は無効コマンド)
+%                                 (edaitemm 環境，\edaitemm コマンドとは
+%                                  併用できません．この場合は
+%                                  continue オプションをご利用ください．)
+% readonly                      4: .kai ファイルを作成はせず，読み込むだけ．
+% twocolumn                     5: twocolumn で解答部分を二段組
+% nidan                       5: nidan で解答部分を二段組
+
+\ifx\fmtname\tmpname%
+  \NeedsTeXFormat{LaTeX2e}
+  \ProvidesPackage{emathA}[2000/04/02 v0.03]%
+% continue オプションを指定したときは，問題の下．
+  \DeclareOption{continue}{\setcounter{kaitou@syorihou}{1}\relax}%
+% ignore オプションを指定したときは，解答は出力しない
+  \DeclareOption{ignore}{\setcounter{kaitou@syorihou}{2}\relax}%
+% debug オプションを指定したときは，デバッグ用
+  \DeclareOption{debug}{\setcounter{kaitou@syorihou}{3}\relax}%
+% readonly オプションを指定したときは，.kai ファイルを再構築せずに読み込む
+  \DeclareOption{readonly}{\setcounter{kaitou@syorihou}{4}\relax}%
+% twocolumn オプションを指定したときは，解答部分を2段組
+  \DeclareOption{twocolumn}{\setcounter{kaitou@syorihou}{5}\relax}%
+% nidan オプションを指定したときは，解答部分を2段組
+  \DeclareOption{nidan}{\setcounter{kaitou@syorihou}{5}\relax}%
+  \ProcessOptions\relax
+\fi%
+
+\ifnum\thekaitou@syorihou=5\relax
+    \RequirePackage{multicol}\raggedcolumns%
+    \columnseprule=0.4pt%
+\fi
+
+\newwrite \kai@hndl%            解答を書き出す一時ファイルのハンドル
+\newif\ifKaiFile\KaiFilefalse%  そのファイルが作られているかどうか
+\newif\iflinechar\linechartrue%   .kai ファイルに書き出す際，
+                              %   空白で改行するか否かのスイッチ
+
+\newwrite \hint@hndl%            ヒントを書き出す一時ファイルのハンドル
+\newif\ifHintFile\HintFilefalse%  そのファイルが作られているかどうか
+
+% \kaitou{} の引数が空のときはその後で改行なし 1998/3/7
+\newcounter{kaikaigyou@kinsi}% 0のとき改行あり，その他のとき改行なし
+
+\def\prekai{}%
+\def\postkai{}%
+\def\prehint{}%
+\def\posthint{}%
+
+\newcommand{\openKaiFile}{%     解答を書き出す一時ファイルの作成
+  \ifnum\value{kaitou@syorihou}=0\relax%
+    \immediate\openout\kai@hndl=\jobname.kai%
+    \KaiFiletrue%
+    \immediate\write\kai@hndl{\string\prekai}%
+  \fi}%
+
+\newcommand{\openHintFile}{%     ヒントを書き出す一時ファイルの作成
+  \ifnum\value{kaitou@syorihou}=0\relax%
+    \immediate\openout\hint@hndl=\jobname.hin%
+    \HintFiletrue%
+    \immediate\write\hint@hndl{\string\prehint}%
+  \fi}%
+
+\def\@KaiLabel{\ \labelenumi\ \ }%  解答の番号付け
+%                               デフォルトは enumerate 環境に対応
+\newcommand{\KaiLabel}[1]{%     その番号付けを変更するコマンド
+  \def\@KaiLabel{#1}}%
+
+% 改行するレベル
+\newcounter{kaikaigyou@suizyun}%
+  \setcounter{kaikaigyou@suizyun}{1}%
+\newcommand{\kaikaigyousuizyun}[1]{%
+  \setcounter{kaikaigyou@suizyun}{#1}}%
+
+% 書き出し
+\newcommand{\WriteFile}[1]{%
+  \ifnum\value{kaitou@syorihou}=0\relax%
+            \immediate\write\kai@hndl{#1}\fi}%
+
+
+%%% \kaitou の定義 --------------------------------------------------
+\ifcase\value{kaitou@syorihou}%   % kaitou@syorihou=0
+  \def\kaitou{%                   \kaitou コマンドの引数に解答を書き，
+%                                 それを一時ファイルに書き出す．
+    \ifKaiFile%
+      \ifcase\@enumdepth%
+        \def\@@KaiLabel{\@KaiLabel}%
+      \or%
+        \def\@@KaiLabel{\labelenumi\ }%
+      \or%
+        \def\@@KaiLabel{\labelenumii\ }%
+      \or%
+        \def\@@KaiLabel{\labelenumiii\ }%
+      \or%
+        \def\@@KaiLabel{\labelenumiv\ }%
+      \else%
+        \def\@@KaiLabel{\@KaiLabel}%
+      \fi%
+    \else
+      \errmessage{コマンド：openKaiFile が実行されていません}%
+    \fi%
+    \@ifnextchar[{\@kaitou}{\@kaitou[\@@KaiLabel]}%
+  }%
+
+  \long\def\@kaitou[#1]#2{%
+      \ifnum\value{kaikaigyou@kinsi}=\z@
+        \ifnum\@enumdepth>\value{kaikaigyou@suizyun}%
+          \def\pre@kaitou{\ }\else%
+        \def\pre@kaitou{\string\bigskip\string\par\string\noindent}%
+            \fi%
+      \else\def\pre@kaitou{}\setcounter{kaikaigyou@kinsi}{0}%
+          \fi%
+      \immediate\write\kai@hndl{\pre@kaitou\string\kaidukuri`#1`}%
+      \def\temp@a{#2}%
+      \ifx\temp@a\empty\setcounter{kaikaigyou@kinsi}{1}\fi%
+      \begingroup%
+        \def\kai@hontai{#2}%
+        \iflinechar\newlinechar='40\fi%
+        \immediate\write\kai@hndl{\meaning\kai@hontai}%
+      \endgroup%
+  }%
+\or%        kaitou@syorihou=1
+  \newcommand{\kaimdsb}{\vspace{0\baselineskip}\par\noindent%
+    \begin{small}【解】}%
+  \newcommand{\kaimdse}{\end{small}\par}%
+  \long\def\kaitou#1{%
+    \def\temp@a{#1}%
+    \ifx\temp@a\empty\else%
+    \ifmmode $\kaimdsb #1 \kaimdse $\else%
+    \kaimdsb #1\kaimdse
+       \fi\fi%
+  }%
+\or%        kaitou@syorihou=2
+  \long\def\kaitou#1{}%
+\or%        kaitou@syorihou=3
+  \def\kaitou{\vspace{.5\baselineskip}\hrule\vspace{.5\baselineskip}}
+\or%        kaitou@syorihou=4
+  \long\def\kaitou#1{}%
+\or%        kaitou@syorihou=5
+  \newcommand{\kaimdsb}{\vspace{0\baselineskip}\par\noindent%
+    \columnseprule.4pt%
+    \begin{multicols}{2}%
+    \begin{small}【解】}%
+  \newcommand{\kaimdse}{\end{small}\end{multicols}\par}%
+  \long\def\kaitou#1{%
+    \def\temp@a{#1}%
+    \ifx\temp@a\empty\else%
+    \ifmmode $\kaimdsb #1 \kaimdse $\else%
+    \kaimdsb #1\kaimdse
+       \fi\fi%
+  }%
+\fi%
+%%% \kaitou の定義終了 ----------------------------------------------
+
+%%% \hint の定義 --------------------------------------------------
+\ifcase\value{kaitou@syorihou}%   % kaitou@syorihou=0
+  \def\hint{%                   \hint コマンドの引数に解答を書き，
+%                                 それを一時ファイルに書き出す．
+    \ifKaiFile%
+      \ifcase\@enumdepth%
+        \def\@@KaiLabel{\@KaiLabel}%
+      \or%
+        \def\@@KaiLabel{\labelenumi\ }%
+      \or%
+        \def\@@KaiLabel{\labelenumii\ }%
+      \or%
+        \def\@@KaiLabel{\labelenumiii\ }%
+      \or%
+        \def\@@KaiLabel{\labelenumiv\ }%
+      \else%
+        \def\@@KaiLabel{\@KaiLabel}%
+      \fi%
+    \else
+      \errmessage{コマンド：openHintFile が実行されていません}%
+    \fi%
+    \@ifnextchar[{\@hint}{\@hint[\@@KaiLabel]}%
+  }%
+
+  \long\def\@hint[#1]#2{%
+      \ifnum\value{kaikaigyou@kinsi}=\z@
+        \ifnum\@enumdepth>\value{kaikaigyou@suizyun}%
+          \def\pre@kaitou{\ }\else%
+        \def\pre@kaitou{\string\par\string\noindent}%
+            \fi%
+      \else\def\pre@kaitou{}\setcounter{kaikaigyou@kinsi}{0}%
+          \fi%
+      \immediate\write\hint@hndl{\pre@kaitou\string\kaidukuri`#1`}%
+      \def\temp@a{#2}%
+      \ifx\temp@a\empty\setcounter{kaikaigyou@kinsi}{1}\fi%
+      \begingroup%
+        \def\kai@hontai{#2}%
+        \iflinechar\newlinechar='40\fi%
+        \immediate\write\hint@hndl{\meaning\kai@hontai}%
+      \endgroup%
+  }%
+\or%        kaitou@syorihou=1
+  \newcommand{\hintmdsb}{\vspace{0\baselineskip}\par\noindent%
+    \begin{small}【ヒント】}%
+  \newcommand{\hintmdse}{\end{small}\par}%
+  \long\def\hint#1{%
+    \def\temp@a{#1}%
+    \ifx\temp@a\empty\else%
+    \ifmmode $\hintmdsb #1 \hintmdse $\else%
+    \hintmdsb #1\hintmdse
+       \fi\fi%
+  }%
+\or%        kaitou@syorihou=2
+  \long\def\hint#1{}%
+\or%        kaitou@syorihou=3
+  \def\hint{\vspace{.5\baselineskip}\hrule\vspace{.5\baselineskip}}
+\or%        kaitou@syorihou=4
+  \long\def\hint#1{}%
+\or%        kaitou@syorihou=5
+  \newcommand{\hintmdsb}{\vspace{0\baselineskip}\par\noindent%
+    \columnseprule.4pt%
+    \begin{multicols}{2}%
+    \begin{small}【解】}%
+  \newcommand{\hintmdse}{\end{small}\end{multicols}\par}%
+  \long\def\hint#1{%
+    \def\temp@a{#1}%
+    \ifx\temp@a\empty\else%
+    \ifmmode $\hintmdsb #1 \hintmdse $\else%
+    \hintmdsb #1\hintmdse
+       \fi\fi%
+  }%
+\fi%
+%%% \hint の定義終了 ----------------------------------------------
+
+\newcommand{\closeFile}{\closeKaiFile\closeHintFile}%
+\newcommand{\closeKaiFile}{%    解答を書き出すファイルの作成終了宣言
+%  \ifnum\value{kaitou@syorihou}=0\relax%
+  \ifKaiFile
+    \immediate\write\kai@hndl{\string\postkai}%
+    \KaiFilefalse%
+    \immediate\closeout\kai@hndl%
+  \fi}%
+\newcommand{\closeHintFile}{%    解答を書き出すファイルの作成終了宣言
+%  \ifnum\value{kaitou@syorihou}=0\relax%
+  \ifHintFile
+    \immediate\write\hint@hndl{\string\posthint}%
+    \HintFilefalse%
+    \immediate\closeout\hint@hndl%
+  \fi}%
+
+\newcommand{\inputKaiFile}{%    一時ファイルの読み取り
+  \ifnum\value{kaitou@syorihou}=0\relax%
+    \ifKaiFile
+      \errmessage{コマンド：closeKaiFile が実行されていません}%
+    \else\input{\jobname.kai}%
+    \fi%
+  \else\ifnum\value{kaitou@syorihou}=4\relax%
+    \input{\jobname.kai}%
+  \fi\fi%
+  }%
+\newcommand{\inputHintFile}{%    一時ファイル(ヒント)の読み取り
+  \ifnum\value{kaitou@syorihou}=0\relax%
+    \ifHintFile
+      \errmessage{コマンド：closeHintFile が実行されていません}%
+    \else\input{\jobname.hin}%
+    \fi%
+  \else\ifnum\value{kaitou@syorihou}=4\relax%
+    \input{\jobname.hin}%
+  \fi\fi%
+  }%
+
+\def\pre@kailabel{\bfseries}%  大問番号の前に付ける見出しなど
+\newcommand{\prekailabel}[1]{\def\pre@kailabel{#1}}%
+
+\long\def\prekaitou#1{\def\pre@kaitou{#1}}%
+
+% 読み取った解答をタイプセットする．
+\long\def\kaidukuri`#1`#2>{{\pre@kailabel{#1}}}%
+
+\newcommand{\ETC}{\errmessage{%
+kaitou コマンドの引数が，ご使用の TeX に対して長すぎます．}}%
+
+
+\endinput
+%%% end of emathA.sty
+% ver.0.00a \hint を新設し，
+%             第1部 本文・問題
+%             第2部 ヒント
+%             第3部 解答
+%           の3部立てとする．
+% ver.0.00b \def\tmpname{LaTeX2e}% を入れて，単独に使用できるように．
+% ver.0.01 1998/12/22 公開
+% ver.0.01a \prekai, \postkai, \prehint, \posthint を新設 1999.4.14
+% ver.0.01b \prehint, \posthint の出力先修正  1999.4.16
+% ver.0.02  19990822 LaTeX2.09 で debug などの指定ができるようにする．
+%     ロードオプション twocolumn を nidan に変更する．
+%     ( twocolumn も同値なオプションとして残す．）
+% v0.03     2000/04/02
+%     nidan オプションを指定したときは multicol を読み込む。
+% v0.04       2000/04/10
+%     nidan オプションを指定したときは \columnseprule=0.4pt も附加
+% v0.05     2000/09/01

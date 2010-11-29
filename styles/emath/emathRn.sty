@@ -1,0 +1,328 @@
+% emathRn.sty by tDB(emath@nifty.ne.jp)
+%
+% 乱数処理
+%
+\ProvidesPackage{emathRn}[2008/09/04 v0.12 乱数処理]%
+%
+  \DeclareOption{perl}{\def\Rn@perl{}}%
+  \DeclareOption{kiroku}{\def\ransuu@kiroku{1}}%
+  \ProcessOptions\relax
+%
+\@ifundefined{Rn@perl}{%
+  \RequirePackage{fp-random}
+  \RequirePackage{emath}
+  \FPmessagesfalse
+}{%
+  \RequirePackage{emathPl}
+  \RequirePackage{verbatim}
+}%
+%
+  \define@key{emRn}{seed}{\def\ran@seed{#1}}%
+  \define@key{emRn}{sup}{\def\ran@sup{#1}}%
+  \define@key{emRn}{max}{\def\ran@sup{#1}\Incr\ran@sup}%
+  \define@key{emRn}{min}{\def\ran@min{#1}}%
+  \define@key{emRn}{kosuu}{\def\ran@kosuu{#1}}%
+  \define@key{emRn}{set}{\def\ran@set{#1}%
+    \csvhairetu*\ran@set{ran@set@}%
+    \edef\ran@min{1}%
+    \edef\ran@sup{\ran@set@N}%
+    \Incr\ran@sup
+  }%
+%
+  \@ifundefined{ransuu@kiroku}{\def\ransuu@kiroku{0}}{%
+    \RequirePackage{emathWR}%
+  }%
+  \def\ransuukiroku{\def\ransuu@kiroku{1}}%
+%
+  \edef\ran@seed{\empty}%
+%
+\def\ranzyunretu{\@ifnextchar<{\@ranzyunretu}{\@ranzyunretu<\empty>}}
+\def\@ranzyunretu<#1>#2{%
+  \edef\ran@sup{10}%
+  \edef\ran@min{0}%
+  \edef\ran@kosuu{10}%
+  \edef\ran@set{\empty}%
+  \edef\ran@set@N{0}%
+  \ifx\empty #1\else \setkeys{emRn}{#1}\fi
+  \ISub\ran@sup\ran@min\ran@tmp
+  \ifnum\ran@tmp<\@ne\errmessage{ranzyunretu:上限，最小値の指定が異常です}\fi
+  \ifnum\ran@tmp<\ran@kosuu\edef\ran@kosuu{\ran@tmp}\fi
+  \CalcVal{%
+    \ifx\empty\ran@seed\else
+      srand(\ran@seed);
+    \fi
+    my $t,$tt;
+    my $sum=0;
+    my $min=\ran@min;
+    my $max=\ran@sup-$min;
+    my $kosuu=\ran@kosuu;
+    my @flg=();
+    for (my $i=0;$i<$max;++$i){@flg=(@flg,0);}
+    my @kekka=(int(rand(9999999999)));
+    do {%
+      $t=int(rand($max));
+      $tt=$t+$min;
+      if ($flg[$t]==0){
+        @kekka=(@kekka,$tt);$flg[$t]=1;$sum++;
+      }%
+    } while ($sum<$kosuu);
+    $" = ',';
+    print FHNDL "@kekka";
+  }\ran@tmp
+  \Strsep\ran@tmp{,}\ran@seed #2\relax
+  \ifnum\ran@set@N>\z@
+    \Cfor{\edef\rz@tmp{}\Strsep#2{,}\rz@c\rz@r}%
+      {\not\equal\rz@c\empty}%
+      {\Strsep\rz@r{,}\rz@c\rz@r}%
+      \do{%
+        \ifx\empty\rz@tmp
+          \edef\rz@tmp{\csname ran@set@\romannumeral\rz@c\endcsname}%
+        \else
+          \edefappend\rz@tmp{,\csname ran@set@\romannumeral\rz@c\endcsname}%
+        \fi
+      }%
+    \edef #2{\rz@tmp}%
+  \fi
+}%
+%
+% \rndsuji[#1][#2]#3
+%   #1 : 取り出す乱数の個数  （デフォルト値=10）
+%   #2 :               上限値（デフォルト値=#1）
+%   #3 : 結果を受け取る制御綴り
+
+\def\rndsuji{\@ifnextchar[{\@rndsuji}{\@rndsuji[10]}}
+\def\@rndsuji[#1]{\@ifnextchar[{\@@rndsuji[#1]}{\@@rndsuji[#1][#1]}}
+\def\@@rndsuji[#1][#2]#3{%
+\ifnum #1>#2\relax
+  \errmessage{rndsuji : 取り出す個数は上限値以下でなければなりません。}%
+\fi
+\@ifundefined{Rn@perl}{%
+  \FPseed=\time
+  \multiply\FPseed\day
+  \multiply\FPseed\month
+  \multiply\FPseed\year
+    \Cfor{\edef\Rn@i{0}}{\Rn@i<#2}{}\do{%
+      \Incr\Rn@i
+      \expandafter\edef\csname num@\Rn@i\endcsname{0}}%
+    \edef\@ii{0}%
+    \@whilenum\@ii<#1\do{%
+        \FPrandom\@x
+        \Mul\@x{#2}\@x
+        \Seisuububun\@x\@x
+        \IAdd\@x{1}\@xx
+        \ifnum\csname num@\@xx\endcsname=0\relax
+            \IAdd\@ii{1}\@ii
+            \expandafter\edef\csname num@\@xx\endcsname{\@ii}%
+            \ifnum\@ii=1\relax\edef\@y{\@x}\else\edef\@y{\@y,\@x}\fi%
+            \fi
+    }\edef#3{\@y}%
+}{%
+  \CalcVal{%
+    $max=#2;
+    $kosuu=#1;
+    @flg=();
+    for ($i=0;$i<$max;++$i){@flg=(@flg,0);}
+    @kekka=();
+    do {
+      $t=int(rand($max));
+      if ($flg[$t]==0){
+        @kekka=(@kekka,$t);$flg[$t]=1;
+      }
+      $sum=0;
+      foreach $one (@flg) {$sum+=$one;}
+    } while ($sum<$kosuu);
+    $" = ',';
+    print FHNDL "@kekka";
+  }#3}%
+}%
+
+% \RandomList<#1>#2#3
+%       #2 に与えられた数字列（コンマ区切り）から
+%       #1 個の数字を乱数的に選んだものを（デフォルトは与えられた全部）
+%       #3 の制御綴りに返す．
+
+\def\RandomList{\@ifnextchar<{\@RandomList}{\@RandomList<0>}}
+\def\@RandomList<#1>#2#3{%
+  \edef\@kosuu{0}%
+  \expandafter\@for\expandafter\@c\expandafter:\expandafter=#2\do{%
+        \Incr\@kosuu
+        \expandafter\edef\csname @motosuu\@kosuu\endcsname{\@c}}%
+    \ifnum#1=\z@\edef\@@kosuu{\@kosuu}\else\edef\@@kosuu{#1}\fi
+    \rndsuji[\@@kosuu][\@kosuu]\@hairetuzyun
+  \edef#3{}%
+  \expandafter\@for\expandafter\@c\expandafter:\expandafter=\@hairetuzyun\do{%
+        \Incr\@c
+        \ifx\empty #3\relax
+          \edef#3{\csname @motosuu\@c\endcsname}%
+        \else
+          \edefappend#3{,\csname @motosuu\@c\endcsname}%
+        \fi
+  }%
+}
+%
+\@ifundefined{Rn@perl}{%
+  \def\ransuuretu{\errmessage{ransuuretu: emathRn にロードオプション [perl] が必要です。}}
+  \def\Iransuuretu{\errmessage{Iransuuretu: emathRn にロードオプション [perl] が必要です。}}
+}{%
+  \def\ransuuretu{\def\ransuu@type{R}\@ifstar{\ransuuretu@}{\@ransuuretu}}%
+  \def\@ransuuretu{\@ifnextchar[{\@@ransuuretu}{\@@ransuuretu[1]}}%
+  \def\@@ransuuretu[#1]#2#3{%
+  \edef\ran@sup{1}%
+  \edef\ran@seed{\empty}%
+  \Strchr{#1}{=}\ran@tmp
+  \ifnum\ran@tmp>\z@
+    \setkeys{emRn}{#1}%
+  \else
+    \edef\ran@sup{#1}%
+  \fi
+  \CalcVal{%
+    \ifx\empty\ran@seed\else
+      srand(\ran@seed);
+    \fi
+    $max=\ran@sup;
+    $kosuu=#2;
+    @kekka=();
+    $n=0;
+    do {
+      $t=rand($max);
+      @kekka=(@kekka,$t);
+    } while (++$n<$kosuu);
+    $" = ',';
+    print FHNDL "@kekka";
+  }#3\edef\ransuu@retu{#3}%
+  \ifnum\ransuu@kiroku>\z@
+    \EMwriteline{\jobname.ran}\ransuu@retu
+  \fi
+}%
+%
+  \def\ransuuretu@{\@ifnextchar[{\@@ransuuretu@}{\@@ransuuretu@[1]}}%
+  \def\@@ransuuretu@[#1]#2{%
+  \edef\ran@sup{1}%
+  \edef\ran@seed{\empty}%
+  \Strchr{#1}{=}\ran@tmp
+  \ifnum\ran@tmp>\z@
+    \setkeys{emRn}{#1}%
+  \else
+    \edef\ran@sup{#1}%
+  \fi
+  \CalcVal{%
+    \ifx\empty\ran@seed\else
+      srand(\ran@seed);
+    \fi
+    $max=\ran@sup;
+    $kosuu=#2;
+    @kekka=();
+    $n=0;
+    do {
+      $t=rand($max);
+      @kekka=(@kekka,$t);
+    } while (++$n<$kosuu);
+    $" = ',';
+    print FHNDL "@kekka";
+  }\ransuu@retu
+  \ifnum\ransuu@kiroku>\z@
+    \EMwriteline{\jobname.ran}\ransuu@retu
+  \fi
+}%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \def\ransuu#1{%
+    \@ifundefined{ransuu@retu}{%
+      \errmessage{ransuu:ransuuretu( or Iransuuretu)で乱数列を取得しておかねばなりません}%
+    }{}%
+    \Strsep{\ransuu@retu}{,}#1\ransuu@retu
+    \xdef\ransuu@retu{\ransuu@retu}%
+    \ifx\empty #1\relax\errmessage{ransuu:用意した乱数列を使い切りました}\fi
+  }%
+%
+  \def\Ransuu{\@ifnextchar[{\@Ransuu}{\@Ransuu[f]}}
+  \def\@Ransuu[#1]#2#3{\ransuu\Ransuu@t\funcval[#1]{#2}{\Ransuu@t}#3}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \def\Iransuuretu{\def\ransuu@type{I}\@ifstar{\Iransuuretu@}{\@Iransuuretu}}%
+  \def\@Iransuuretu{\@ifnextchar[{\@@Iransuuretu}{\@@Iransuuretu[10]}}%
+  \def\@@Iransuuretu[#1]#2#3{%
+  \edef\ran@sup{10}%
+  \edef\ran@seed{\empty}%
+  \Strchr{#1}{=}\ran@tmp
+  \ifnum\ran@tmp>\z@
+    \setkeys{emRn}{#1}%
+  \else
+    \edef\ran@sup{#1}%
+  \fi
+  \CalcVal{%
+    \ifx\empty\ran@seed\else
+      srand(\ran@seed);
+    \fi
+    $max=\ran@sup;
+    $kosuu=#2;
+    @kekka=();
+    $n=0;
+    do {
+      $t=int(rand($max));
+      @kekka=(@kekka,$t);
+    } while (++$n<$kosuu);
+    $" = ',';
+    print FHNDL "@kekka";
+  }#3\edef\ransuu@retu{#3}%
+  \ifnum\ransuu@kiroku>\z@
+    \EMwriteline{\jobname.ran}\ransuu@retu
+  \fi
+}%
+%
+  \def\Iransuuretu@{\@ifnextchar[{\@@Iransuuretu@}{\@@Iransuuretu@[10]}}%
+  \def\@@Iransuuretu@[#1]#2{%
+  \edef\ran@sup{10}%
+  \edef\ran@seed{\empty}%
+  \Strchr{#1}{=}\ran@tmp
+  \ifnum\ran@tmp>\z@
+    \setkeys{emRn}{#1}%
+  \else
+    \edef\ran@sup{#1}%
+  \fi
+  \CalcVal{%
+    \ifx\empty\ran@seed\else
+      srand(\ran@seed);
+    \fi
+    $max=\ran@sup;
+    $kosuu=#2;
+    @kekka=();
+    $n=0;
+    do {
+      $t=int(rand($max));
+      @kekka=(@kekka,$t);
+    } while (++$n<$kosuu);
+    $" = ',';
+    print FHNDL "@kekka";
+  }\ransuu@retu
+  \ifnum\ransuu@kiroku>\z@
+    \EMwriteline{\jobname.ran}\ransuu@retu
+  \fi
+  }%
+}%
+%
+\def\setransuuretu{\@ifnextchar[{\@setransuuretu}{\@setransuuretu[1]}}
+\def\@setransuuretu[#1]#2{\edef\ran@sup{#1}\edef\ransuu@retu{#2}}
+\def\ransup{\ran@sup}%
+\endinput
+%
+v 0.04 2007/04/04 [perl] ロードオプション
+       \ransuuretu, \Iransuuretu
+v 0.05 2007/04/06 
+       \ransuuretu*, \Iransuuretu*
+       \ransuu : \ransuuretu(*) or \Iransuuretu(*)で作成した乱数列から1個ずつ切り出す。
+       \ransuuretu, \Iransuuretu に [seed=..,sup=..] オプション
+v 0.06 2007/04/07
+       \Ransuu : \ransuu を変換する関数を指定可能
+       \ransuu : 内部変数 \ransuu@retu を大域変数とする
+v 0.07 2007/04/14
+       \setransuuretu#1 : 乱数列をセットする
+v 0.08 2007/04/17
+       \ransuuretu, \Iransuuretu のいずれで乱数生成を行ったかを識別する \ransuu@type
+v 0.09 2007/04/28
+       ロードオプション [kiroku] : 乱数列を \jobname.ran に記録する。
+v 0.10 2008/06/29
+       \ranzyunretu
+v 0.11 2008/08/03
+       \ranzyunretu: max=.
+       \ranzyunretu: set=.
+v 0.12 2008/09/04
+       空白の混入対策

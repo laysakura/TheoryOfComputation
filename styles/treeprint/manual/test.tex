@@ -1,0 +1,86 @@
+\documentclass[openany]{j-book}
+%\usepackage{here} % 図を張り込んだ位置にしたいときに必要[H]
+%\usepackage[dviout]{graphicx}% 図のために必要
+%\usepackage{ascmac} % 囲みのため(screen,itembox)
+%\usepackage{makeidx} %索引を作るため
+%\usepackage{eclclass} %ディレクトリ表示型の木構造を描くため
+%\usepackage{ecltree} %縦型の木構造を描くため
+%\usepackage{tree} %トーナメント表示型の木構造を描くため
+\usepackage{eclarith}
+\usepackage{eepic}
+\usepackage{epic}
+\usepackage{eclarith}
+\usepackage{treeprint} %日本人にわかりやすい木構造を描くため
+\begin{document}
+	       	%====図==============================
+                \begin{figure}
+		\begin{minipage}[t]{.99\textwidth}
+		\begin{center}
+
+  \scriptsize
+  \tree{
+    試合開始 →
+    \ruby{キックオフ前}{（before\_kick\_off）} →
+    \ruby{キックオフ}{（kick\_off\_l/r）}
+  }
+    \downsubtree{\ruby{試合中}{（play\_on）}}
+      \downleaf{\ruby{延長戦}{（time\_extended）}
+        \downleaf{キックオフ前へ}}
+      \downleaf{\ruby{ペナルティキック戦}{（penalty\_onfield\_l/r）}}
+      \downleaf{\ruby{試合終了}{（time\_over）}}
+      \downleaf{\ruby{得点}{（goal\_l/r）}
+        \downleaf{キックオフへ}}
+      \downleaf{ハーフ終了}
+        \downleaf{\ruby{ハーフタイム}{（half\_time）}
+          \downleaf{キックオフ前へ}}
+    \endsubtree
+  \endtree
+		\end{center}
+		\caption{試合全体}\label{試合全体}
+		\end{minipage}
+		\end{figure}
+
+		%====図==============================
+ \begin{figure}
+  		\begin{minipage}[t]{.77\textwidth}
+		\begin{center}
+   \scriptsize
+  \tree{試合中（play\_on）}
+
+    \downsubtree{\ruby{キーパーキャッチ}{(goalie\_catch\_ball\_l/r)}}
+      \downsubtree{\ruby{フリーキック}{（free\_kick\_l/r）}}
+        \downsubtree{プレイ中へ}
+        \endsubtree
+      \endsubtree
+    \endsubtree
+    \downsubtree{フィールドアウト}
+      \downsubtree{
+        \begin{tabular}{c}
+          \ruby{コーナーキック}{（corner\_kick\_l/r）}\\
+          \ruby{ゴールキック}{（goal\_kick\_l/r）}\\
+          \ruby{キック・イン}{（kick\_in\_l/r）}
+        \end{tabular}
+      }
+        \downsubtree{プレイ中へ}
+        \endsubtree
+      \endsubtree
+    \endsubtree
+    \downsubtree{ファウル}
+      \downsubtree{
+        \ruby
+          {\ruby{間接フリーキック}{indirect\_free\_kick\_r/l}}
+          {\ruby{フリーキック}{free\_kick\_r/l}}}
+        \downsubtree{プレイ中へ}
+        \endsubtree
+      \endsubtree
+    \endsubtree
+  \endtree
+ 		\end{center}
+		\caption{play\_onからの試合状態の遷移}
+		\end{minipage}
+		\end{figure}
+                %====図==============================
+
+\end{document}
+
+

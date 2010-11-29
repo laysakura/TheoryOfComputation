@@ -1,0 +1,401 @@
+\documentclass[landscape,b4j,fleqn]{jarticle}
+\usepackage[papersize]{emathP}
+\usepackage{emathOld}
+\usepackage{hako}
+\usepackage{b4yoko3}
+%\usepackage[maskAnstrue]{emathAe}% 解答をマスクする。すなわち解答は印刷しない
+\usepackage[maskAnsfalse]{emathAe}% 解答をマスクしない。すなわち解答は印刷する
+
+\begin{document}
+\hakosyokika
+\prpagetrue% ページを印刷するときは行頭の % を削除する．
+\pageran{\thepage/\pageref{lastpage}}% ページ番号の出力様式を変更してみます．
+                                     % 総ページ数を必要とするときは，
+                                     % 最終ページで \label{lastpage} として
+                                     % ラベル lastpage を定義します．
+\testname{2学期期末考査 1年数学I 2001/12}
+\begin{sheet}
+\begin{column}
+\item 次の\karaHako を補え。(38点)
+  \begin{Enumerate}[(1)]
+    \item 1個のさいころを5回投げるとき，
+      \begin{enumerate}[(\protect\expandafter\emroman i)]
+        \item 3の倍数の目が2回出る確率は
+          \maskHako(4zw)[2zh][1zh]{\bunsuu{80}{243}}である。
+        \item 3の倍数の目が少なくとも1回出る確率は\\
+          \maskHako(4zw)[2zh][1zh]{\bunsuu{211}{243}}である。
+      \end{enumerate}
+\vfill
+    \item さいころを
+      \begin{enumerate}[(\protect\expandafter\emroman i)]
+        \item 1回投げたとき，出る目の数の期待値は
+          \maskHako(4zw)[2zh][1zh]{\bunsuu{7}{2}}である。
+        \item 2回投げたとき，出る目の和を$X$としたとき，$\sin(30X)\Deg$の
+          期待値は\maskHako(8zw)[2zh][1zh]{-\bunsuu{2+\sqrt3}{18}}である。
+      \end{enumerate}
+\vfill
+    \item 次の三角比の値を書け。
+      \begin{edaenumerate}[(1)]
+        \item $\sin60\Deg=\maskHako(4zw)[2zh][1zh]{\bunsuu{\sqrt3}{2}}$
+        \item $\cos45\Deg=\maskHako(4zw)[2zh][1zh]{\bunsuu{\sqrt2}{2}}$
+        \item $\tan135\Deg=\maskHako(4zw)[2zh][1zh]{-1}$
+        \item $\cos180\Deg=\maskHako(4zw)[2zh][1zh]{-1}$
+      \end{edaenumerate}
+\vfill
+    \item
+      \begin{mawarikomi}{}{\small
+        \begin{zahyou*}[ul=10mm](-1,4.5)(-2,2)
+          \tenretu{A(0,0)s;B(3.6056,0)s}
+          \CandC\A{3}\B{2}\CC\C\Put\C[n]{C}
+          \Tyokkakukigou\A\C\B
+          \Kakukigou\B\A\C{}
+          \Hen_ko[0]\B\C{2}
+          \Hen_ko[0]\C\A{3}
+          \Drawline{\A\B\C\A}
+        \end{zahyou*}
+      }
+      右の図で
+      \begin{align*}
+        \sin A&=\maskHako(4zw)[2zh][1zh]{\bunsuu{2\sqrt{13}}{13}}\\
+        \cos A&=\maskHako(4zw)[2zh][1zh]{\bunsuu{3\sqrt{13}}{13}}\\
+        \tan A&=\maskHako(4zw)[2zh][1zh]{\bunsuu{2}{3}}
+      \end{align*}
+      \end{mawarikomi}
+  \end{Enumerate}
+\end{column}
+\begin{column}
+  \item []
+    \begin{Enumerate*}
+    \item 次の値を0\Deg から90\Deg の間の角の三角比を用いて表せ。
+      \begin{enumerate}[(\protect\expandafter\emroman i)]
+        \item[例.] $\sin130\Deg=\hako{\makebox[8zw]{$\sin50\Deg$}}$
+        \item $\cos140\Deg=\maskHako(8zw)[2zh][1zh]{-\cos40\Deg}$
+        \item $\tan190\Deg=\maskHako(8zw)[2zh][1zh]{\tan10\Deg}$
+        \item $\sin290\Deg=\maskHako(8zw)[2zh][1zh]{-\sin70\Deg}$
+      \end{enumerate}
+\vfill
+    \item $\sin\theta+\cos\theta=\bunsuu{5}{4}$のとき，
+      $\sin\theta\cos\theta=\maskHako(4zw)[2zh][1zh]{\bunsuu{9}{32}}$,\\
+      $\sin^3\theta+\cos^3\theta=\maskHako(4zw)[2zh][1zh]{\bunsuu{115}{128}}$
+\vfill
+    \end{Enumerate*}
+
+\item $\mathrm{BC}=7$, $\kaku{C}=90\Deg$, $\kaku{A}=62\Deg$の直角三角形ABCの
+辺AB, ACの長さを下の三角比の表を利用して求めよ。
+ただし，四捨五入して小数第1位までとする。(8点)
+
+\begin{zahyou*}[ul=4mm](-7,0)(0,3.66)
+  \tenretu{A(0,3.66)n;B(-7,0)s;C(0,0)s}
+  \Hen_ko[40]<.4>\B\C{7}
+  \Kakukigou\B\A\C(-4pt,-3pt)[t]{$62\Deg$}
+  \Tyokkakukigou\A\C\B
+  \Drawline{\A\B\C\A}
+\end{zahyou*}
+\hfill
+\raisebox{2zh}{%
+\begin{minipage}{19zw}
+\centerline{三角比の表}
+
+\footnotesize
+$\begin{array}{|c||c|c|c|}\hline
+角度 & 正弦(\sin) &余弦(\cos) & 正接(\tan)\\\hline
+26\Deg & 0.438 & 0.899 & 0.488\\\hline
+27\Deg & 0.454 & 0.891 & 0.510\\\hline
+28\Deg & 0.470 & 0.883 & 0.532\\\hline
+29\Deg & 0.485 & 0.875 & 0.554\\\hline
+30\Deg & 0.500 & 0.866 & 0.577\\\hline
+\end{array}$
+\end{minipage}}
+\begin{Kaitou}
+$\kaku B=90\Deg-62\Deg=28\Deg$であるから
+\begin{caprm}
+\[ \cos28\Deg=\bunsuu{7}{AB} \]
+したがって
+\[AB=\bunsuu{7}{\cos28\Deg}=\bunsuu{7}{0.883}=7.9\teisei[r]{2}\cdots
+  \owari[\color{red}$\longleftarrow$~4点] \]
+同様に，$\tan28\Deg=\bunsuu{AC}{7}$より
+\[ AC=7\tan28\Deg=7\times0.532=3.7\teisei[r]2\cdots
+  \owari[\color{red}$\longleftarrow$~4点] \]
+\qquad （答）$\bm{AB=7.9}$, $\bm{AC=3.7}$
+\end{caprm}
+\end{Kaitou}
+\vfill
+\vfill
+\vfill
+\vfill
+\vfill
+\vfill
+\vfill
+\end{column}
+\begin{column}
+
+
+\begin{nidan}{52mm}{\footnotesize\hfill
+  \begin{zahyou*}[ul=3mm](-1,15)(-1,5)
+    \tenretu{A(0,0)sw;P(8,0)se}
+    \kandk\A{17}\P{35}\C\Put\C[n]{C}%
+    \Suisen\C\A\P\B\Put\B[s]{B}%
+    \Drawline{\C\A\B\C\P}%
+    \Tyokkakukigou\C\B\A
+    \Kakukigou\B\A\C<2>(2pt,1pt)[l]{17\Deg}%
+    \Kakukigou\B\P\C<1.5>(2pt,1pt)[l]{35\Deg}%
+    \Hen_ko[40]\A\P{80}%
+  \end{zahyou*}
+  }
+\item
+  右図の\sankaku{ABC}において次の辺の長さを求めよ。
+  ただし，\\
+  $\tan17\Deg=0.3$, $\tan35\Deg=0.7$\\
+  として計算せよ。(8点)
+\end{nidan}
+  \begin{edaenumerate}[(1)]
+    \item PB
+    \item BC
+  \end{edaenumerate}
+\begin{Kaitou}
+  \resetcounter{equation}
+  \preEqlabel{$\cdots\cdots$}
+  \begin{caprm}
+    $PB=x$, $BC=y$とおくと，
+    \begin{alignat}{2}
+      \tan17\Deg&=\bunsuu{y}{x+80}~より\quad&\therefore y&=0.3(x+80)\\
+      \tan35\Deg&=\bunsuu{y}{x}~より        &\therefore y&=0.7x
+    \end{alignat}
+    $\maru2-\maru1$より $x=60$ すなわち $\bm{PB=60}$
+      \owari[{$\Cdots[3]$} (1)の答]
+    \maru2に代入して $y=42$ すなわち $\bm{BC=42}$
+      \owari[{$\Cdots[3]$} (2)の答]
+  \end{caprm}
+\end{Kaitou}
+  \vfill
+
+\item 次の方程式を満たす$\theta$の値を求めよ。ただし，$0\Deg\leqq \theta
+  <360\Deg$とする。(14点)
+  \begin{edaenumerate}[(1)]
+    \item $2\sin\theta+1=0$
+      \begin{Kaitou}
+        変形して $\sin\theta=-\bunsuu{1}{2}$となるから，
+        直線$y=-\bunsuu{1}{2}$と原点を中心とする半径1の円との交点と
+        中心を結んで，求める角は
+        \[ \theta=\bm{210\Deg},~\bm{330\Deg} \kotae \]
+        \centerline{\begin{zahyou}[ul=10mm,gentenhaiti={[nw]}]%
+          (-1.2,1.5)(-1.2,1.5)
+            \En\O{1}
+            \Put{(1,0)}[ne]{1}
+            \rtenretu*{A(1,-30);B(1,-150)}
+            \Tyokusen\A\B{}{}
+            \Put\migiT[e]{$y=-\frac12$}
+            {\thicklines
+            \Hantyokusen\O\A
+            \Hantyokusen\O\B}
+          \end{zahyou}}
+      \end{Kaitou}
+    \item $\tan^2\theta=3$
+      \begin{Kaitou}
+        変形して $\tan\theta=\pm\sqrt3$となるから，
+        点(1, $\pm\sqrt3$)と原点を結んで，求める角は
+        \[ \theta=\bm{60\Deg},~\bm{120\Deg},~\bm{240\Deg},~\bm{300\Deg}
+           \kotae \]
+        \centerline{\begin{zahyou}[ul=10mm,gentenhaiti={[nw]}]%
+          (-1.2,1.5)(-2,2.5)
+            \En\O{1}
+            \Put{(1,0)}[ne]{1}
+            \tenretu*{A(1,1.732);B(1,-1.732)}
+            \Put\A[syaei=y,ylabel=\sqrt3]{}
+            \Put\B[syaei=y,ylabel=-\sqrt3]{}
+            \Tyokusen\A\B{}{}
+            {\thicklines
+            \Tyokusen\O\A{}{}
+            \Tyokusen\O\B{}{}}
+          \end{zahyou}}
+      \end{Kaitou}
+  \end{edaenumerate}
+  \vfill
+  \vfill
+\end{column}
+\end{sheet}
+
+\begin{sheet}
+\begin{column}
+\item 原点Oから出発して数直線上を動く点Pは，さいころを投げて4以下の目が出ると
+  $+2$移動し，5以上の目が出ると$-1$移動する。(14点)%\kaitou{}
+  \begin{enumerate}[(1)]
+    \item さいころを4回投げたとき，点Pの座標が$2$となる確率を求めよ。
+      \begin{Kaitou}
+        4以下の目が出た回数を$n$とすると，点Pの座標は
+        \[ 2n-(4-n)=2 \qquad \therefore n=2 \]
+        したがって求める確率は
+        \[ \kumiawase42\left(\bunsuu46\right)^2\left(\bunsuu26\right)^2
+          =\bm{\bunsuu{8}{27}} \kotae \]
+      \end{Kaitou}
+\vfill
+    \item さいころを3回投げたとき，点Pの座標が0以下となる確率を求めよ。
+      \begin{Kaitou}
+        4以下の目が出た回数を$n$とすると，点Pの座標は
+        \[ 2n-(3-n)\leqq 0\qquad \therefore n\leqq 1\]
+        したがって求める確率は
+        \begin{align*}
+          P(n\leqq 1)&=P(n=0)+P(n=1)\\
+            &=\left(\bunsuu26\right)^3
+              +\kumiawase31\left(\bunsuu46\right)\left(\bunsuu26\right)^2\\
+            &=\bunsuu{1}{27}+\bunsuu{6}{27}\\
+            &=\bm{\bunsuu{7}{27}}\kotae
+        \end{align*}
+      \end{Kaitou}
+\vfill
+  \end{enumerate}
+\end{column}
+\begin{column}
+\item 赤球4個，白球3個，黒球2個が入った袋から4個の球を同時に取り出す。
+  取り出された赤球の個数を$X$, 白球の個数を$Y$とする。(18点)%\kaitou{}
+  \begin{enumerate}[(1)]
+    \item $X=1$となる確率を求めよ。
+      \begin{Kaitou}
+        $X=1$となるのは，取り出した4個の球の色が
+        \begin{jquote}
+          1個は赤，他の3個は白または黒
+        \end{jquote}
+        となる場合であるから，求める確率は
+        \[ \bunsuu{\kumiawase41\times\kumiawase53}{\kumiawase94}
+          =\bunsuu{40}{126}=\bm{\bunsuu{20}{63}} \kotae \]
+      \end{Kaitou}
+\vfill
+    \item $X$の期待値を求めよ。
+      \begin{Kaitou}
+        (1)と同様にして，
+        \begin{align*}
+          P(X=0)&=\bunsuu{\kumiawase54}{\kumiawase94}=\bunsuu{5}{126}\\
+          P(X=2)&=\bunsuu{\kumiawase42\times\kumiawase52}{\kumiawase94}
+            =\bunsuu{60}{126}\\
+          P(X=3)&=\bunsuu{\kumiawase43\times\kumiawase51}{\kumiawase94}
+            =\bunsuu{20}{126}\\
+          P(X=4)&=\bunsuu{\kumiawase44}{\kumiawase94}
+            =\bunsuu{1}{126}
+        \end{align*}
+        となるから求める期待値は
+        \[ E(X)=\bunsuu{0\cdot5+1\cdot40+2\cdot60+3\cdot20+4\cdot1}{126}
+          =\bm{\bunsuu{16}{9}} \kotae \]
+      \end{Kaitou}
+\vfill
+    \item $X-Y=2$となる確率を求めよ。
+      \begin{Kaitou}
+        取り出された4個の球のうち黒球の個数を$Z$とすると，$X-Y=2$となるのは，
+        次の2つの場合である。
+        \begin{enumerate}[(\expandafter\emroman i)]
+          \item $X=2$, $Y=0$, $Z=2$
+          \item $X=3$, $Y=1$, $Z=0$
+        \end{enumerate}
+        よって求める確率は
+        \[\bunsuu{\kumiawase42\times\kumiawase22}{\kumiawase94}
+          +\bunsuu{\kumiawase43\times\kumiawase31}{\kumiawase94}
+          =\bm{\bunsuu{1}{7}} \kotae \]
+      \end{Kaitou}
+\vfill
+  \end{enumerate}
+% 2116200106
+\end{column}
+\begin{column}
+\ifmaskAns
+  \item []\centerline{\textgt{計算欄}}
+\else
+  \item[]\textbf{\fbox{1}~の略解}
+\def\labelenumi{(\theenumi)}
+\setcounter{enumi}{0}
+\small
+\abovedisplayskip=0pt
+\belowdisplayskip=0pt
+  \item
+    \begin{enumerate}[(\expandafter\emroman i)]
+      \item 3の倍数の目が出る確率は$\bunsuu{2}{6}=\bunsuu{1}{3}$であるから，
+        反復試行の定理より~
+        $\kumiawase52\left(\bunsuu13\right)^2\left(1-\bunsuu13\right)^3
+          =\kumiawase52\left(\bunsuu13\right)^2\left(\bunsuu23\right)^3
+          =\bm{\bunsuu{80}{243}} $
+      \item 余事象「5回とも3の倍数でない目が出る」を考えて
+        \[ 1-\left(\bunsuu23\right)^5=1-\bunsuu{32}{243}
+          =\bm{\bunsuu{211}{243}} \]
+    \end{enumerate}
+  \item
+    \begin{enumerate}[(\expandafter\emroman i)]
+      \item 1から6までどの目が出る確率も$\bunsuu{1}{6}$であるから，
+        求める期待値は
+        \[ 1\cdot\bunsuu16+2\cdot\bunsuu16+3\cdot\bunsuu16+4\cdot\bunsuu16
+          +5\cdot\bunsuu16+6\cdot\bunsuu16=\bm{\bunsuu{7}{2}} \]
+      \item \def\arraystretch{1.72}
+        さいころの目の和$X$と，$\sin(30X\Deg)$の値，その確率との関係は\\
+        $\begin{hyou}{|c|*7{C{18pt}|}}\hline
+          X & 2 & 3 & 4 & 5 & 6 & 7 & 8 \\\hline
+          \sin(30X)\Deg& \bunsuu{\sqrt3}{2} & 1 & \bunsuu{\sqrt3}{2}
+            & \bunsuu{1}{2} & 0 & -\bunsuu12 & -\bunsuu{\sqrt3}{2} \\\hline
+          P(X) & \bunsuu{1}{36} & \bunsuu{2}{36} & \bunsuu{3}{36}
+            & \bunsuu{4}{36} & \bunsuu{5}{36} & \bunsuu{6}{36}
+            & \bunsuu{5}{36}
+          \\\hline
+        \end{hyou}$\\
+        \hspace*{\arrayrulewidth}%
+        $\begin{hyou}{c|*4{C{18pt}|}}\cline{2-5}
+          \phantom{\sin(30X)\Deg} & 9 & 10 & 11 & 12 \\\cline{2-5}
+          & -1 & -\bunsuu{\sqrt3}{2} & -\bunsuu{1}{2} & 0 \\\cline{2-5}
+          & \bunsuu{4}{36} & \bunsuu{3}{36} & \bunsuu{2}{36}
+              & \bunsuu{1}{36} \\\cline{2-5}
+        \end{hyou}$\\[5pt]
+        となるから，求める期待値は
+        \begin{multline*}
+          \bunsuu{\sqrt3}{2}\cdot\bunsuu{1}{36}+1\cdot\bunsuu{2}{36}
+          +\bunsuu{\sqrt3}{2}\cdot\bunsuu{3}{36}+\bunsuu12\cdot\bunsuu{4}{36}\\
+          \phantom{\bunsuu{\sqrt3}{2}}
+          +0\cdot\bunsuu{5}{36}-\bunsuu12\cdot\bunsuu{6}{36}
+          -\bunsuu{\sqrt3}{2}\cdot\bunsuu{5}{36}-1\cdot\bunsuu{4}{36}\\
+          -\bunsuu{\sqrt3}{2}\cdot\bunsuu{3}{36}-\bunsuu12\cdot\bunsuu{2}{36}
+          +0\cdot\bunsuu{1}{36}=\bm{-\bunsuu{2+\sqrt3}{18}}
+        \end{multline*}
+    \end{enumerate}
+  \item (4)~~略\refstepcounter{enumi}
+  \item
+    \begin{mawarikomi}(0,6pt){}{%
+    \footnotesize
+    \begin{zahyou}[ul=8mm,hidariyohaku=1.2,migiyohaku=1.5](-1.2,1.5)(-1.2,1.5)
+      \rtenretu*{A(1,140);B(1,40)}
+      \En\O{1}
+      \Kakukigou\XMAX\O\B<hankei=.4>(2pt,2pt)[l]{40\Deg}
+      \Kakukigou\XMAX\O\A<hankei=.3>[n]{140\Deg}
+      \Put\B[e]{($\cos40\Deg,\sin40\Deg$)}
+      \Put\A[w]{($\cos140\Deg,\sin140\Deg$)}
+      \Put{(1,0)}[se]{1}
+      \kuromaru{\A;\B}
+      \Hasen{\A\B}
+      {\thicklines\Hantyokusen\O\A\Hantyokusen\O\B}
+    \end{zahyou}}
+    \mbox{}\vspace{-\baselineskip}\vspace{-\abovedisplayskip}
+    \mathindent=4pt
+    \begin{align*}
+      \cos140\Deg&=\cos(180\Deg-40\Deg)\\
+        &=-\cos40\Deg\\
+      \tan190\Deg&=\tan(180\Deg+10\Deg)\\
+        &=\tan10\Deg\\
+      \sin290\Deg&=\sin(180\Deg+110\Deg)\\
+        &=-\sin110\Deg
+        =-\sin(180\Deg-70\Deg)
+        =-\sin70\Deg
+    \end{align*}
+    \end{mawarikomi}
+    あるいは右のような図を用いてもよい。
+  \item $\sin\theta+\cos\theta=\bunsuu54$の両辺を平方して
+        \[ \sin^2\theta+2\sin\theta\cos\theta+\cos^2\theta=\bunsuu{25}{16} \]
+        $\sin^2\theta+\cos^2\theta=1$であるから
+        \[ 1+2\sin\theta\cos\theta=\bunsuu{25}{16}\quad
+        \therefore \sin\theta\cos\theta
+        =\bunsuu{1}{2}\left(\bunsuu{25}{16}-1\right)=\bm{\bunsuu{9}{32}} \]
+    つぎに
+    \begin{align*}
+      \sin^3\theta+\cos^3\theta
+        &=(\sin\theta+\cos\theta)
+          (\sin^2\theta-\sin\theta\cos\theta+\cos^2\theta)\\
+        &=\bunsuu{5}{4}\left(1-\bunsuu{9}{32}\right)=\bm{\bunsuu{115}{128}}
+    \end{align*}
+\fi
+\end{column}
+\end{sheet}
+\label{lastpage}%     全ページ情報をヘッダなどで使用するときは
+                %     lastpage という名前のラベルを利用します．
+\end{document}

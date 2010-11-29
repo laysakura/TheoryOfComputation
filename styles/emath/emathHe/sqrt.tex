@@ -1,0 +1,48 @@
+\documentclass[a4j]{jarticle}
+\usepackage{emathB}
+\usepackage{emathHe}
+\usepackage{emathEy}
+\usepackage{emathAe}
+
+%\rootmark{r}
+
+\begin{document}
+\openKaiFile
+\begin{enumerate}[1.\ ]
+    \item 次の式を簡単にせよ．\kaitou{\setKaienum{edaenumerate<2>}}
+        \begin{edaenumerate}[(1)]
+        \item \Hkeisan<A>{((1)-("2))@(("2)-("3))}
+            \item \Hkeisan<A>{(1):(1-"2+"3)}
+        \end{edaenumerate}
+
+    \item 次の式を簡単にせよ．\kaitou{\setKaienum{edaenumerate<2>}}
+        \begin{edaenumerate}[(1)]
+            \item \Hkeisan<A>{(("2)@(("3)-("2)))**(2)}
+            \item \Hkeisan<A>{<("2)@(("3)-("2))>**(2)}
+            \item \Hkeisan<A>{("2)+("((1):(2)))}
+            \item \Hkeisan<A>{("2)+`"((1):(2))'}
+        \end{edaenumerate}
+
+    \item 次の式を簡単にせよ．\kaitou{\setKaienum{edaenumerate<2>}}
+        \begin{edaenumerate}[(1)]
+            \item \Hkeisan<A>{((1)+`("2):(2)')*((1)+("2))}
+            \item \Hkeisan<A>[s]{((1)+`("2):(2)')*((1)+("2))}
+        \end{edaenumerate}
+
+    \item 次の式を簡単にせよ．答は小数を用いずに表せ．
+      \kaitou{\setKaienum{edaenumerate<4>}}
+        \begin{edaenumerate}[(1)]
+            \item \Hkeisan<A>{(1)+("0.25)}
+            \item \Hkeisan<A>{(1):("0.01)}
+            \item \Hkeisan<A>{(1)+(0.5)*("0.4)}
+            \item \Hkeisan<A>{("2)*(("0.5)+`"((1):(2))')}
+        \end{edaenumerate}
+\end{enumerate}
+\closeKaiFile
+\hrule
+
+\begin{center}【答】\end{center}
+\inputKaiFile
+\delfile{\jobname .tmp}
+\delfile{\jobname .kai}
+\end{document}

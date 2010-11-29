@@ -1,0 +1,36 @@
+% EMesvect.sty by tDB(emath@nifty.com)
+%
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{EMesvect}[2009/01/22 v0.04]%
+%
+  \edef\EMesvect@opt{d}
+  \DeclareOption{a}{\edef\EMesvect@opt{a}}
+  \DeclareOption{b}{\edef\EMesvect@opt{b}}
+  \DeclareOption{c}{\edef\EMesvect@opt{c}}
+  \DeclareOption{d}{\edef\EMesvect@opt{d}}
+  \DeclareOption{e}{\edef\EMesvect@opt{e}}
+  \DeclareOption{f}{\edef\EMesvect@opt{f}}
+  \DeclareOption{g}{\edef\EMesvect@opt{g}}
+  \DeclareOption{h}{\edef\EMesvect@opt{h}}
+  \ProcessOptions\relax
+%
+\@ifundefined{bekutorukata}{}{\errmessage{bekutorukata と esvect.sty の併用はしないほうがよい}}%
+\IfFileExists{esvect.sty}{%
+  \if d\EMesvect@opt
+    \RequirePackage{esvect}%
+  \else
+    \RequirePackage[\EMesvect@opt]{esvect}%
+  \fi
+  \let\overrightarrow\vv
+%   \let\bekutoru@rightarrow\fldr
+  \bekutorusityuu{\vphantom{P}}%%
+}{%
+  \errmessage{esvect.sty が存在しません。}
+}%
+\endinput
+%
+v 0.00 2006/06/09
+v 0.01 2006/10/27 esvect.sty が存在するか否かを確認する。
+v 0.02 2007/11/07 \bekutoru@rightarrow の定義を追加（bekutorukata.sty との関係 BBS #6651）
+v 0.03 2007/11/12 v0.02 の変更を元に戻す。bekutorukata.sty との併用を拒否
+v 0.04 2009/01/22 esvect.sty が存在しない場合は，エラー終了させる

@@ -1,0 +1,94 @@
+\documentclass[disablejfam,a4j]{jarticle}
+\usepackage{epic,eepic}
+\usepackage{emath}
+\usepackage{bekutorukata}
+\usepackage{showexample}
+\usepackage{jquote}
+\usepackage[eu,tx,xy,abx]{emathFx}
+
+\begin{document}
+\textsf{emathFx.sty}は，\textsf{txfonts, pxfonts}などのフォントの一部を
+つまみ食いするためのファイルです。
+
+まず，ロードするとき，つまみ食いをしたいフォントを表す記号を
+オプションに指定します。例えば，\textsf{txfonts}をつまみ食いしたいときは
+\begin{jquote}
+\begin{verbatim}
+  \usepackage[tx]{emathFx}
+\end{verbatim}
+\end{jquote}
+とします。現時点で用意されているオプションは
+\begin{jquote}
+\begin{verbatim}
+tx : txfonts
+px : pxfonts
+eu : euler
+xy : Xy-pic パッケージ
+abx: mathabx fonts
+\end{verbatim}
+\end{jquote}
+の5種類です。
+\clearpage
+
+また，現時点でつまみ食いが定義されているのは，
+\begin{enumerate}[(1)]
+  \item 
+\verb+\bekutoru+ の矢印の鏃の形
+
+\begin{showpEx}(.7,.24){\cmd{bekutorukata}}
+\begin{tabular}{ll}
+cm & \bekutorukata{cm}\bekutoru{AB}\\
+eu & \bekutorukata{eu}\bekutoru{AB}\\
+tx & 
+! \IfFileExists{txfonts.sty}{%
+  \bekutorukata{tx}\bekutoru{AB}
+!}{}
+\\
+abx & 
+! \IfFileExists{mathabx.sty}{%
+  \bekutorukata{abx}\bekutoru{AB}
+!}{}
+\\
+xy & 
+! \IfFileExists{xy.sty}{%
+  \bekutorukata{xy}\bekutoru{AB}
+!}{xy オプションは無効です}\\
+\end{tabular}
+\end{showpEx}
+
+\item 
+その他
+
+\begin{jquote}
+  \begin{tabular}{|l|l|l|c|c|}\hline
+    フォント         & 文字・記号 & コマンド  & 結果 & cm フォント\\\hline
+    \textsf{txfonts}&ギリシャ文字ω&\verb+\txomega+&$\txomega$&$\omega$\\\hline
+    〃&パイ&\verb+\txpi+&$\txpi$&$\pi$\\\hline
+    〃&ガンマ&\verb+\txgamma+&$\txgamma$&$\gamma$\\\hline
+    〃& g & \verb+\txg+ & $\txg$ & $g$ \\\hline
+    〃&積分記号\EMvphantom[5pt][3pt]{$\displaystyle\int$}
+      &\verb+\txint+& $\displaystyle\txint_a^b$&$\displaystyle\int_a^b$
+      \\\hline
+    \textsf{euler} &積分記号\EMvphantom[6pt]{$\displaystyle\int$}&
+      \verb+\euint+
+      & $\displaystyle\euint_a^b$&$\displaystyle\int_a^b$
+      \\\hline
+    \textsf{mathabx} &積分記号\EMvphantom[6pt]{$\displaystyle\int$}&
+      \verb+\abxint+
+      & $\displaystyle\abxint_a^b$&$\displaystyle\int_a^b$
+      \\\hline
+    〃&等号付不等号\EMvphantom[6pt]{$\displaystyle\geqq$}&
+      \verb+\abxgeqq+
+      & $\displaystyle y\abxgeqq x$&$\displaystyle y \geqq x$
+      \\\hline
+    〃&和の記号\EMvphantom[6pt]{$\displaystyle\abxsum_k^n$}&
+      \verb+\abxsum+
+      & $\displaystyle \abxsum_{k=1}^n$&$\displaystyle \sum_{k=1}^n$
+      \\\hline
+  \end{tabular}
+\end{jquote}
+\end{enumerate}
+
+この他につまみ食いをご希望になる記号などがあれば，
+BBS に書き込んでください。
+\end{document}

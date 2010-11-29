@@ -1,0 +1,141 @@
+% emCircuit.sty by tDB(emath@nifty.ne.jp)
+%
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{empsCircuit}[2010/09/11 v 0.06α]%
+%
+  \DeclareOption{notMy}{\def\not@My{}}%
+  \DeclareOption{dviout}{\def\em@grdrv{dviout}}%
+  \DeclareOption{dvips}{\def\em@grdrv{dvips}}%
+  \DeclareOption{dvipdfm}{\def\em@grdrv{dvipdfm}}%
+  \DeclareOption{dvipdfmx}{\def\em@grdrv{dvipdfmx}}%
+  \DeclareOption{EMdvipsk}{\def\em@dvipsk{}}%
+  \DeclareOption{EMdvipdfm}{\def\em@dvipdfm{}}%
+  \DeclareOption{EMdvipdfmx}{\def\em@dvipdfmx{}}%
+  \DeclareOption{papersize}{\papersizetrue}
+  \ProcessOptions\relax
+%
+\RequirePackage{emathPs}%
+%
+\input{emCircSubc.sty}%
+\input{emCircSubp.sty}%
+%
+\edef\emC@labelopt{empty}%
+\newdimen\cunitlength\cunitlength=2.5mm\relax
+%
+\define@key{emCircuit}{kosuu}{\edef\ko@suu{#1}}%
+\define@key{emCircuit}{type}{\edef\parts@type{#1}}%
+\define@key{emCircuit}{form}{\edef\parts@form{#1}}%
+\define@key{emCircuit}{height}{\setlength{\@tempdima}{#1}\edef\parts@H{\the\@tempdima}}%
+\define@key{emCircuit}{width}{\setlength{\@tempdima}{#1}\edef\parts@W{\the\@tempdima}}%
+\define@key{emCircuit}{pos}{\def\@pos{#1}}%
+\define@key{emCircuit}{label}{\def\emC@label{#1}}%
+\define@key{emCircuit}{currentlength}{\edef\emcurrent@length{#1}}%
+\define@key{emCircuit}{currentheight}{\edef\emcurrent@height{#1}}%
+\define@key{emCircuit}{labeloption}{\EMxdefappend\emC@labelopt{,#1}}%
+\define@key{emCircuit}{partsoption}{\EMedef\parts@option{#1}}%
+\define@key{emCircuit}{oldtype}[1]{\edef\old@type{#1}}%
+\define@key{emCircuit}{yazirusi}[a]{\def\yazirusi@opt{#1}}%
+\define@key{emCircuit}{cul}{\setlength{\cunitlength}{#1}}%
+\define@key{emP}{cul}{\setlength{\cunitlength}{#1}}%
+%
+\def\empsCircuit{%
+%
+\def\parts@form{1}%
+\def\Putparts{\def\Putparts@r{1}\@ifstar{\Putparts@}{\@Putparts}}%
+\def\Putparts@{\def\Putparts@r{0}\@Putparts}%
+\def\@Putparts{\@ifnextchar<{\@@Putparts}{\@@Putparts<\empty>}}%
+\def\@@Putparts<##1>##2##3##4{{%
+%   ##1 : key = val
+%         pos
+%   ##2 : パーツ
+%   ##3 : 始点
+%   ##4 : 終点
+  \edef\org@ul{\the\unitlength}%
+  \emCtype{##2}%
+  \ifnum\emC@type=11
+    \edef\@pos{1}%
+    \Drawline{##3##4}%
+  \else
+    \edef\@pos{.5}%
+  \fi
+  \edef\emC@labelopt{\empty}%
+  \ifx\empty ##1\else\setkeys{emCircuit}{##1}\fi
+  \Sub{1}{\@pos}{\@pos@}
+  \Subvec{##4}{##3}\Putparts@v
+  \Argvec\Putparts@v\Putparts@arg
+  \Bunten{##3}{##4}{\@pos}{\@pos@}\Putparts@P
+  \ifnum\Putparts@r>\z@
+    \ifdim\Putparts@arg\p@=\z@
+      \ifx\empty\parts@option
+        \Put\Putparts@P{\csname em\parts@type\endcsname}%
+      \else
+        \def\parts@cmd{\csname em\parts@type\endcsname}%
+        \edef\parts@opt{<\parts@option>}%
+        \Put\Putparts@P{\expandafter\parts@cmd\parts@opt}%
+      \fi
+    \else
+      \ifx\empty\parts@option
+%        \Put\Putparts@P{\rotatebox{\Putparts@arg}{\csname em\parts@type\endcsname}}%
+        \Put\Putparts@P{\EPSkaiten{(0,0)}{\Putparts@arg}{\csname em\parts@type\endcsname}}%
+      \else
+        \def\parts@cmd{\csname em\parts@type\endcsname}%
+        \edef\parts@opt{<\parts@option>}%
+%        \Put\Putparts@P{\rotatebox{\Putparts@arg}{\expandafter\parts@cmd\parts@opt}}%
+        \Put\Putparts@P{\EPSkaiten{(0,0)}{\Putparts@arg}{\expandafter\parts@cmd\parts@opt}}%
+      \fi
+    \fi
+  \else
+    \Put\Putparts@P{\csname em\parts@type\endcsname}%
+  \fi
+  \@ifundefined{emC@label}{}{%
+    \ifcase\emC@type% emCtype=0 (coil)
+      \def\emC@labelopt@{henkoH=.5\cunitlength+.6em,putoption={(0,0)[c]}}%
+    \or% emCtype=1 (resistor)
+      \def\emC@labelopt@{henkoH=.5\cunitlength+.6em,putoption={(0,0)[c]}}%
+    \or% emCtype=2 (condenser)
+      \def\emC@labelopt@{henkoH=\cunitlength+.6em,putoption={(0,0)[c]}}%
+    \or% emCtype=3 (battery)
+      \def\emC@labelopt@{henkoH=2\cunitlength+.6em,putoption={(0,0)[c]}}%
+    \or% emCtype=4 (switch)
+      \def\emC@labelopt@{henkoH=-\cunitlength-.6667em,putoption={(0,0)[c]}}%
+    \or% emCtype=5 (meter)
+      \def\emC@labelopt@{henkoH=0pt,putoption={(0,0)[c]}}%
+    \or% emCtype=6 (current)
+      \def\emC@labelopt@{henkoH=6\cunitlength+.6em,putoption={(0,0)[c]}}%
+    \or% emCtype=7 (oldresistor)
+      \def\emC@labelopt@{henkoH=.5\cunitlength+.6em,putoption={(0,0)[c]}}%
+    \or% emCtype=8 (diode)
+      \def\emC@labelopt@{henkoH=\cunitlength+.6em,putoption={(0,0)[c]}}%
+    \or% emCtype=9 (transistor)
+      \def\emC@labelopt@{henkoH=2\cunitlength+.6em,putoption={(0,0)[c]}}%
+    \or% emCtype=10 (earphone)
+      \def\emC@labelopt@{henkoH=4\cunitlength+.6em,putoption={(0,0)[c]}}%
+    \or% emCtype=11 (earth)
+      \def\emC@labelopt@{henkoH=4\cunitlength+.6em,putoption={(0,0)[c]}}%
+    \or% emCtype=12 (antenna)
+      \def\emC@labelopt@{henkoH=-4\cunitlength-.6em,putoption={(0,0)[c]}}%
+    \fi
+    \EMedef\emC@labelopt@@{sironuki=false,henkotype=parallel,putpos=\@pos,\emC@labelopt@}%
+    \ifx\empty\emC@labelopt\else\EMedefappend\emC@labelopt@@{,\emC@labelopt}\fi
+    \EMedef\emC@labeloption{[0]<\emC@labelopt@@>}
+    \expandafter\HenKo\emC@labeloption{##3}{##4}{\emC@label}%
+  }%
+}}%
+%
+\begin{pszahyou*}}
+%
+\def\endempsCircuit{\end{pszahyou*}}
+%
+\def\embresistor{\emresistor}%
+\endinput
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+http://www-lab.ee.uec.ac.jp/text/misc/jis/index.html
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+v 0.00α 2007/03/24
+v 0.01α 2007/03/25 パーツに transistor を追加
+　　　　　　　　　　\Putparts で指定した部品が存在しないときは，エラーとする。
+　　　　　　　　　　パーツを描画する局所座標系における点を emCircuit座標系に変換する\getOrgP
+v 0.02α 2007/04/22 パーツに earphone, eartch を追加
+v 0.03α 2007/08/31 JIS 改訂に対応
+                    emCircSubc.sty, emCircSubp.sty を分離
+v 0.06α 2010/09/11 emathPs.sty をロード

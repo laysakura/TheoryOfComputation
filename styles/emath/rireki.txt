@@ -1,0 +1,1030 @@
+丸ごとパック 060122 以降の主な修正
+
+
+
+2006/12/18
+    emathPh.sty v 2.90
+      \HenKo 整備
+                                                           ---> Wiki/HenKo
+
+2006/12/17
+    emath.sty v 1.70
+      \everzahyou の初期化
+
+2006/12/15
+    emathLb.sty v 0.05a
+      v 0.05 における変更の修正
+                                                           ---> BBS 5409〜
+
+2006/12/12
+    emathPs.sty v 1.15
+      \setlinewidth : 単位つき長さを許容
+                                                        ---> Wiki/setlinewidth
+
+2006/12/10
+    emathC.sty v 0.39
+      \upszkansan : .1pt単位への換算
+
+2006/12/09
+    emathPs.sty v 1.14
+    emathPh.sty v 2.89
+      \Drawline : <yazirusi=..> の調整
+                                                           ---> BBS 5403〜
+
+2006/12/03-04
+    emathPs.sty v 1.13
+    emathPh.sty v 2.88
+      \setarrowsize, \setdash で単位つき長さを許容
+                                                           ---> Wiki
+
+2006/11/28
+    emathPs.sty v 1.12
+      \ArrowLine : <arrowsize=..>オプションで矢印サイズ変更
+                                                           ---> Wiki/ArrowLine
+2006/11/27
+    emathPh.sty v 2.86
+      \Enko : <arrowheadsize=.> オプションを有効に
+                                                           ---> BBS 5372〜
+
+2006/11/23
+    emathC.sty v 0.38
+      \Ifor*, \For* : 終値に対して実行
+
+2006/11/23
+    emathBk.sty 0.28,0.29
+      \MigiRangai : 別行立て数式での調整,
+                    <..> オプション修正
+                                                           ---> BBS 5354,6
+
+2006/11/20
+    emathPh.sty v 2.85
+      \tentotyokusen バグフィックスなど
+                                                           ---> BBS 5343,4
+
+2006/11/17
+    emathPh.sty v 2.84
+      \Kakukigou : emathPs との整合
+                                                           ---> asahi.tex
+                                                         （岡山朝日高入試問題）
+
+2006/11/14
+    emathPh.sty v 2.83
+      \Suisin 新設
+                                                           ---> Wiki/Suisin
+2006/11/10
+    emathPh.sty v 2.82
+      \Hatchpolygon(\Nuritubusi*) 整備
+                                                        ---> Wiki/Hatchpolygon
+
+2006/11/08
+    emathPh.sty v 2.81
+      \ArrowLine 整備
+                                                           ---> Wiki/ArrowLine
+2006/11/05
+    emathPh.sty v 2.80
+      \Kakukigou 整備
+                                                           ---> Wiki/Kakukigou
+
+2006/11/03
+    emathPp.sty v 0.51
+      \YTenPut 新設など
+                                                           ---> Wiki/YTenPut
+
+2006/11/01
+    emathPh.sty v 2.79
+      \Kakukigou & x(y)scale
+                                                           ---> BBS 5307〜
+
+2006/10/31
+    emathPs.sty v 1.11
+      \Drawline 整備
+                                                           ---> Wiki/Drawline
+
+2006/10/30
+    emathPh.sty v 2.78
+      バグフィックス
+                                                           ---> BBS 5298〜
+
+2006/10/28
+    emathPk.sty v 0.99
+      \iiiHasen : \Hasen の修正に対応
+                                                           ---> BBS 5319〜
+
+2006/10/27
+    emathPxy.sty v 0.37
+      \xMemori : 改訂
+                                                           ---> Wiki/xMemori-Pxy
+2006/10/15
+    emathPh.sty v 2.77
+      \tenretu* : 機能拡張
+                                                           ---> BBS 5273〜
+
+2006/10/11
+    emathPp.sty v 0.49
+      \defcsvfunc : [r]オプション
+                                                           ---> Wiki/\defcsvfunc
+2006/09/29
+    emathW.sty v 0.15
+      \ikahou, \igenpou 修正
+                                                           ---> BBS 5265〜
+
+2006/09/23
+    emathPp.sty v 0.48
+      \defcsvfunc 新設
+      [csvfunc]ロードオプション
+                                                           ---> BBS 5265〜
+
+2006/09/22
+    emathPh.sty v 2.75
+      \HenKo バグ修正
+                                                           ---> BBS 5235〜
+      \HenKo : <putpos=..> 新設
+                                                           ---> BBS 5229〜
+
+2006/09/13
+    emathPs.sty v 1.07
+      \setborderwidth 新設
+                                                           ---> BBS 5254〜
+
+2006/09/05
+    emathPp.sty v 0.47
+    emathPh.sty v 2.74
+    emathC.sty  v 0.35
+      \YGurafu などで，perlの関数 log2(a,x) などが使えないバグの修正
+                                                           ---> BBS 5188〜
+
+2006/09/04
+    emathE.sty v 0.89
+      description, itemize 環境に対し，<apnlist=..> を有効とする
+
+2006/08/31
+    emFxabx.sty v 0.01
+      \abxsubseteqq など新設
+                                                           ---> BBS 5174〜
+
+2006/08/27
+    emathP.sty v 0.69
+      perl との連携機能をオフとするオプション [notPp]
+                                                           ---> BBS 5156〜
+
+2006/08/26
+    emathPg.sty v 0.04
+      \ippankaku : emathPp.sty をロードしたときはそちらを優先
+                                                           ---> BBS 5156〜
+
+2006/08/25
+    emathPh.sty v 2.73
+    emathPg.sty v 0.03
+      \ippankaku の定義を emathPh.sty から移管
+    emathPp.sty
+      perl を使用する \ippankaku を新設
+                                                           ---> BBS 5156〜
+
+2006/08/23      v 2.72
+    \ArrowLine 調整
+                                                           ---> BBS 5144〜
+
+2006/08/22
+    emath.sty   v 1.69
+    emathEc.sty v 0.02
+      \ltxitem の定義を emath.sty から移管
+                                                           ---> BBS 5128〜
+
+2006/08/21
+    emathE.sty v 0.88
+      \emroman, \emRoman 整備
+
+2006/08/21
+    emathPh.sty v 2.71
+      \ArrowLine : 幹と鏃の接続再修正
+      \yenko : 鏃の先端を鋭利に
+      \enko ---> \EMenko : ceo.sty と衝突
+                                                           ---> BBS 5121〜
+2006/08/17
+    \emathK.sty v 0.10
+      \akasatana, \irohanum
+2006/08/12
+    emathC.sty v 0.34
+      \trim : バグ修正
+                                                           ---> BBS 5102〜
+2006/08/10
+    emathLb.sty v 0.05
+      \eqlabel : 参照された式のみに番号を付与
+2006/08/10
+   emathPh.sty v 2.70
+      \Kakukigou : 鏃の調整
+                                                           ---> BBS 5081〜
+                                                           ---> BBS 5087〜
+2006/08/06
+    emathC.sty v 0.33
+      \ukansan : バグ修正
+                                                           ---> BBS 5043〜
+2006/08/02
+    emathPh.sty v 2.68
+      \PutStr* : 文字列を置く位置指定の別法
+                                                           ---> BBS 5025〜
+2006/07/31
+    emathPp.sty v 0.45 \YGurafu: 係数列で定義
+    emathC.sty  v 0.31 \reversecsv
+    emathPg.sty v 0.01 \Gurafu : yscale に対応
+                                                           ---> BBS 5019〜
+2006/07/28
+    emath.sty v 1.67
+      \Bcdot
+                                                   使用例 ---> 1050200603.tex
+2006/07/25
+    emathC.sty v 30
+      \Sin : タイミング修正
+                                                           ---> BBS 4996〜
+    emathPk.sty v 0.98
+      \Zahyou : 座標軸描画タイミングの修正
+                                                           ---> BBS 5003〜
+2006/07/23
+    emathPh.sty v 2.67
+      \Tyokkakukigou 修正
+      \gyakutenretu 新設
+                                                           ---> BBS 4974〜
+                                                           ---> BBS 4979〜
+2006/07/19
+    itembbox.sty v 0.20
+      tascmac.sty 改訂に対応
+                                                           ---> BBS 4959〜
+2006/07/08
+    emathPp.sty v 0.43
+      EMcallperl環境
+                                                           ---> BBS 4923〜
+2006/06/21
+    hako.sty v 1.36
+    arhako.sty v 1.03
+      \widthHako
+                                                   使用例 ---> 2214200601.tex
+2006/06/18
+    emathN.sty v 0.16
+      \syorii : 定義済み処理 など JIS X 0121 に準拠して記号を増強
+
+2006/06/13
+    emathPk.sty v 0.97
+      \iiiHamidasisenbun
+                                                   使用例 ---> 0066200607.tex
+2006/06/09
+    EMesvect.sty v 0.00
+      emath において，esvect.sty を使用するためのスタイル
+                                                           ---> BBS 4786〜
+2006/06/09
+    emathAe.sty v 0.48
+      \ltxitem の定義を emath.sty に移管
+
+2006/06/08
+    emathPh.sty v 2.64
+      \bekutorukata{fill} : xscale 指定に対応
+                                                           ---> BBS 4786〜
+2006/06/06
+    arhako.sty v 1.02
+      \AstHako
+
+2006/06/05
+    emathPk.sty v 0.95
+      \iiiDottedline
+                                                           ---> BBS 4763〜
+2006/06/04
+    hako.sty v 1.35
+      \AstHako
+                                                   使用例 ---> 2110200601.tex
+2006/06/03
+    emathEy.sty v 0.06
+      edaenumerate : \listparinden=0pt とする
+    emathC.sty v 0.28
+      \EMnameuse 新設
+                                                   使用例 ---> 2299200604.tex
+2006/05/30
+    emathEy.sty v 0.05
+      \syoki@ti など emathEc.sty に移管
+      edaenumerate<#1>(#2) : #2 を用いた場合の処理を修正
+                                                           ---> BBS 4699〜
+    emathPh.sty v 2.62
+      \Hamidasisenbun : \hamidasisenbun において，はみ出し量を単位付の数値で指定
+      \HenKo : <..> オプションに
+                Hamidasi=.., HamidasiA=.., HamidasiB=..
+
+2006/05/29
+    emath.sty v 1.64
+      \zyohou : 係数に \sqrt などを許容
+    emathC.sty v 0.27
+      \EMxdef, \EMxdefappend : \protected@xdef 使用
+                                                           ---> BBS 4693〜
+2006/05/27
+    emathEc.sty v 0.01
+      \kizami@ti など emathE より移管
+
+2006/05/20
+    emathE.sty v 0.83
+      \emromannum : 0を噛ませる
+      enumerate : <apnlist=..> を有効
+
+2006/05/19
+    emathEy.sty v 0.04
+      edaenumerate, yokoenumerate, betaenumerate : syokiti=.. を有効
+                                                          ---> 法政大（工）
+2006/05/16
+    emath.sty v 1.63
+      \kagenhou : <prei=..> で，式に前置文
+                                                           ---> BBS 4672〜
+                                                           ---> new163.tex
+2006/05/14
+    emathPh.sty v 2.61
+    emathPxy.sty v 0.35
+      \put : wallpaper.sty との共存
+
+2006/05/13
+    arhako.sty v 1.01
+      \nuriHako
+                                                          ---> 理科大（薬）
+                                                           ---> newarH101.tex
+2006/05/07
+    emathBk.sty v 0.26α
+      onlyBk 使用時にも allinethickness=.. を有効に
+      \vrule --> \drawline 切り替えは [sensyu=\drawline] を用いる
+
+2006/05/03
+    emathT.sty v 0.45
+      \EMcell : \ifmmode を使用
+
+2006/04/25
+    arhako.sty v 1.00
+      \RefrenHako : 枠線の細い \refrenHako*
+                                                          ---> 理科大（応物）
+2006/04/24
+    emathPs.sty v 1.04
+      \EMpsRectbox : 新設
+                                                          ---> isikawa.tex
+2006/04/22
+    emathPh.sty v 2.60
+    emathFx.sty v 0.39
+      \mybekutoru : ベクトルの形状を変更するためのコマンド
+                                                           ---> BBS 4597〜
+                                                           ---> newFx39.tex
+2006/04/19
+    emathPs.sty v 1.03
+       \psovalbox : [noudo=..]を有効に
+                                                          ---> iwate.tex
+2006/04/16
+    emathPxy.sty v 0.34
+      \xyhenkan 点列に \@xscale, \@yscale をかけた結果を得る
+    emathPp.sty v 0.42
+      \namisen : xscale, yscale に対応
+    emathPh.sty v 2.57
+      \Argvec : xscale, yscale に対応
+    emathPh.sty v 2.58
+      \Drawtpic : [waku] オプションで制御点を結ぶ折れ線描画
+                                                           ---> BBS 4564〜
+    emathPh.sty v 2.59
+      \Drawtpic : [yazirusi=a/r/b] を有効に
+      \@yaziri  : yscale との関係で修正
+                                                           ---> BBS 4579〜
+                                                           ---> newPh259.tex
+2006/04/15
+    emath.sty v 1.62
+      \zettaiti に [kagi=..,senhaba=..] オプション
+                                                           ---> BBS 4562〜
+                                                           ---> new162.tex
+2006/04/11
+    emathE.sty
+      \emromannum, \emRomannum, \emromaniinum
+                                                           ---> BBS 4591〜
+2006/04/09
+    emathAe.sty v 0.47
+      \item[option] で，option に \textbf などを許容
+                                                           ---> BBS 4548〜
+2006/04/06
+    emath.sty 1.61
+      \retu\langle....\rangle
+                                                          ---> 早大（政経）
+2006/03/30
+    emathPb.sty v 0.03
+      framelinewidth=.. 新設
+                                                           ---> newPs102.tex
+    emathPh.sty v 2.56
+      \zahyou : x,yのレンジについて，syntax check を入れる
+                                                           ---> BBS 4512〜
+2006/03/21
+    emathPh.sty v 2.55
+      \yaziri : \ArrowHeadPit を指定したとき，xscale=, yscale= に対応
+
+2006/03/18
+    emathFx.sty v 0.38
+      \txsharp : txfonts から `#' をつまみ食い
+
+2006/03/17
+    emathE.sty v 0.81
+      \getcurrentenum : \@enumdepth=0のときは，\empty を返す。
+
+2006/03/12
+    emathB.sty v 0.16
+      \prF など：+1/2など分子に`+'がつく場合，括弧でくくる
+                                                           ---> BBS 4460〜
+    emathPb.sty v 0.02
+      mekurebox環境：rectboxparindent=.. を有効に
+                     key として，mekurex, mekurey, mekurez, mekured を新設
+                                                           使用例 hukuoka.tex
+2006/03/07
+    emathThmbx.sty v 0.02
+      teiri などの環境に，<tuikamidasi=..>オプション
+                                                           ---> BBS 4436〜
+
+2006/03/06
+    hako.sty v 1.34
+    arhako.sty v v 0.98
+      \HakoFunci, ii, iii ... でハコ文字を修飾する機能を付加
+                                                           ---> BBS 4403〜
+
+2006/03/04
+    emathC.sty v 0.26
+      \getAlphnum : 戻り値のデフォルト値を0に設定
+
+2006/03/01
+    emathEy.sty v 0.03
+      \edaenumgyoukan : 新設
+                                                           ---> BBS 4402〜
+
+2006/02/26
+    emathPh.sty v 2.54
+    emathPxy.sty v 0.33
+      \everyzahyou を新設
+    emathAe.sty v 0.46
+      (ps)zahyou環境内で \maskAns を利用する場合への対応
+                                                           ---> BBS 4391〜
+
+2006/02/20
+    emathThmbx.sty v 0.01
+      \bxthmttlfont で，見出しの書体を指定
+                                                           ---> BBS 4374〜
+
+2006/02/15
+    emathUtf.sty v 0.01
+      \ajMaru : textmode
+      \ajMaruAlph{A..Z}, \ajMaruAlphnum{1..26}
+
+2006/02/07
+    emathZ.sty v 0.10
+      枝の太さが 0 のときは，枝を描画しない （mathPs 対策）
+
+2006/02/06
+    hako.sty v 1.32
+      \karaHako : 段落先頭で用いる場合に対する補正
+                                                           ---> BBS 4302〜
+
+2006/02/03
+    emathPs.sty v 1.01
+      \ougigata : <border=1>オプションを有効に
+
+2006/01/30
+    emath.sty v 1.58
+      \EMparbox 内に \Hako を配置したさい，番号が進みすぎるのを修正
+
+2006/01/29
+    emathPh.sty v 2.53
+      dash=.. : emathPs.sty から移管
+      emathPut : 方位オプションが不適切な場合，エラーとする
+
+2006/01/27
+    emathPs.ty v 1.00
+      \setdash の定義を emathPh.sty に移管
+
+2006/01/22
+    emathPh.sty v 2.52
+      \yaziriiti : 円弧に鏃を置く場合，その位置を指定 (0〜1)
+                                                           ---> BBS 4258〜
+
+丸ごとパック 051107 以降の主な修正
+
+2006/01/20
+    emathP.sty  v 0.68
+    emathPs.sty v 0.99
+      ロードオプション [oldB]
+
+2006/01/19
+    emathPp.sty v 0.41
+      BGurafu* の旧仕様に対応するためロードオプション [oldB]
+                                                           ---> BBS 4221〜
+    emathPh.sty v 2.50
+      \Chainline ---> \ChainLine と改名し
+      \Chainline は，点列を引数とする。
+      \def\ArrowHeadType#1 : t（三角形）を追加
+      \xmemori*,\ymemori* : 目盛り線を引かない
+      \Agezokov : \Agezokovi, \Agezokovii 共通の指定
+      \HenKoA,\HenKoVA,\HenKoVB,\HenKoB : henkotype=bracket の場合の端点，折れ点
+      \mTyokusen, \GFunci : \xmin ---> \truexmin など
+                                                           ---> BBS 4223〜
+
+2005/12/15
+    emathEy.sty v 0.02
+      \edatopsep 新設
+                                                           ---> BBS 4147〜
+
+2005/12/08
+    a4tate2.sty 新設
+                                                           ---> BBS 4100〜
+
+2005/12/05
+    emath.sty v 1.56p
+      \houteisiki に横幅を指定する (W=...) オプション
+                                                           ---> new156.tex
+                                                           ---> BBS 4076〜
+
+2005/12/03
+    emathPh.sty v 2.48
+      クロス塗り
+                                                           ---> newPH248.tex
+                                                           ---> BBS 4072〜
+
+2005/12/02
+    arhako.sty
+      \refamiHako 新設
+                                                           ---> BBS 4070〜
+
+2005/11/30
+    emathMw.sty
+      \MWintertext : mawarikomi環境内で，
+          align環境などで用いられる\intertext が図を侵略することへの対応
+                                                           ---> newMw14.tex
+                                                           ---> BBS 4025〜
+
+2005/11/26
+    emathHe.sty
+      \Heihoukon が emathC.sty と衝突することの回避
+                                                           ---> BBS 4001〜
+2005/11/16
+    hako.sty
+      \sqrt[\Hako]{..} で番号が進むバグをフィックス
+                                                           ---> BBS 3962〜
+2005/11/15
+    emathPp.sty
+      \RGurafu* : *付を可能
+      \emLlim : 収束判定数値（デフォルト : 0.001)
+                                                           ---> newPp40.tex
+                                                           ---> BBS 3954〜
+2005/11/12
+    emath.sty
+    v 1.55 2005/11/12
+      \bunsuu に \protect をかぶせる
+                                                           ---> BBS 3972〜
+2005/11/11
+    emathPs.sty 
+      \Daen : \EMps@mode=0 の場合について修正
+                                                           ---> BBS 3912〜
+    emathPh.sty 
+      sikipicture, bunpicture環境を emathPsiki.sty に分離
+      \Siromaru : 境界の円周を描画する。
+                                                           ---> newPsiki00.tex
+                                                           ---> BBS 3914〜
+    emathT.sty
+      key に label= を追加
+
+丸ごとパック 041228 以降の主な修正
+
+2005/10/23
+    emath.sty
+      \maruKata, \Kakko 新設（emathUtf との互換）
+2005/10/20
+    emathPh.sty
+      \HenKo で，矢印を付加する機能が一部の henkotype では無効であったものを修正                                                           ----> newPh243.tex
+                                                           ---> BBS 3786〜
+2005/10/19
+    emathPs.sty
+    emathPh.sty
+      カラー塗りつぶしの修正
+      \emDottedline 新設
+                                                           ----> newPh242.tex
+                                                           ---> BBS 3779〜
+2005/10/11
+    emathPh.sty
+      \ArrowLine[#2]が無効となっていたのを修正
+                                                           ---> BBS 3711〜
+2005/10/10
+    emathPs.sty
+      EMpsrectbox環境 : [rectboxparindent=..]が無効となっていたのを修正
+
+2005/10/09
+    emath.sty
+      \marudashref : emathUtf における不具合の修正
+                                                           ---> BBS 3684〜
+2005/10/07
+    emathPh.sty
+      [DLT=..] など：[dLT=..]の右辺が無名数に対して，単位付の長さを与える
+
+2005/10/03
+    emathMap.tex
+      emath パッケージの依存関係を修正
+      （
+         emathEy.sty : emathE から読み込まれない
+         emathPb.sty, emathPg.sty : emathPh から読み込まれない
+       ）
+    hako.sty
+      \iihakoframe : 左右の縦罫線を二重線
+
+2005/09/25
+  emathPh.sty : \ArrowLine に，両端の位置を微調整するためのオプション
+                     <Henvi=..,Henvii=..>
+                                                            ----> newPh234.tex
+2005/09/19
+    emathP.sty など : ロードオプション dvipdfmx
+
+2005/09/17
+    emathPh.sty : \HenKo の整備
+                  sikipicture環境
+                                                            ----> newPh233.tex
+2005/09/10
+    emathUtf.sty : utf.sty で定義されている
+                  \ajMaru で相互参照ができるようにする
+                                                          ----> sampleUtf.tex
+2005/09/07
+    emathPg.sty : emathPh から，整関数グラフ描画関連を分離
+                  （ emathPp を用いることが多くなったので，お蔵入り）
+    emathPb.sty : emathPh から，rectbox関連を分離
+
+2005/09/05
+    emathEc.sty : emathE と emathEy の共通部分を分離することにより
+                  emathEy.sty を独立させる。
+
+2005/09/03
+    emathMap.tex
+      emath パッケージの依存関係を修正
+      （
+         emathMw.sty : mawarikomi環境を独立使用可能
+                                                          ----> sampleMw.tex
+         emathEy.sty : edaenumerate, yokoenumnerate, beta...
+                       を独立使用可能
+                                                          ----> sampleEy.tex
+       ）
+
+    emathMw.sty v 0.13
+      emath.sty からは呼ばれない。
+      mawarikomi環境を使用する場合は
+          \usepackage{emathMw}
+      を宣言する必要あり。
+
+    emath.sty v 1.47
+      jquote, jquotation ---> jquote.sty　　（新設）
+      fgcaption など -------> emathCap.sty　（分離・新設）
+      （emathCap は emath.sty からは呼ばれない）
+
+    emathEy.sty v 0.00
+      横並び enumerate 環境を emathE.sty から独立
+      （emathE.sty から呼び込まれる）
+
+2005/08/30
+    emathFx.sty v 0.33
+      [mbb]オプション : \mathmbb で mbboard パッケージを用いる
+                                                          ----> newFx33.tex
+
+2005/08/27
+    emathPh.sty v 2.27
+    \xmemori, \ymemori : emathPs.sty の場合は \cPut 使用
+                                                           ---> BBS 3507〜
+2005/08/14
+    emath.sty v 1.46
+      数式番号に \ajMaru を用いた場合の相互参照対策
+                                                          ----> new146.tex(pdf)
+
+2005/08/04
+    emathPh.sty v 2.25
+      \ArrowHeadPit 新設
+      \bekutorukata 修正
+         : やじり底辺に窪みを作る
+                                                            ----> newPh225.tex
+    itembkbx.sty v 0.15β
+      \ignorefirstline : 囲み内の先頭行が空白行の場合それを削除
+
+    emathThmbx.sty v 0.00α 新設
+      itembox環境など，見出しつき枠囲み環境において
+      見出しにナンバリングする手段を提供
+                                                          ----> sampleThmbx.tex
+2005/08/01
+    emathE.sty v 0.77
+      edaenumerate : mawarikomi との関連を修正
+    emath.sty v 1.45
+      \renritu : mawarikomi との関連を修正
+    emathPh.sty v 2.25
+      rectbox : mawarikomi との関連を修正
+    emathPs.sty v 0.85
+      EMpsrectbox : mawarikomi との関連を修正
+    emathMw.sty v 0.12
+          \mawarikomiowari* = \mawarikomimusi
+                                                            ---> BBS 3453〜
+2005/07/31
+    hako.sty v 1.25
+      \inputHakoKaiFile : ファイルの存在をチェックする。
+      \openHakoKaiFile, \inputHakoKaiFile : [..]オプションで番号指定
+                                                            ---> 談話室 73〜
+2005/07/23
+    itembkbx.sty v 0.14
+      breakitembox : 上下ブロックとの繋ぎ見直し
+                                                            ---> BBS 3432〜
+2005/07/19
+    emathAe.sty v 0.43
+      maskanstrue オプションを指定したときは \let\normalcolor\relax
+                                                            ---> BBS 3417〜
+2005/07/16
+    emathAe.sty v 0.42
+      betaenumerate環境における\kaitou のナンバリング修正
+                                                            ---> BBS 3398〜
+2005/07/09
+    emathT.sty v 0.36
+      \sya [#3]が無効となる場合を修正
+                                                            ---> BBS 3376〜
+2005/07/06
+    emathPh.sty v 2.22
+      enumrectbox環境：連番を振る rectbox環境
+                                                            ----> newPh222.tex
+                                                            ---> BBS 3339〜
+2005/07/03
+    arhako.sty v 0.94
+      \ren@hakofalse の実行タイミング修正
+                                                            ---> BBS 3335〜
+2005/06/30
+    jquote.sty v 0.00
+    emath.sty  v 1.44
+      jquot, jquotation環境を分離
+
+2005/06/27
+    itembkbx.sty v 0.13
+      emathPh.sty を切り離す
+
+    emathPh.sty v 2.21
+    emathPxy.sty v 0.31
+    emathPk.sty v 0.91
+    emathPs.sty v 0.84
+      \endzahyou, \endzahyou* : 空白の混入を除去
+                                                            ---> BBS 3316〜
+2005/06/25
+    hako.sty v 1.24
+      hakomozisyu{m}の場合，\protected@edef を使用
+
+2005/06/15
+    emathE.sty v 0.76
+      \ifbetaraggedlastlinefalse とすれば，最終行も均等割り
+      edaenumerate環境 : <kaitouYohaku=..>
+
+2005/06/13
+    emathPh.sty v 2/20 
+      zahyou環境 : [Yohaku=..]オプション（上下・左右余白同時指定）
+
+2005/06/12
+    itembkbx.sty v 0.12
+      breakitembox : <hsep=..> を有効
+                                                            ---> BBS 3224〜
+
+    emathE.sty v 0.75
+      betaenumerate環境：最終行は均等割りをしない
+
+2005/06/11
+    emathE.sty v 0.74
+      edaenumerate環境に<edafirstindent=..>
+                                                            ----> newE74.tex
+2005/06/10
+    emathE.sty v 0.73 
+      edaenumerate環境に<edaitemindent=..>を新設
+                                                            ----> newE73.tex
+2005/05/28
+    emath.sty v 1.40
+      \teisei : tpic-specials に依存しないことも可能
+                                                            ----> new140.tex
+    emathPh.sty v 2.18
+      Hidariyohaku=1zw+2pt などを可能
+      \rotateline : 2点を結ぶ斜線を \rotatebox を利用して描画する
+    emathT.sty v 0.35
+      \sya で描画する斜線について，\rotateline が使えるようにする
+    emathC.sty v 0.23 
+      \Log : 真数条件のチェック
+      \atanperl : perl を利用した arctan
+
+2005/05/27
+    emathE.sty v 0.70 
+      \betalabel : betaenumerate環境において，\item 番号の相互参照用ラベルつけ
+      edaenumerate環境に <edaframe> オプション
+
+2005/05/22
+    emath.sty v 1.39
+      \EMresetstrutbox : js*.cls の場合無効化
+
+2005/05/17
+    emath.sty v 1.38
+      \houteisiki : LaTeX 本来の equation における
+                    数式番号のカラー指定 \normalcolor を無効化
+
+2005/05/14
+    emath.sty v 1.37
+      \conjstrut : 新設
+
+2005/05/12
+    emath.sty v.1.36
+      \bmaru : \maru 内の文字について，
+               ベースラインをその行のベースラインと重ねる
+      \houteisiki : 内部で呼び出す equation環境を LaTeX 本来のものとする
+                                                            ----> new136.tex
+2005/04/28
+    emathPh.sty v.2.17
+      rectbox環境において，[rectboxparindent=..]オプションで，
+      この環境内のインデント量を指定する。
+
+2005/04/12
+    emathPs.sty v0.78
+      \EMpsrectbox : rectboxoval オプションで，コーナーを丸く
+        (arcto を利用)
+                                                            ----> newPs76.tex
+2005/04/11
+    emathPh.sty v2.15
+      rectbox環境において，[rectboxoval]オプションで，コーナーを丸く
+    emathMw.sty v 0.10
+      \EMWRlinewidth：テキスト部の横幅
+      Pmawarikomi環境：次ページに送る処理をしない
+                                                            ----> newMw10.tex
+2005/04/07
+    arhako.sty v 0.92
+      ロードオプション tpic : \renHako の仕切り線を tpic で
+                                                            ----> newH122.tex
+    hako.sty v 1.23
+      \renHako の仕切り線の形状変更に対応
+2005/04/02
+    emath.sty v 1.33
+      \notni : \ni の否定演算子
+    emathFx.sty v 0.31
+      037 mathabx から \abxnotin, \abxnotni
+2005/03/28
+    hako.sty v 1.21
+      \refHako hakosyotai を反映させる
+2005/03/22
+    emathPh.sty v 2.13
+      \En, \En*, \En** : tuukaten=.. で，間接的に半径を指定
+                                                        ----> sampleP.tex 訂補
+    emathPs.sty v 0.75
+      \EMpsrectbox : mawarikomi環境下における横幅調整
+                                                            ----> newPs76.tex
+2005/03/21
+    emathPh.sty v 2.12 2005/03/21
+      mawarikomi & rectbox 関連で修正
+                                                             ---> BBS No.2862
+2005/03/20
+    emathPh.sty v 2.11
+      \EnT : 直径の両端を与えて，円を描画
+                                                        ----> sampleP.tex 訂補
+    emathPs.sty v 0.74
+      \psdrawwaku : \EMpsBezier の制御線を表示させる
+    emathB.sty 0.14
+      \xFcalc : 未知数を X として，一次方程式を解く
+                                                              ---> sampleB.tex
+2005/03/14
+    emathFx.sty v 0.30
+      035 txfonts から \pm, \mp ---> \txpm, \txmp
+      036 mathabx から \pm, \mp ---> \abxpm, \abxmp
+                                                            ----> BBS No.2824〜
+2005/03/10
+    emath.sty v 1.32
+        \EMresetstrutbox : \small の場合
+2005/03/08
+    emathPh.sty v 2.10
+      mawarikomi環境下で，rectbox環境を使用するさいについて修正
+    emathMw.sty v 0.09
+        \mawarikomitextwidth : 新設
+2005/03/07
+    emathPh.sty v 2.09
+      \CandC*, \CandL* : 交点の順序について，三角形#1#5#6が
+                       正の向きとなるように#5,#6をセット
+2005/03/06
+    emathPs.sty v 0.73
+      \@@ArrowLine : [b]オプションの処理を修正
+    emathMw.sty v 0.08
+      Amawarikomi環境：行頭で配置する旧形式のmawarikomi
+      Zmawarikomi環境：行末で配置する形式のmawarikomi
+2005/03/04
+    emathAe.sty v 0.38
+      \maskAnstrue 時，冒頭で \par を発行
+2005/03/01
+    emath.sty v 1.31
+      ロードオプション normallineskip を整備
+    emathPs.sty v 0.72
+      \@@emathPut@@ : \grestore のタイミング修正
+2005/02/20
+    hako.sty v 1.19-20
+      文字種を解答ファイルに書き出す（修正）
+    emathC.sty v 0.22
+      \Headchar : 先頭文字のみを返す
+2005/02/19
+    emath.sty v 1.30
+        別行立て数式内でも \baselinestretch を反映させる
+2005/02/18
+    emathPh.sty v 2.08 2005/02/18
+      \naikaku : 三角形の内角を求める
+    emathPs.sty v 0.70
+      psZahyou : 初期化不十分 \let\clipDrawline\psDrawline など
+2005/02/17
+    emathPk.sty v 0.87
+      \iiiBGurafu [iro=..]オプションを有効
+    emathPp.sty v 0.37
+        \Argvec : <perl> オプション
+2005/02/16
+    emathPk.sty v 0.86
+      座標軸の端点 \iiiXMAX, \iiiYMAX, \iiiZMAX
+2005/02/12
+    emath.sty v 1.29
+    emathPp.sty v 0.36
+      \@percent などの定義を emathPp.sty から emath.sty に移管
+    hako.sty v 1.18
+      文字種を解答ファイルに書き出す。
+2005/02/11
+    emathPh.sty v 2.07
+      mekurebox環境 で，めくれ部分に色をつける [liningcolor=..] オプション
+    emathPs.sty v 0.68
+      ロードオプション[tpic]
+    emathPs.sty v 0.69
+      ロードオプション[Pk]
+2005/02/10
+    emathPh.sty v 2.06
+      mekurebox環境
+    emathPs.sty v 0.67
+      \ArrowLine の<#1>オプションが無効であったのを修正
+2005/02/08
+    arhako.sty v 0.90
+    hako.sty v 1.17
+      丸囲みを2桁でも
+2005/02/07
+    arhako.sty v 0.89
+    hako.sty v 1.16
+      丸囲み数字をセンターモードで使用する試み
+2005/02/06
+    emathPh.sty v 2.05
+      \rectbox に [framecolor=..,background=..]オプション
+2005/02/04
+    emathPh.sty v 2.04
+      \BousetuenHankei : 傍接円の半径
+2005/02/02
+    emathBk.sty v 0.22
+    itembkbx.sty v 0.11
+      \frame@color 初期化
+2005/02/01
+    emathPp.sty v 0.35
+        \BGurafu* : \egroup が1個多かった
+2005/01/30
+    emathPh.sty v 2.03
+      \En : \iro@ 初期化
+    emathPs.sty v 0.66
+      CMYK 方式を用いるためのロードオプション [cmyk]
+2005/01/28
+    emathPh.sty v 2.02
+      HTML規格のカラーネームの使用
+    emathPs.sty v 0.65
+      HTML規格のカラーネームの使用
+2005/01/23
+    emath.sty v 1.28
+      \houteisiki <#2> 符号を伴う場合は，デフォルト値に対する相対値
+    emathPh.sty v 0.64
+      \Yaziri : \arrowsize に追随
+2005/01/22
+    emPoly.sty v0.03
+      \CRpolygon : 多角形の頂点列を\polygon に保存し，\Nuritubusi などに利用
+2005/01/15
+    emathC.sty v 0.21
+      \repeatchar ： 文字列の繰り返し
+    itembkbx.sty v 0.10
+      breakitembox <framecolor=..>オプション
+2005/01/18
+    hako.sty 1.15
+      \RefHako : 枠線の細い \refHako*
+2005/01/13
+    emathBk.sty v 0.21α
+          EMbreakbox環境 : <backgroundcolor=..,framecolor=..,hsep=..,vsep=..>
+2005/01/09-11
+    emathPh.sty v 2.01
+      ロードオプション papersize
+      \KTkukan : 書式を補う
+2005/01/09
+    emathP.sty v 0.65
+    emathPk.sty v 0.85
+    emathPp.sty v 0.85
+    emathPs.sty v 0.63
+    emathT.sty v 0.34
+    emath.sty v 1.26
+    hako.sty v 1.14
+      ロードオプション papersize
+2005/01/08
+    emathPs.sty v 0.62  
+        \En : <iro=..>オプションを有効とする
+        \En* : [iro=..]で円周の色，[nuriiro=..]で内部の色指定
+2004/01/07
+    emathPxy.sty v 0.26
+      \Absvec ---> \PhAbsvec として
+      \Absvec を xscale, yscale を考慮したものとする。
+2005/01/06
+    emathT.sty v 0.33
+      hyou : retuhaba=.. オプション
+2005/01/01
+    emathPp.sty v 0.33
+        iro=.. オプション整備
+2004/12/30
+    emathPh.sty v 2.00
+      \Drawline <iro=..>
+      \En<iro=..>
+          オプションの整備
+
+
+

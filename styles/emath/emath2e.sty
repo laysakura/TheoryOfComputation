@@ -1,0 +1,86 @@
+\NeedsTeXFormat{LaTeX2e}
+%\ProvidesPackage{emath2e}[2010/09/25 v1.92 emath2e]
+%
+  \DeclareOption{only}{\def\@nly{}}%
+  \DeclareOption{times}{\def\em@fonts{1}}%
+  \DeclareOption{txfonts}{\def\em@fonts{2}}%
+  \DeclareOption{pxfonts}{\def\em@fonts{3}}%
+  \DeclareOption{mathabx}{\def\em@fonts{4}}%
+  \DeclareOption{ceo}{\def\em@fonts{5}}%
+  \DeclareOption{varg}{\def\@varg{}}%
+  \DeclareOption{normallineskip}{\def\EM@normallineskip{}}%
+  \DeclareOption{notAMS}{\def\notAMS{}}%
+  \DeclareOption{notMy}{\def\not@My{}}%
+  \DeclareOption{My}{\let\not@My\undefined}%
+  \DeclareOption{papersize}{\papersizetrue}%
+%  \ExecuteOptions{notMy}%
+  \ProcessOptions\relax
+%
+\def\EM@system#1{\immediate\write18{#1}}%
+%
+\@ifundefined{@nly}{%
+  \@ifundefined{notAMS}{\RequirePackage{amsmath}}{}%
+  \@ifundefined{em@fonts}{%
+    \@ifundefined{notAMS}{\RequirePackage{amssymb}}{}%
+  }{%
+    \ifcase\em@fonts % 0
+      \or % 1=times
+        \RequirePackage{times}%
+      \or % 2=txfonts
+        \@ifundefined{@varg}{\RequirePackage{txfonts}}{%
+            \RequirePackage[varg]{txfonts}}%
+        \renewcommand{\ttdefault}{cmtt}%
+        \def\bekutoru@sityuu{\vrule height .75zh width \z@}%
+      \or % 3=pxfonts
+        \@ifundefined{@varg}{\RequirePackage{pxfonts}}{%
+            \RequirePackage[varg]{pxfonts}}%
+        \renewcommand{\ttdefault}{cmtt}%
+        \def\bekutoru@sityuu{\vrule height .75zh width \z@}%
+      \or % 4=mathabx
+        \let\cmsum\sum
+        \let\cmintop\intop
+        \def\cmint{\cmintop\nolimits}
+        \RequirePackage{mathabx}%
+        \def\bekutoru@sityuu{\vrule height .75zh width \z@}%
+      \or % 5
+        \IfFileExists{EMceo.sty}{\RequirePackage{EMceo}}{}%
+      \fi
+  }%
+  \RequirePackage{emathC}%
+  \RequirePackage{emathE}%
+}{}%
+\@ifundefined{@amsmath@err}{}{\if@fleqn\let\mathindent=\@mathmargin\fi}%
+%
+% フォントサイズを #1 倍にする．
+\def\chgfontsize#1#2{%
+  \def\tmp@size@{\@setfontsize\tmp@size@{#1}{#2}}%
+  \tmp@size@\ignorespaces
+}%
+\def\endchgfontsize{\@ignoretrue}%
+\def\chgfontsizeratio#1{\setlength{\@tempdima}{\f@size pt}%
+  \setlength{\@tempdima}{#1\@tempdima}%
+  \@tempdimb=\@tempdima\advance\@tempdimb2\p@
+  \def\@tmp@size{%
+    \@setfontsize\@tmp@size{\strip@pt\@tempdima}{\strip@pt\@tempdimb}}%
+  \@tmp@size\ignorespaces
+}%
+%
+\def\endchgfontsizeratio{\@ignoretrue}%
+%
+%
+% 相似の記号
+\DeclareRobustCommand\souzi{\@ifnextchar[{\@souzi}{\@souzi[\empty]}}%
+\def\@souzi[#1]{%
+  \edef\sz@s{1.4}\edef\sz@r{.33}
+  \ifx\empty #1\else
+    \Mulself\sz@s{#1}%
+    \Mulself\sz@r{#1}%
+  \fi
+  \mathrel{\hbox{\chgfontsizeratio{\sz@s}\raisebox{-\sz@r ex}{∽}}}%
+%  \kern.1em{\mbox{\chgfontsizeratio{1.4}\raisebox{-.33ex}{∽}}}\kern.1em\relax
+}%
+% 比例の記号
+\def\hirei{\kern.2em{\mbox{\raisebox{-.33ex}{∝}}}\kern.2em}%
+%\let\hirei\propto
+%
+\endinput

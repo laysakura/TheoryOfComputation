@@ -1,0 +1,1009 @@
+% treeprint.sty
+%
+% Version 2.2 (Nov 10 1995) by Yasuharu Den (den@itl.atr.co.jp)
+% * Bug fix: extra spaces in \@xxmakeTree
+%
+% Version 2.1 (Mar 03 1994) by Yasuharu Den (den@itl.atr.co.jp)
+% * Bug fix: \omittree in \flatmode
+%
+% Version 2.0 (Mar 01 1993) by Yasuharu Den (den@atr-la.atr.co.jp)
+%
+% A new tool for printing trees
+%
+% * epic/eepic/eclarith macro support
+% * Flat and non-flat modes
+% * Balancing switch in non-flat mode
+% * Various sorts of lines as branches
+% * Omit tree (triangle instead of line branching)
+% * Arc Label
+%
+
+% require epic.sty, eepic.sty and eclarith.sty
+
+% Ignore End Of Line
+\edef\save@endlinechar{\the\endlinechar}
+\endlinechar = -1
+
+%%%%%%%%%%%%%%%%%
+%%% Variables %%%
+%%%%%%%%%%%%%%%%%
+\newbox\@TreeBox
+\newbox\@NodeBox
+\newbox\@ChildBoxes
+
+\newcount\@NodeIDCounter
+\newcount\@TreeDepthCounter
+\newcount\@TreeLevelCounter
+
+\newdimen\@TotalVSep
+\newdimen\@AdjustDimen
+
+%%%%%%%%%%%%%%%%%%
+%%% Operations %%%
+%%%%%%%%%%%%%%%%%%
+\def\@@@{\noexpand\@@@\noexpand}
+
+\def\@headConsBox#1#2#3{\setbox#3\hbox{#1\unhbox#2}}
+\def\@tailConsBox#1#2#3{\setbox#3\hbox{\unhbox#2#1}}
+
+\def\@headCons#1#2#3{\edef#3{\@@@{#1}#2}}
+\def\@tailCons#1#2#3{\edef#3{#2\@@@{#1}}}
+
+\def\@getCar#1{\expandafter\do@getCar#1\@nil}
+\def\@getCdr#1{\expandafter\do@getCdr#1\@nil}
+\def\@getLeftmost#1{\expandafter\do@getLeftmost#1\@nil}
+\def\@getRightmost#1{\expandafter\do@getRightmost#1\@nil}
+
+\def\do@getCar\@@@#1#2\@nil{#1}
+\def\do@getCdr\@@@#1#2\@nil{#2}
+\def\do@getLeftmost\@@@#1#2\@nil{#1}
+% The trick used in the definition of \do@getRightmost is from
+% Appendix D of TeX Book.
+\def\do@getRightmost\@@@#1#2{\ifx#2\@nil#1\@tail\fi\do@getRightmost#2}
+\def\@tail#1\do@getRightmost\@nil{\fi}
+
+\def\@nlist#1#2#3{
+% #1: +Item
+% #2: +Times
+% #3: -List
+  \edef\@Var{#1}\@tempcnta#2\relax
+  \let\@Return\@empty
+  \@whilenum\@tempcnta>\z@\do{
+    \@tailCons\@Var\@Return\@Return
+    \advance\@tempcnta - 1
+  }
+  \let#3\@Return
+}
+
+\def\@length#1#2{
+% #1: +List
+% #2: -Length
+  \edef\@Var{#1}\@tempcnta\z@
+  \@tempswatrue
+  \loop
+    \ifx\@Var\@empty \@tempswafalse
+    \else \edef\@Var{\@getCdr\@Var}
+          \advance\@tempcnta + 1\fi
+    \if@tempswa
+  \repeat
+  \edef#2{\the\@tempcnta}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%
+%%% USER Parameters %%%
+%%%%%%%%%%%%%%%%%%%%%%%
+\newdimen\branchlength
+\newdimen\nodesep
+\newdimen\internodesep
+\newdimen\arclabelsep
+
+\newif\if@FlatMode
+\newif\if@Balancing
+
+\let\flatmode\@FlatModetrue
+\let\nonflatmode\@FlatModefalse
+\let\balancingon\@Balancingtrue
+\let\balancingoff\@Balancingfalse
+
+% initial values
+\branchlength 4ex
+\internodesep 1em
+\nodesep .5ex
+\arclabelsep 1ex
+
+\nonflatmode
+\balancingoff
+
+%%%%%%%%%%%%%%%%%%%%%
+%%% USER Commands %%%
+%%%%%%%%%%%%%%%%%%%%%
+%
+% Syntax of trees
+%
+%   <Tree>      ::= \tree{<Node>}[<Pos>][<Label>] <Children> \endtree
+%   <Chidlren>  ::= a sequence of <Child>'s
+%   <Child>     ::= <SubTree> | <Leaf> | <OmitTree>
+%   <SubTree>   ::= \subtree[<Branch>]{<Node>}[<Pos>][<Label>]
+%                   <Children>
+%                   \endsubtree
+%   <Leaf>      ::= \leaf[<Branch>]{<Node>}[<Pos>][<Label>]
+%   <Omit Tree> ::= \omittree{<Node>}
+%
+%   <Branch>    ::= an arbitrary epic/eepic drawline command
+%   <Node>      ::= an arbitrary LaTeX text
+%   <Pos>       ::= r | c | l
+%   <Label>     ::= an arbitrary LaTeX text
+%
+\def\tree{
+  \begingroup
+    \endlinechar = -1
+    \offinterlineskip
+    \@TotalVSep\branchlength \advance\@TotalVSep + 2\nodesep
+    \setbox\@ChildBoxes\null
+    \let\@ChildIDs\@empty
+    \@NodeIDCounter\z@
+    \@makeTree[\relax]
+}
+\def\endtree{
+    \end@makeTree
+% \typeout{TreeID: \@TreeID}
+    \setbox\@tempboxa\hbox{
+      \unhbox\@ChildBoxes
+      \global\setbox\@TreeBox\lastbox
+    }
+    \@setTreeSizes\@TreeBox\@TreeDataY
+% \typeout{TreeDataY: \@TreeDataY}
+    \@length\@TreeDataY\@TreeDepth
+% \typeout{TreeDepth: \@TreeDepth}
+    \@augmentTree\@TreeBox\@TreeDataX
+% \typeout{TreeDataX: \@TreeDataX}
+    \@normalizeTree\@TreeDataX\@TreeDataY\@TreeData
+% \typeout{TreeData: \@TreeData}
+    \unitlength1pt
+    \@displayTree\@TreeBox\@TreeID\@TreeData
+  \endgroup
+}
+
+\def\end@makeTree{
+    \global\@headConsBox{\box\@NodeBox}\@ChildBoxes\@TreeBox
+    \xdef\@TreeID{{\@NodeID}{\@ChildIDs}}
+  \endgroup
+  \@headConsBox{\box\@TreeBox}\@ChildBoxes\@ChildBoxes
+  \@tailCons\@TreeID\@ChildIDs\@ChildIDs
+}
+
+\def\subtree{\@ifnextchar[{\@makeTree}{\@makeTree[\path]}}
+\let\endsubtree\end@makeTree
+\def\leaf{\@ifnextchar[{\@leaf}{\@leaf[\path]}}
+\def\omittree{\@leaf[\drawtriangle]}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% USER Command Abbreviations %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\dotgap{3}
+\def\dashlength{3}
+
+\def\dottedsubtree{\subtree[\dottedline{\dotgap}]}
+\def\dashsubtree{\subtree[\dashline{\dashlength}]}
+\def\downsubtree{\subtree[\DownArrow\path]}
+\def\upsubtree{\subtree[\UpArrow\path]}
+\def\updownsubtree{\subtree[\UpDownArrow\path]}
+
+\def\dottedleaf{\leaf[\dottedline{\dotgap}]}
+\def\dashleaf{\leaf[\dashline{\dashlength}]}
+\def\downleaf{\leaf[\DownArrow\path]}
+\def\upleaf{\leaf[\UpArrow\path]}
+\def\updownleaf{\leaf[\UpDownArrow\path]}
+
+%%%%%%%%%%%%%%%%
+%%% MakeTree %%%
+%%%%%%%%%%%%%%%%
+%
+% Data structure of TreeBox and TreeID
+%
+%   <TreeBox>    ::= \hbox{<NodeBox> <ChildBoxes>}
+%   <NodeBox>    ::= \vtop{\hbox{<Node>}}
+%   <ChildBoxes> ::= a sequence of <TreeBox>'s
+%   <Node>       ::= an arbitrary LaTeX text
+%
+%   <TreeID>     ::= {<NodeID>}{<ChildIDs>}
+%   <NodeID>     ::= an integer
+%   <ChildIDs>   ::= a list of <TreeID>'s
+%
+% Note that <TreeBox>'s are arranged in the converse order in
+% <ChildBoxes>, so that a LOOP operator on <ChildBoxes> will
+% explore <TreeBox>'s in the converse order (by \lastbox command).
+%
+% The data structure of <TreeBox> is from a TeX macro ``tree.sty''
+% written by Madoka Kuniyasu and Toshiharu Ohno at ASCII Corp.
+%
+\def\@makeTree[#1]#2{
+  \@ifnextchar[{\@xmakeTree[#1]{#2}}{\@xxmakeTree[#1]{#2}[c][]}
+}
+\def\@xmakeTree[#1]#2[#3]{
+  \@ifnextchar[{\@xxmakeTree[#1]{#2}[#3]}{\@xxmakeTree[#1]{#2}[c][#3]}
+}
+\def\@xxmakeTree[#1]#2[#3][#4]{
+  \begingroup
+    \global\advance\@NodeIDCounter + 1
+    \edef\@NodeID{\the\@NodeIDCounter}
+    \global\@namedef{Branch@\romannumeral\@NodeID}{#1}
+    \if#3l\global\@namedef{Label@\romannumeral\@NodeID}
+                          {\makebox(0,0)[r]{#4\hskip\arclabelsep}}
+    \else\if#3r\global\@namedef{Label@\romannumeral\@NodeID}
+                               {\makebox(0,0)[l]{\hskip\arclabelsep#4}}
+    \else\global\@namedef{Label@\romannumeral\@NodeID}
+                         {\makebox(0,0){#4}}\fi\fi
+    \setbox\@NodeBox\vtop{\null\hbox{#2}}
+    \setbox\@ChildBoxes\null
+    \let\@ChildIDs\@empty
+    \ignorespaces
+}
+
+\def\@leaf[#1]#2{
+  \@ifnextchar[{\@xleaf[#1]{#2}}{\@xxleaf[#1]{#2}[c][]}
+}
+\def\@xleaf[#1]#2[#3]{
+  \@ifnextchar[{\@xxleaf[#1]{#2}[#3]}{\@xxleaf[#1]{#2}[c][#3]}
+}
+\def\@xxleaf[#1]#2[#3][#4]{
+  \@xxmakeTree[#1]{#2}[#3][#4]
+  \end@makeTree
+  \ignorespaces
+}
+
+% Definition of \end@makeTree moved earlier in file so other commands
+% can be \let = to it.
+
+%%%%%%%%%%%%%%%%%%%%
+%%% SetTreeSizes %%%
+%%%%%%%%%%%%%%%%%%%%
+%
+% Data structure of TreeDataY
+%
+%   <TreeDataY> ::= a list of <NodeDataY>'s
+%   <NodeDataY> ::= the maximal node depth at each level
+%
+% The data structure and functions are from ``tree.sty''.
+%
+\def\@setTreeSizes#1#2{
+% #1: +TreeBox
+% #2: -TreeDataY
+  \setbox\@tempboxa\copy#1
+  \let\@ChildData\@empty
+  \@setSizes
+  \let#2\@NewChildData
+}
+\def\@setSizes{
+% +\@tempboxa
+% +\@ChildData
+% -\@NewChildData
+  \let\@DataSoFar\@ChildData
+  \setbox\@tempboxa\hbox{
+    \ifx\@DataSoFar\@empty \@tempdima\z@
+                           \let\@ChildData\@empty
+    \else \@tempdima\@getCar\@DataSoFar\relax
+          \edef\@ChildData{\@getCdr\@DataSoFar}\fi
+    \unhbox\@tempboxa
+    \loop
+      \setbox\@tempboxa\lastbox
+      \ifhbox\@tempboxa \@setSizes
+                        \let\@ChildData\@NewChildData
+    \repeat
+    \ifdim\@tempdima<\dp\@tempboxa \@tempdima\dp\@tempboxa\fi
+    \global\@headCons{\the\@tempdima}\@ChildData\@NewChildData
+  }
+}
+
+%%%%%%%%%%%%%%%%%%%
+%%% AugmentTree %%%
+%%%%%%%%%%%%%%%%%%%
+%
+% Data structure of TreeDataX
+%
+%   <TreeDataX> ::= {<XVal>}{<YVal>}{<Bounds>}{<Children>}
+%   <Children>  ::= a list of <TreeDataX>'s
+%   <Bounds>    ::= a list of {<LeftXVal>, <RightXVal>}'s
+%
+%   <XVal>      ::= the x-postion of the root node
+%   <YVal>      ::= the y-postion of the root node
+%   <LeftXVal>  ::= the left-position of the leftmost node at each level
+%   <RightXVal> ::= the right-position of the rightmost node at each level
+%
+% The data structure and functions are from a LISP program ``treeprint.lisp''
+% written by Kevin Knight at CMU.
+%
+\def\@getXVal#1{\expandafter\do@getXVal#1\@nil}
+\def\@getYVal#1{\expandafter\do@getYVal#1\@nil}
+\def\@getBounds#1{\expandafter\do@getBounds#1\@nil}
+\def\@getChildren#1{\expandafter\do@getChildren#1\@nil}
+
+\def\do@getXVal#1#2#3#4\@nil{#1}
+\def\do@getYVal#1#2#3#4\@nil{#2}
+\def\do@getBounds#1#2#3#4\@nil{#3}
+\def\do@getChildren#1#2#3#4\@nil{#4}
+
+\def\@getLeftXVal#1{\expandafter\do@getLeftXVal#1\@nil}
+\def\@getRightXVal#1{\expandafter\do@getRightXVal#1\@nil}
+
+\def\do@getLeftXVal#1,#2\@nil{#1}
+\def\do@getRightXVal#1,#2\@nil{#2}
+
+\def\@augmentTree#1#2{
+% #1: +TreeBox
+% #2: -TreeDataX
+  \setbox\@tempboxa\copy#1
+  \@TreeDepthCounter\z@
+  \@augment
+  \let#2\@ChildTreeDataX
+}
+\def\@augment{
+% +\@tempboxa
+% -\@ChildTreeDataX
+  \setbox\@tempboxa\hbox{
+    \advance\@TreeDepthCounter + 1
+    \let\@Children\@empty
+    \unhbox\@tempboxa
+    \loop
+      \setbox\@tempboxa\lastbox
+      \ifhbox\@tempboxa \@augment
+                        \@tailCons\@ChildTreeDataX\@Children\@Children
+    \repeat
+    \ifx\@Children\@empty
+          \let\@BalancedChildren\@Children
+          \def\@XVal{0.0pt}
+          \if@FlatMode \@tempcntb\@TreeDepth\relax
+                       \advance\@tempcntb - \@TreeDepthCounter
+          \else \@tempcntb\z@\fi
+          \@nlist{0.0pt,0.0pt}{\@tempcntb}\@ChildBounds
+    \else \@movearoundTree\@Children\@MovedChildren\@ChildBounds
+          \if@FlatMode \let\@BalancedChildren\@MovedChildren
+          \else\if@Balancing \@balanceTree\@MovedChildren\@BalancedChildren
+          \else \let\@BalancedChildren\@MovedChildren\fi\fi
+          \@buildXVal\@BalancedChildren\@XVal\fi
+    \@atomBounds{\wd\@tempboxa}\@XVal\@Bound
+    \ifx\@BalancedChildren\@empty\if@FlatMode
+          \@tailCons\@Bound\@ChildBounds\@Bounds
+    \else \@headCons\@Bound\@ChildBounds\@Bounds\fi
+    \else \@headCons\@Bound\@ChildBounds\@Bounds\fi
+    \xdef\@ChildTreeDataX
+         {{\@XVal}{\the\dp\@tempboxa}{\@Bounds}{\@BalancedChildren}}
+  }
+}
+\def\@buildXVal#1#2{
+% #1: +Children
+% #2: -XVal
+  \edef\@LeftmostChild{\@getLeftmost#1}
+  \edef\@RightmostChild{\@getRightmost#1}
+  \@tempdima\@getXVal\@LeftmostChild\relax
+  \advance\@tempdima + \@getXVal\@RightmostChild\relax
+  \divide\@tempdima by 2
+  \edef#2{\the\@tempdima}
+}
+\def\@atomBounds#1#2#3{
+% #1: +NodeWidth
+% #2: +XVal
+% #3: -Bound
+  \@tempdima#1\relax \divide\@tempdima by 2
+  \@tempdimb#2\relax \advance\@tempdimb - \@tempdima
+  \advance\@tempdima + #2\relax
+  \edef#3{\the\@tempdimb,\the\@tempdima}
+}
+
+%%% MovearoundTree
+\def\@movearoundTree#1#2#3{
+% #1: +Children
+% #2: -MovedChildren
+% #3: -ChildBounds
+  \edef\@SetChild{\@getCar#1}
+  \edef\@RestChildren{\@getCdr#1}
+  \let\@ResultChildren\@empty
+  \let\@ResultBounds\@empty
+  \@movearoundTreeLoop
+  \let#2\@ResultChildren
+  \let#3\@ResultBounds
+}
+\def\@movearoundTreeLoop{
+  \edef\@SetBounds{\@getBounds\@SetChild}
+  \@mergeBounds\@ResultBounds\@SetBounds\@ResultBounds
+  \@tailCons\@SetChild\@ResultChildren\@ResultChildren
+  \ifx\@RestChildren\@empty \let\@movearoundTreeNext\relax
+  \else \edef\@ChildToMove{\@getCar\@RestChildren}
+        \edef\@RestChildren{\@getCdr\@RestChildren}
+        \edef\@BoundsToMove{\@getBounds\@ChildToMove}
+        \@movearound\@BoundsToMove\@ResultBounds\@ChildToMove\@SetChild
+        \let\@movearoundTreeNext\@movearoundTreeLoop\fi
+  \@movearoundTreeNext
+}
+\def\@movearound#1#2#3#4{
+% #1: +LeftBounds
+% #2: +RightBounds
+% #3: +TreeToMove
+% #4: -MovedTree
+  \@calcOuterDistance#1#2\z@\@Distance
+  \@AdjustDimen\@Distance\relax \advance\@AdjustDimen + \internodesep
+  \@adjustValues#3#4
+}
+\def\@calcOuterDistance#1#2#3#4{
+% #1: +LeftBounds
+% #2: +RightBounds
+% #3: +InitDistance
+% #4: -Distance
+  \edef\@LeftBounds{#1}
+  \edef\@RightBounds{#2}
+  \@tempdima#3\relax
+  \@calcOuterDistanceLoop
+  \edef#4{\the\@tempdima}
+}
+\def\@calcOuterDistanceLoop{
+  \ifx\@LeftBounds\@empty \let\@calcOuterDistanceNext\relax
+  \else\ifx\@RightBounds\@empty \let\@calcOuterDistanceNext\relax
+  \else \edef\@LeftBound{\@getCar\@LeftBounds}
+        \edef\@LeftBounds{\@getCdr\@LeftBounds}
+        \edef\@RightBound{\@getCar\@RightBounds}
+        \edef\@RightBounds{\@getCdr\@RightBounds}
+        \@tempdimb\@getRightXVal\@RightBound\relax
+        \advance\@tempdimb - \@getLeftXVal\@LeftBound\relax
+        \ifdim\@tempdimb>\@tempdima \@tempdima\@tempdimb\fi
+        \let\@calcOuterDistanceNext\@calcOuterDistanceLoop\fi\fi
+  \@calcOuterDistanceNext
+}
+
+%%% BlanceTree
+\def\@balanceTree#1#2{
+% #1: +MovedChildren
+% #2: -BalancedChildren
+  \edef\@ResultChildren{#1}
+  \@TreeLevelCounter\@TreeDepth\relax
+  \advance\@TreeLevelCounter - \@TreeDepthCounter
+  \@whilenum\@TreeLevelCounter>\z@\do{
+    \let\@RestChildren\@ResultChildren
+    \let\@ResultChildren\@empty
+    \@balanceTreeLoopA
+    \let\@ListToBalance\@empty
+    \@balanceTreeLoopB
+    \advance\@TreeLevelCounter - 1
+  }
+  \let#2\@ResultChildren
+}
+\def\@balanceTreeLoopA{
+  \ifx\@RestChildren\@empty \let\@balanceTreeNextA\relax
+  \else \edef\@LeftSetChild{\@getCar\@RestChildren}
+        \edef\@RestChildren{\@getCdr\@RestChildren}
+        \edef\@LeftSetBounds{\@getBounds\@LeftSetChild}
+        \@tailCons\@LeftSetChild\@ResultChildren\@ResultChildren
+        \@length\@LeftSetBounds\@LeftDepth
+        \ifnum\@LeftDepth<\@TreeLevelCounter
+              \let\@balanceTreeNextA\@balanceTreeLoopA
+        \else \let\@balanceTreeNextA\relax\fi\fi
+  \@balanceTreeNextA
+}
+\def\@balanceTreeLoopB{
+  \ifx\@RestChildren\@empty
+        \edef\@ResultChildren{\@ResultChildren\@ListToBalance}
+        \let\@balanceTreeNextB\relax
+  \else \edef\@RightSetChild{\@getCar\@RestChildren}
+        \edef\@RestChildren{\@getCdr\@RestChildren}
+        \edef\@RightSetBounds{\@getBounds\@RightSetChild}
+        \@length\@RightSetBounds\@RightDepth
+        \ifnum\@RightDepth<\@TreeLevelCounter
+             \@tailCons\@RightSetChild\@ListToBalance\@ListToBalance
+        \else\ifx\@ListToBalance\@empty\else
+                 \@buildBounds\@ListToBalance\@BoundsToBalance
+                 \@balance\@BoundsToBalance\@LeftSetBounds\@RightSetBounds
+                          \@ListToBalance\@BalancedList
+                 \edef\@ResultChildren{\@ResultChildren\@BalancedList}\fi
+             \@tailCons\@RightSetChild\@ResultChildren\@ResultChildren
+             \let\@LeftSetChild\@RightSetChild
+             \let\@LeftSetBounds\@RightSetBounds
+             \let\@ListToBalance\@empty\fi
+        \let\@balanceTreeNextB\@balanceTreeLoopB\fi
+  \@balanceTreeNextB
+}
+\def\@buildBounds#1#2{
+% #1: +ListOfChild
+% #2: -BuiltBounds
+  \edef\@ListOfChild{#1}
+  \let\@BuiltBounds\@empty
+  \@buildBoundsLoop
+  \let#2\@BuiltBounds
+}
+\def\@buildBoundsLoop{
+  \ifx\@ListOfChild\@empty \let\@buildBoundsNext\relax
+  \else \edef\@RightChild{\@getCar\@ListOfChild}
+        \edef\@ListOfChild{\@getCdr\@ListOfChild}
+        \edef\@RightChildBounds{\@getBounds\@RightChild}
+        \@mergeBounds\@BuiltBounds\@RightChildBounds\@BuiltBounds
+        \let\@buildBoundsNext\@buildBoundsLoop\fi
+  \@buildBoundsNext
+}
+\def\@balance#1#2#3#4#5{
+% #1: +MiddleBounds
+% #2: +LeftBounds
+% #3: +RightBounds
+% #4: +ListToBalance
+% #5: -BalancedList
+  \@calcInnerDistance#2#1\maxdimen\@LeftDistance
+  \@calcInnerDistance#1#3\maxdimen\@RightDistance
+  \@AdjustDimen\@RightDistance\relax
+  \advance\@AdjustDimen - \@LeftDistance\relax
+  \divide\@AdjustDimen by 2
+  \@adjustChildValues#4#5
+}
+\def\@calcInnerDistance#1#2#3#4{
+% #1: +LeftBounds
+% #2: +RightBounds
+% #3: +InitDistance
+% #4: -Distance
+  \edef\@LeftBounds{#1}
+  \edef\@RightBounds{#2}
+  \@tempdima#3\relax
+  \@calcInnerDistanceLoop
+  \edef#4{\the\@tempdima}
+}
+\def\@calcInnerDistanceLoop{
+  \ifx\@LeftBounds\@empty \let\@calcInnerDistanceNext\relax
+  \else\ifx\@RightBounds\@empty \let\@calcInnerDistanceNext\relax
+  \else \edef\@LeftBound{\@getCar\@LeftBounds}
+        \edef\@LeftBounds{\@getCdr\@LeftBounds}
+        \edef\@RightBound{\@getCar\@RightBounds}
+        \edef\@RightBounds{\@getCdr\@RightBounds}
+        \@tempdimb\@getLeftXVal\@RightBound\relax
+        \advance\@tempdimb - \@getRightXVal\@LeftBound\relax
+        \ifdim\@tempdimb<\@tempdima \@tempdima\@tempdimb\fi
+        \let\@calcInnerDistanceNext\@calcInnerDistanceLoop\fi\fi
+  \@calcInnerDistanceNext
+}
+
+\def\@mergeBounds#1#2#3{
+% #1: +LeftBounds
+% #2: +RightBounds
+% #3: -MergedBounds
+  \edef\@LeftBounds{#1}
+  \edef\@RightBounds{#2}
+  \let\@MergedBounds\@empty
+  \@mergeBoundsLoop
+  \let#3\@MergedBounds
+}
+\def\@mergeBoundsLoop{
+  \ifx\@LeftBounds\@empty
+        \edef\@MergedBounds{\@MergedBounds\@RightBounds}
+        \let\@mergeBoundsNext\relax
+  \else\ifx\@RightBounds\@empty
+        \edef\@MergedBounds{\@MergedBounds\@LeftBounds}
+        \let\@mergeBoundsNext\relax
+  \else \edef\@LeftBound{\@getCar\@LeftBounds}
+        \edef\@LeftBounds{\@getCdr\@LeftBounds}
+        \edef\@RightBound{\@getCar\@RightBounds}
+        \edef\@RightBounds{\@getCdr\@RightBounds}
+        \@tailCons{\@getLeftXVal\@LeftBound,\@getRightXVal\@RightBound}
+                  \@MergedBounds
+                  \@MergedBounds
+        \let\@mergeBoundsNext\@mergeBoundsLoop\fi\fi
+  \@mergeBoundsNext
+}
+
+%%% AdjustValues
+\def\@adjustValues#1#2{
+% #1: +Tree
+% #2: -AdjustedTree
+  \edef\@Child{#1}
+  \@adjustChild
+  \let#2\@AdjustedChild
+}
+\def\@adjustChildValues#1#2{
+% #1: +List
+% #2: -AdjustedList
+  \edef\@Children{#1}
+  \@adjustChildren
+  \let#2\@AdjustedChildren
+}
+\def\@adjustChild{
+% +\@Child
+% -\@AdjustedChild
+  \begingroup
+    \edef\@XVal{\@getXVal\@Child}
+    \edef\@YVal{\@getYVal\@Child}
+    \edef\@Bounds{\@getBounds\@Child}
+    \edef\@Children{\@getChildren\@Child}
+    \@adjustXVal\@XVal\@AdjustedXVal
+    \@adjustBounds\@Bounds\@AdjustedBounds
+    \@adjustChildren
+    \xdef\@AdjustedChild
+         {{\@AdjustedXVal}{\@YVal}{\@AdjustedBounds}{\@AdjustedChildren}}
+  \endgroup
+}
+\def\@adjustChildren{
+% +\@Children
+% -\@AdjustedChildren
+  \let\@Rest\@Children
+  \let\@AdjustedChildren\@empty
+  \@tempswatrue
+  \loop
+    \ifx\@Rest\@empty \@tempswafalse
+    \else \edef\@Child{\@getCar\@Rest}
+	  \edef\@Rest{\@getCdr\@Rest}
+	  \@adjustChild
+	  \@tailCons\@AdjustedChild\@AdjustedChildren\@AdjustedChildren\fi
+    \if@tempswa
+  \repeat
+}
+\def\@adjustXVal#1#2{
+% #1: +XVal
+% #2: -AdjustedXVal
+  \@tempdima#1\relax \advance\@tempdima + \@AdjustDimen
+  \edef#2{\the\@tempdima}
+}
+\def\@adjustBounds#1#2{
+% #1: +Bounds
+% #2: -AdjustedBounds
+  \edef\@RestBounds{#1}
+  \let\@ResultBounds\@empty
+  \@tempswatrue
+  \loop
+    \ifx\@RestBounds\@empty \@tempswafalse
+    \else \edef\@Bound{\@getCar\@RestBounds}
+          \edef\@RestBounds{\@getCdr\@RestBounds}
+          \@tempdima\@getLeftXVal\@Bound\relax
+          \advance\@tempdima + \@AdjustDimen
+          \@tempdimb\@getRightXVal\@Bound\relax
+          \advance\@tempdimb + \@AdjustDimen
+          \@tailCons{\the\@tempdima,\the\@tempdimb}
+                    \@ResultBounds
+                    \@ResultBounds\fi
+    \if@tempswa
+  \repeat
+  \let#2\@ResultBounds
+}
+
+%%%%%%%%%%%%%%%%%%%%%
+%%% NormalizeTree %%%
+%%%%%%%%%%%%%%%%%%%%%
+%
+% Data structure of TreeData
+%
+%   <TreeData>   ::= {<TreeWidth>}{<RootXVal>}{<RootYVal>}
+%                                 {<ChildVals>}{<SubTrees>}
+%   <SubTrees>   ::= a list of <TreeData>'s
+%   <TreeWidth>  ::= the width of the tree
+%   <RootXVal>   ::= the x-position of the root node in the tree
+%   <RootYVal>   ::= the y-position of the root node in the tree
+%   <ChildVals>  ::= a list of {<ChildXVal>,<ChildYVal>,<ChildWidth>}'s
+%   <ChildXVal>  ::= the x-position of the root node in each subtree
+%   <ChildYVal>  ::= the y-position of the root node in each subtree
+%   <ChildWidth> ::= the width of the root node in each subtree
+%
+\def\@getTreeWidth#1{\expandafter\do@getTreeWidth#1\@nil}
+\def\@getRootXVal#1{\expandafter\do@getRootXVal#1\@nil}
+\def\@getRootYVal#1{\expandafter\do@getRootYVal#1\@nil}
+\def\@getChildVals#1{\expandafter\do@getChildVals#1\@nil}
+\def\@getSubTrees#1{\expandafter\do@getSubTrees#1\@nil}
+
+\def\do@getTreeWidth#1#2#3#4#5\@nil{#1}
+\def\do@getRootXVal#1#2#3#4#5\@nil{#2}
+\def\do@getRootYVal#1#2#3#4#5\@nil{#3}
+\def\do@getChildVals#1#2#3#4#5\@nil{#4}
+\def\do@getSubTrees#1#2#3#4#5\@nil{#5}
+
+\def\@normalizeTree#1#2#3{
+% #1: +TreeDataX
+% #2: +TreeDataY
+% #3: -TreeData
+  \edef\@Child{#1}
+  \edef\@ChildMaxYVals{#2}
+  \@normalizeChild
+  \let#3\@ChildTreeData
+}
+\def\@normalizeChild{
+% +\@Child
+% +\@ChildMaxYVals
+% -\@ChildTreeData
+% -\@ChildXVal
+% -\@ChildYVal
+% -\@ChildTreeWidth
+  \begingroup
+    \edef\@XVal{\@getXVal\@Child}
+    \edef\@RootYVal{\@getYVal\@Child}
+    \edef\@Bounds{\@getBounds\@Child}
+    \edef\@Children{\@getChildren\@Child}
+    \edef\@YOffset{\@getCar\@ChildMaxYVals}
+    \edef\@ChildMaxYVals{\@getCdr\@ChildMaxYVals}
+    \@calcTreeEdges\@Bounds\@XOffset\@TreeRightXVal
+    \@calcWidth\@XOffset\@TreeRightXVal\@TreeWidth
+    \@normalizeXValue\@XOffset\@XVal\@RootXVal
+    \@normalizeChildren
+    \ifx\@ChildVals\@empty\if@FlatMode
+          \@calcLeafEdges\@Bounds\@ChildLeftXVal\@ChildRightXVal
+    \else \@calcChildEdges\@Bounds\@ChildLeftXVal\@ChildRightXVal\fi
+    \else \@calcChildEdges\@Bounds\@ChildLeftXVal\@ChildRightXVal\fi
+    \@calcWidth\@ChildLeftXVal\@ChildRightXVal\@ChildWidth
+    \ifx\@ChildVals\@empty\if@FlatMode
+          \@lowerLeaf\@ChildMaxYVals\@YOffset\@YVal
+    \else \def\@YVal{0.0pt}\fi
+    \else \def\@YVal{0.0pt}\fi
+    \xdef\@ChildTreeData
+         {{\@TreeWidth}{\@RootXVal}{\@RootYVal}{\@ChildVals}{\@SubTrees}}
+    \global\let\@ChildXVal\@XVal
+    \global\let\@ChildYVal\@YVal
+    \global\let\@ChildTreeWidth\@ChildWidth
+  \endgroup
+}
+\def\@normalizeChildren{
+% +\@XOffset
+% +\@YOffset
+% +\@Children
+% +\@ChildMaxYVals
+% -\@ChildVals
+% -\@SubTrees
+  \let\@RestChildren\@Children
+  \let\@ResultChildVals\@empty
+  \let\@ResultSubTrees\@empty
+  \@tempswatrue
+  \loop
+    \ifx\@RestChildren\@empty \@tempswafalse
+    \else \edef\@Child{\@getCar\@RestChildren}
+          \edef\@RestChildren{\@getCdr\@RestChildren}
+          \@normalizeChild
+          \@normalizeXValue\@XOffset\@ChildXVal\@NormalizedXVal
+          \@normalizeYValue\@YOffset\@ChildYVal\@NormalizedYVal
+          \@tailCons{\@NormalizedXVal,\@NormalizedYVal,\@ChildTreeWidth}
+                    \@ResultChildVals
+                    \@ResultChildVals
+          \@tailCons\@ChildTreeData\@ResultSubTrees\@ResultSubTrees\fi
+    \if@tempswa
+  \repeat
+  \let\@ChildVals\@ResultChildVals
+  \let\@SubTrees\@ResultSubTrees
+}
+\def\@normalizeXValue#1#2#3{
+% #1: +Offset
+% #2: +XValue
+% #3: -NormalizedXValue
+  \@tempdima#2\relax \advance\@tempdima - #1\relax
+  \edef#3{\the\@tempdima}
+}
+\def\@normalizeYValue#1#2#3{
+% #1: +Offset
+% #2: +YValue
+% #3: -NormalizedYValue
+  \@tempdima#2\relax \advance\@tempdima + #1\relax
+  \advance\@tempdima + \@TotalVSep
+  \edef#3{\the\@tempdima}
+}
+\def\@calcWidth#1#2#3{
+% #1: +LeftValue
+% #2: +RightValue
+% #3: -Width
+  \@tempdima#2\relax \advance\@tempdima - #1\relax
+  \edef#3{\the\@tempdima}
+}
+\def\@calcTreeEdges#1#2#3{
+% #1: +Bounds
+% #2: -LeftXVal
+% #3: -RightXVal
+  \edef\@RestBounds{#1}
+  \@tempdima\maxdimen \@tempdimb-\maxdimen
+  \@calcTreeEdgesLoop
+  \edef#2{\the\@tempdima}\edef#3{\the\@tempdimb}
+}
+\def\@calcTreeEdgesLoop{
+  \ifx\@RestBounds\@empty \let\@calcTreeEdgesNext\relax
+  \else \edef\@Bound{\@getCar\@RestBounds}
+        \edef\@RestBounds{\@getCdr\@RestBounds}
+        \edef\@LeftXVal{\@getLeftXVal\@Bound}
+        \edef\@RightXVal{\@getRightXVal\@Bound}
+        \ifdim\@tempdima>\@LeftXVal \@tempdima\@LeftXVal\relax\fi
+        \ifdim\@tempdimb<\@RightXVal \@tempdimb\@RightXVal\relax\fi
+        \let\@calcTreeEdgesNext\@calcTreeEdgesLoop\fi
+  \@calcTreeEdgesNext
+}
+\def\@calcChildEdges#1#2#3{
+% #1: +Bounds
+% #2: -LeftXVal
+% #3: -RightXVal
+  \edef\@Bound{\@getCar#1}
+  \edef#2{\@getLeftXVal\@Bound}
+  \edef#3{\@getRightXVal\@Bound}
+}
+\def\@calcLeafEdges#1#2#3{
+% #1: +Bounds
+% #2: -LeftXVal
+% #3: -RightXVal
+  \edef\@Bound{\@getRightmost#1}
+  \edef#2{\@getLeftXVal\@Bound}
+  \edef#3{\@getRightXVal\@Bound}
+}
+\def\@lowerLeaf#1#2#3{
+% #1: +ChildYVals
+% #2: +YValOrig
+% #3: -NewYVal
+  \edef\@RestChildYVals{#1}
+  \edef\@ResultYVal{\z@}
+  \edef\@Offset{#2}
+  \@lowerLeafLoop
+  \let#3\@ResultYVal
+}
+\def\@lowerLeafLoop{
+  \ifx\@RestChildYVals\@empty \let\@lowerLeafNext\relax
+  \else \edef\@ChildYVal{\@getCar\@RestChildYVals}
+        \edef\@RestChildYVals{\@getCdr\@RestChildYVals}
+        \@normalizeYValue\@Offset\@ResultYVal\@ResultYVal
+        \let\@Offset\@ChildYVal
+        \let\@lowerLeafNext\@lowerLeafLoop\fi
+  \@lowerLeafNext
+}
+
+%%%%%%%%%%%%%%%%%%%
+%%% DisplayTree %%%
+%%%%%%%%%%%%%%%%%%%
+%
+%          ___          Node ~~~~~~~~~~~~~ (\@PicRootX,0)
+%  \nodesep |     
+%          ~|~           /\  ~~~~~~~~~~~~~ (\@PicRootX,\@PicUpEdgeY)
+%           |           /  \
+%  \branchlength       /    \ Label ------ (\@PicLabelX,\@PicLabelY)
+%           |         /      \
+%          _|_       /        \ __________ (\@PicChildX,\@PicDownEdgeY)
+%  \nodesep |       
+%          ~~~ LeftChild    RightChild ~~~ (\@PicChildX,\@PicChildY)
+%                       |--|
+%                  \internodesep
+%
+\def\@getNodeID#1{\expandafter\do@getNodeID#1\@nil}
+\def\@getChildIDs#1{\expandafter\do@getChildIDs#1\@nil}
+
+\def\do@getNodeID#1#2\@nil{#1}
+\def\do@getChildIDs#1#2\@nil{#2}
+
+\def\@getChildXVal#1{\expandafter\do@getChildXVal#1\@nil}
+\def\@getChildYVal#1{\expandafter\do@getChildYVal#1\@nil}
+\def\@getChildWidth#1{\expandafter\do@getChildWidth#1\@nil}
+
+\def\do@getChildXVal#1,#2,#3\@nil{#1}
+\def\do@getChildYVal#1,#2,#3\@nil{#2}
+\def\do@getChildWidth#1,#2,#3\@nil{#3}
+
+\def\@displayTree#1#2#3{
+% #1: +TreeBox
+% #2: +TreeID
+% #3: +TreeData
+  \edef\@Offset{\@getRootXVal#3}
+  \setbox\@tempboxa\box#1
+  \edef\@ChildID{#2}
+  \edef\@SubTree{#3}
+  \@arrangeTree
+  \leavevmode
+  \hbox{\hskip\@Offset\box\@TreeBox\hskip-\@Offset}
+}
+\def\@arrangeTree{
+% +\@tempboxa
+% +\@ChildID
+% +\@SubTree
+% -\@TreeBox
+  \setbox\@TreeBox\vtop{
+    \edef\@ChildIDs{\@getChildIDs\@ChildID}
+    \edef\@TreeWidth{\@getTreeWidth\@SubTree}
+    \edef\@RootXVal{\@getRootXVal\@SubTree}
+    \edef\@RootYVal{\@getRootYVal\@SubTree}
+    \edef\@ChildVals{\@getChildVals\@SubTree}
+    \edef\@SubTrees{\@getSubTrees\@SubTree}
+    \hbox to \@TreeWidth{
+      \hskip -\@RootXVal
+      \hbox{
+        \edef\@PicRootX{\@EvalDim\@RootXVal}
+        \@tempdima\@RootYVal\relax \advance\@tempdima + \nodesep
+        \edef\@PicUpEdgeY{-\@EvalDim{\the\@tempdima}}
+        \@arrangeSubTrees
+        \put(\@PicRootX,0){\hbox to \z@{\hss\box\@tempboxa\hss}}
+        \put(0,0){\box\@ChildBoxes}
+      }
+      \hss
+    }
+  }
+}
+\def\@arrangeSubTrees{
+% +\@tempboxa
+% +\@ChildIDs
+% +\@ChildVals
+% +\@SubTrees
+% +\@PicRootX
+% +\@PicUpEdgeY
+% -\@tempboxa
+% -\@ChildBoxes
+  \let\@RestChildIDs\@ChildIDs
+  \let\@RestChildVals\@ChildVals
+  \let\@RestSubTrees\@SubTrees
+  \setbox\@ChildBoxes\null
+  \unhbox\@tempboxa
+  \loop
+    \setbox\@tempboxa\lastbox
+    \ifhbox\@tempboxa
+      \edef\@ChildID{\@getCar\@RestChildIDs}
+      \edef\@RestChildIDs{\@getCdr\@RestChildIDs}
+      \edef\@ChildVal{\@getCar\@RestChildVals}
+      \edef\@RestChildVals{\@getCdr\@RestChildVals}
+      \edef\@SubTree{\@getCar\@RestSubTrees}
+      \edef\@RestSubTrees{\@getCdr\@RestSubTrees}
+      \edef\@NodeID{\@getNodeID\@ChildID}
+      \edef\@ChildXVal{\@getChildXVal\@ChildVal}
+      \edef\@ChildYVal{\@getChildYVal\@ChildVal}
+      \edef\@ChildWidth{\@getChildWidth\@ChildVal}
+      \edef\@PicChildX{\@EvalDim\@ChildXVal}
+      \edef\@PicChildY{-\@EvalDim\@ChildYVal}
+      \@tempdima\@ChildYVal \advance\@tempdima - \nodesep
+      \edef\@PicDownEdgeY{-\@EvalDim{\the\@tempdima}}
+      \@arrangeTree
+      \@tailConsBox{\@nameuse{Branch@\romannumeral\@NodeID}
+                             (\@PicRootX,\@PicUpEdgeY)
+                             (\@PicChildX,\@PicDownEdgeY)
+                    \@drawLabel(\@PicRootX,\@PicUpEdgeY)
+                               (\@PicChildX,\@PicDownEdgeY)
+                               {\@nameuse{Label@\romannumeral\@NodeID}}
+                    \put(\@PicChildX,\@PicChildY){\box\@TreeBox}}
+                   \@ChildBoxes
+                   \@ChildBoxes
+  \repeat
+}
+\def\@drawLabel(#1,#2)(#3,#4)#5{
+% #1: +PicX1
+% #2: +PicY1
+% #3: +PicX2
+% #4: +PicY2
+% #5: +Label
+  \@average{#1}{#3}\@PicLabelX
+  \@average{#2}{#4}\@PicLabelY
+  \put(\@PicLabelX,\@PicLabelY){#5}
+}
+\def\@average#1#2#3{
+% #1: +Pic1
+% #2: +Pic2
+% #3: -Average
+  \@tempdima#1\p@ \advance\@tempdima + #2\p@
+  \divide\@tempdima by 2
+  \edef#3{\@EvalDim{\the\@tempdima}}
+}
+
+\def\drawtriangle(#1,#2)(#3,#4){
+% #1: +PicX1
+% #2: +PicY1
+% #3: +PicX2
+% #4: +PicY2
+  \@tempdima\@ChildWidth\relax \divide\@tempdima by 2
+  \@tempdimb#3\p@ \advance\@tempdimb - \@tempdima
+  \advance\@tempdima + #3\p@
+  \edef\@PicLeft{\@EvalDim{\the\@tempdimb}}
+  \edef\@PicRight{\@EvalDim{\the\@tempdima}}
+  \path(#1,#2)(\@PicLeft,#4)(\@PicRight,#4)(#1,#2)
+}
+
+% \@EvalDim is from a TeX macro ``ecltree.sty''
+% written by Hideki Isozaki at NTT Corp.
+\def\@EvalDim#1{\expandafter\@doEvalDim#1}
+
+{\catcode`\p=12 \catcode`\t=12
+\gdef\@doEvalDim#1pt{#1}}
+
+%%%%%%%%%%%%%%
+%%% Arrows %%%
+%%%%%%%%%%%%%%
+% an extension to the arrow macros defined in eclarith.sty
+%
+\def\ArrowHeadSize{5}
+
+\def\UpArrow#1(#2,#3)(#4,#5){
+  #1(#4,#5)(#2,#3)\relax
+  \ArrowHead(#4,#5)(#2,#3)\ignorespaces
+}
+\def\DownArrow#1(#2,#3)(#4,#5){
+  #1(#2,#3)(#4,#5)\relax
+  \ArrowHead(#2,#3)(#4,#5)\ignorespaces
+}
+\def\UpDownArrow#1(#2,#3)(#4,#5){
+  #1(#2,#3)(#4,#5)\relax
+  \ArrowHead(#2,#3)(#4,#5)\ArrowHead(#4,#5)(#2,#3)\ignorespaces
+}
+
+% Restore End Of Line
+\endlinechar = \save@endlinechar\relax
+
+%\endinput

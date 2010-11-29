@@ -1,0 +1,40 @@
+\documentclass{jarticle}
+\usepackage{emathN}
+
+\begin{document}
+\fbox{%
+\begin{caprm}
+\begin{nagarezu}(20zw,25zh)(6zw,0zh)
+	\termbox{始め}
+	\downto
+	\iobox{A, Bを入力}
+	\downto[loop0]
+	\opbox{R $\longleftarrow$ A $\div$ B の余り}
+	\downto
+	\begin{ifbox}<2><2>{$R>0$}
+		\begin{migibunki}
+			\rightto<n>(5zw)"""$R>0$"
+			\upto(1zw)
+			\opbox{
+				\begin{minipage}{4zw}
+					\vspace{-\baselineskip}
+					\begin{align*}
+						A &\longleftarrow B\\
+						B &\longleftarrow R
+					\end{align*}
+				\end{minipage}}
+			\upto<n>`loop0'
+			\leftto`loop0'
+		\end{migibunki}
+		\begin{sitabunki}
+			\downto"$R=0$"
+			\iobox{B を表示}
+			\downto
+			\termbox{終わり}
+		\end{sitabunki}
+	\end{ifbox}
+\end{nagarezu}
+\end{caprm}
+}
+
+\end{document}

@@ -1,0 +1,138 @@
+\section{作表}
+この節の環境，コマンド類は \textsf{emathT.sty} で定義されています。
+したがって，プリアンブルで
+\begin{jquote}
+  \verb/\usepackage{emathT}/
+\end{jquote}
+を宣言しておく必要があります．
+
+\subsection{列幅指定}
+表を作成するには，\textsf{tabular}環境，\textsf{array}環境があります．
+これらの環境で作成される表の列幅は，列の中に置かれる内容によって
+自動的に定まります．
+
+\showexample[表の幅](1)(.9){example/hyou00}
+
+これは便利ですが，ときには列幅を指定したいことも
+あります．
+欄指定子 l/c/r を発展させて L/C/R を用意しました．
+これらは，列の幅を引数に取ります．
+その一例です．
+
+\showexample[列幅一定の表](1)(.9){example/hyou01}
+
+\subsection{表の罫線を太く}
+\subsubsection{\cmd{arrayrulewidth}}
+表の罫線全部を太くするのは，\LaTeX で用意されている
+\cmd{arrayrulewidth}の値を変更することで実現できます。
+
+\begin{showEx}{\cmd{arrayrulewidth}の変更}
+\arrayrulewidth1pt\relax
+\begin{tabular}{|c|c|c|c|}\hline
+  A & B & C & D \\\hline
+  1 & 2 & 3 & 4 \\\hline
+  a & b & c & d \\\hline
+\end{tabular}
+\end{showEx}
+
+\subsubsection{外枠のみを太く}
+外枠だけを太くしたい，など一部の罫線を太くするには，
+面倒な手順を踏まねばなりませんので，マクロ化することにしました。
+
+横罫線を太くするために
+\begin{jquote}
+\begin{verbatim}
+\hline, \cline
+\end{verbatim}
+\end{jquote}
+にかえて，それぞれ
+\begin{jquote}
+\begin{verbatim}
+\hlineb, \clineb
+\end{verbatim}
+\end{jquote}
+を新設しました。これらの罫線の太さは\cmd{arrarulewidthb}で指定します。
+デフォルトは\verb+1pt+としてあります。
+縦罫線を太くする位置には
+\begin{jquote}
+\begin{verbatim}
+|
+\end{verbatim}
+\end{jquote}
+にかえて
+\begin{jquote}
+\begin{verbatim}
+I
+\end{verbatim}
+\end{jquote}
+を用います。
+
+では，これらを用いて外枠だけを太くしてみましょう。
+
+\begin{showEx}(.5,.44){外枠を太く}
+\begin{tabular}{Ic|c|c|cI}\hlineb
+  A & B & C & D \\\hline
+  1 & 2 & 3 & 4 \\\hline
+  a & b & c & d \\\hlineb
+\end{tabular}
+\end{showEx}
+
+\subsubsection{二重罫線との併用}
+さらに，見出し行・列と表の内容との境界を二重線にすることもできます。
+この部分は\textsf{hhline.sty}の一部を修正しています。
+なお，\textsf{emathT.sty}はその中で，\textsf{array.sty}と
+\textsf{hhline.sty}を読み込んでいます。
+
+\begin{showEx}(.5,.44){二重罫線も}
+\begin{tabular}{Ic||c|c|cI}\hlineb
+  A & B & C & D \\\hhline{I=#=|=|=I}
+  1 & 2 & 3 & 4 \\\hline
+  a & b & c & d \\\hlineb
+\end{tabular}
+\end{showEx}
+
+\subsubsection{太罫線の太さ}
+太罫線の太さは\cmd{arrayrulewidthb}で決まりますから，もっと太くしたければ
+
+\begin{showEx}(.5,.44){\cmd{arrayrulewidthb}}
+\arrayrulewidthb=2pt\relax
+\begin{tabular}{Ic||c|c|cI}\hlineb
+  A & B & C & D \\\hhline{I=#=|=|=I}
+  1 & 2 & 3 & 4 \\\hline
+  a & b & c & d \\\hlineb
+\end{tabular}
+\end{showEx}
+
+\subsubsection{特定のブロック枠を太く}
+
+\begin{showEx}(.5,.44){一部分を太罫線で}
+\begin{tabular}{|c|c|c|c|}\hlineb
+  A & B & C & D \\\hline
+  \noalign{\vskip-\arrayrulewidth}
+  \clineb{2-3}
+  \multicolumn{1}{|cI}{1}
+    & \multicolumn{1}{c|}{2}
+    & \multicolumn{1}{cI}{3}
+    & 4 \\
+  \noalign{\vskip-\arrayrulewidthb
+  \vskip\arrayrulewidth}
+  \clineb{2-3}
+  \noalign{\vskip\arrayrulewidthb
+  \vskip-\arrayrulewidth}\hline
+  a & b & c & d \\\hlineb
+\end{tabular}
+\end{showEx}
+
+\subsection{罫線を点線で}
+罫線を点線で引くには，\textsf{arydshln.sty}を用いることが出来ます。
+しかし，このスタイルファイルは\textsf{hhline.sty}と相性が悪いので，
+\textsf{emathT.sty}との併用については，
+emathWiki の arydshln-LO-T なるページをご覧ください。
+
+\subsection{カラムに斜線}
+また，この環境内では，\cmd{emTsya} コマンドで欄に斜線を引くことができます．
+
+\showexample[カラムに斜線](1)(.9){example/sya01}
+
+詳しくは emathWiki の emTsya なるページをご覧ください。
+

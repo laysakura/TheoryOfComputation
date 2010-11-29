@@ -1,0 +1,56 @@
+% 年度 1999
+% 出題 0069 九州大学
+% 検索キーワード  プログラミング
+% 科目 数Ｂ
+
+\documentclass[fleqn]{jarticle}
+\usepackage{emath}
+%\usepackage[debug]{emathA}
+\pagestyle{empty}
+
+\begin{document}
+次の(1)，(2)では，それぞれ，その目的を実行するためのBASICによる
+プログラムの始めの部分が与えられている．方針を記述してから，
+プログラムの残りの部分を完成せよ．ただし，変数A(1)，A(2)等には座標
+$a_1$，$a_2$等が入力されるものとする．
+
+\begin{description}
+\item[注意：] (1)のブログラムでは配列を表すためにDIM文を使っているが，
+  DIM文を使わないブログラムを作成してもよい．
+  そのときは，行番号10の文は消去し，行番号20，30の文は
+    \begin{jquote}
+    \begin{verbatim}
+20 INPUT Al，A2
+30 INPUT Pl，P2
+    \end{verbatim}
+    \end{jquote}
+で置き換えるものとする．(2)についても，同様である．
+\end{description}
+\begin{enumerate}[(1)]
+  \item 座標平面上の原点Oと異なる点A$(a_1，a_2)$について，
+    任意の点P$(p_1，p_2)$から直線OAへの距離を表示すること．
+    \begin{jquote}
+    \begin{verbatim}
+10 DIM A(2)，P(2)
+2O INPUT A(1)，A(2)
+30 INPUT P(1)，P(2)
+    \end{verbatim}
+    \end{jquote}
+  \item 点A$(a_1，a_2)$，B$(b_l，b_2)$を座標平面上の相異なる点とし，
+    直線ABで平面を二分する．点P$(p_1，p_2)$，Q$(q_1，q_2)$が
+    この直線の同じ側にあるときは1を，異なる側にあるときは$-1$を，
+    P，Qの少なくとも一方がこの直線上にあるときは0を表示すること．
+    ただし，ある点と直線との距離が，与えられた正数0.00001より
+    小さいときはその点は直線上にあるとみなすことにする．
+    \begin{jquote}
+    \begin{verbatim}
+10 DIM A(2)，B(2)，P(2)，Q(2)
+20 EPS=0.00001
+3O INPUT A(1)，A(2)
+40 INPUT B(1)，B(2)
+5O INPUT P(1)，P(2)
+60 INPUT Q(1)，Q(2)
+    \end{verbatim}
+    \end{jquote}
+\end{enumerate}
+\end{document}

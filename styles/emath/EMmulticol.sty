@@ -1,0 +1,146 @@
+% EMmulticol.sty  by tDB (emath@nifty.com)
+%
+\ProvidesPackage{EMmulticol}[2008/03/31 v0.02]%
+%
+\RequirePackage{multicol}
+%
+\def\EM@mc@gap{5pt}%
+\edef\EM@mc@iro@{\empty}%
+%
+\let\org@page@sofar\page@sofar
+\def\page@sofar{%
+   \process@cols\mult@rightbox
+       {\ifvoid\count@
+          \setbox\count@\hbox to\hsize{}%
+        \else
+          \wd\count@\hsize
+        \fi}%
+   \count@\col@number \advance\count@\m@ne
+   \mult@info\z@
+    {Column spec: \the\full@width\space = indent
+                  + columns + sep =\MessageBreak
+        \the\multicol@leftmargin\space
+        + \the\col@number\space
+        x \the\hsize\space
+        + \the\count@\space
+        x \the\columnsep
+     }%
+\ifvmode\else\errmessage{Multicol Error}\fi
+   \nointerlineskip
+   \setbox\z@\hbox{p}\global\dimen\tw@\dp\z@
+   \moveright\multicol@leftmargin
+    \hbox to\full@width{%
+     \process@cols\mult@gfirstbox{%
+       \ifdim\dp\count@>\dimen\tw@
+         \global\dimen\tw@\dp\count@ \fi
+\@tempdima=\ht\count@
+\advance\@tempdima\dp\count@
+\edef\EMmc@tmp{\the\@tempdima}%
+\edef\EMmc@tmp@{\the\dp\count@}%
+       \box\count@
+       \hss{\normalcolor
+          \ifx\empty\EM@mc@iro@\else\color{\EM@mc@iro@}\fi
+          \ifx\empty\EM@mc@gap
+            \vrule\@width\columnseprule
+          \else
+            \ifx\empty\EM@mc@l
+              \lower\EMmc@tmp@\vbox to\EMmc@tmp{%
+                \leaders \vbox to\EM@mc@gap{\vss\hbox{.}\vss}\vfil}%
+            \else
+              \lower\EMmc@tmp@\vbox to\EMmc@tmp{%
+                \leaders \vbox to\EM@mc@gap{\vss\hbox{\rule{\columnseprule}{\EM@mc@l}}\vss}\vfil}%
+            \fi
+          \fi
+       }\hss}%
+     \ifdim\dp\mult@rightbox>\dimen\tw@
+       \global\dimen\tw@\dp\mult@rightbox \fi
+     \box\mult@rightbox
+     \rlap{\phantom p}%
+    }%
+ \kern-\dimen\tw@
+ \ifdim\dimen\tw@ = \mc@gridwarn
+   \PackageWarning{multicol}%
+     {Very deep columns!\MessageBreak
+      Grid alignment might be broken}%
+ \fi
+}
+%
+\let\EM@page@sofar\page@sofar
+\edef\EM@mc@gap{\empty}%
+\edef\EM@mc@l{\empty}%
+%
+\def\EMmulticolruledash#1{%
+  \edef\EM@mc@l{\empty}%
+  \Strsep{#1}{,}\EMmc@a\EMmc@b
+  \ifx\empty\EMmc@b
+    \edef\EM@mc@l{\empty}%
+    \ifdim\EMmc@a=\z@
+      \edef\EM@mc@gap{\empty}%
+    \else
+      \edef\EM@mc@gap{\EMmc@a}%
+    \fi
+  \else
+    \ifdim\EMmc@a=\z@
+      \edef\EM@mc@gap{\EMmc@b}%
+    \else
+      \ifdim\columnseprule=\z@\columnseprule=.4pt\relax\fi
+      \edef\EM@mc@l{\EMmc@a}%
+      \@tempdima\EMmc@a\advance\@tempdima\EMmc@b
+      \edef\EM@mc@gap{\the\@tempdima}%
+    \fi
+  \fi
+}%
+%\def\EMmulticolrule{\@ifnextchar[{\@EMmulticolrule}{\@EMmulticolrule[\empty]}}%
+%\def\@EMmulticolrule[#1]#2{%
+%  \edef\EM@mc@l{#1}%
+%  \ifdim #2<\z@
+%    \ifx\empty #1\else\ifdim\columnseprule=\z@\columnseprule=.4pt\relax\fi\fi
+%    \let\page@sofar\EM@page@sofar\@tempdima=#2\relax\@tempdima=-\@tempdima
+%    \edef\EM@mc@gap{\the\@tempdima}%
+%  \else
+%    \edef\EM@mc@gap{\empty}%
+%    \let\page@sofar\org@page@sofar\columnseprule=#2\relax
+%  \fi}
+%\let\multicolrule\EMmulticolrule
+%
+\define@key{EMcol}{linethickness}{\setlength\columnseprule{#1}}%
+\define@key{EMcol}{iro}{%
+  \ifdim\columnseprule=\z@\columnseprule=.4pt\relax\fi
+  \edef\EM@mc@iro@{#1}}%
+\define@key{EMcol}{dotgap}{\EMmulticolruledash{0pt,#1}}%
+\define@key{EMcol}{dash}{\EMmulticolruledash{#1}}%
+%
+\def\EMmulticols{\@ifnextchar<{\@EMmulticols}{\@@EMmulticols}}%
+\def\@@EMmulticols#1{\begin{multicols}{#1}}%
+\def\@EMmulticols<#1>#2{%
+%  \edef\EM@mc@iro@{\empty}%
+  \setkeys{EMcol}{#1}%
+  \begin{multicols}{#2}}%
+\def\endEMmulticols{\end{multicols}}%
+%
+\expandafter\def\csname EMmulticols*\endcsname{\@ifnextchar<{\EMmulticols@}{\EMmulticols@@}}%
+\def\EMmulticols@@#1{\begin{multicols*}{#1}}%
+\def\EMmulticols@<#1>#2{%
+  \setkeys{EMcol}{#1}%
+  \begin{multicols*}{#2}}%
+\expandafter\def\csname endEMmulticols*\endcsname{\end{multicols*}}%
+\endinput
+%
+\documentclass{jarticle}
+\usepackage{emath}
+\usepackage{EMmulticol}
+
+\begin{document}
+\repeatstr{あ}{100}
+%\columnseprule=.4pt\relax
+%\multicolrule[1.5pt]{-3pt}
+\multicolrule{-3pt}
+\begin{multicols}{2}
+\repeatstr{い}{100}
+\end{multicols}
+\repeatstr{う}{100}
+\end{document}
+%
+v 0.00 2008/03/08
+v 0.01 2008/03/24 EMtwocolumn.sty と同期をとる
+v 0.02 2008/03/31 multicols*環境に対応

@@ -1,0 +1,150 @@
+\documentclass[a4j]{jarticle}
+\usepackage{graphicx,color}
+\usepackage{hakoMS}
+\usepackage{showexample}
+
+\begin{document}
+\title{マークシート作成マクロ\\
+hakoMS.sty {\normalsize ver.0.03}\\使用例}%
+\author{tDB}%
+\date{2004/09/03}%
+
+\maketitle\thispagestyle{empty}%
+\begin{abstract}%
+マークシートを作成するためのマクロです．
+emathPh パッケージの使用を前提とします．
+
+このマクロ集のマクロについてのご質問，バグ報告，修正・追加の提案等は
+emath のサポートページ（現時点では
+\begin{center}
+    http://emath.s40.xrea.com/
+\end{center}
+）の掲示板でご発言ください．
+\end{abstract}
+\pagebreak
+\pagenumbering{roman}%
+
+\tableofcontents
+
+\pagebreak
+
+\pagenumbering{arabic}
+
+\section{基本的用法}
+\cmd{EMmarksheet}コマンドの必須の引数は
+\begin{jquote}
+\begin{verbatim}
+#1 : 行数
+#2 : 記号配列（コンマ区切り）
+\end{verbatim}
+\end{jquote}
+の2つです。
+
+\begin{showEx}(.9,.9){\cmd{EMmarksheet}}
+\EMmarksheet{5}{$-$,0,1,2,3,4,5,6,7,8,9,s,t}
+\end{showEx}
+
+\section{配点表示}
+配点を表示するときは，\verb+[...]+オプションで与えます。
+
+\begin{showEx}(.9,.95){配点表示}
+\EMmarksheet%
+  [2,,4,,4]%
+  {5}{$-$,0,1,2,3,4,5,6,7,8,9,a,b,c}
+\end{showEx}
+\newpage
+
+\section{正答表示}
+正答を黒く塗りつぶすには，\verb+'....'+オプションを用います。
+
+\begin{showEx}(.9,.95){正答表示}
+\def\arraystretch{1.2}%
+\scalebox{.9}{%
+  \EMmarksheet%
+    [,6,,,2,,2]%
+    '$-$,4,$\pm$,5,s,6,t'%
+    {7}{$-$,$\pm$,0,1,2,3,4,5,6,7,8,9,s,t}
+}%
+\end{showEx}
+
+ここでは
+\begin{jquote}
+\begin{verbatim}
+\scalebox{.9}{%
+\end{verbatim}
+\end{jquote}
+を用いて，縮小しています。
+\textsf{hakoMS.sty}は，\textsf{emathPh.sty}を読み込みますから，
+グラフィック関係のコマンドは自由に用いることができます。
+
+また，この表は\textsf{tabular}環境を用いて実現していますから，
+\begin{jquote}
+\begin{verbatim}
+\def\arraystretch{1.2}%
+\end{verbatim}
+\end{jquote}
+などとして，行間を調整することも可能です。
+\newpage
+
+\section{欄記号の変更}
+欄の名称は，デフォルトでは
+\begin{jquote}
+ア，イ，ウ，．．．．．
+\end{jquote}
+と進行しますが，これを変更するには，
+\textsf{hako.sty}で定義されたコマンド\cmd{hakomozisyu}を用います。
+
+\begin{showEx}(.9,.95){欄記号の変更}
+\hakomozisyu{\inhibitglue（あ）}
+\EMmarksheet%
+  [2,,4,,4]%
+  {5}{$-$,0,1,2,3,4,5,6,7,8,9,a,b,c}
+\end{showEx}
+
+\section{欄記号書体の変更}
+欄記号の書体を変更するには，
+\textsf{hako.sty}で定義されたコマンド\cmd{hokosyotai}を用います。
+
+\begin{showEx}(.9,.95){欄記号書体の変更}
+\hakomozisyu{(1)}
+\hakosyotai{\sffamily}
+\EMmarksheet%
+  [2,,4,,4]%
+  {5}{$-$,0,1,2,3,4,5,6,7,8,9,a,b,c}
+\end{showEx}
+\newpage
+
+\section{欄記号初期値の変更}
+マークシートを作成する際，欄記号を`ア'からではなく，
+途中`タ'から始める機能を附加しました。
+
+\cmd{EMmarksheet}に，\verb+<syokiti=15>+などと，オプションで指定します。
+
+\begin{showEx}(.9,.9){\texttt{<syokiti=15>}オプション}
+\EMmarksheet<syokiti=15>{13}{$-$,0,1,2,3,4,5,6,7,8,9,s,t}
+\end{showEx}
+\clearpage
+
+\section{書式}
+\cmd{EMmarksheet}の書式です。
+
+\begin{boxnote}
+\begin{verbatim}
+\EMmarksheet<#1>[#2]'#3'#4#5
+  #1 : key=val の形式
+         syokiti=.. : 初期値の変更
+  #2 : 配点をコンマ区切りで与えます。
+       いくつかの行をセットとする場合は，
+           最終行に配点を記述し，
+           他の行には空文字列を与えておきます。
+  #3 : 正答をコンマ区切りで与えます。
+       後述の #5 に与えるものと同一でなければなりません。
+  #4 : 行数
+  #5 : 記号配列をコンマ区切りで与えます。
+       数式モードにするときは $....$ で挟みます。
+次の場合は，エラーとなります。
+  (1) #2 で与えられた個数と行数が一致しない場合。
+  (2) #3 で与えられた個数と行数が一致しない場合。
+\end{verbatim}
+\end{boxnote}
+\end{document}

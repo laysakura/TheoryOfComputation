@@ -1,0 +1,38 @@
+\documentclass{jarticle}
+\usepackage{emathB}
+\usepackage{showexample}
+
+\begin{document}
+分数 \texttt{67/555} を小数展開すると \texttt{0.1207207207...} と
+循環小数になります．\textsf{emathB.sty} では，循環小数は
+循環節を\texttt{(...)} でくくって表現します．この例では
+\texttt{0.1(207)}と表すこととなります．
+分数形式を循環小数形式に変換するマクロが
+\verb/\FtoZ/ です．
+
+\begin{showEx}{\cmd{FtoZ}}
+\FtoZ{67/555}\tmp
+\tmp
+\end{showEx}
+
+この結果を通常の表現形式にするのが \cmd{prZ} です．
+
+\begin{showEx}{\cmd{prZ}}
+\FtoZ{67/555}\tmp
+$\prZ\tmp$
+\end{showEx}
+
+逆に循環小数形式を分数形式に変換するコマンドが \cmd{ZtoF} です．
+
+\begin{showEx}{\cmd{ZtoF}}
+\ZtoF{0.1(207)}\tmp
+\tmp
+\end{showEx}
+
+この分数形式を通常の表現形式にするのが \cmd{prF} です．
+
+\begin{showEx}{\cmd{prF}}
+\ZtoF{0.1(207)}\tmp
+$\prF\tmp$
+\end{showEx}
+\end{document}

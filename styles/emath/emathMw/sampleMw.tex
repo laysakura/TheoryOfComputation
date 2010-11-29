@@ -1,0 +1,611 @@
+\documentclass{jarticle}
+\usepackage{emathMw}
+%
+%\usepackage[dvipdfm,bookmarks=true,bookmarksnumbered=true]{hyperref}
+%\AtBeginDvi{\special{pdf:tounicode 90ms-RKSJ-UCS2}} %SJISの場合
+%
+%\usepackage[dvips]{hyperref}
+%dvipsk -Ppdf -z -o -f samplepp |bkmk2uni -e >samplepp.ps
+%
+
+\title{\textsf{emathMw.sty} \\{\normalsize v 0.13}\\
+使用例}
+\author{tDB}
+\date{2005/09/03}
+
+\begin{document}
+\maketitle\thispagestyle{empty}
+\begin{abstract}%
+\parindent1zw%
+テキストを図の周りに回りこませるには, \verb/wrapfigure/ 環境があります。
+しかし，これは \verb/list/ 環境と相性が悪いのが難点です。
+
+そこで，\verb/list/環境と共存できる\verb/mawarikomi/環境を
+作ってみました。
+
+このマクロ集のマクロについてのご質問，バグ報告，修正・追加の提案等は
+\begin{center}
+http://emath.s40.xrea.com/
+\end{center}
+の掲示板へどうぞ。
+\end{abstract}
+\pagebreak
+\pagenumbering{roman}%
+
+\tableofcontents
+
+\listoffigures
+
+\listoftables
+
+\pagebreak
+\pagenumbering{arabic}
+\section{\texttt{mawarikomi} 環境}
+\verb/enumerate/ 環境など \verb/list/ 環境と併用して，
+テキストを図のまわりに回り込ませる
+\verb/mawarikomi/ 環境の使用法は
+
+\begin{verbatim}
+    \begin{enumerate}
+      \item
+        \begin{mararikomi}{図の横幅}{図}
+          テキスト
+        \end{mawarikomi}
+      \item .....
+      \item .....
+      ...........
+    \end{enumerate}
+\end{verbatim}
+となります。
+
+\medskip
+\begin{enumerate}
+\item
+\begin{mawarikomi}{50pt}{%
+    \begin{picture}(50,50)
+      \put(0,0){\framebox(50,50){図}}
+    \end{picture}}
+  ああああああああああああああああああああああああああああ
+  ああああああああああああああああああああああああああああ
+  ああああああああああああああああああああああああああああ
+  ああああああああああああああああああああああああああああ
+  ああああああああああああああああああああああああああああ
+  ああああああああああああああああああああああああああああ
+  ああああああああああああああああああああああああああああ
+  ああああああああああああああああああああああああああああ
+  ああああああああああああああああああああああああああああ
+  ああああああああああああああああああああああああああああ
+\end{mawarikomi}
+\item いいいいいいいいいいいいいいいいいいいいいいいいい
+  いいいいいいいいいいいいいいいいいいいいいいいいいいいい
+\end{enumerate}
+\clearpage
+
+
+図が大きくて複数の問題で回り込みを行わせるには，
+
+\begin{verbatim}
+    \begin{enumerate}
+      \item
+        \begin{mawarikomi}{図の横幅}{図}
+          第1問
+        \end{mawarikomi}
+      \item 
+        \begin{mawarikomi*}
+          第2問
+        \end{mawarikomi*}
+      \item 
+        \begin{mawarikomi*}
+          第3問
+        \end{mawarikomi*}
+      \item 第4問
+      ...........
+    \end{enumerate}
+\end{verbatim}
+と回り込みが続く問題をを \verb/mawarikomi*/ 環境でくるみます。
+
+\begin{enumerate}
+  \item\label{hukusuumon}
+    \begin{mawarikomi}{50pt}{%
+      \begin{picture}(50,150)
+        \put(0,0){\framebox(50,150){図}}
+      \end{picture}}
+      ああああああああああああああああああああああああああああ
+      $\displaystyle\frac{\sqrt3}{2}$
+    \end{mawarikomi}
+  \item 
+    \begin{mawarikomi*}
+      いいいいいいいいいいいいいいいいいいいいいいいいい
+      いいいいいいいいいいいいいいいいいいいいいいいいいいいい
+    \end{mawarikomi*}
+  \item 
+    \begin{mawarikomi*}
+      ううううううううううううううううううううううううう
+      うううううううううううううううううううううううううううう
+    \end{mawarikomi*}
+  \item 
+    \begin{mawarikomi*}
+      えええええええええええええええええええええええええ
+      ええええええええええええええええええええええええええええ
+      ええええええええええええええええええええええええええええ
+      ええええええええええええええええええええええええええええ
+      ええええええええええええええええええええええええええええ
+      ええええええええええええええええええええええええええええ
+      ええええええええええええええええええええええええええええ
+    \end{mawarikomi*}
+\item おおおおおおおおおおおおおおおおおおおおおおおおお
+  おおおおおおおおおおおおおおおおおおおおおおおおおおおお
+  おおおおおおおおおおおおおおおおおおおおおおおおおおおお
+\end{enumerate}
+
+この場合，テキスト部に \verb/display/ 数式があったりする関係で
+回り込みのタイミングがずれてきました。
+この修正法については後述します。
+(p.\pageref{gyousuusitei}, 第\ref{gyousuusitei}節)
+
+\section{\texttt{mawarikomi}環境内に\texttt{list}環境}
+\verb/mawarikomi/環境内に\verb/list/環境を入れることができます。
+
+\begin{verbatim}
+   \item
+     \begin{mawarikomi}{図の横幅}{図}
+       問題文
+       \begin{enumerate}
+          \item 小問1
+          \item 小問2
+          \item ....
+          .....
+       \end{enumerate}
+     \end{mawarikomi}
+\end{verbatim}
+という書式になります。
+
+\begin{enumerate}
+\item
+  \begin{mawarikomi}{50pt}{%
+    \begin{picture}(50,100)
+      \put(0,0){\framebox(50,100){図}}
+    \end{picture}}
+    次の問いに答えよ。おおおおおおおおおおおおおおおおおおお
+    おおおおおおおおおおおおおおおおおおおおおおおおおおおお
+    \begin{enumerate}
+      \item 小問1 アアアアアアアアアアアアアアアア
+        アアアアアアアアアアアアアアアアアアアアア
+      \item 小問2 イイイイイイイイイイイイイイイイイイイイイ
+        イイイイイイイイイイイイイイイイイイイイイイイイイイ
+        イイイイイイイイイイイイイイイイイイイイイイイイイイ
+        イイイイイイイイイイイイイイイイイイイイイイイイイイ
+        イイイイイイイイイイイイイイイイイイイイイイイイイイ
+      \item 小問3 ウウウウウウウウウウウウウウウウウウウウウ
+        ウウウウウウウウウウウウウウウウウウウウウウウウウウ
+        ウウウウウウウウウウウウウウウウウウウウウウウウウウ
+    \end{enumerate}
+  \end{mawarikomi}
+\item 第2問 いいいいいいいいいいいいいいいいいいいいいいい
+  いいいいいいいいいいいいいいいいいいいいいいいいいいいい
+\end{enumerate}
+
+\clearpage
+
+さらに \verb/enumerate/環境を深くして，小問1が更なる小問---以下，枝問と
+呼ぶことにします---をもたせることもできます。
+
+\begin{verbatim}
+   \item
+     \begin{mawarikomi}{図の横幅}{図}
+       問題文
+       \begin{enumerate}
+        \item 小問1
+          \begin{enumerate}
+            \item 枝問1
+            \item 枝問2
+            ...........
+          \end{enumerate}
+        \item 小問2
+        \item ....
+        .....
+       \end{enumerate}
+     \end{mawarikomi}
+\end{verbatim}
+
+\begin{enumerate}
+\item
+  \begin{mawarikomi}{150pt}{%
+    \begin{picture}(150,90)
+      \put(0,0){\framebox(150,90){図}}
+    \end{picture}}
+    次の問いに答えよ。
+    \begin{enumerate}
+      \item 
+      小問1 アアアアアアアアアアアアアアアアアアアアア
+      \begin{enumerate}
+        \item 枝問1 かかかかかかかかかかかかかかかか
+        \item 枝問2 きききききききききききききききき
+                    きききききききききききききききき
+                    きききききききききききききききき
+                    きききききききききききききききき
+                    きききききききききききききききき
+      \end{enumerate}
+      \item 小問2 イイイイイイイイイイイイイイイイイイイイイ
+        イイイイイイイイイイイイイイイイイイイイイイイイイイ
+        イイイイイイイイイイイイイイイイイイイイイイイイイイ
+      \item 小問3 ウウウウウウウウウウウウウウウウウウウウウ
+        ウウウウウウウウウウウウウウウウウウウウウウウウウウ
+        ウウウウウウウウウウウウウウウウウウウウウウウウウウ
+    \end{enumerate}
+  \end{mawarikomi}
+\item 第2問 いいいいいいいいいいいいいいいいいいいいいいい
+    いいいいいいいいいいいいいいいいいいいいいいいいいいいい
+\end{enumerate}
+\clearpage
+
+\section{回り込みの行数指定オプション}\label{gyousuusitei}
+回り込みを行う行数は，図の高さから計算で求めています。
+しかし，テキスト部分の状態によっては不適切な場合もでてきます。
+そこで\verb/mawarikomi/ 環境に \verb/[...]/ オプションで
+行数の指定ができるようにしてあります。
+\pageref{hukusuumon}ページの例では，
+計算では11行となっていますが，テキスト部分の状況から
+10行とした方が良いようです。
+
+下の例では，
+\begin{verbatim}
+  \begin{mawarikomi}[10]{50pt}{図}
+\end{verbatim}
+としています。
+
+なお，この指定法は相対指定も可能で，数値に `+' `$-$' を付けることにより
+計算で得られた行数を増減させます。下の例を
+\begin{verbatim}
+  \begin{mawarikomi}[-1]{50pt}{図}
+\end{verbatim}
+としても同じ結果が得られます。
+
+\begin{enumerate}
+  \item
+    \begin{mawarikomi}[10]{50pt}{%
+      \begin{picture}(50,150)
+        \put(0,0){\framebox(50,150){図}}
+      \end{picture}}
+      ああああああああああああああああああああああああああああ
+      $\displaystyle\frac{\sqrt3}{2}$
+    \end{mawarikomi}
+  \item 
+    \begin{mawarikomi*}
+      いいいいいいいいいいいいいいいいいいいいいいいいい
+      いいいいいいいいいいいいいいいいいいいいいいいいいいいい
+    \end{mawarikomi*}
+  \item 
+    \begin{mawarikomi*}
+      ううううううううううううううううううううううううう
+      うううううううううううううううううううううううううううう
+    \end{mawarikomi*}
+  \item 
+    \begin{mawarikomi*}
+      えええええええええええええええええええええええええ
+      ええええええええええええええええええええええええええええ
+      ええええええええええええええええええええええええええええ
+      ええええええええええええええええええええええええええええ
+      ええええええええええええええええええええええええええええ
+      ええええええええええええええええええええええええええええ
+      ええええええええええええええええええええええええええええ
+    \end{mawarikomi*}
+\item おおおおおおおおおおおおおおおおおおおおおおおおお
+  おおおおおおおおおおおおおおおおおおおおおおおおおおおお
+  おおおおおおおおおおおおおおおおおおおおおおおおおおおお
+\end{enumerate}
+\clearpage
+
+\section{テキストと図の間隔}
+テキスト部分と図の部分との横間隔はデフォルトで
+\begin{verbatim}
+  \newlength{\mawarikomisep}%
+  \setlength{\mawarikomisep}{2pt}%
+\end{verbatim}
+としてあり，その2倍\verb/4pt/が空くようにしてあります。
+
+次の例では，
+\begin{verbatim}
+  \setlength{\mawarikomisep}{1zw}%
+\end{verbatim}
+として，その2倍\verb/2zw/の空きを作ってみました。
+
+\begin{enumerate}
+\item
+  \setlength{\mawarikomisep}{1zw}%
+  \begin{mawarikomi}{50pt}{
+    \begin{picture}(50,100)
+      \put(0,0){\framebox(50,100){図}}
+    \end{picture}}
+  次の問いに答えよ。
+  \begin{enumerate}
+    \item 小問1 アアアアアアアアアアアアアアアアアアアアア
+      アアアアアアアアアアアアアアアアアアアアアアアアアア
+    \item 小問2 イイイイイイイイイイイイイイイイイイイイイ
+      イイイイイイイイイイイイイイイイイイイイイイイイイイ
+      イイイイイイイイイイイイイイイイイイイイイイイイイイ
+      イイイイイイイイイイイイイイイイイイイイイイイイイイ
+      イイイイイイイイイイイイイイイイイイイイイイイイイイ
+    \item 小問3 ウウウウウウウウウウウウウウウウウウウウウ
+      ウウウウウウウウウウウウウウウウウウウウウウウウウウ
+      ウウウウウウウウウウウウウウウウウウウウウウウウウウ
+  \end{enumerate}
+  \end{mawarikomi}
+\item 第2問 いいいいいいいいいいいいいいいいいいいいいいい
+  いいいいいいいいいいいいいいいいいいいいいいいいいいいい
+\end{enumerate}
+\clearpage
+
+\section{図の位置の微調整}
+図の位置を細かく調整したいことがあります。そのために
+\verb/mawarikomi/環境に\verb/(x,y)/オプションを用意しました。
+一例です。
+
+\begin{enumerate}
+\item
+  \begin{mawarikomi}{120pt}{%
+    \begin{picture}(100,50)%
+      \put(0,0){\fboxsep0pt\framebox(100,50){図}}%
+    \end{picture}}
+  第1問あああああああああああああああああああああああああ
+    ああああああああああああああああああああああああああああ
+    ああああああああああああああああああああああああああああ
+    ああああああああああああああああああああああああああああ
+    ああああああああああああああああああああああああああああ
+  \end{mawarikomi}
+\item 第2問 いいいいいいいいいいいいいいいいいいいいいいい
+    いいいいいいいいいいいいいいいいいいいいいいいいいいいい
+\end{enumerate}
+
+図をもう少し右上に動かしたいですね。
+\verb/mawarikomi/環境に\verb/(10pt,2pt)/ オプションを付加してみました。
+
+\begin{enumerate}
+\item
+  \begin{mawarikomi}(10pt,2pt){120pt}{%
+    \begin{picture}(100,50)%
+      \put(0,0){\fboxsep0pt\framebox(100,50){図}}%
+    \end{picture}}
+  第1問あああああああああああああああああああああああああ
+    ああああああああああああああああああああああああああああ
+    ああああああああああああああああああああああああああああ
+    ああああああああああああああああああああああああああああ
+    ああああああああああああああああああああああああああああ
+  \end{mawarikomi}
+\item 第2問 いいいいいいいいいいいいいいいいいいいいいいい
+    いいいいいいいいいいいいいいいいいいいいいいいいいいいい
+\end{enumerate}
+\clearpage
+
+\section{段落途中からの回り込み}
+\verb/<n>/ オプションで段落の始めからn行は回り込みをしないように
+指定することができます。下の例は\verb/<1>/としたものです。
+
+\begin{enumerate}
+\item
+  \begin{mawarikomi}<1>{100pt}{%
+    \begin{picture}(100,50)%
+      \put(0,0){\fboxsep0pt\framebox(100,50){図}}%
+    \end{picture}}
+  第1問あああああああああああああああああああああああああ
+    ああああああああああああああああああああああああああああ
+    ああああああああああああああああああああああああああああ
+    ああああああああああああああああああああああああああああ
+    ああああああああああああああああああああああああああああ
+    ああああああああああああああああああああああああああああ
+    ああああああああああああああああああああああああああああ
+  \end{mawarikomi}
+\item 第2問 いいいいいいいいいいいいいいいいいいいいいいい
+    いいいいいいいいいいいいいいいいいいいいいいいいいいいい
+\end{enumerate}
+
+ただしテキスト部に数式があるなど行ピッチが変わると，
+図の位置の調整が必要になります。下の例では，
+2行目の数式を回り込みの対象外にするため，
+\texttt{<2>}オプションをつけました。
+テキスト部はお望み通り3行目から回り込みが始まっていますが，
+図の位置が不適切です。
+
+\begin{enumerate}
+\item
+  \begin{mawarikomi}<2>{100pt}{%
+    \begin{picture}(100,50)%
+      \put(0,0){\fboxsep0pt\framebox(100,50){図}}%
+    \end{picture}}
+  第1問ああああああああああああああああああ
+    ああああああああああああああああああああああああああああ
+    $f(x)=\displaystyle\frac{1}{
+      1+\displaystyle\frac{1}{1+\displaystyle\frac{1}{x}}}~(x>0)$
+    ああああああああああああああああああああああああああああ
+    ああああああああああああああああああああああああああああ
+    ああああああああああああああああああああああああああああ
+    ああああああああああああああああああああああああああああ
+    ああああああああああああああああああああああああああああ
+    ああああああああああああああああああああああああああああ
+  \end{mawarikomi}
+\item 第2問 いいいいいいいいいいいいいいいいいいいいいいい
+    いいいいいいいいいいいいいいいいいいいいいいいいいいいい
+\end{enumerate}
+
+では，\verb/(0,-24pt)/オプションで図を下に動かしてみます。
+
+\clearpage
+
+\begin{enumerate}
+\item
+  \begin{mawarikomi}<2>(0,-24pt){100pt}{%
+    \begin{picture}(100,50)%
+      \put(0,0){\fboxsep0pt\framebox(100,50){図}}%
+    \end{picture}}
+  第1問ああああああああああああああああああ
+    ああああああああああああああああああああああああああああ
+    $f(x)=\displaystyle\frac{1}{
+      1+\displaystyle\frac{1}{1+\displaystyle\frac{1}{x}}}~(x>0)$
+    ああああああああああああああああああああああああああああ
+    ああああああああああああああああああああああああああああ
+    ああああああああああああああああああああああああああああ
+    ああああああああああああああああああああああああああああ
+    ああああああああああああああああああああああああああああ
+    ああああああああああああああああああああああああああああ
+  \end{mawarikomi}
+\item 第2問 いいいいいいいいいいいいいいいいいいいいいいい
+    いいいいいいいいいいいいいいいいいいいいいいいいいいいい
+\end{enumerate}
+
+\section{caption の使用}
+\verb/mawarikomi/環境内では，\verb/\caption/を使用できません。
+そこで，
+\begin{verbatim}
+    Fmawarikomi 環境：図番号を使用
+    Tmawarikomi 環境：表番号を使用
+\end{verbatim}
+なる2つの環境を用意してあります。
+下の例では，\verb/Tmawarikomi/環境，\verb/Fmawarikomi/環境
+内で\verb/\caption/を使用しています。\bigskip
+
+\begin{enumerate}
+\item
+  \begin{Tmawarikomi}(0,5pt){9zw}{%
+    \caption{表の例}\label{T1}
+    \hfil
+    \begin{tabular}{|c|c|c|}\hline
+      aaa & bbb & ccc \\\hline
+      1 & 2 & 3 \\\hline
+    \end{tabular}
+    }
+  第1問 右の表\ref{T1}において
+    ああああああああああああああああああああああああああああ
+    ああああああああああああああああああああああああああああ
+    ああああああああああああああああああああああああああああ
+    ああああああああああああああああああああああああああああ
+    ああああああああああああああああああああああああああああ
+  \end{Tmawarikomi}
+\item 
+    \begin{Fmawarikomi}{100pt}{%
+      \unitlength1pt%
+      \begin{picture}(100,50)%
+        \put(0,0){\line(2,1){100}}%
+      \end{picture}%
+      \caption{図の例}\label{Fig1}
+      }
+    第2問 右の図\ref{Fig1}において，
+    いいいいいいいいいいいいいいいいいいいいいいいいいいいい
+    いいいいいいいいいいいいいいいいいいいいいいいいいいいい
+    いいいいいいいいいいいいいいいいいいいいいいいいいいいい
+    いいいいいいいいいいいいいいいいいいいいいいいいいいいい
+    いいいいいいいいいいいいいいいいいいいいいいいいいいいい
+    いいいいいいいいいいいいいいいいいいいいいいいいいいいい
+    いいいいいいいいいいいいいいいいいいいいいいいいいいいい
+    \end{Fmawarikomi}
+\end{enumerate}
+\bigskip
+
+なお別法として，\verb/mawarikomi/環境において，
+\begin{verbatim}
+   \fgcaption
+   \tbcaption
+\end{verbatim}
+コマンドで \verb/\caption/ の代行をさせることも可能です。
+
+\section{書式}
+\verb/mawarikomi/環境の書式です。
+
+\begin{verbatim}
+\begin{mawarikomi}<#1>[#2](#3,#4)#5#6
+   #1 : 段落当初の回り込みをしない行数
+   #2 : 回り込み行数（相対指定可）
+        先頭に`l'を付けたときは図を左に配置
+   (#3,#4) : 図の位置修正ベクトル
+                #3 : (>0) 右，(<0) 左
+                #4 : (>0) 上，(<0) 下
+            #3,#4 共に単位必須（0のみは単位不要）
+   #5 : 図の横幅（単位必須）
+   #6 : 図，表など
+
+関連パラメータ
+   \mawarikomisep テキストと図の間隔（デフォルト値 2pt)
+     この2倍の空きができます。
+\end{verbatim}
+\clearpage
+
+\section{図の左配置}
+行数指定オプション\verb/[#2]/で，引数の先頭に`l' (\underline{l}eft)をつけると
+図などが左に配置されます。
+
+\medskip
+\begin{enumerate}
+\item
+\begin{mawarikomi}[l]{50pt}{%
+    \begin{picture}(50,50)
+      \put(0,0){\framebox(50,50){図}}
+    \end{picture}}
+  ああああああああああああああああああああああああああああ
+  ああああああああああああああああああああああああああああ
+  ああああああああああああああああああああああああああああ
+  ああああああああああああああああああああああああああああ
+  ああああああああああああああああああああああああああああ
+  ああああああああああああああああああああああああああああ
+  ああああああああああああああああああああああああああああ
+  ああああああああああああああああああああああああああああ
+  ああああああああああああああああああああああああああああ
+  ああああああああああああああああああああああああああああ
+\end{mawarikomi}
+\item いいいいいいいいいいいいいいいいいいいいいいいいい
+  いいいいいいいいいいいいいいいいいいいいいいいいいいいい
+\end{enumerate}
+\clearpage
+
+図が大きくて複数の問題で回り込みを行わせるには，
+継続して回り込ませる問題を \verb/mawarikomi*/ 環境で
+くるむ必要があります。
+
+\begin{verbatim}
+    \begin{enumerate}
+      \item
+        \begin{mawarikomi}{図の横幅}{図}
+          第1問
+        \end{mawarikomi}
+      \item 
+        \begin{mawarikomi*}
+          第2問
+        \end{mawarikomi*}
+      \item 第3問
+      ...........
+    \end{enumerate}
+\end{verbatim}
+
+下の例では，\verb/[l-2]/ として，回り込み行数を
+計算値に比して2行少なく指定しています。
+
+\begin{enumerate}
+\item
+\begin{mawarikomi}[l-2]{50pt}{%
+    \begin{picture}(50,150)
+      \put(0,0){\framebox(50,150){図}}
+    \end{picture}}
+ああああああああああああああああああああああああああああ
+$\displaystyle\frac{\sqrt3}{2}$
+\end{mawarikomi}
+\item 
+\begin{mawarikomi*}
+いいいいいいいいいいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいいいいいいいいいいいいい
+\end{mawarikomi*}
+\item 
+\begin{mawarikomi*}
+ううううううううううううううううううううううううう
+うううううううううううううううううううううううううううう
+\end{mawarikomi*}
+\item 
+\begin{mawarikomi*}
+えええええええええええええええええええええええええ
+ええええええええええええええええええええええええええええ
+ええええええええええええええええええええええええええええ
+ええええええええええええええええええええええええええええ
+ええええええええええええええええええええええええええええ
+\end{mawarikomi*}
+\item おおおおおおおおおおおおおおおおおおおおおおおおお
+おおおおおおおおおおおおおおおおおおおおおおおおおおおお
+おおおおおおおおおおおおおおおおおおおおおおおおおおおお
+\end{enumerate}
+\end{document}

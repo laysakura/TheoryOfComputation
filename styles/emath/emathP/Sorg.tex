@@ -1,0 +1,134 @@
+\section{\textsf{emath}パッケージにおけるグラフィックス}
+\textsf{emath}パッケージでは，図を描画するのに二つの手法を用意しています。
+\begin{enumerate}[(1)]
+  \item \texttt{tpic specials}を用いる方法
+  
+    \textsf{emathPh.sty, emathPk.sty, emathP.sty }では，\texttt{tpic specials}を用いて，
+    図を描画します。
+  \item \texttt{Post Script}を用いる方法
+
+   \textsf{emathPs.sty} では，\texttt{Post Script}を用いて，図を描画します。
+\end{enumerate}
+
+いずれにせよ，
+\cmd{special}コマンドを用いてグラフィックスを扱うのは，OS・dvi-ware依存となります。
+従って，\textsf{emathP?.sty}等のロードに先立って
+\begin{jquote}
+\begin{sffamily}
+  graphicx.sty
+\end{sffamily}
+\end{jquote}
+を，グラフィックスドライバを指定してロードしておく必要があります。
+例えば
+\begin{jquote}
+\begin{verbatim}
+  \usepackage[dvips]{graphicx}
+  \usepackage[dviout]{graphicx}
+  \usepackage[dvipdfm]{graphicx}
+  \usepackage[dvipdfmx]{graphicx}
+\end{verbatim}
+\end{jquote}
+カラーを用いる場合は，
+\begin{jquote}
+\begin{sffamily}
+  color.sty
+\end{sffamily}
+\end{jquote}
+を，\textsf{graphicx.sty}と同一の
+ドライバを指定してロードしておく必要があります。
+\begin{jquote}
+\begin{verbatim}
+  \usepackage[dvips]{graphicx,color}
+  \usepackage[dviout]{graphicx,color}
+  \usepackage[dvipdfm]{graphicx,color}
+  \usepackage[dvipdfmx]{graphicx,color}
+\end{verbatim}
+\end{jquote}
+\begin{enumerate}[注 1.~]
+  \item \TeX 環境がデフォルトのグラフィックスドライバを指定している場合は，単に
+\begin{jquote}
+\begin{verbatim}
+\usepackage{graphicx,color}
+\end{verbatim}
+\end{jquote}
+    とすれば，デフォルトのドライバが用いられます。
+  \item \textsf{dvipdfmx}は，
+    EPS において，座標が負の部分を無条件にカットする，
+    などの振る舞いがありますので，\textsf{emath}ではお勧めいたしかねます。
+    \textsf{emath}パッケージでは，\texttt{dvips}を標準としています。
+    
+    また\textsf{dvipdfmx}は図形の回転処理が独特ですから，どうしても\textsf{dvipdfmx}
+    を使用したい場合は
+\begin{jquote}
+\begin{verbatim}
+\usepackage[dvipdfmx]{graphicx,color}
+\end{verbatim}
+\end{jquote}
+    としておく必要があります。こうしても，
+    EPS ファイルの座標が負の部分をカットすることは回避できません。
+
+    なお，\texttt{dvipdfmx}には，カラーの tpic が扱えないバージョンがあります。
+  \item \textsf{dvipdfm}は，EPS において，
+    座標が負の部分をカットする点は \textsf{dvipdfmx}と同様です。
+  \item \texttt{dviout}を用いたとき，白く塗りつぶしたはずが黒くなる，
+    という場合の対策です。
+    \begin{enumerate}[(a)]
+      \item \texttt{dviout}の画面で黒塗りとなる場合は，
+        グラフィックスドライバが不適切です。~
+        \begin{jquote}
+          \verb+\usepackage[dvips]{graphicx,color}+
+        \end{jquote}
+        と，グラフィックスドライバを明示するのがよいでしょう
+      （ \textsf{emath}などの読み込みに先立って）。
+\iffalse
+//原則として，graphics.sty, color.sty 双方のドライバはともに~
+//　　dvips.dev~
+//となります（ともに dviout.dev となっていても可）。~
+//この両者が食い違っていたり，一致していても dvipdfmx.dev となっていると，~
+//黒のボックスが現れることがあります。~
+//読み込まれているドライバの種別を確認するには，ログファイルで~
+//　　Package graphics Info: Driver file: ~
+//　　Package color Info: Driver file: ~
+//の右に読み込まれたドライバが記録されています。~
+//対策は，~
+//　　\usepackage[dvips]{graphicx,color}~
+//と，グラフィックスドライバを明示することです。~
+\fi
+
+\noindent
+【補足】 dviout のメニューバーから
+  \begin{jquote}
+  \begin{ttfamily}
+    Option\\
+    　Setup Parameters\\
+    　　Graphic
+  \end{ttfamily}
+  \end{jquote}
+  とたどって，Ghostscript の項が
+  \begin{jquote}
+    On(default)
+  \end{jquote}
+  になっていることも必要です。
+  \item \texttt{dviout}の画面では正常だが，印刷すると黒塗りになる
+    という場合は，dviout の設定の問題です。
+
+    具体的な手順です：
+    \begin{verbatim}
+dviout のメニューバーから
+　　Option
+　　　Setup Parameters
+　　　　Graphic
+とたどり，その下方
+　　color specials
+の左にチェックが入っていることを確認し，
+右のドロップダウンリストで
+　　auto mode(rep)
+　　replace(def)
+　　replace(bak)
+のいずれかを選び，
+　　その右の　Save ボタン
+　　さらに下の OK ボタン
+を押します。
+    \end{verbatim}
+\end{enumerate}
+\end{enumerate}

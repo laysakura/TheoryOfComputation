@@ -1,0 +1,84 @@
+% emathThmbx.sty by tDB (emath@nifty.com)
+%
+\NeedsTeXFormat{LaTeX2e}%
+\ProvidesPackage{emathThmbx}[2008/01/31 v0.04α]%
+%
+%\RequirePackage{keyval}%
+\RequirePackage{emath}%
+\RequirePackage{itembbox}%
+%
+\@ifundefined{ifpr@kaitou}{\newif\ifpr@kaitou\pr@kaitoufalse}{}%
+%
+\define@key{EMbxthm}{frame}{\def\bxthm@frame{#1}}
+\define@key{EMbxthm}{frameoption}{\def\bxthm@frameoption{#1}}
+\define@key{EMbxthm}{appendframeoption}{%
+  \edefappendoption\bxthm@frameoption{#1}\bxthm@frameoption}
+\define@key{EMbxthm}{tuikamidasi}{\def\tuika@midasi{#1}}
+\define@key{EMbxthm}{AeEnv}{\EMedef\Aeprobname{#1}}%
+\def\bxthm@ttlfont{\normalfont}
+\def\bxthmttlfont#1{\def\bxthm@ttlfont{#1}}
+\def\bxthm@midasi{\relax}
+\def\tuika@midasi{\relax}%
+%
+%
+\def\strip@lrbrack[#1]#2{\edef#2{#1}}%
+\def\edefappendoption#1#2#3{%
+  \expandafter\strip@lrbrack#1\appendopt@tmp
+  \expandafter\strip@lrbrack#2\appendopt@tmpp
+  \edef#3{[\appendopt@tmp,\appendopt@tmpp]}%
+}%
+%
+%
+\def\boxedtheorem{%
+  \def\bxthm@frame{itembox}%
+  \def\bxthm@frameoption{[c]}%
+  \@ifnextchar<{\@boxedtheorem}{\@boxedtheorem<\empty>}}
+\def\@boxedtheorem<#1>#2#3{%
+  \newcounter{#2}%
+  \EMedef\Aeprob{#2}%
+  \EMedef\Aeprobname{#2}%
+  \ifx\empty #1\else\setkeys{EMbxthm}{#1}\fi
+  \expandafter\def\csname the#2\endcsname{\arabic{#2}}%
+  \expandafter\edef\csname #2@frame\endcsname{\bxthm@frame}%
+  \expandafter\edef\csname #2@frameoption\endcsname{\bxthm@frameoption}%
+  \expandafter\def\csname #2\endcsname{\@ifnextchar<{\csname @#2\endcsname}{\csname @#2\endcsname<\empty>}}%
+  \expandafter\def\csname @#2\endcsname<##1>{%
+%   \def\tuika@midasi{\relax}%
+    \ifx\empty ##1\else\setkeys{EMbxthm}{##1}%
+      \expandafter\edef\csname #2@frameoption\endcsname{\bxthm@frameoption}%
+    \fi
+    \refstepcounter{#2}%
+    \EMedef\@tmp{{\csname #2@frame\endcsname}\csname #2@frameoption\endcsname{\bxthm@ttlfont #3~\csname the#2\endcsname\tuika@midasi}}
+    \expandafter\begin\@tmp%
+    }%
+  \expandafter\def\csname end#2\endcsname{%
+    \ifpr@kaitou
+%
+      \@whilenum\K@currentenumdepth>\@enumdepth\do{%
+        \xDecr\K@currentenumdepth
+        \ifx\empty\edaenumopt
+          \ifx\empty\betaenumopt
+            \immediate\write\kaitou@out{\string\end\string\Kaienumerate\string\def\string\Kaienumerate{enumerate}\string\def\string\Kaienumopt{}}%
+          \else
+            \immediate\write\kaitou@out{\string\end{betaenumerate}\string\par}%
+            \xdef\betaenumopt{\empty}%
+          \fi
+        \else
+          \immediate\write\kaitou@out{\string\end{edaenumerate}\string\par}%
+          \xdef\edaenumopt{\empty}%
+        \fi
+      }%
+%
+      \immediate\write\kaitou@out{\string\end{\Aeprobname}}%
+      \global\pr@kaitoufalse
+    \fi
+    \edef\@tmp{{\csname #2@frame\endcsname}}%
+    \expandafter\end\@tmp}
+}
+%
+\endinput
+-----------------------------------
+v 0.00α 2005/08/04
+v 0.01α 2006/02/20 \bxthmttlfont で，見出しの書体を指定
+v 0.02α 2006/03/07 teiri などの環境に，<tuikamidasi=..>オプション
+v 0.04α 2008/01/31 emathAe との連動

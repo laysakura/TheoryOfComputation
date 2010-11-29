@@ -1,0 +1,32 @@
+\documentclass[a4j]{jarticle}
+\usepackage{emathPa}
+\usepackage{emathCap}
+
+\makeatletter
+\def\sankakusuu#1{%
+  \Cfor{\def\skks@j{0}\def\skks@jj{#1}}{\skks@j<#1}{%
+          \Incr\skks@j\Decr\skks@jj}\do{%
+      \Cfor{\def\skks@i{0}}{\skks@i<\skks@jj}{\Incr\skks@i}\do{%
+      \azPut{(\skks@i,\skks@j)}{\En\O{.5}}%
+    }%
+  }%
+}
+\makeatother
+
+\begin{document}
+\Cfor{\def\num{0}}{\num<5}{}\do{%
+\Incr\num
+\begin{center}
+\begin{zahyou*}[ul=10mm](0,\num)(0,\num)
+\rtenretu*{E(1,0);F(1,60)}
+\Put\O{\begin{azahyou}\E\F
+  \azPut\O{\sankakusuu{\num}}
+\end{azahyou}
+}
+\end{zahyou*}
+\fgcaption{$n=\num$}
+\end{center}
+}
+
+
+\end{document}

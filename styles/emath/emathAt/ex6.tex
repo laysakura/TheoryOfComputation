@@ -1,0 +1,85 @@
+\documentclass[a4j,fleqn]{jarticle}
+\usepackage{emathAt}
+\usepackage{color}
+\usepackage{emathPh}
+\usepackage{emathPb}
+\usepackage{emathEy}
+\usepackage{emathMw}
+\usepackage{itembbox}
+
+\begin{document}
+\def\tyuumark{$\blacktriangleleft$}
+\def\tyuuitemizeoption{%
+  \labelwidth=6pt\labelsep=3pt\leftmargin9pt\footnotesize}
+\begin{itembox}{角の二等分線}
+\begin{caprm}
+\sankaku{ABC}において，$AB=5$, $AC=3$, $\kaku A=120\Deg$とする。
+\kaku Aの二等分線とBCとの交点をDとするとき，次の線分の長さを求めよ。
+\end{caprm}
+\begin{edaenumerate}<3>[(1)]
+  \item BC
+  \item BD
+  \item AD
+\end{edaenumerate}
+\end{itembox}\bigskip
+
+\noindent 【解法の手順】\vspace{1ex}
+
+\begin{small}
+\begin{rectbox}[sensyu=\protect\hasen]
+\begin{enumerate}[\protect\expandafter\fbox1]
+  \item 余弦定理を用いて，BCを計算する。
+  \item 角の二等分線の性質より，BDを求める。
+  \item 面積を利用して，ADを求める。
+\end{enumerate}
+\end{rectbox}
+\end{small}\bigskip
+
+\hidarityuukeisentrue
+\begin{tyuukai}
+\begin{caprm}
+【解答】
+\begin{enumerate}[(1)]
+  \item 
+    \begin{mawarikomi}{}{%
+      \begin{zahyou*}[ul=5mm](0,7)(-.5,4)
+        \tenretu{B(0,0)s;C(7,0)s}
+        \CandC\B5\C3\AA\A\Put\A[n]{A}
+        \Bunten\B\C53\D\Put\D[s]{D}
+        \Hen_ko[25]\A\B{5}
+        \Hen_ko[15]\C\A{3}
+        \Kakukigou<0>\B\A\D(0,0){$\bullet$}
+        \Kakukigou<0>\D\A\C(0,0){$\bullet$}
+        \Drawline{\A\B\C\A\D}
+      \end{zahyou*}}
+    \gyoutou{\small\fbox1}
+    余弦定理より
+    {\mathindent=0pt\relax
+    \begin{align*}
+      BC^2&=AB^2+AC^2-2AB\cdot AC\cos120\Deg\\
+        &=5^2+3^2-2\cdot5\cdot3\cdot\left(-\bunsuu12\right)\\
+        &=49
+    \end{align*}}%
+    \tyuu<-4\baselineskip>{\makebox[0pt][l]{$\cos120\Deg=-\bunsuu12$}}%
+    $BC>0$であるから $\bm{BC=7}$
+    \end{mawarikomi}
+  \item 
+    \gyoutou{\small\fbox2}
+    \tyuu<-.5\baselineskip>{二等分線と比例の関係}
+    $AB:AC=BD:DC$であるから
+    \[ BD:DC=5:3 \]
+    よって $BD=\bunsuu{5}{8}BC=\bm{\bunsuu{35}{8}}$
+  \item 
+    \gyoutou{\small\fbox3}%
+    \tyuu<-.75\baselineskip>{面積に関する等式}%
+    \tyuu{$\sin120\Deg=\bunsuu{\sqrt3}{2}$,\\
+      $\sin60\Deg=\bunsuu{\sqrt3}{2}$}
+    $\sankaku{ABC}=\sankaku{ABD}+\sankaku{ADC}$であるから，
+    $AD=x$とおくと
+    \[ \bunsuu{1}{2}\cdot5\cdot3\sin120\Deg
+      =\bunsuu{1}{2}\cdot5x\sin60\Deg+\bunsuu{1}{2}\cdot3x\sin60\Deg \]
+    よって $\bm{AD=\bunsuu{15}{8}}$
+\end{enumerate}
+\end{caprm}
+\end{tyuukai}
+\end{document}

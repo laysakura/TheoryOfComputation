@@ -1,0 +1,1588 @@
+% emathQf.sty by tDB(CQB00260@nifty.ne.jp)
+%
+  \NeedsTeXFormat{LaTeX2e}
+  \ProvidesPackage{emathQf}[2009/09/26 v 0.14α]%
+%
+  \RequirePackage{emathHe}
+  \RequirePackage{emathB}
+%
+%  \newwrite\peq@hndl
+  \@ifundefined{em@whndl}{\newwrite\em@whndl}{}%
+%
+  \def\bunbo@{1}%
+  \def\bunbo@max{12}%
+  \def\bunbo@min{1}%
+  \def\bunbo@@{1}%
+  \edef\range@F{\empty}%
+  \edef\range@T{\empty}%
+  \edef\mitis@@{x}%
+%
+\edef\kai@type{\empty}%
+\define@key{emQf}{kaitype}{\def\kai@type{#1}}%
+\define@key{emQf}{hutougou}[1]{\def\hutougou{#1}}%
+\define@key{emQf}{mitisuu}[1]{\edef\mitis@@{#1}}%
+\define@key{emQf}{mozi}[1]{\edef\mitis@@{#1}}%
+\define@key{emQf}{A}[1]{\def\pr@ans{#1}}%
+\define@key{emQf}{bunbo}[0]{\edef\bunbo@@{#1}\edef\bunbo@@min{\bunbo@min}\edef\bunbo@@max{\bunbo@max}}%
+\define@key{emQf}{bunbomax}{\edef\bunbo@@{0}\edef\bunbo@@max{#1}}%
+\define@key{emQf}{bunbomin}{\edef\bunbo@@{0}\edef\bunbo@@min{#1}}%
+\define@key{emQf}{amax}{\edef\a@@max{#1}}%
+\define@key{emQf}{amin}{\edef\a@@min{#1}}%
+\define@key{emQf}{aimax}{\edef\ai@@max{#1}}%
+\define@key{emQf}{aimin}{\edef\ai@@min{#1}}%
+\define@key{emQf}{aiimax}{\edef\aii@@max{#1}}%
+\define@key{emQf}{aiimin}{\edef\aii@@min{#1}}%
+\define@key{emQf}{zisuu}{\edef\rndPf@deg@{#1}}%
+\define@key{emQf}{kukan}[0,0]{\Strsep{#1}{,}\range@F\range@T}%
+\define@key{emQf}{sityuu}{\EMedef\tbl@sityuu{#1}}%
+%
+\def\Pf@deg{3}%
+\def\aii@max{6}%
+\def\ai@max{12}%
+\def\a@max{12}%
+\def\aii@min{-2}% ２次係数：-2〜6
+\def\ai@min{-12}% １次係数：-12〜12
+\def\a@min{-12}%  定数項　：-12〜12
+\def\amax#1{\edef\a@max{#1}}%
+\def\aimax#1{\edef\ai@max{#1}}%
+\def\aiimax#1{\edef\aii@max{#1}}%
+\def\amin#1{\edef\a@min{#1}}%
+\def\aimin#1{\edef\ai@min{#1}}%
+\def\aiimin#1{\edef\aii@min{#1}}%
+\def\bunbomax#1{\edef\bunbo@max{#1}}%
+\def\bunbomin#1{\edef\bunbo@min{#1}}%
+%
+\def\mitisuu#1{\edef\mitis@@{#1}}%
+\edef\hutougou{=}%
+%
+% 乱数による不等号の決定
+%
+\def\defhutougou{%
+    \Ransuu[d]{Int(4*X/\ran@sup)}\htg@t
+    \ifcase\htg@t
+      \edef\hutougou{>}%
+    \or
+      \edef\hutougou{>=}%
+    \or
+      \edef\hutougou{<}%
+    \or
+      \edef\hutougou{<=}%
+    \fi
+}%
+%
+\define@key{emQf}{bekizyun}{\def\beki@zyun{#1}}%
+\define@key{emQf}{syoubeki}[1]{\def\beki@zyun{#1}}%
+\def\prPolynomial{\begingroup
+  \edef\beki@zyun{\empty}%
+  \@ifstar{\prF@Polynomial}{\@prPolynomial}}
+\def\@prPolynomial{%
+  \@ifnextchar<{\prPolynomial@}{\@@prPolynomial}}%
+\def\prPolynomial@<#1>{\setkeys{emQf}{#1}\@@prPolynomial}%
+\def\@@prPolynomial#1{%
+  \ifx\empty\beki@zyun
+    \@@@prPolynomial{#1}%
+  \else
+    \@@@@prPolynomial{#1}%
+  \fi
+}%
+\def\@@@prPolynomial#1{%
+  \edef\prPnom@{#1}%
+  \@cut\prPnom@
+  \def\pr@keisuu##1{%
+    \prF[y]{##1/\bunbo@@}%
+  }%
+  \reversecsv{\prPnom@}\prPoly@csv
+  \csvhairetu\prPoly@csv{keisuu@}\dim@
+  \edef\prP@n{\dim@}%
+  \ensuremath{%
+    \Cfor{\edef\prP@i{\prP@n}}{\prP@i>0}{}\do{%
+      \edef\prP@c{\hairetu{keisuu@}{\prP@i}}% 係数
+      \ifnum\prP@i<\prP@n
+        \ifnum\prP@c>0\relax + \fi
+      \fi
+      \Decr\prP@i% 次数
+      \ifnum\prP@i>\z@
+        \ifnum \prP@c=-\bunbo@@\relax
+          -
+        \else\ifnum\prP@c=\bunbo@@\relax
+        \else\ifnum\prP@c=0\relax
+        \else
+          \pr@keisuu{\prP@c}%
+        \fi\fi\fi
+      \else
+        \ifnum\prP@n>\@ne
+          \ifnum\prP@c=\z@\else\pr@keisuu{\prP@c}\fi
+        \else
+          \pr@keisuu{\prP@c}%
+        \fi
+      \fi
+      \ifnum\prP@c=\z@\else
+        \ifnum\prP@i>\@ne
+         {\mitis@@}^{\prP@i}
+        \else\ifnum\prP@i>\z@
+          \mitis@@
+        \fi\fi
+      \fi
+    }%
+  }%
+  \endgroup
+}%
+\def\@@@@prPolynomial#1{%
+  \edef\prPnom@{#1}%
+%  \@cut\prPnom@
+  \def\pr@keisuu##1{%
+    \prF[y]{##1/\bunbo@@}%
+  }%
+  \if *\beki@zyun
+    \reversecsv{\prPnom@}\prPoly@csv
+    \csvhairetu\prPoly@csv{keisuu@}\dim@
+  \else
+    \csvhairetu\prPnom@{keisuu@}\dim@
+  \fi
+  \edef\prP@n{\dim@}%
+  \ensuremath{%
+    \edef\pr@flg{0}%
+    \Cfor{\edef\prP@i{0}}{\prP@i<\prP@n}{}\do{%
+      \IAdd\prP@i{1}\prP@ii
+      \edef\prP@c{\hairetu{keisuu@}{\prP@ii}}% 係数
+      \ifnum\pr@flg>\z@
+        \ifnum\prP@c>\z@ + \fi
+      \fi
+      \ifnum\prP@c=\z@\else\edef\pr@flg{1}\fi
+%      \Decr\prP@i% 次数
+      \ifnum\prP@i>\z@
+        \ifnum \prP@c=-\bunbo@@\relax
+          -
+        \else\ifnum\prP@c=\bunbo@@\relax
+        \else\ifnum\prP@c=0\relax
+        \else
+          \pr@keisuu{\prP@c}%
+        \fi\fi\fi
+      \else
+        \ifnum\prP@n>\@ne
+          \ifnum\prP@c=\z@\else\pr@keisuu{\prP@c}\fi
+        \else
+          \pr@keisuu{\prP@c}%
+        \fi
+      \fi
+      \ifnum\prP@c=\z@\else
+        \ifnum\prP@i>\@ne
+         {\mitis@@}^{\prP@i}
+        \else\ifnum\prP@i>\z@
+          \mitis@@
+        \fi\fi
+      \fi
+      \Incr\prP@i% 次数
+    }%
+  }%
+  \endgroup
+}%
+\let\prPolynom\prPolynomial
+%
+\def\@cut#1{%
+  \edef\@cut@{\empty}%
+  \expandafter\@for\expandafter\@cut@@c\expandafter:\expandafter=#1\do{%
+    \ifx\empty\@cut@
+      \ifnum\@cut@@c=\z@\else
+        \edefappend\@cut@{\@cut@@c}%
+      \fi
+    \else
+      \edefappend\@cut@{,\@cut@@c}%
+    \fi
+  }%
+  \ifx\empty\@cut@\edef#1{0}\else\edef#1{\@cut@}\fi
+}%
+%
+\def\iPAdd{\@ifstar{\iF@PAdd}{\@iPAdd}}
+\def\@iPAdd#1#2#3{%
+  \csvhairetu{#1}{tr@L}\dim@L
+  \csvhairetu{#2}{tr@R}\dim@R
+  \edef\iPAdd@ans{\empty}%
+  \edef\tr@i{0}%
+  \edef\tr@j{0}%
+  \IMax{\dim@L,\dim@R}\dim@
+  \edef\tr@n{\dim@}%
+  \ifthenelse{\dim@L>\dim@R}{%
+    \Cfor{}{\tr@n>\dim@R}{}\do{%
+      \Incr\tr@i
+      \ifnum\tr@i=1\else\edefappend\iPAdd@ans{,}\fi
+      \edefappend\iPAdd@ans{\hairetu{tr@L}\tr@i}%
+      \Decr\tr@n
+    }%
+  }{%
+    \ifthenelse{\dim@L<\dim@R}{%
+    \Cfor{}{\tr@n>\dim@L}{}\do{%
+      \Incr\tr@j
+      \ifnum\tr@j=1\else\edefappend\iPAdd@ans{,}\fi
+      \edefappend\iPAdd@ans{\hairetu{tr@R}{\tr@j}}%
+      \Decr\tr@n
+      }%
+    }{}%
+  }%
+  \Cfor{}{\tr@n>0}{}\do{%
+    \Incr\tr@i
+    \Incr\tr@j
+    \IAdd{\hairetu{tr@L}\tr@i}{\hairetu{tr@R}\tr@j}\tr@tmp
+    \ifx\empty \iPAdd@ans\else\edefappend\iPAdd@ans{,}\fi
+    \edefappend\iPAdd@ans{\tr@tmp}%
+    \Decr\tr@n
+  }%
+  \@cut{\iPAdd@ans}%
+  \edef#3{\iPAdd@ans}%
+}
+%
+\def\iPSub{\@ifstar{\iF@PSub}{\@iPSub}}
+\def\@iPSub#1#2#3{%
+  \csvhairetu{#1}{tr@L}\dim@L
+  \csvhairetu{#2}{tr@R}\dim@R
+  \edef#3{\empty}%
+  \edef\tr@i{0}%
+  \edef\tr@j{0}%
+  \IMax{\dim@L,\dim@R}\dim@
+  \edef\tr@n{\dim@}%
+  \ifthenelse{\dim@L>\dim@R}{%
+    \Cfor{}{\tr@n>\dim@R}{}\do{%
+      \Incr\tr@i
+      \ifnum\tr@i=1\else\edefappend#3{,}\fi
+      \edefappend#3{\hairetu{tr@L}\tr@i}%
+      \Decr\tr@n
+    }%
+  }{%
+    \ifthenelse{\dim@L<\dim@R}{%
+    \Cfor{}{\tr@n>\dim@L}{}\do{%
+      \Incr\tr@j
+      \ifnum\tr@j=1\else\edefappend#3{,}\fi
+      \ISub{0}{\hairetu{tr@R}\tr@j}\tr@tmp
+      \edefappend#3{\tr@tmp}%
+      \Decr\tr@n
+      }%
+    }{}%
+  }%
+  \Cfor{}{\tr@n>0}{}\do{%
+    \Incr\tr@i
+    \Incr\tr@j
+    \ISub{\hairetu{tr@L}\tr@i}{\hairetu{tr@R}\tr@j}\tr@tmp
+    \ifx\empty #3\else\edefappend#3{,}\fi
+    \edefappend#3{\tr@tmp}%
+    \Decr\tr@n
+  }%
+  \@cut{#3}%
+}
+%
+% (#1)×(#2)=(#3)
+%
+\def\iPMul{\@ifstar{\iF@PMul}{\@iPMul}}%
+\def\@iPMul#1#2#3{%
+  \csvhairetu{#1}{ipMul@A}\iPM@dim@A
+  \csvhairetu{#2}{ipMul@B}\iPM@dim@B
+  \edef\iPMul@ans{0}%
+  \Cfor{\edef\iP@n{\iPM@dim@B}}{\iP@n>0}{}\do{%
+    \edef\iP@tmp{\empty}%
+    \Decr\iP@n
+    \expandafter\@for\expandafter\iP@@c\expandafter:\expandafter=#1\do{%
+      \ISub\iPM@dim@B\iP@n\iP@d
+      \edef\iP@m{\hairetu{ipMul@B}\iP@d}%
+      \IMul\iP@@c\iP@m\iP@@@c
+      \ifx\empty\iP@tmp\edef\iP@tmp{\iP@@@c}\else\edefappend\iP@tmp{,\iP@@@c}\fi
+    }%
+    \Cfor{\edef\iP@@n{\iP@n}}{\iP@@n>0}{\Decr\iP@@n}\do{%
+      \edefappend\iP@tmp{,0}%
+    }%
+    \iPAdd\iPMul@ans{\iP@tmp}\iPMul@ans\relax
+  }%
+  \edef#3{\iPMul@ans}%
+}%
+%
+\def\iPDivMod{\@ifstar{\iF@PDivMod}{\@iPDivMod}}%
+\def\@iPDivMod#1#2#3#4{% #1 ÷ #2 = 商 #3, 余り #4
+  \csvhairetu{#1}{pDM@L}\pDM@dim@L
+  \csvhairetu{#2}{pDM@R}\pDM@dim@R
+  \edef\pQ@i{\hairetu{pDM@R}{1}}%
+  \ISub\pDM@dim@L\pDM@dim@R\pDM@iend
+  \Incr\pDM@iend
+  \Cfor{\edef\pDM@Qx{}\edef\pDM@i{0}\edef\pDM@W{#1}\edef\pDM@dim@W{\pDM@dim@L}}{\pDM@i<\pDM@iend}{}\do{%
+    \Incr\pDM@i
+    \csvhairetu{\pDM@W}{tr@W}\pDM@dim@WW
+    \Cfor{\edef\pDM@j{\pDM@dim@WW}\Incr\pDM@j}{\pDM@j<\pDM@dim@W}{}\do{%
+      \edefappend\pDM@Qx{,0}\Incr\pDM@i\Incr\pDM@j
+    }%
+    \edef\pDM@dim@W{\pDM@dim@WW}%
+    \ifnum\pDM@i>\pDM@iend\else
+      \IDiv{\hairetu{tr@W}{1}}{\pQ@i}\pDM@Qtmp
+      \ifx\empty\pDM@Qx\edef\pDM@Qx{\pDM@Qtmp}\else\edefappend\pDM@Qx{,\pDM@Qtmp}\fi
+      \Cfor{\edef\pDM@j{\pDM@dim@R}}{\pDM@j<\pDM@dim@W}{}\do{%
+        \Incr\pDM@j
+        \edefappend\pDM@Qtmp{,0}%
+      }%
+      \iPMul{#2}\pDM@Qtmp\pDM@Qtmp
+      \iPSub\pDM@W\pDM@Qtmp\pDM@W
+    \fi
+  }%
+  \edef#3{\pDM@Qx}%
+  \edef#4{\pDM@W}%
+}
+%
+\def\iPyakubun{\@ifstar{\iF@Pyakubun}{\@iPyakubun}}%
+\def\@iPyakubun{\@ifnextchar[{\@iPyakubun}{\@iPyakubun[\empty]}}%
+\def\@@iPyakubun[#1]#2#3{%
+  \csvhairetu{#2}{iPy@A}\iPy@n
+  \IGCMs{#2}\iPy@gcm
+  \ifnum\iPy@Ai<\z@\IMulself\iPy@gcm{-1}\fi
+  \IDiv{\iPy@Ai}{\iPy@gcm}\iPy@ans
+  \Cfor{\edef\iPy@i{1}}{\iPy@i<\iPy@n}{}\do{%
+    \Incr\iPy@i
+    \IDiv{\csname iPy@A\romannumeral\iPy@i\endcsname}\iPy@gcm\iPy@tmp
+    \edefappend\iPy@ans{,\iPy@tmp}%
+  }%
+  \edef#3{\iPy@ans}%
+  \ifx\empty #1\else\edef#1{\iPy@gcm}\fi
+}%
+%
+\def\iF@Pyakubun{\@ifnextchar[{\@iF@Pyakubun}{\@iF@Pyakubun[\empty]}}%
+\def\@iF@Pyakubun[#1]#2#3{%
+  \csvhairetu{#2}{iPy@A}\iPy@n
+  \edef\iPy@lcm{1}%
+  \Ifor*\iPy@i{1}\iPy@n\Do{%
+    \FtoB{\csname iPy@A\romannumeral\iPy@i\endcsname}\iPy@bunsi\iPy@bunbo
+    \ILCM\iPy@lcm\iPy@bunbo\iPy@lcm
+  }%
+  \edef\iPy@seq{}%
+  \Ifor*\iPy@i{1}\iPy@n\Do{%
+    \FMul{\csname iPy@A\romannumeral\iPy@i\endcsname}\iPy@lcm\iPy@tmp
+    \ifnum\iPy@i>\@ne\edefappend\iPy@seq{,}\fi
+    \FtoB\iPy@tmp\iPy@bunsi\iPy@bunbo
+    \edefappend\iPy@seq{\iPy@bunsi}%
+  }%
+  \IGCMs\iPy@seq\iPy@gcm
+  \edef#3{\empty}%
+  \expandafter\@for\expandafter\iPy@c\expandafter:\expandafter=\iPy@seq\do{%
+    \IDiv\iPy@c\iPy@gcm\iPy@tmp
+    \ifx\empty #3\relax
+      \ifnum\iPy@tmp<\z@\IMulself\iPy@gcm{-1}\IMulself\iPy@tmp{-1}\fi%
+    \else\edefappend #3{,}\fi
+    \edefappend #3{\iPy@tmp}%
+  }%
+  \ifx\empty #1\else\edef#1{\iPy@gcm/\iPy@lcm}\fi
+}%
+%
+%\def\iPyakubun{\@ifnextchar[{\@iPyakubun}{\@iPyakubun[\empty]}}%
+%\def\@iPyakubun[#1]#2#3{%
+%  \csvhairetu{#2}{iPy@A}\iPy@n
+%  \IGCMs{#2}\iPy@gcm
+%  \ifnum\iPy@Ai<\z@\IMulself\iPy@gcm{-1}\fi
+%  \IDiv{\iPy@Ai}{\iPy@gcm}\iPy@ans
+%  \Cfor{\edef\iPy@i{1}}{\iPy@i<\iPy@n}{}\do{%
+%    \Incr\iPy@i
+%    \IDiv{\csname iPy@A\romannumeral\iPy@i\endcsname}\iPy@gcm\iPy@tmp
+%    \edefappend\iPy@ans{,\iPy@tmp}%
+%  }%
+%  \edef#3{\iPy@ans}%
+%  \ifx\empty #1\else\edef#1{\iPy@gcm}\fi
+%}
+%
+% \iPgozyohou
+%
+\def\iPgozyohou{\@ifnextchar<{\@iPgozyohou}{\@iPgozyohou<\empty>}}
+\def\@iPgozyohou<#1>{\begingroup
+  \edef\tbl@sityuu{\empty}%
+  \ifx\empty #1\else\setkeys{emQf}{#1}\fi
+  \@ifnextchar[{\@@iPgozyohou}{\@@iPgozyohou[\gozyohou@kekka]}}
+\def\@@iPgozyohou[#1]#2#3{%
+  \csvhairetu{#2}{iPg@L}\Pg@dim@L
+  \csvhairetu{#3}{iPg@R}\Pg@dim@R
+  \ifnum\Pg@dim@L>\Pg@dim@R
+    \xdef\gozyo@a{#2}\xdef\gozyo@b{#3}%
+  \else
+    \xdef\gozyo@a{#3}\xdef\gozyo@b{#2}%
+  \fi
+  \xdef\gozyo@owari{0}%
+  \ensuremath{%
+    \ifx\empty\tbl@sityuu\begin{array}{r|r|r|r}\else
+    \@ifundefined{hyou}{\errmessage{Pgozyohou needs emathT.sty}}{}%
+    \begin{array}{>{\tbl@sityuu}r|r|r|r}\fi
+    \Cfor{}{\gozyo@owari=\z@}{%
+       \xdef\gozyo@a{\gozyo@r}\xdef\gozyo@b{\gozyo@rr}\\\hline}\do{%
+      \iPDivMod*\gozyo@a\gozyo@b\gozyo@q\gozyo@r
+      \iPyakubun*[\gozyo@c]\gozyo@r\gozyo@r
+      \xdef\gozyo@q{\gozyo@q}\xdef\gozyo@r{\gozyo@r}\xdef\gozyo@c{\gozyo@c}%
+      \Strchr{\gozyo@r}{,}\iPg@tmp
+      \ifnum\iPg@tmp>\z@\edef\gozyo@r@sign{1}\else
+        \Fhugou\gozyo@r\gozyo@r@sign
+      \fi
+      \ifthenelse{\equal{\gozyo@r@sign}{0}}{%
+        \xdef\gozyo@owari{1}\xdef#1{\gozyo@b}\xdef\gozyo@rr{0}%
+      }{%
+        \iPDivMod*\gozyo@b\gozyo@r\gozyo@qq\gozyo@rr
+        \iPyakubun*[\gozyo@cc]\gozyo@rr\gozyo@rr
+        \xdef\gozyo@qq{\gozyo@qq}\xdef\gozyo@rr{\gozyo@rr}\xdef\gozyo@cc{\gozyo@cc}%
+        \ifthenelse{\equal{\gozyo@rr}{0}}{%
+          \xdef\gozyo@owari{1}\xdef#1{\gozyo@r}%
+        }{}%
+      }%
+      \prPolynomial*{\gozyo@q} & \prPolynomial*{\gozyo@a}
+        & 
+          \ifthenelse{\equal{\gozyo@r}{0}}{%
+            \Fhikaku{\gozyo@cc}{1}\gozyo@ne
+            \Fhikaku{\gozyo@cc}{-1}\gozyo@me
+            \ifnum\gozyo@ne=\z@
+              \bm{\prPolynomial*{\gozyo@b}}% 
+            \else
+              \ifnum\gozyo@me=\z@
+                -(\bm{\prPolynomial*{\gozyo@b}})% 
+              \else
+                \prF\gozyo@cc(\bm{\prPolynomial*{\gozyo@b}})% 
+              \fi
+            \fi
+          }{\prPolynomial*{\gozyo@b}}%
+        & 
+          \ifthenelse{\equal{\gozyo@r}{0}}{}{\prPolynomial*{\gozyo@qq}}%
+        \\
+      & 
+        \iPMul*\gozyo@b\gozyo@q\gozyo@tmp
+        \prPolynomial*{\gozyo@tmp}%
+        & 
+          \ifthenelse{\equal{\gozyo@r}{0}}{}{\iPMul*\gozyo@r\gozyo@qq\gozyo@tmp\prPolynomial*{\gozyo@tmp}}%
+        &
+    }%
+    & 
+      \ifthenelse{\equal{\gozyo@r}{0}}{\gozyo@r}{%
+        \Fhikaku{\gozyo@c}{1}\gozyo@ne
+        \Fhikaku{\gozyo@c}{-1}\gozyo@me
+        \ifnum\gozyo@ne=\z@
+          \bm{\prPolynomial*{\gozyo@r}}%
+        \else
+          \ifnum\gozyo@me=\z@
+            -(\bm{\prPolynomial*{\gozyo@r}})%
+          \else
+            \prF\gozyo@c(\bm{\prPolynomial*{\gozyo@r}})%
+          \fi
+        \fi}%
+      & 
+        \ifthenelse{\equal{\gozyo@r}{0}}{}{%
+          \Fhikaku{\gozyo@cc}{1}\gozyo@ne
+          \Fhikaku{\gozyo@cc}{-1}\gozyo@me
+          \ifnum\gozyo@ne=\z@
+            \prPolynomial*{\gozyo@rr}% 
+          \else
+            \ifnum\gozyo@me=\z@
+              -(\prPolynomial*{\gozyo@rr})% 
+            \else
+              \prF\gozyo@cc(\prPolynomial*{\gozyo@rr})% 
+            \fi
+          \fi}%
+  \end{array}}\endgroup}
+%\def\@iPgozyohou[#1]#2#3{%
+%  \csvhairetu{#2}{iPg@L}\Pg@dim@L
+%  \csvhairetu{#3}{iPg@R}\Pg@dim@R
+%  \ifnum\Pg@dim@L>\Pg@dim@R
+%    \xdef\gozyo@a{#2}\xdef\gozyo@b{#3}%
+%  \else
+%    \xdef\gozyo@a{#3}\xdef\gozyo@b{#2}%
+%  \fi
+%  \xdef\gozyo@owari{0}%
+%  \ensuremath{\begin{array}{r|r|r|r}
+%    \Cfor{}{\gozyo@owari=\z@}{%
+%       \xdef\gozyo@a{\gozyo@r}\xdef\gozyo@b{\gozyo@rr}\\\hline}\do{%
+%      \iPDivMod\gozyo@a\gozyo@b\gozyo@q\gozyo@r
+%      \iPyakubun[\gozyo@c]\gozyo@r\gozyo@r
+%      \xdef\gozyo@q{\gozyo@q}\xdef\gozyo@r{\gozyo@r}\xdef\gozyo@c{\gozyo@c}%
+%      \ifthenelse{\equal{\gozyo@r}{0}}{%
+%        \xdef\gozyo@owari{1}\xdef#1{\gozyo@b}\xdef\gozyo@rr{0}%
+%      }{%
+%        \iPDivMod\gozyo@b\gozyo@r\gozyo@qq\gozyo@rr
+%        \iPyakubun[\gozyo@cc]\gozyo@rr\gozyo@rr
+%        \xdef\gozyo@qq{\gozyo@qq}\xdef\gozyo@rr{\gozyo@rr}\xdef\gozyo@cc{\gozyo@cc}%
+%        \ifthenelse{\equal{\gozyo@rr}{0}}{%
+%          \xdef\gozyo@owari{1}\xdef#1{\gozyo@r}%
+%        }{}%
+%      }%
+%      \prPolynomial{\gozyo@q} & \prPolynomial{\gozyo@a}
+%        & 
+%          \ifthenelse{\equal{\gozyo@r}{0}}{\bm{\prPolynomial{\gozyo@b}}}{\prPolynomial{\gozyo@b}}%
+%        & 
+%          \ifthenelse{\equal{\gozyo@r}{0}}{}{\prPolynomial{\gozyo@qq}}%
+%        \\
+%      & 
+%        \iPMul\gozyo@b\gozyo@q\gozyo@tmp
+%        \prPolynomial{\gozyo@tmp}%
+%        & 
+%          \ifthenelse{\equal{\gozyo@r}{0}}{}{\iPMul\gozyo@r\gozyo@qq\gozyo@tmp\prPolynomial{\gozyo@tmp}}%
+%        &
+%    }%
+%    & 
+%      \ifthenelse{\equal{\gozyo@r}{0}}{\gozyo@r}{%
+%        \ifnum\gozyo@c=\@ne
+%          \bm{\prPolynomial{\gozyo@r}}%
+%        \else
+%          \ifnum\gozyo@c=-1\relax
+%            -(\bm{\prPolynomial{\gozyo@r}})%
+%          \else
+%            \gozyo@c(\bm{\prPolynomial{\gozyo@r}})%
+%          \fi
+%        \fi}%
+%      & 
+%        \ifthenelse{\equal{\gozyo@r}{0}}{}{%
+%          \ifnum\gozyo@cc=\@ne
+%            \prPolynomial{\gozyo@rr}% 
+%          \else
+%            \ifnum\gozyo@cc=-1\relax
+%              -(\prPolynomial{\gozyo@rr})% 
+%            \else
+%              \gozyo@cc(\prPolynomial{\gozyo@rr})% 
+%            \fi
+%          \fi}%
+%  \end{array}}}
+%%
+\def\iPDiv#1#2#3{%
+% #1 : 多項式 (csv)
+% #2 : 定数
+  \csvhairetu{#2}{tr@}\dim@
+  \edef#3{\empty}%
+  \Cfor{\edef\tr@i{0}}{\tr@i<\dim@}{}\do{%
+    \Incr\tr@i
+    \IDiv{\hairetu{tr@}\tr@i}{#2}\tr@tmp
+    \ifx\empty #3\else\edefappend#3{,}\fi
+    \edefappend#3{\tr@tmp}%
+  }%
+  \@cut{#3}%
+}
+%
+% 方程式表示
+%
+\def\prPeq{\@ifnextchar<{\@prPeq}{\@prPeq<\empty>}}%
+\def\@prPeq<#1>#2#3#4{%
+% #2 : 左辺 (csv)
+% #3 : 関係演算子
+% #4 : 右辺 (csv)
+  \def\bunbo@@{\bunbo@}%
+  \edef\pr@ans{\empty}%
+  \edef\mitis@@{x}%
+  \ifx\empty #1\else\setkeys{emQf}{#1}\fi
+  \ifnum\bunbo@@=\z@
+    \Ransuu[d]{Int((\bunbo@@max-\bunbo@@min+1)*X/\ran@sup+\bunbo@@min)}\bunbo@@
+  \fi
+  \ifthenelse{\equal{\hutougou}{1}}{\defhutougou}{}%
+  \ensuremath{%
+      \prPolynom{#2}%
+      \ifthenelse{\equal{#3}{>=}}{%
+        \geqq
+      }{%
+        \ifthenelse{\equal{#3}{<=}}{%
+          \leqq
+        }{%
+          #3
+        }%
+      }%
+      \prPolynom{#4}%
+  }%
+  \ifx\empty\pr@ans\else
+      \immediate\openout\em@whndl=\jobname.peq%
+      \immediate\write\em@whndl{%
+        \string\begin{Kaitou}\string\mitisuu{\mitis@@}\string\prPeqAns{#2}{#3}{#4}\string\end{Kaitou}}%
+      \immediate\closeout\em@whndl%
+      \input{\jobname.peq}%
+  \fi
+}%
+%
+% 方程式の解表示
+%
+\def\prPeqAns#1#2#3{%
+% #1 : 左辺 (csv)
+% #2 : 関係演算子
+% #3 : 右辺 (csv)
+  \iPSub{#1}{#3}\peq@tmp
+  \csvhairetu{\peq@tmp}{EqAns@L}\dim@
+  \ifthenelse{\dim@=3}{%
+    \ifthenelse{\equal{#2}{=}}{%
+      \@prQeqAns{\hairetu{EqAns@L}{1}}{\hairetu{EqAns@L}{2}}{\hairetu{EqAns@L}{3}}%
+    }{%
+      \@prQineqAns{\hairetu{EqAns@L}{1}}{\hairetu{EqAns@L}{2}}{\hairetu{EqAns@L}{3}}{#2}%
+    }%
+  }{%
+    \ifthenelse{\dim@=2}{%
+      \ifthenelse{\equal{#2}{=}}{%
+        \@prLeqAns{\hairetu{EqAns@L}{1}}{\hairetu{EqAns@L}{2}}%
+      }{%
+        \@prLineqAns{\hairetu{EqAns@L}{1}}{\hairetu{EqAns@L}{2}}{#2}%
+      }%
+    }{%
+      \ifthenelse{\dim@=1}{%
+        \ifthenelse{\equal{#2}{=}}{%
+          \@prOeqAns{\hairetu{EqAns@L}{1}}%
+        }{%
+          \@prOineqAns{\hairetu{EqAns@L}{1}}{#2}%
+        }%
+      }{%
+    }%
+    }%
+  }%
+}
+%
+% 整数係数二次方程式の解表示
+%
+\def\@prQeqAns#1#2#3{%
+  \IMul{2}{#1}\prQ@a
+  \IMul{#2}{-1}\prQ@b
+  \IMul{#2}{#2}\prQ@D
+  \IMul{#1}{#3}\prQ@tmp
+  \IMulself\prQ@tmp{-4}%
+  \IAddself\prQ@D\prQ@tmp
+  \ifnum\prQ@a<\z@
+    \IMulself\prQ@a{-1}%
+    \IMulself\prQ@b{-1}%
+  \fi
+  \ensuremath{%
+    \ifnum\prQ@D=\z@
+        \Hcalc{(\prQ@b)/(\prQ@a)}=\prQ@tmp
+          \prHsort[s]\prQ@tmp
+          （重解）
+    \else
+      \ifnum\prQ@D<\z@\edef\zitu@kyo{i}\IMulself{\prQ@D}{-1}\else\edef\zitu@kyo{\empty}\fi
+      \Hcalc{("\prQ@D)}=\prQ@D@
+      \Strsep\prQ@D@{"}\prQ@Da\prQ@Db
+      \ifx\empty\zitu@kyo
+        \ifnum\prQ@Db=1\relax
+          \Hcalc{((\prQ@b)-("\prQ@D))/(\prQ@a)}=\prQ@tmp 
+            \prHsort[s]\prQ@tmp
+          \Hcalc{((\prQ@b)+("\prQ@D))/(\prQ@a)}=\prQ@tmp 
+            ,~\prHsort[s]\prQ@tmp
+        \else
+          \saidaikouyakusuu\prQ@a\prQ@b\prQ@r
+          \saidaikouyakusuu\prQ@r\prQ@Da\prQ@r
+          \IDivself\prQ@a\prQ@r
+          \IDivself\prQ@b\prQ@r
+          \IDivself\prQ@Da\prQ@r
+          \ifnum\prQ@b=\z@
+            \ifnum\prQ@a=1\relax
+              \ifnum\prQ@Da=1\relax
+                \pm \sqrt{\prQ@Db}
+              \else
+                \pm \prQ@Da\sqrt{\prQ@Db}
+              \fi
+            \else
+              \ifnum\prQ@Da=1\relax
+                \pm\bunsuu{\sqrt{\prQ@Db}}{\prQ@a}
+              \else
+                \pm\bunsuu{\prQ@Da\sqrt{\prQ@Db}}{\prQ@a}
+              \fi
+            \fi
+          \else
+            \ifnum\prQ@b=\z@
+              \ifnum\prQ@a=1\relax
+                \ifnum\prQ@Da=1\relax
+                   \pm \sqrt{\prQ@Db}
+                \else
+                   \pm \prQ@Da\sqrt{\prQ@Db}
+                \fi
+              \else
+                \ifnum\prQ@Da=1\relax
+                  \pm\bunsuu{\sqrt{\prQ@Db}}{\prQ@a}
+                \else
+                  \pm\bunsuu{\prQ@Da\sqrt{\prQ@Db}}{\prQ@a}
+                \fi
+              \fi
+            \else
+              \ifnum\prQ@a=1\relax
+                \ifnum\prQ@Da=1\relax
+                  \prQ@b \pm \sqrt{\prQ@Db}
+                \else
+                  \prQ@b \pm \prQ@Da\sqrt{\prQ@Db}
+                \fi
+              \else
+                \ifnum\prQ@Da=1\relax
+                  \bunsuu{\prQ@b \pm \sqrt{\prQ@Db}}{\prQ@a}
+                \else
+                  \bunsuu{\prQ@b \pm \prQ@Da\sqrt{\prQ@Db}}{\prQ@a}
+                \fi
+              \fi
+            \fi
+          \fi
+        \fi
+      \else
+        \saidaikouyakusuu\prQ@a\prQ@b\prQ@r
+        \saidaikouyakusuu\prQ@r\prQ@Da\prQ@r
+        \IDivself\prQ@a\prQ@r
+        \IDivself\prQ@b\prQ@r
+        \IDivself\prQ@Da\prQ@r
+        \ifnum\prQ@b=\z@
+          \ifnum\prQ@Db=1\relax
+            \ifnum\prQ@a=1\relax
+              \ifnum\prQ@Da=1\relax
+                 \pm i
+              \else
+                 \pm \prQ@Da i
+              \fi
+            \else
+              \pm\bunsuu{\prQ@Da}{\prQ@a}i
+            \fi
+          \else
+            \ifnum\prQ@a=1\relax
+              \ifnum\prQ@Da=1\relax
+                 \pm \sqrt{\prQ@Db}\,i
+              \else
+                 \pm \prQ@Da\sqrt{\prQ@Db}\,i
+              \fi
+            \else
+              \ifnum\prQ@Da=1\relax
+                \pm\bunsuu{\sqrt{\prQ@Db}}{\prQ@a}i
+              \else
+                \pm\bunsuu{\prQ@Da\sqrt{\prQ@Db}}{\prQ@a}i
+              \fi
+            \fi
+          \fi
+        \else
+          \ifnum\prQ@Db=1\relax
+            \ifnum\prQ@a=1\relax
+              \ifnum\prQ@Da=1\relax
+                \prQ@b \pm i
+              \else
+                \prQ@b \pm \prQ@Da i
+              \fi
+            \else
+              \ifnum\prQ@Da=1\relax
+                \bunsuu{\prQ@b \pm i}{\prQ@a}%
+              \else
+                \bunsuu{\prQ@b \pm \prQ@Da\,i}{\prQ@a}
+              \fi
+            \fi
+          \else
+            \ifnum\prQ@a=1\relax
+              \ifnum\prQ@Da=1\relax
+                \prQ@b \pm \sqrt{\prQ@Db}\,i
+              \else
+                \prQ@b \pm \prQ@Da\sqrt{\prQ@Db}\,i%
+              \fi
+            \else
+              \ifnum\prQ@Da=1\relax
+                \bunsuu{\prQ@b \pm \sqrt{\prQ@Db}\,i}{\prQ@a}
+              \else
+                \bunsuu{\prQ@b \pm \prQ@Da\sqrt{\prQ@Db}\,i}{\prQ@a}
+              \fi
+            \fi
+          \fi
+        \fi
+      \fi
+    \fi
+  }%
+}
+%
+\let\prIeqii\@prQeqAns
+%
+% 二次不等式の解表示
+%
+\def\@prQineqAns#1#2#3#4{%
+  \IMul{2}{#1}\prQ@a
+  \IMul{#2}{-1}\prQ@b
+  \IMul{#2}{#2}\prQ@D
+  \IMul{#1}{#3}\prQ@tmp
+  \IMulself\prQ@tmp{-4}%
+  \IAddself\prQ@D\prQ@tmp
+  \edef\hutou@gou{#4}%
+  \ifnum\prQ@a<\z@
+    \IMulself\prQ@a{-1}%
+    \IMulself\prQ@b{-1}%
+    \ifthenelse{\equal{#4}{>}}{%
+      \edef\hutou@gou{<}%
+    }{%
+      \ifthenelse{\equal{#4}{>=}}{%
+        \edef\hutou@gou{<=}%
+      }{%
+        \ifthenelse{\equal{#4}{<}}{%
+          \edef\hutou@gou{>}%
+        }{%
+          \ifthenelse{\equal{#4}{<=}}{%
+            \edef\hutou@gou{>=}%
+          }{%
+          }%
+        }%
+      }%
+    }%
+  \fi
+  \Hcalc{("\prQ@D)}=\prQ@D@
+  \Strsep\prQ@D@{"}\prQ@Da\prQ@Db
+  \ensuremath{%
+    \Hcalc{((\prQ@b)-("\prQ@D))/(\prQ@a)}=\prQ@Ltmp
+    \Hcalc{((\prQ@b)+("\prQ@D))/(\prQ@a)}=\prQ@Rtmp
+    \ifnum\prQ@D>\z@
+      \Hcalc{((\prQ@b)-("\prQ@D))/(\prQ@a)}=\prQ@Ltmp
+      \Hcalc{((\prQ@b)+("\prQ@D))/(\prQ@a)}=\prQ@Rtmp
+      \ifthenelse{\equal{\hutou@gou}{>}}{%
+        \ifnum\prQ@Db=\@ne
+          \mitis@@<\prHsort[s]\prQ@Ltmp,\quad\prHsort[s]\prQ@Rtmp<\mitis@@
+        \else
+          \mitis@@<\prH\prQ@Ltmp,\quad\prH\prQ@Rtmp<\mitis@@
+        \fi
+      }{%
+        \ifthenelse{\equal{\hutou@gou}{>=}}{%
+          \ifnum\prQ@Db=\@ne
+            \mitis@@\leqq\prHsort[s]\prQ@Ltmp,\quad\prHsort[s]\prQ@Rtmp\leqq\mitis@@
+          \else
+            \mitis@@\leqq\prH\prQ@Ltmp,\quad\prH\prQ@Rtmp\leqq\mitis@@
+          \fi
+        }{%
+          \ifthenelse{\equal{\hutou@gou}{<}}{%
+            \ifnum\prQ@Db=\@ne
+              \prHsort[s]\prQ@Ltmp < \mitis@@ < \prHsort[s]\prQ@Rtmp
+            \else
+              \prH\prQ@Ltmp < \mitis@@ < \prH\prQ@Rtmp
+            \fi
+          }{%
+            \ifthenelse{\equal{\hutou@gou}{<=}}{%
+              \ifnum\prQ@Db=\@ne
+                \prHsort[s]\prQ@Ltmp \leqq \mitis@@ \leqq \prHsort[s]\prQ@Rtmp
+              \else
+                \prH\prQ@Ltmp \leqq \mitis@@ \leqq \prH\prQ@Rtmp
+              \fi
+            }{%
+            }%
+          }%
+        }%
+      }%
+    \else\ifnum\prQ@D=\z@
+      \ifthenelse{\equal{\hutou@gou}{>}}{%
+        \prHsort[s]\prQ@Ltmp~以外のすべての実数
+      }{%
+        \ifthenelse{\equal{\hutou@gou}{>=}}{%
+          すべての実数
+        }{%
+          \ifthenelse{\equal{\hutou@gou}{<}}{%
+            解なし
+          }{%
+            \ifthenelse{\equal{\hutou@gou}{<=}}{%
+              \prHsort[s]\prQ@Ltmp
+            }{%
+            }%
+          }%
+        }%
+      }%
+    \else
+      \ifthenelse{\equal{\hutou@gou}{>}}{%
+        すべての実数
+      }{%
+        \ifthenelse{\equal{\hutou@gou}{>=}}{%
+          すべての実数
+        }{%
+          \ifthenelse{\equal{\hutou@gou}{<}}{%
+            解なし
+          }{%
+            \ifthenelse{\equal{\hutou@gou}{<=}}{%
+              解なし
+            }{%
+            }%
+          }%
+        }%
+      }%
+    \fi\fi
+  }%
+}%
+%
+% 整数係数1次方程式の解表示
+%
+\def\@prLeqAns#1#2{%
+  \edef\prLeqAns@a{#1}%
+  \edef\prLeqAns@b{#2}%
+  \ensuremath{%
+    \ifnum\prLeqAns@a<\z@
+      \IMul{#1}{-1}\prLeqAns@a
+    \else
+      \IMul{\prLeqAns@b}{-1}\prLeqAns@b
+    \fi
+    \prF[y]{\prLeqAns@b/\prLeqAns@a}%
+  }%
+}%
+%
+% 整数係数1次不等式の解表示
+%
+\def\@prLineqAns#1#2#3{%
+  \edef\prLineqAns@a{#1}%
+  \edef\prLineqAns@b{#2}%
+  \IMulself\prLineqAns@b{-1}%
+  \edef\hutou@gou{#3}%
+  \ifnum\prLineqAns@a<\z@
+    \IMulself\prLineqAns@a{-1}%
+    \IMulself\prLineqAns@b{-1}%
+    \ifthenelse{\equal{#3}{>}}{%
+      \edef\hutou@gou{<}%
+    }{%
+      \ifthenelse{\equal{#3}{>=}}{%
+        \edef\hutou@gou{<=}%
+      }{%
+        \ifthenelse{\equal{#3}{<}}{%
+          \edef\hutou@gou{>}%
+        }{%
+          \ifthenelse{\equal{#3}{<=}}{%
+            \edef\hutou@gou{>=}%
+          }{%
+          }%
+        }%
+      }%
+    }%
+  \fi
+  \ensuremath{%
+    \ifthenelse{\equal{\hutou@gou}{>}}{%
+      \mitis@@ > \prF[y]{\prLineqAns@b/\prLineqAns@a}%
+    }{%
+      \ifthenelse{\equal{\hutou@gou}{>=}}{%
+        \mitis@@ \geqq \prF[y]{\prLineqAns@b/\prLineqAns@a}%
+      }{%
+        \ifthenelse{\equal{\hutou@gou}{<}}{%
+          \mitis@@ < \prF[y]{\prLineqAns@b/\prLineqAns@a}%
+        }{%
+          \ifthenelse{\equal{\hutou@gou}{<=}}{%
+            \mitis@@ \leqq \prF[y]{\prLineqAns@b/\prLineqAns@a}%
+          }{%
+          }%
+        }%
+      }%
+    }%
+  }%
+}%
+%
+% 整数係数0次方程式の解表示
+%
+\def\@prOeqAns#1{%
+  \ifnum #1=\z@ 不定 \else 不能 \fi
+}%
+%
+% 整数係数0次不等式の解表示
+%
+\def\@prOineqAns#1#2{%
+  \edef\prOineqAns@a{#1}%
+  \edef\hutou@gou{#2}%
+  \ifnum\prOineqAns@a<\z@
+    \IMulself\prOineqAns@a{-1}%
+    \ifthenelse{\equal{#2}{>}}{%
+      \edef\hutou@gou{<}%
+    }{%
+      \ifthenelse{\equal{#2}{>=}}{%
+        \edef\hutou@gou{<=}%
+      }{%
+        \ifthenelse{\equal{#2}{<}}{%
+          \edef\hutou@gou{>}%
+        }{%
+          \ifthenelse{\equal{#2}{<=}}{%
+            \edef\hutou@gou{>=}%
+          }{%
+          }%
+        }%
+      }%
+    }%
+  \fi
+  \ifnum\prOineqAns@a=\z@
+    \ifthenelse{\equal{\hutou@gou}{>}}{%
+      解なし
+    }{%
+      \ifthenelse{\equal{\hutou@gou}{>=}}{%
+        すべての実数
+      }{%
+        \ifthenelse{\equal{\hutou@gou}{<}}{%
+          解なし
+        }{%
+          \ifthenelse{\equal{\hutou@gou}{<=}}{%
+            すべての実数
+          }{%
+          }%
+        }%
+      }%
+    }%
+  \else
+    \ifthenelse{\equal{\hutou@gou}{>}}{%
+      すべての実数
+    }{%
+      \ifthenelse{\equal{\hutou@gou}{>=}}{%
+        すべての実数
+      }{%
+        \ifthenelse{\equal{\hutou@gou}{<}}{%
+          解なし
+        }{%
+          \ifthenelse{\equal{\hutou@gou}{<=}}{%
+            解なし
+          }{%
+          }%
+        }%
+      }%
+    }%
+  \fi
+}%
+%
+% ２次式の平方完成
+%
+\def\prQQ{\@ifnextchar<{\@prQQ}{\@prQQ<\empty>}}
+\def\@prQQ<#1>#2{%
+  \edef\pr@ans{\empty}%
+  \edef\mitis@@{x}%
+  \edef\bunbo@@{\bunbo@}%
+  \ifx\empty #1\else\setkeys{emQf}{#1}\fi
+  \ifnum\bunbo@@=\z@
+    \Ransuu[d]{Int((\bunbo@@max-\bunbo@@min+1)*X/\ran@sup+\bunbo@@min)}\bunbo@@
+  \fi
+  \prPolynomial{#2}%
+  \ifx\empty\pr@ans\else
+      \immediate\openout\em@whndl=\jobname.peq%
+      \immediate\write\em@whndl{%
+        \string\begin{Kaitou}\string\mitisuu{\mitis@@}\string\prQQAns<bunbo=\bunbo@@>{#2}\string\end{Kaitou}}%
+      \immediate\closeout\em@whndl%
+      \input{\jobname.peq}%
+  \fi
+}%
+%
+\def\prQQAns{\@ifnextchar<{\@prQQAns}{\@prQQAns<\empty>}}%
+\def\@prQQAns<#1>#2{%
+  \csvhairetu{#2}{QQ@}\QQ@dmy
+  \edef\bunbo@@{\bunbo@}%
+  \ifx\empty #1\else\setkeys{emQf}{#1}\fi
+  \ensuremath{%
+    \edef\QQ@a{\hairetu{QQ@}{1}}%
+    \edef\QQ@b{\hairetu{QQ@}{2}}%
+    \edef\QQ@c{\hairetu{QQ@}{3}}%
+    \IMul\QQ@a{2}\QQ@aa
+    \Fsign{\QQ@b/\QQ@aa}\QQ@t
+    \ifnum\QQ@a=\bunbo@@
+    \else\ifnum\QQ@a=-\bunbo@@ -
+    \else \prF[y]{\QQ@a/\bunbo@@}
+    \fi\fi
+    \if 0\QQ@t x^2
+    \else
+      \left(x
+      \if +\QQ@t +\fi
+      \prF[y]{\QQ@b/\QQ@aa}\right)^2
+    \fi
+    \IMul{4}\QQ@a\QQ@@@@a
+    \IMul\QQ@@@@a\QQ@c\QQ@ac
+    \IMul\QQ@b\QQ@b\QQ@@b
+    \ISub\QQ@ac\QQ@@b\QQ@bunsi
+    \IMulself\QQ@@@@a\bunbo@@
+    \Fsign{\QQ@bunsi/\QQ@@@@a}\QQ@t
+    \if 0\QQ@t
+    \else
+      \if +\QQ@t +\fi
+      \prF[y]{\QQ@bunsi/\QQ@@@@a}
+    \fi
+  }%
+}%
+%
+% 2次関数の最大最小
+%
+\def\prQMinMax{\@ifnextchar<{\@prQMinMax}{\@prQMinMax<\empty>}}
+\def\@prQMinMax<#1>#2{%
+  \edef\pr@ans{\empty}%
+  \edef\mitis@@{x}%
+  \edef\bunbo@@{\bunbo@}%
+  \edef\range@F{\empty}%
+  \edef\range@T{\empty}%
+  \ifx\empty #1\else\setkeys{emQf}{#1}\fi
+  \ifnum\bunbo@@=\z@
+    \Ransuu[d]{Int((\bunbo@@max-\bunbo@@min+1)*X/\ran@sup+\bunbo@@min)}\bunbo@@
+  \fi
+  \ifx\empty\range@F
+  \else
+    \ifthenelse{\range@F=0\and\range@T=0}{%
+      \csvhairetu{#2}{QQ@}\QQ@dmy
+      \edef\QQ@a{\hairetu{QQ@}{1}}%
+      \edef\QQ@b{\hairetu{QQ@}{2}}%
+      \edef\QQ@c{\hairetu{QQ@}{3}}%
+      \Cfor{\edef\range@a{0}\edef\range@b{0}}{\range@a=\range@b}{}\do{%
+        \Ransuu[d]{Int(13*X/\ran@sup-6-(\QQ@b)/(2*(\QQ@a)))}\range@a
+        \Ransuu[d]{Int(13*X/\ran@sup-6-(\QQ@b)/(2*(\QQ@a)))}\range@b
+      }%
+      \ifnum\range@a<\range@b
+        \edef\range@F{\range@a}%
+        \edef\range@T{\range@b}%
+      \else
+        \edef\range@F{\range@b}%
+        \edef\range@T{\range@a}%
+      \fi
+    }{}%
+  \fi
+  \prPolynomial{#2}%
+  \ifx\empty\range@F\else
+    ~\ensuremath{(\range@F\leqq x\leqq \range@T)}%
+  \fi
+  \ifx\empty\pr@ans\else
+      \immediate\openout\em@whndl=\jobname.peq%
+      \immediate\write\em@whndl{%
+        \string\begin{Kaitou}
+        \string\mitisuu{\mitis@@}\string\prQminmax<bunbo=\bunbo@@,kukan={\range@F,\range@T}>{#2}\string\end{Kaitou}}%
+      \immediate\closeout\em@whndl%
+      \input{\jobname.peq}%
+  \fi
+}%
+%
+\def\Qminmax{\@ifnextchar<{\@Qminmax}{\@Qminmax<\empty>}}
+\def\@Qminmax<#1>#2#3#4#5#6{%
+% #1 : key=val
+% #2 : 2次関数 (csv)
+% #3 : 戻り値（最小となるx）
+% #4 : 　　　（最小値）
+% #5 : 戻り値（最大となるx）
+% #6: 　　　（最大値）
+%
+\def\QQ@val##1##2{\Fcalc{((\QQ@a)*(##1)*(##1)+(\QQ@b)*(##1)+(\QQ@c))/(\bunbo@@)}=##2\relax}%
+%
+  \csvhairetu{#2}{QQ@}\QQ@dmy
+  \edef\bunbo@@{\bunbo@}%
+  \ifx\empty #1\else\setkeys{emQf}{#1}\fi
+  \edef#3{\empty}%
+  \edef#4{\empty}%
+  \edef#5{\empty}%
+  \edef#6{\empty}%
+  \edef\QQ@a{\hairetu{QQ@}{1}}%
+  \edef\QQ@b{\hairetu{QQ@}{2}}%
+  \edef\QQ@c{\hairetu{QQ@}{3}}%
+  \IMul\QQ@a{-2}\QQ@aa
+  \IMul{4}\QQ@a\QQ@@@@a
+  \IMul\QQ@@@@a\QQ@c\QQ@ac
+  \IMul\QQ@b\QQ@b\QQ@@b
+  \ISub\QQ@ac\QQ@@b\QQ@bunsi
+  \IMulself\QQ@@@@a\bunbo@@
+  \ifnum\QQ@a>\z@%            下に凸
+    \ifx\empty\range@F%         区間指定なし
+      \ifnum\QQ@b=\z@
+        \edef#3{0}%
+      \else
+        \edef#3{\QQ@b/\QQ@aa}%
+      \fi
+      \edef#4{\QQ@bunsi/\QQ@@@@a}%
+   \else%                      区間指定あり
+      \Fhikaku{\QQ@b/\QQ@aa}\range@F\QQ@tmp
+      \ifnum\QQ@tmp<\z@%          頂点は区間の左
+        \QQ@val\range@F#4\edef#3{\range@F}%
+        \QQ@val\range@T#6\edef#5{\range@T}%
+      \else
+        \Fhikaku{\QQ@b/\QQ@aa}\range@T\QQ@tmp
+        \ifnum\QQ@tmp>\z@%     頂点は区間の右
+          \QQ@val\range@F#6\edef#5{\range@F}%
+          \QQ@val\range@T#4\edef#3{\range@T}%
+        \else%                      頂点は区間内
+          \ifnum\QQ@b=\z@
+            \edef#3{0}%
+          \else
+            \edef#3{\QQ@b/\QQ@aa}%
+          \fi
+          \edef#4{\QQ@bunsi/\QQ@@@@a}%
+          \QQ@val\range@F\val@F
+          \QQ@val\range@T\val@T
+          \Fhikaku\val@F\val@T\QQ@tmp
+          \ifnum\QQ@tmp<\z@
+            \edef#5{\range@T}\edef#6{\val@T}%
+          \else\ifnum\QQ@tmp>\z@
+            \edef#5{\range@F}\edef#6{\val@F}%
+          \else
+            \edef#5{\range@F,\ \range@T}\edef#6{\val@T}%
+          \fi\fi
+        \fi
+      \fi
+    \fi
+  \else%                      上に凸
+    \ifx\empty\range@F%         区間指定なし
+      \ifnum\QQ@b=\z@
+        \edef#5{0}%
+      \else
+        \edef#5{\QQ@b/\QQ@aa}%
+      \fi
+      \edef#6{\QQ@bunsi/\QQ@@@@a}%
+    \else%                      区間指定あり
+      \Fhikaku{\QQ@b/\QQ@aa}\range@F\QQ@tmp
+      \ifnum\QQ@tmp<\z@%          頂点は区間の左
+        \QQ@val\range@F#6\edef#5{\range@F}%
+        \QQ@val\range@T#4\edef#3{\range@T}%
+      \else
+        \Fhikaku{\QQ@b/\QQ@aa}\range@T\QQ@tmp
+        \ifnum\QQ@tmp>\z@%     頂点は区間の右
+          \QQ@val\range@F#4\edef#3{\range@F}%
+          \QQ@val\range@T#6\edef#5{\range@T}%
+        \else%                      頂点は区間内
+          \ifnum\QQ@b=\z@
+            \edef#5{0}%
+          \else
+            \edef#5{\QQ@b/\QQ@aa}%
+          \fi
+          \edef#6{\QQ@bunsi/\QQ@@@@a}%
+          \QQ@val\range@F\val@F
+          \QQ@val\range@T\val@T
+          \Fhikaku\val@F\val@T\QQ@tmp
+          \ifnum\QQ@tmp<\z@
+            \edef#3{\range@F}\edef#4{\val@F}%
+          \else\ifnum\QQ@tmp>\z@
+            \edef#3{\range@T}\edef#4{\val@T}%
+          \else
+            \edef#3{\range@F,\ \range@T}\edef#4{\val@T}%
+          \fi\fi
+        \fi
+      \fi
+    \fi
+  \fi
+\ifx\empty #3\else
+  \Strchr{#3}{,}\QQ@tmp
+  \ifnum\QQ@tmp=\z@\FYakubun{#3}#3\fi
+\fi
+\ifx\empty #4\else\FYakubun{#4}#4\fi
+\ifx\empty #5\else
+  \Strchr{#5}{,}\QQ@tmp
+  \ifnum\QQ@tmp=\z@\FYakubun{#5}#5\fi
+\fi
+\ifx\empty #6\else\FYakubun{#6}#6\fi
+}
+%
+\def\prQminmax{\@ifnextchar<{\@prQminmax}{\@prQminmax<\empty>}}
+\def\@prQminmax<#1>#2{%
+  \edef\bunbo@@{\bunbo@}%
+  \ifx\empty #1\else\setkeys{emQf}{#1}\fi
+  \edef\bunbo@@@{\bunbo@@}%
+  \Qminmax<bunbo=\bunbo@@@>{#2}\Q@xmin\Q@ymin\Q@xmax\Q@ymax
+  \ifx\empty\Q@ymax\else 最大値{$\prF[y]\Q@ymax~\left(x=\prF[y]\Q@xmax\right)$}
+    \ifx\empty\Q@ymin\else\\\fi
+  \fi
+  \ifx\empty\Q@ymin\else 最小値{$\prF[y]\Q@ymin~\left(x=\prF[y]\Q@xmin\right)$}\fi
+}%
+%
+% 2次式の係数を乱数で決定
+%
+\def\rndQf{\@ifnextchar<{\@rndQf}{\@rndQf<\empty>}}
+\def\@rndQf<#1>#2{%
+  \edef\kai@type{\empty}%
+  \edef\hutougou{=}%
+  \edef\aii@@max{\aii@max}%
+  \edef\ai@@max{\ai@max}%
+  \edef\a@@max{\a@max}%
+  \edef\aii@@min{\aii@min}%
+  \edef\ai@@min{\ai@min}%
+  \edef\a@@min{\a@min}%
+  \ifx\empty #1\else\setkeys{emQf}{#1}\fi
+  \ifthenelse{\equal{\hutougou}{1}}{\defhutougou}{}%
+  \ifthenelse{\equal{\kai@type}{seisuu}}{%
+    \edef\Qf@a{1}%
+    \Ransuu[d]{Int(25*X/\ran@sup-12)}\iQ@i
+    \Ransuu[d]{Int(25*X/\ran@sup-12)}\iQ@ii
+    \IAdd\iQ@i\iQ@ii\Qf@b\relax
+    \IMul\iQ@i\iQ@ii\Qf@c\relax
+  }{%
+    \ifthenelse{\equal{\kai@type}{yuurisuu}}{%
+      \Ransuu[d]{Int(13*X/\ran@sup-6)}\fQ@b% 分数の分子は -6〜6
+      \ifnum\fQ@b=0\edef\fQ@a{1}\else
+        \Cfor{\edef\fQ@a{0}}{\fQ@a=0}{\Ransuu[d]{Int(5*X/\ran@sup)}\fQ@a}\do{}% 分母は 1〜4
+        \saidaikouyakusuu\fQ@a\fQ@b\fQ@g
+        \IDivself\fQ@a\fQ@g
+        \IDivself\fQ@b\fQ@g
+      \fi
+      \Ransuu[d]{Int(13*X/\ran@sup-6)}\fQ@d
+      \ifnum\fQ@d=0\edef\fQ@c{1}\else
+        \Cfor{\edef\fQ@c{0}}{\fQ@c=0}{\Ransuu[d]{Int(5*X/\ran@sup)}\fQ@c}\do{}%
+        \saidaikouyakusuu\fQ@c\fQ@d\fQ@g
+        \IDivself\fQ@c\fQ@g
+        \IDivself\fQ@d\fQ@g
+      \fi
+      \IMul\fQ@a\fQ@c\Qf@a\relax
+      \IMul\fQ@b\fQ@d\Qf@c\relax
+      \IMul\fQ@a\fQ@d\Qf@b\relax
+      \IMul\fQ@b\fQ@c\fQ@r
+      \IAddself\Qf@b\fQ@r
+    }{%
+      \ifthenelse{\equal{\kai@type}{zissuu}}{%
+        \Cfor{\edef\Qf@D{-1}}{\lengthtest{\Qf@D\p@<\z@}}\do{%
+          \Cfor{\edef\Qf@a{0}}{\Qf@a=0}{%
+            \Ransuu[d]{Int(((\aii@@max)-(\aii@@min)+1)*X/\ran@sup+(\aii@@min))}\Qf@a}\do{}%
+          \Ransuu[d]{Int(((\ai@@max)-(\ai@@min)+1)*X/\ran@sup+(\ai@@min))}\Qf@b
+          \Ransuu[d]{Int(((\a@@max)-(\a@@min)+1)*X/\ran@sup+(\a@@min))}\Qf@c
+          \IMul\Qf@b\Qf@b\Qf@D\IDivself\Qf@D{4}\IMul\Qf@a\Qf@c\Qf@r\ISubself\Qf@D\Qf@r
+        }%
+      }{%
+        \ifthenelse{\equal{\kai@type}{kyosuu}}{%
+          \Cfor{\edef\Qf@D{1}}{\lengthtest{\Qf@D\p@>\z@}\or\lengthtest{\Qf@D\p@=\z@}}\do{%
+            \Cfor{\edef\Qf@a{0}}{\Qf@a=0}{%
+              \Ransuu[d]{Int(((\aii@@max)-(\aii@@min)+1)*X/\ran@sup+(\aii@@min))}\Qf@a%
+              }\do{}%
+            \Ransuu[d]{Int(((\ai@@max)-(\ai@@min)+1)*X/\ran@sup+(\ai@@min))}\Qf@b
+            \Ransuu[d]{Int(((\a@@max)-(\a@@min)+1)*X/\ran@sup+(\a@@min))}\Qf@c
+            \IMul\Qf@b\Qf@b\Qf@D\IDivself\Qf@D{4}\IMul\Qf@a\Qf@c\Qf@r\ISubself\Qf@D\Qf@r
+          }%
+        }{%
+          \loop
+            \Ransuu[d]{Int(((\aii@@max)-(\aii@@min)+1)*X/\ran@sup+(\aii@@min))}\Qf@a
+            \ifnum\Qf@a=\z@
+          \repeat
+          \Ransuu[d]{Int(((\ai@@max)-(\ai@@min)+1)*X/\ran@sup+(\ai@@min))}\Qf@b
+          \Ransuu[d]{Int(((\a@@max)-(\a@@min)+1)*X/\ran@sup+(\a@@min))}\Qf@c
+        }%
+      }%
+    }%
+  }%
+  \edef#2{\Qf@a,\Qf@b,\Qf@c}%
+}
+%
+%
+%
+\def\rndLf{\@ifstar{\edef\taik@{0}\@rndLf}{\edef\taik@{1}\@rndLf}}%
+\def\@rndLf{\@ifnextchar<{\@@rndLf}{\@@rndLf<\empty>}}
+\def\@@rndLf<#1>#2{%
+  \edef\kai@type{\empty}%
+  \edef\hutougou{=}%
+  \edef\ai@@max{\ai@max}%
+  \edef\ai@@min{\ai@min}%
+  \edef\a@@max{\a@max}%
+  \edef\a@@min{\a@min}%
+  \ifx\empty #1\else\setkeys{emQf}{#1}\fi
+  \ifthenelse{\equal{\hutougou}{1}}{\defhutougou}{}%
+  \ifnum\taik@=\z@
+    \Ransuu[d]{Int(((\ai@@max)-(\ai@@min)+1)*X/\ran@sup+(\ai@@min))}\Lf@a
+  \else
+    \loop
+      \Ransuu[d]{Int(((\ai@@max)-(\ai@@min)+1)*X/\ran@sup+(\ai@@min))}\Lf@a
+      \ifnum\Lf@a=\z@
+    \repeat
+  \fi
+  \Ransuu[d]{Int(((\a@@max)-(\a@@min)+1)*X/\ran@sup+(\a@@min))}\Lf@b
+  \edef#2{\Lf@a,\Lf@b}%
+}
+%
+\def\rndPf{\@ifnextchar<{\@rndPf}{\@rndPf<\empty>}}
+\def\@rndPf<#1>#2{%
+  \edef\kai@type{\empty}%
+  \edef\rndPf@deg@{\Pf@deg}%
+  \edef\a@@max{\a@max}%
+  \edef\a@@min{\a@min}%
+  \ifx\empty #1\else\setkeys{emQf}{#1}\fi
+  \edef#2{\empty}%
+  \Cfor{\edef\rndPf@i{-1}}{\rndPf@i<\rndPf@deg@}{\Incr\rndPf@i}\do{%
+    \Ransuu[d]{Int(((\a@@max)-(\a@@min)+1)*X/\ran@sup+(\a@@min))}\Pf@a
+    \ifx\empty #2\relax
+      \ifnum\Pf@a=\z@\else\edef #2{\Pf@a}\fi
+    \else
+      \edefappend #2{,\Pf@a}%
+    \fi
+  }%
+}
+%
+\let\PAdd\iPAdd
+\let\PSub\iPSub
+\let\PMul\iPMul
+\let\PDivMod\iPDivMod
+\let\Pgozyohou\iPgozyohou
+%
+%
+%
+\def\F@cut#1{%
+  \edef\@cut@{\empty}%
+  \expandafter\@for\expandafter\@cut@@c\expandafter:\expandafter=#1\do{%
+    \ifx\empty\@cut@
+      \Fhikaku\@cut@@c{0}\@cut@tmp
+      \ifnum\@cut@tmp=\z@\else
+        \edefappend\@cut@{\@cut@@c}%
+      \fi
+    \else
+      \edefappend\@cut@{,\@cut@@c}%
+    \fi
+  }%
+  \ifx\empty\@cut@\edef#1{0}\else\edef#1{\@cut@}\fi
+}%
+%
+\def\prF@Polynomial{%
+  \@ifnextchar<{\prF@Polynomial@}{\@prF@Polynomial}}%
+\def\prF@Polynomial@<#1>{\setkeys{emQf}{#1}\@prF@Polynomial}%
+\def\@prF@Polynomial#1{%
+  \edef\prPnom@{#1}%
+  \F@cut\prPnom@
+  \def\pr@keisuu##1{%
+    \prF{##1}%
+  }%
+  \reversecsv{\prPnom@}\prPoly@csv
+  \csvhairetu\prPoly@csv{keisuu@}\dim@
+  \edef\prP@n{\dim@}%
+  \ensuremath{%
+    \Cfor{\edef\prP@i{\prP@n}}{\prP@i>0}{}\do{%
+      \edef\prP@c{\hairetu{keisuu@}{\prP@i}}% 係数
+      \Fhikaku\prP@c{0}\prP@c@sign
+      \ifnum\prP@i<\prP@n
+        \ifnum\prP@c@sign>0\relax + \fi
+      \fi
+      \Decr\prP@i% 次数
+      \ifnum\prP@i>\z@
+        \Fhikaku\prP@c{0}\prP@c@sign
+        \Fhikaku\prP@c{-1}\prP@c@mone
+        \ifnum \prP@c@mone=\z@
+          -
+        \else\ifnum\prP@c@sign=0\relax
+        \else
+          \Fhikaku\prP@c{1}\prP@c@one
+          \ifnum\prP@c@one=\z@\else
+            \pr@keisuu{\prP@c}%
+          \fi
+        \fi\fi
+      \else
+        \ifnum\prP@n>\@ne
+          \ifnum\prP@c@sign=\z@\else\pr@keisuu{\prP@c}\fi
+        \else
+          \pr@keisuu{\prP@c}%
+        \fi
+      \fi
+      \ifnum\prP@c@sign=\z@\else
+        \ifnum\prP@i>\@ne
+         {\mitis@@}^{\prP@i}
+        \else\ifnum\prP@i>\z@
+          \mitis@@
+        \fi\fi
+      \fi
+    }%
+  }%
+\endgroup
+}%
+%
+\def\iF@PAdd#1#2#3{%
+  \csvhairetu{#1}{tr@L}\dim@L
+  \csvhairetu{#2}{tr@R}\dim@R
+  \edef\iF@PAdd@ans{\empty}%
+  \edef\tr@i{0}%
+  \edef\tr@j{0}%
+  \IMax{\dim@L,\dim@R}\dim@
+  \edef\tr@n{\dim@}%
+  \ifthenelse{\dim@L>\dim@R}{%
+    \Cfor{}{\tr@n>\dim@R}{}\do{%
+      \Incr\tr@i
+      \ifnum\tr@i=1\else\edefappend\iF@PAdd@ans{,}\fi
+      \edefappend\iF@PAdd@ans{\hairetu{tr@L}\tr@i}%
+      \Decr\tr@n
+    }%
+  }{%
+    \ifthenelse{\dim@L<\dim@R}{%
+    \Cfor{}{\tr@n>\dim@L}{}\do{%
+      \Incr\tr@j
+      \ifnum\tr@j=1\else\edefappend\iF@PAdd@ans{,}\fi
+      \edefappend\iF@PAdd@ans{\hairetu{tr@R}{\tr@j}}%
+      \Decr\tr@n
+      }%
+    }{}%
+  }%
+  \Cfor{}{\tr@n>0}{}\do{%
+    \Incr\tr@i
+    \Incr\tr@j
+    \FAdd{\hairetu{tr@L}\tr@i}{\hairetu{tr@R}\tr@j}\tr@tmp
+    \ifx\empty \iF@PAdd@ans\else\edefappend\iF@PAdd@ans{,}\fi
+    \edefappend\iF@PAdd@ans{\tr@tmp}%
+    \Decr\tr@n
+  }%
+  \F@cut{\iF@PAdd@ans}%
+  \edef#3{\iF@PAdd@ans}%
+}
+%
+\def\iF@PSub#1#2#3{%
+  \csvhairetu{#1}{tr@L}\dim@L
+  \csvhairetu{#2}{tr@R}\dim@R
+  \edef#3{\empty}%
+  \edef\tr@i{0}%
+  \edef\tr@j{0}%
+  \IMax{\dim@L,\dim@R}\dim@
+  \edef\tr@n{\dim@}%
+  \ifthenelse{\dim@L>\dim@R}{%
+    \Cfor{}{\tr@n>\dim@R}{}\do{%
+      \Incr\tr@i
+      \ifnum\tr@i=1\else\edefappend#3{,}\fi
+      \edefappend#3{\hairetu{tr@L}\tr@i}%
+      \Decr\tr@n
+    }%
+  }{%
+    \ifthenelse{\dim@L<\dim@R}{%
+    \Cfor{}{\tr@n>\dim@L}{}\do{%
+      \Incr\tr@j
+      \ifnum\tr@j=1\else\edefappend#3{,}\fi
+      \FSub{0}{\hairetu{tr@R}\tr@j}\tr@tmp
+      \edefappend#3{\tr@tmp}%
+      \Decr\tr@n
+      }%
+    }{}%
+  }%
+  \Cfor{}{\tr@n>0}{}\do{%
+    \Incr\tr@i
+    \Incr\tr@j
+    \FSub{\hairetu{tr@L}\tr@i}{\hairetu{tr@R}\tr@j}\tr@tmp
+    \ifx\empty #3\else\edefappend#3{,}\fi
+    \edefappend#3{\tr@tmp}%
+    \Decr\tr@n
+  }%
+  \F@cut{#3}%
+}
+%
+\def\iF@PMul#1#2#3{%
+  \csvhairetu{#1}{ipMul@A}\iFPM@dim@A
+  \csvhairetu{#2}{ipMul@B}\iFPM@dim@B
+  \edef\iFPMul@ans{0}%
+  \Cfor{\edef\iP@n{\iFPM@dim@B}}{\iP@n>0}{}\do{%
+    \edef\iP@tmp{\empty}%
+    \Decr\iP@n
+    \expandafter\@for\expandafter\iP@@c\expandafter:\expandafter=#1\do{%
+      \ISub\iFPM@dim@B\iP@n\iP@d
+      \edef\iP@m{\hairetu{ipMul@B}\iP@d}%
+      \FMul\iP@@c\iP@m\iP@@@c
+      \ifx\empty\iP@tmp\edef\iP@tmp{\iP@@@c}\else\edefappend\iP@tmp{,\iP@@@c}\fi
+    }%
+    \Cfor{\edef\iP@@n{\iP@n}}{\iP@@n>0}{\Decr\iP@@n}\do{%
+      \edefappend\iP@tmp{,0}%
+    }%
+    \iF@PAdd\iFPMul@ans{\iP@tmp}\iFPMul@ans\relax
+  }%
+  \edef#3{\iFPMul@ans}%
+}%
+%
+\def\iF@PDivMod#1#2#3#4{% #1 ÷ #2 = 商 #3, 余り #4
+  \csvhairetu{#1}{pDM@L}\pDM@dim@L
+  \csvhairetu{#2}{pDM@R}\pDM@dim@R
+  \edef\pQ@i{\hairetu{pDM@R}{1}}%
+  \ISub\pDM@dim@L\pDM@dim@R\pDM@iend
+  \Incr\pDM@iend
+  \Cfor{\edef\pDM@Qx{}\edef\pDM@i{0}\edef\pDM@W{#1}\edef\pDM@dim@W{\pDM@dim@L}}{\pDM@i<\pDM@iend}{}\do{%
+    \Incr\pDM@i
+    \csvhairetu{\pDM@W}{tr@W}\pDM@dim@WW
+    \Cfor{\edef\pDM@j{\pDM@dim@WW}\Incr\pDM@j}{\pDM@j<\pDM@dim@W}{}\do{%
+      \edefappend\pDM@Qx{,0}\Incr\pDM@i\Incr\pDM@j
+    }%
+    \edef\pDM@dim@W{\pDM@dim@WW}%
+    \ifnum\pDM@i>\pDM@iend\else
+      \FDiv{\hairetu{tr@W}{1}}{\pQ@i}\pDM@Qtmp
+      \ifx\empty\pDM@Qx\edef\pDM@Qx{\pDM@Qtmp}\else\edefappend\pDM@Qx{,\pDM@Qtmp}\fi
+      \Cfor{\edef\pDM@j{\pDM@dim@R}}{\pDM@j<\pDM@dim@W}{}\do{%
+        \Incr\pDM@j
+        \edefappend\pDM@Qtmp{,0}%
+      }%
+      \iF@PMul{#2}\pDM@Qtmp\pDM@Qtmp
+      \iF@PSub\pDM@W\pDM@Qtmp\pDM@W
+    \fi
+  }%
+  \edef#3{\pDM@Qx}%
+  \edef#4{\pDM@W}%
+}
+%
+\endinput
+v 0.00α 2007/04/16
+v 0.01α 2007/04/18
+           <hutougou> オプションが，\Iransuuretu で発生させた乱数列でも使用できるようにした。
+           ただし,４種類の不等号の出現比率は不平等
+v 0.02α 2007/04/19
+           <A> オプションに対して，\kaitou ではなく，Kaitou環境を使用するように変更。
+           (---> BBS No.5925)
+v 0.03α 2007/04/21
+           \rndLf, \rndQf : 係数の上限・下限，分母の上限指定
+           \Mul, \Div, \Sub ---> \IMul, \IDiv, \ISub
+v 0.04α 2007/04/25
+           bunbomin : 新設
+           二次関数の平方完成，最大最小
+v 0.05α 2007/04/28
+           二次関数の閉区間における最大最小
+           \rndPf : 3(〜)次式
+v 0.06α 2007/12/01
+           上に凸の場合の不具合修正 (BBS #6780)
+v 0.07α 2008/02/02
+           \iPDivMod
+v 0.08α 2008/02/03
+           \let\PAdd\iPAdd など
+v 0.09α 2008/03/02
+           \PAdd, \PSub, \PMul, \PDivMod: *付きで，有理数係数を扱う
+           \iPgozyohou: 途中に有理数係数を必要とする場合に対応
+v 0.10α 2008/04/15
+           \prPolynomial: <mozi=.>オプション
+v 0.11α 2008/12/25
+           \Qminmax: 両端で最大・最小となる場合
+v 0.12α 2009/04/23
+           \prIeqii
+v 0.13α 2009/09/26
+           \prPolynomial: <syoubeki> で昇べき順 (BBS #8354)
+v 0.14α 2009/09/26
+           <syoubeki=*> で，引数は降べき順で，表示は昇べき順

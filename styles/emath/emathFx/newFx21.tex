@@ -1,0 +1,95 @@
+\documentclass[a4j]{jarticle}
+\usepackage{emathPh}
+\usepackage{bekutorukata}
+\usepackage{emathFx}
+\usepackage{showexample}
+\usepackage{jquote}
+
+\begin{document}
+\section{newFx21}
+\textsf{emathFx.sty v 0.21}では，\verb+\bekutoru+コマンドにおける
+鏃の形状を塗りつぶしたものとするために，\verb+\bekutorukata+コマンドの
+引数に\verb+fill+を新設しました：
+\begin{jquote}
+\begin{verbatim}
+\bekutorukata{fill}
+\end{verbatim}
+\end{jquote}
+\bigskip
+
+デフォルトの\verb+\bekutoru+です：
+\begin{showEx}(.6,.34){デフォルト}
+  \bekutoru{AB}
+\end{showEx}
+
+\verb+\bekutorukata{fill}+を宣言します：
+\begin{showEx}(.6,.34){\cmd{bekutorukata}\texttt{\{fill\}}}
+  \bekutorukata{fill}
+  \bekutoru{AB}
+\end{showEx}
+
+鏃の形状は\verb+\changeArrowHeadSize+コマンドで変更可能です。\\
+つぎは\verb+\changeArrowHeadSize[22.5]{1.2}+（長さを1.2倍に，
+先端の開き角を40\Deg(default=36\Deg)に設定しています。）：
+
+\begin{showEx}(.6,.34){鏃の形状変更}
+  \bekutorukata{fill}
+  \changeArrowHeadSize[22.5]{1.2}
+  \bekutoru{AB}
+\end{showEx}
+
+\begin{enumerate}[注 1.~]
+  \item 矢印は\verb+\ArrowLine+を用いていますから，
+\begin{jquote}
+\begin{verbatim}
+\usepackage{emathPh}
+\end{verbatim}
+\end{jquote}
+    が必須です。
+  \item 矢印の形状を変更するコマンド\verb+\bekutorukata+は
+    \textsf{emathFx.sty}で定義されていますから
+\begin{jquote}
+\begin{verbatim}
+\usepackage{emathFx}
+\end{verbatim}
+\end{jquote}
+    も必須です。
+  \item 文書全体を通して，ベクトル矢線の形状を変更するには，
+\begin{jquote}
+\begin{verbatim}
+\begin{document}
+\end{verbatim}
+\end{jquote}
+直後に，
+\begin{jquote}
+\begin{verbatim}
+\bekutorukata{fill}
+\changeArrowHeadSize[22.5]{1.2}
+\end{verbatim}
+\end{jquote}
+    などを置きます。    
+  \item デフォルトでは
+\begin{jquote}
+\begin{verbatim}
+\bekutorukata{cm}
+\end{verbatim}
+\end{jquote}
+    が実行されています。何らかの事情で初期状態に戻したければ
+    上記コマンドを発行してください。
+  \item 前版までは，\cmd{bekutorukata}の引数は
+\begin{jquote}
+\begin{verbatim}
+cm （デフォルト）
+abx
+eu
+px
+tx
+xy
+\end{verbatim}
+\end{jquote}
+    のいずれかでしたが，これに\verb+fill+が加わったということです。
+    上述の引数の効果については，丸ごとパック添付のドキュメント
+    \texttt{sampleFx.tex}をご覧ください。
+\end{enumerate}
+
+\end{document}

@@ -1,0 +1,24 @@
+\documentclass{jarticle}
+\usepackage{hako}
+\usepackage{emathT}
+\usepackage[continue]{emathAe}
+
+\maskhakofalse
+
+\begin{document}
+\openHakoKaiFile
+次の式を展開せよ。
+\begin{enumerate}[(1)]
+  \item $(2x-3)^2=\Hako'4x^2-12x+9'$
+  \item $(3x+y)^2=\Hako'9x^2+12xy+y^2'$
+\end{enumerate}
+\closeHakoKaiFile
+\begin{Kaitou}
+\HakoKaiKata{a}%
+\inputHakoKaiFile
+\begin{tabular}[t]{|>{\sityuu[1zw]{2zw}}L{20zw}|}\hline
+  \HKi\\\hline
+  \HKii\\\hline
+\end{tabular}
+\end{Kaitou}
+\end{document}

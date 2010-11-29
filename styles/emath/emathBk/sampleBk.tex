@@ -1,0 +1,618 @@
+\documentclass[a4j,fleqn]{jarticle}
+\usepackage{emathMw}
+\usepackage{color}
+\usepackage{emathBk}
+\usepackage{emathPp}
+\usepackage{emathEy}
+\usepackage{emathR}
+\usepackage{emathLb}
+\usepackage{multido}
+\usepackage{showexample}
+%\usepackage{type1cm}% ps, pdf を作るときには必要
+
+\title{ページをまたぐ罫線囲み\\
+emathBk.sty {\normalsize ver.0.23α}}
+\author{tDB}
+\date{2005/09/19}
+
+\resetcounter{equation}[section]
+\resetcounter{equation}[subsection]
+\resetcounter{equation}[subsubsection]
+\checkPerl
+
+\begin{document}
+\maketitle\thispagestyle{empty}
+\begin{abstract}%
+\parindent1zw%
+\textbf{eclbkbox.sty} で定義されている，
+複数ページにわたる囲み枠を作る \texttt{breakbox}環境の
+バリエーションを作ってみました。
+
+解答部を二段組にして，右側に注釈をつけるスタイルを
+\textsf{emathAt.sty}で実現していますが，それを置き換えることを狙っています。
+
+このマクロ集のマクロについてのご質問，バグ報告，修正・追加の提案等は
+\begin{center}
+http://emath.s40.xrea.com/
+\end{center}
+の掲示板へどうぞ。
+\end{abstract}
+\pagebreak
+
+\pagenumbering{roman}%
+
+\tableofcontents
+\pagebreak
+\pagenumbering{arabic}
+
+\section{ページをまたぐ囲み(1) 見出し無}
+\subsection{本家 --- \textsf{breakbox}環境}
+まずは，本家 \textsf{eclbkbox.sty} で定義されている \textsf{breakbox}環境の
+使用例を見ておきます。（ソースリストは ex01.tex です。）\bigskip
+
+\input{example/ex01}
+
+\subsection{\textsf{EMbreakbox}環境}
+もともとの\textsf{breakbox}環境に修正を加えるため，\textsf{EMbreakbox}
+環境を新設しました。基本的には，ほとんど\textsf{breakbox}環境そのものですが，
+\cmd{parindent}は\verb+1zw+としてあります。
+
+\input{example/ex25}
+
+\subsubsection{\texttt{<hsep=..,vsep=..>}オプション}
+枠罫線と本文との間隔は\cmd{fboxsep}となっていますが，これをいじると，
+\cmd{fbox}などを本文で使用したときも影響してしまいます。また，上下と左右で
+空きを異なる値に設定したいときもあります。
+そこで，上下の空きを設定する\verb+<vsep=..>+オプション，
+左右の空きを設定する\verb+<hsep=..>+オプションをつけました。
+下のリストは
+\begin{jquote}
+\begin{verbatim}
+\begin{EMbreakbox}<hsep=2zw,vsep=1zh>
+\end{verbatim}
+\end{jquote}
+としてあります。
+\bigskip
+
+\input{example/ex26}
+
+\subsubsection{背景色の指定}
+囲みの中の背景色を指定するためのオプションが\verb+<backgroundcolor=..>+です。
+下のリストでは
+\begin{jquote}
+\begin{verbatim}
+\begin{EMbreakbox}<backgroundcolor=cyan>
+\end{verbatim}
+\end{jquote}
+としてあります。
+\bigskip
+
+\input{example/ex27}
+
+（注）\cmd{color}のネストがどうなるかは，環境依存でしょうか。
+
+下のリストは，上のリストの中に
+\begin{jquote}
+\begin{verbatim}
+\fcolorbox{red}{yellow}{ABC}
+\end{verbatim}
+\end{jquote}
+を入れ子にしています。
+\bigskip
+
+\input{example/ex28}
+
+\subsubsection{枠線色の指定}
+囲みにおける枠の色を指定するためのオプションが\verb+<framecolor=..>+です。
+下のリストでは
+\begin{jquote}
+\begin{verbatim}
+\begin{EMbreakbox}<framecolor=red,backgroundcolor=lightgray>
+\end{verbatim}
+\end{jquote}
+としてあります。
+\bigskip
+
+\input{example/ex29}
+
+\iffalse
+\subsection{枠線を点線に --- \textsf{breakDbox}環境}
+
+枠線を点線にした \textsf{breakDbox}環境です。
+ただし，この環境は\textsf{multido.sty}で定義されている\cmd{multido}を用いています。
+\bigskip
+
+\input{example/ex02}
+\bigskip
+
+枠線と中のテキストとの間隔は\verb+[fboxsep=...]+オプションで指定します。
+次の例は
+\begin{jquote}
+\begin{verbatim}
+\begin{breakDbox}[fboxsep=10pt]
+\end{verbatim}
+\end{jquote}
+としています。\bigskip
+
+\input{example/ex03}
+
+\subsection{二重罫線枠 ---\textsf{bkdblbox}環境}
+ページをまたぐ二重罫線枠囲みです。
+
+\input{example/ex22}
+
+\textsf{itembbox.sty}で定義されている\textsf{dblbox}とは
+次の点で異なっています。
+
+\begin{enumerate}[1.~]
+  \item 外枠の太さが\texttt{2pt}と太めになっています。
+  \item 枠線は，\textsf{dblbox}環境が\verb+\hrule, \vrule+で
+    引いているのに対し，\textsf{bkdblbox}環境では，
+    \texttt{tpic specials}で描画しています。
+  \item \textsf{dblbox}環境はページをまたぐことができませんが，
+    \textsf{bkdblbox}環境はページをまたぐことができます。
+    （ただし，ページをまたぐという前提ですから，
+    中身が１行だけという状況は許容しません。）
+\end{enumerate}
+
+\paragraph{書式}
+\textsf{bkdblbox}環境の書式です。
+
+\begin{boxnote}
+\begin{verbatim}
+\begin{bkdblbox}[#1]
+  #1: key=val
+    内側罫線とテキスト部との間隔をつかさどるオプション
+       fboxsep=..（デフォルト値=\fboxsep）
+       hsep=...（デフォルト値=\fboxsep）
+       vsep=...（デフォルト値=\fboxsep）
+    罫線の太さ，間隔をつかさどるオプション
+       fboxruleA=... 外枠罫線の太さ（デフォルト値=2pt）
+       fboxruleB=... 内枠罫線の太さ（デフォルト値=\fboxrule）
+       fboxruleG=... 外枠罫線と内枠罫線の距離（デフォルト値=2pt）
+    右辺値はすべて，単位を伴う数値です。
+\end{verbatim}
+\end{boxnote}
+
+\subsection{丸二重罫線枠 --- \textsf{bkdblovalbox}環境}
+四隅を丸くしたのが\textsf{bkdblovalbox}環境です。
+
+\input{example/ex23}
+
+この環境では，内側罫線と文字ブロックとの間隔のデフォルト値は
+\begin{jquote}
+上下が\texttt{1zh}\\
+左右が\texttt{1zw}
+\end{jquote}
+となっています。
+
+さらに，四隅の楕円を描画するのに\textsf{emathPp.sty}，すなわち
+\textsf{perl}との連携機能を用います。
+
+\subsection{影つき -- bkshadebox環境}
+\textsf{ascmac.sty}で定義されている\textsf{shadebox}環境を
+ページがまたげるようにしたものです。
+
+\input{example/ex24}
+\fi
+
+\subsection{丸囲み -- breakitembox環境}
+四隅が丸い囲みです。本来は見出しをつけるためのものですが，
+見出しとして空文字列を与えれば，見出しなしの囲みも作れます。
+
+ただし，この環境は\textsf{itembkbx.sty}で定義されていますから，
+\texttt{itembkbx.tex}をご覧ください。
+
+\section{ページをまたぐ囲み(2) 見出し有}
+\iffalse
+\subsection{見出し付き四角囲み --- \textsf{breakitemsquarebox}環境}
+四角囲みで，見出しを上辺・下辺につけることができ，ページをまたぎます。
+
+ただし，この環境は\textsf{itembkbx.sty}で定義されていますから，
+\texttt{itembkbx.tex}をご覧ください。
+\fi
+
+\subsection{見出し付き丸囲み -- breakitembox環境}
+丸囲みで，見出しを上辺・下辺につけることができ，ページをまたぎます。
+
+ただし，この環境は\textsf{itembkbx.sty}で定義されていますから，
+\texttt{itembkbx.tex}をご覧ください。
+
+\section{左／右の罫線のみを引く}
+\subsection{左右に罫線 --- \textsf{breakLRline}環境}
+罫線枠の上辺・下辺は引かず，左右のみを引きます。
+欄外に注釈をつけることを狙っています。
+
+\input{example/ex04}
+
+線種は，デフォルトでは実線ですが，点線にしたければ
+\begin{jquote}
+\begin{verbatim}
+[sensyu=\emcdottedline]
+\end{verbatim}
+\end{jquote}
+などとオプションをつけます。
+ただし，\cmd{emcdottedline}は，\textsf{multido.sty}で定義されている
+\cmd{multido}を用いています。
+
+\input{example/ex05}
+
+\subsection{右にのみ罫線 --- \textsf{breakRline}環境}
+右罫線のみをつけるのが\textsf{breakRline}環境です。%\bigskip
+
+\input{example/ex06}
+
+実例はつけませんが，
+\begin{jquote}
+\begin{verbatim}
+[sensyu=\emcdottedline]
+\end{verbatim}
+\end{jquote}
+オプションも有効です。
+
+\subsection{左にのみ罫線 --- \textsf{breakLline}環境}
+左罫線のみをつけるのが\textsf{breakLline}環境です。\bigskip
+
+\input{example/ex07}
+
+\begin{jquote}
+\begin{verbatim}
+[sensyu=.....]
+\end{verbatim}
+\end{jquote}
+オプションが有効なのは言うまでもありません。
+
+
+
+\subsubsection{\texttt{[headline]}オプション}
+この左罫線を先頭行だけ引きたくない，というご要望がありました。
+そのため，\verb+[headline]+オプションを新設しました。
+
+まずは，\textsf{breakLline}環境のデフォルト状態を見ておきます。
+
+\begin{showEx}(.5,.44){\textsf{breakLline}}
+\begin{breakLline}
+デフォルトの
+\textsf{breakLline}環境
+です。
+環境内のブロックに左縦罫線を引きます。
+
+このブロックはページをまたぐことができる
+のが特徴です。
+\end{breakLline}
+\smallskip
+\end{showEx}
+
+\textsf{breakLline}環境において，先頭行には左罫線を引かないための
+オプション \verb+[headline=..]+を導入しました。
+
+\begin{showEx}(.5,.44){\texttt{[headline]}オプション}
+\begin{breakLline}%
+    [parindent=0pt,headline]
+\textgt{\inhibitglue 【見出し】} 
+先頭行のみ，
+左罫線を切るためのオプションが
+\begin{jquote}
+\begin{verbatim}
+[headline]
+\end{verbatim}
+\end{jquote}
+です。あわせて，この段落は
+インデントをつけたくないので
+\begin{jquote}
+\begin{verbatim}
+[parindent=0pt]
+\end{verbatim}
+\end{jquote}
+を併用しています。\\
+（左のリストの先頭2行を
+ご覧ください。)
+
+\parindent=1zw\relax
+第2段落以降は左インデントをつける
+とすれば，第2段落先頭に
+\begin{jquote}
+\begin{verbatim}
+\parindent=1zw
+\end{verbatim}
+\end{jquote}
+などとする必要があります。
+\end{breakLline}
+\smallskip
+\end{showEx}
+
+\verb+[headline]+オプションは，\verb+[headline=1]+などと，
+右辺値を指定するのが本来の使い方ですが，1の場合に限って省略可能
+としてあります。
+
+右辺値が1でない使い方の例をご覧ください。
+
+\begin{showEx}(.5,.44){\texttt{[headline=..]}オプション}
+\begin{breakLline}%
+    [parindent=0pt,headline=2]
+\begin{mawarikomi}[l]%
+    {2.5zw}{\Huge 注}
+段落先頭の文字（列）を大きくして
+強調するスタイルを日本語化したものに
+\textsf{egdrop.sty}がありますが，
+\textsf{breakLline}環境とは相性が悪いようです。
+\end{mawarikomi}
+
+\parindent=1zw\relax
+ここでは，\textsf{mawarikomi}環境の左配置を用いて，
+擬似的に実現しています。
+\end{breakLline}
+\smallskip
+\end{showEx}
+
+\section{左右欄外に注釈}
+\subsection{右欄外に注釈 --- \cmd{MigiRangai}}
+\textsf{breakbox}環境はページをまたぐことができるのはありがたいのですが，
+\cmd{marginpar}コマンドは使用できません。
+
+そこで\cmd{marginpar}もどきを作ろう，ということです。\bigskip
+
+\begin{enumerate}[注 1)]
+  \item \cmd{MigiRangai}の引数は，\cmd{parbox}に渡されますから，
+    長い注釈は折り返されます。
+  \item \cmd{MigiRangai}は，浮動体ではありませんから，
+    2つの注が重なっても移動されません。（重なったままです。
+    それを移動するのはソースリスト上で工夫しなければなりません。）
+\end{enumerate}
+
+\input{example/ex08}
+左欄外に注をつける \cmd{HidariRangai}もあります。
+
+\subsection{左欄外に注釈 --- \cmd{HidariRangai}}
+
+\input{example/ex09}
+
+\subsection{行頭にマーク --- \cmd{Gyoutou}}
+\cmd{Hidarirangai}でつけられる注釈は，左詰になります。
+簡単なマークの場合，右詰で置きたいことがあります。
+そのためのコマンドが\cmd{gyoutou}です。
+これは必ずしも段落の始めに置く必要はありません。
+段落の途中で発行してもその行の行頭に置かれます。
+
+\input{example/ex10}
+
+\subsection{欄外注，縦位置の調整}
+数式が登場する行などでは，右注の縦位置がずれることがあります。
+そのようなときは\verb+<...>+オプションで縦位置を調整します。
+\bigskip
+
+\input{example/ex11}
+
+\begin{enumerate}[注1)~]
+  \item \verb+<..>+オプションの数値（単位付）が正のときは下に，
+    負のときは上に移動します。
+  \item このオプションは\cmd{HidariRangai}, \cmd{MigiRangai}, \cmd{Gyoutou}
+    すべてに使用できます。
+\end{enumerate}
+
+\section{解答を二段組に}
+\textsf{emathAt.sty}で，解答を二段組にする試みをしていますが，
+そこでは，解答本文と右注釈部を仕切る縦罫線がページをまたぐことが
+できませんでした。
+
+それを可能としたのが \textsf{emathBk.sty} です。
+
+\subsection{\texttt{tyuukai}環境と\cmd{tyuu}コマンド}
+問題の解答部分を2段組にして，左側に解答を，
+右側に注釈を付けるための \verb+tyuukai+環境と，注釈を付ける\verb+\tyuu+
+コマンドです。
+
+下の例は，\textsf{emathAt.sty} のものとほとんど同じですが，
+ページをまたぐことができます。
+（ソースリストは，ex12.tex）
+
+\input{example/ex12}
+
+\subsection{注釈領域の横幅指定}
+注釈領域の横幅はデフォルトでは \verb+\textwidth+の3/10となっています。
+これを変更するには，\verb+emathAt.sty+の内部変数\cmd{tyuuhaba}に
+単位付きの長さを指定します。
+\begin{jquote}
+ 例：\verb+\tyuuhaba=8zw+
+\end{jquote}
+
+{\input{example/ex13}}
+
+\clearpage
+
+\subsection{注釈文，表示位置の微調整}
+数式行は改行ピッチなどが通常の文と異なるため，
+注釈文の位置に不満が出ることがあります。
+
+\input{example/ex14}
+
+という例では，注釈文の位置を上にずらしたくなります。
+これを実現するのが\cmd{tyuu}の\verb+<...>+オプションです。
+下の例では\verb+\tyuu<-.4\baselineskip>{...}+として，
+注釈文を上方に\verb+.4\baselineskip+上げています。
+
+\input{example/ex15}
+\clearpage
+
+\subsection{\textsf{mawarikomi}環境との併用}
+解答の中で\textsf{mawarikomi}環境を使用し，その中で注釈をつけるのは
+\textsf{emathAt.sty}では面倒でしたが，\textsf{emathBk.sty}では
+\verb+\tyuu+コマンドはそのまま使用可能です。
+
+\input{example/ex16}
+
+ただし，回り込み中において，\textsf{align}環境などの数式環境内では，
+\verb+\tyuu*+と，アスタリスク付のコマンドを使用します。
+\clearpage
+
+\input{example/ex17}
+\clearpage
+
+\subsection{注釈記号の変更}
+デフォルトでは，注釈の冒頭に`$\longleftarrow$'がつきます。
+この記号を変更するには
+\begin{jquote}
+\begin{verbatim}
+\tyuumark{$\blacktriangleleft$~}
+\end{verbatim}
+\end{jquote}
+などとします。
+
+\input{example/ex18}
+
+\subsection{注記号の局所的変更}
+\cmd{tyuu}による注記号を局所的に変更するには
+\cmd{tyuu}に\verb+[...]+オプションをつけます。
+
+\begin{tyuukai}
+ああああああああああああ
+ここで\verb+\tyuu+コマンドによる注をつけます。
+\tyuu{注釈です。}注の先頭には，$\longleftarrow$がつきます。
+これを変更するには，\cmd{tyuumark}コマンドを用いますが，
+局所的に変更するために，\cmd{tyuu}に\verb+[...]+オプション
+を付加可能としました。ここでは\verb+\tyuu[※~]{...}+として
+注記号を局所的に変更しています。\tyuu[※~]{注記号の変更}
+この記号が局所的であることを確認するため，ここで再度
+\verb+\tyuu{...}+を発行します。\tyuu{注記号はデフォルトに戻っています。}
+
+このオプションによる注記号の局所的な変更は
+別行立て数式環境内でも有効です。
+
+下の例では，式\eqref{Lq}に\verb+\tyuu[※~]{...}+として，
+注記号の局所的変更を指定しています。
+他の式には\verb+\tyuu{...}+としていますから，デフォルトの
+注記号が使われます。
+\begin{align}
+  y&=ax+b \tyuu{一次関数} \\
+  y&=px^2+qx+r \tyuu<label=Lq>[※~]{二次関数}\\
+  y&=\alpha x^3+\beta x^2+\gamma x+\delta \tyuu{三次関数}
+\end{align}
+\end{tyuukai}
+
+\subsection{\cmd{tyuu}と数式番号，ラベル}
+\subsubsection{\cmd{tyuu}と\cmd{notag}の同居}
+数式番号を付与する環境において，
+数式番号を付与しない行には，\verb+\notag+をつけますが，
+その行に\verb+\tyuu+もつけるときは
+\begin{jquote}
+\begin{verbatim}
+\tyuu<tag=notag>{.....}
+\end{verbatim}
+\end{jquote}
+とします。
+
+\begin{showEx}(1,1){\cmd{tyuu}の\texttt{<tag=notag>}オプション}
+本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文
+本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文
+\begin{tyuukai}
+あああああああああああああああああああああああああああああああああああああああ
+ああああああああああああああああああああああ
+\begin{gather}
+\sin x\tyuu{イイイイイイ}\\
+\cos x\tyuu<tag=notag>{ウウウウウウ}\\
+\tan x\\
+\log x\notag
+\end{gather}
+いいいいいいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいいいいいい
+\end{tyuukai}
+本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文
+本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文
+\end{showEx}
+
+\clearpage
+
+\subsubsection{\cmd{tyuu}と\cmd{atag}の同居}
+逆に，数式番号を付与しない環境において，数式番号を付与したい行には
+\verb+\atag+をつけますが，\verb+\tyuu+も付けたいときは
+\begin{jquote}
+\begin{verbatim}
+\tyuu<tag=atag>{.....}
+\end{verbatim}
+\end{jquote}
+とします。
+
+\begin{showEx}(1,1){\cmd{tyuu}の\texttt{<tag=atag>}オプション}
+本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文
+本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文
+\begin{tyuukai}
+あああああああああああああああああああああああああああああああああああああああ
+ああああああああああああああああああああああ
+\begin{gather*}
+\sin x\tyuu{イイイイイイ}\\
+\cos x\tyuu<tag=atag>{ウウウウウウ}\\
+\tan x\\
+\log x\atag
+\end{gather*}
+いいいいいいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいいいいいい
+\end{tyuukai}
+本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文
+本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文
+\end{showEx}
+\clearpage
+
+\subsubsection{\cmd{tyuu}と\cmd{label}の同居}
+\verb+\tyuu+を付与した行にラベルをつけたいときは
+\begin{jquote}
+\begin{verbatim}
+\tyuu<label=ラベル名>{.....}
+\end{verbatim}
+\end{jquote}
+とします。
+
+\begin{showEx}(1,1){\cmd{tyuu}の\texttt{<label=...>}オプション}
+本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文
+本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文
+\begin{tyuukai}
+あああああああああああああああああああああああああああああああああああああああ
+ああああああああああああああああああああああ
+\begin{gather}
+\sin x\tyuu<tag=notag>{イイイイイイ}\\
+\cos x\tyuu<label=E1>{ウウウウウウ}\\
+\tan x\label{E2}\\
+\log x\notag
+\end{gather}
+\eqref{E1}, \eqref{E2}において，
+いいいいいいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいいいいいい
+\end{tyuukai}
+本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文
+本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文
+\end{showEx}
+
+\subsection{左注}
+\cmd{tyuu}は右欄外に注釈をおきますが，左欄外に注釈を置くには
+\cmd{HidariRangai}を用います。
+\textsf{emathAt}で用いていた\cmd{hidarityuu}も\cmd{HidariRangai}と
+同値なコマンドとしてありますから，こちらを用いることもできます。
+
+\input{example/ex19}
+
+前節までの例では，左罫線は引きませんでした。これを引くには
+\begin{jquote}
+\begin{verbatim}
+\hidarityuukeisentrue
+\end{verbatim}
+\end{jquote}
+と宣言します。
+
+\subsection{行頭，左欄外にマーク}
+左欄外にマークだけをつけたいときもあります。そのためのコマンドが
+\begin{jquote}
+\begin{verbatim}
+\gyoutou
+\end{verbatim}
+\end{jquote}
+です。
+
+\input{example/ex20}
+\clearpage
+
+\subsection{具体例}
+次の具体例は，\texttt{sampleAt.tex}とほとんど同じですが，
+\cmd{tyuu}の使い方 --- 特に縦位置の調整が楽になっています。
+ソースリスト \texttt{ex21.tex} をご覧ください。
+
+\ReadTeXFile{example/ex21}
+\end{document}

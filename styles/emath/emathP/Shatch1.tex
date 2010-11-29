@@ -1,0 +1,331 @@
+\section{斜線塗り(1)}
+前節のコマンドの末尾に更に \texttt{*} を付加すると，斜線塗りとなります．
+
+\subsection{多角形}
+まずは，多角形の内部に斜線を引いてみます．
+
+\showexample[多角形の内部に斜線](0.5)(0.45){example/hatch01}
+
+\cmd{Nuritubusi*} の書式は\cindex{Nuritubusi*}
+
+\begin{boxnote}
+\begin{verbatim}
+\Nuritubusi*[#1]<#2>#3
+  #1 : 斜線の方向角
+      ( -90 と 90 の間の数（単位は度）．デフォルトは 45)
+  #2 : 斜線の間隔 （デフォルトは 0.125 ）
+  #3 : 多角形の点列（閉じていなければなりません．)
+\end{verbatim}
+\end{boxnote}\medskip
+
+\subsection{円}
+円の内部を斜線塗りする例です．
+\verb+[-45]+ オプションをつけて，斜線の方向角を変更してみました．
+
+\showexample[円の内部に斜線](0.45)(0.45){example/hatch02}
+
+\cmd{En**} の書式です．\cindex{En**}
+
+\begin{boxnote}
+\begin{verbatim}
+\En**[#1]<#2>#3#4
+    #1 : 斜線の方向角
+      ( -90 と 90 の間の数（単位は度）．デフォルトは 45)
+    #2 : 斜線の間隔 （デフォルトは 0.125 ）
+    #3 : 中心の座標
+    #4 : 半径
+\end{verbatim}
+\end{boxnote}
+
+\subsection{扇形など}
+\cmd{Daen**}, \cmd{yumigata**}, \cmd{ougigata**}, \cmd{Daenko**},
+\cmd{Nuritubusi*} も同様です．
+\cindex{Daen**}\cindex{yumigata**}\cindex{ougigata**}
+\cindex{Daenko**}\cindex{Nuritubusi*}
+
+代表的に\verb/\yumigata**/ の書式を記します。
+
+\begin{boxnote}
+\begin{verbatim}
+\yumigata**[#1]<#2>#3#4#5
+  #1 : 斜線塗りの傾斜角（デフォルトは45）
+  #2 : オプション
+        <border=1> で境界線を描画する。
+        <syanurisiteiten=xx> で斜線群が指定点xxを通るようにする。
+        <syanurikankaku=xx> 斜線の間隔を指定する無名数（デフォルトは 0.125）
+          #2 に単に無名数を記述すれば，斜線の間隔を変更する指示と解釈される。
+  #3 〜 #5 : \yumigata の #1〜#3 と同じ
+
+（注）始め角と終り角の与え方の順序について
+    2つの角を指定すると，円は2つの弓形に分割されます。
+    そのどちらが描画されるのかという話です。
+    始め角で指定された動径を正の向きに（時計の針と反対向き）
+    回転して終り角で指定した動径と重なるまでを描画します。
+\end{verbatim}
+\end{boxnote}
+
+\showexample[弓形の斜線塗り](0.5)(0.45){example/hatch04}
+
+\showexample[扇形の斜線塗り](0.5)(0.45){example/hatch03}
+
+ただし，扇形の中心角は180度以下でなければなりません．
+優角の扇形の斜線塗りは，円を斜線塗りした後，余分の扇形を白塗りします．
+
+\showexample[扇形の斜線塗り（優角の場合）](0.5)(0.45){example/hatch05}
+
+\showexample[弓形（楕円弧）の斜線塗り](0.5)(0.45){example/hatch06}
+
+\subsection{格子セルのぬりつぶし}
+格子を描画する \cmd{kousi} に
+\begin{jquote}
+\begin{verbatim}
+セルを塗る
+セルの座標を指定しての \put, 
+黒丸配置
+\end{verbatim}
+\end{jquote}
+などのを実現する\texttt{<nuri=..>}オプションの説明です。
+\verb+<nuri=..>+の右辺に，塗りつぶしを行うセルの左下コーナーの
+格子座標を与えます。
+
+\begin{showEx}(.64,.3){塗りつぶし}
+\begin{zahyou*}[ul=4mm](0,8)(0,8)
+\kousi<nuri={(1,2)}>(2,1.5){4}{5}
+\end{zahyou*}
+\end{showEx}
+
+\verb+<nuri=..>+の右辺は，コンマを含みますから，\verb+{...}+で
+くくっておく必要があります。濃度指定は\verb+[..]+オプションというのは
+\cmd{Nuritubusi}と同様です。
+
+\begin{showEx}(.64,.3){濃度指定}
+\begin{zahyou*}[ul=4mm](0,8)(0,8)
+\kousi<nuri={[1](3,1)}>(2,1.5){4}{5}
+\end{zahyou*}
+\end{showEx}
+
+\verb+<nuri=..(x,y)>+における\verb+..+の部分は\cmd{Nuritubusi}の
+オプションとして引き渡されます。赤で塗りつぶしてみましょう。
+
+\begin{showEx}(.64,.3){カラー塗り}
+\begin{zahyou*}[ul=4mm](0,8)(0,8)
+\kousi<nuri={[nuriiro=red](3,0)}>(2,1.5){4}{5}
+\end{zahyou*}
+\end{showEx}
+
+\noindent
+ということなれば，斜線塗りは
+
+\begin{showEx}(.64,.3){斜線塗り}
+\begin{zahyou*}[ul=4mm](0,8)(0,8)
+\kousi<nuri={*(1,4)}>(2,1.5){4}{5}
+\end{zahyou*}
+\end{showEx}
+
+斜線の角度，間隔指定も
+
+\begin{showEx}(.64,.3){斜線角度，間隔}
+\begin{zahyou*}[ul=4mm](0,8)(0,8)
+\kousi<nuri={*[-45]<.5>(0,2)}>(2,1.5){4}{5}
+\end{zahyou*}
+\end{showEx}
+
+\cmd{Nuritubusi}のオプションと同様であることが納得いただけたでしょうか。
+
+複数のセルに対して塗りを指定するには，\verb+<nuri=..>+の右辺に，
+上記の指定を`;'で区切って並べれば実現できます。
+
+\begin{showEx}(.64,.3){複数指定}
+\begin{zahyou*}[ul=4mm](0,8)(0,8)
+\kousi<nuri={%
+  (1,2);%
+  [1](3,1);%
+  [nuriiro=red](3,0);%
+  *(1,4);%
+  *[-45]<.5>(0,2)%
+}>(2,1.5){4}{5}
+\end{zahyou*}
+\end{showEx}
+
+
+\subsection{境界線と斜線の間を空ける}
+領域の境界を含まないことを示すのに，
+斜線と境界をくっつけず，少し空ける流儀があります。
+
+これを実現するにはいくつかの方法がありますが，
+田中 徹 さんが\verb+BBS #354+に投稿された方法
+\begin{jquote}\relax
+(1) ひとまず塗りつぶしを行う\\
+(2) 境界線を太めの白い線で上書き\\
+(3) 改めて境界線を引く
+\end{jquote}
+は有力な手法です。
+
+そのアイデアを頂いてマクロ化してみました。
+\textsf{emathPh.sty v 1.07}で
+\begin{jquote}
+\begin{verbatim}
+syasentanmatu=...（単位付の長さ）
+\end{verbatim}
+\end{jquote}
+オプションにより白塗りの幅を指定することにしてみました。
+境界線を中心として，その左右に指定した幅を有する白い曲線を描画します。
+
+（斜線の端点と境界線の距離が指定した長さとなり，
+白塗りの曲線の太さは指定した幅の2倍となります。）
+
+\begin{showEx}(.6,.34){\texttt{syasentanmatu=..}オプション}
+\begin{zahyou*}[ul=6mm](0,5)(0,4)
+  \tenretu*{A(0,0);B(5,0);C(4,4);D(1,3)}
+  \Nuritubusi*<syasentanmatu=1mm>%
+    {\A\B\C\D\A}
+  \Drawline{\A\B\C\D\A}
+\end{zahyou*}
+\end{showEx}
+
+\subsection{2円の共通部分に斜線}
+2円の共通部分を斜線塗りするのは，結構面倒です。
+
+まずは斜線塗りではなく，ベタ塗りの場合を検討します。
+これは，共通弦で2分割したそれぞれの弓形を塗りつぶします。
+
+\begin{showEx}(.6,.34){2円の共通部分のベタ塗り}
+\unitlength12mm\drawaxisfalse
+\begin{zahyou}(-1.5,1.5)(-1.5,2.5)
+  \tenretu*{A(0,0);B(0,1)}
+  \edef\hankeiA{1}
+  \edef\hankeiB{1}
+  \En\A\hankeiA
+  \En\B\hankeiB
+  \CandC\A\hankeiA\B\hankeiB\P\Q
+  \Put\A{\yumigata*\hankeiA{%
+    hazimeten=\Q}{owariten=\P}}
+  \Put\B{\yumigata*\hankeiB{%
+    hazimeten=\P}{owariten=\Q}}
+\end{zahyou}
+\end{showEx}
+
+これが斜線塗りとなると
+
+\begin{showEx}(.6,.34){2円の共通部分の斜線塗り(1)}
+\unitlength12mm\drawaxisfalse
+\begin{zahyou}(-1.5,1.5)(-1.5,2.5)
+  \tenretu*{A(0,0);B(0,1)}
+  \edef\hankeiA{1}
+  \edef\hankeiB{1}
+  \En\A\hankeiA
+  \En\B\hankeiB
+  \CandC\A\hankeiA\B\hankeiB\P\Q
+  \Put\A{\yumigata**\hankeiA{%
+    hazimeten=\Q}{owariten=\P}}
+  \Put\B{\yumigata**\hankeiB{%
+    hazimeten=\P}{owariten=\Q}}
+\end{zahyou}
+\end{showEx}
+2つの弓形の斜線がつながりません。
+
+そこで，斜線塗りに
+\begin{verbatim}
+  syanurisiteiten=
+\end{verbatim}
+という書式で，
+斜線群が通過すべき1点を指定するためのオプションを付加しました。
+その効果は
+
+\begin{showEx}(.6,.34){2円の共通部分の斜線塗り(1)}
+\unitlength12mm\drawaxisfalse
+\begin{zahyou}(-1.5,1.5)(-1.5,2.5)
+  \tenretu*{A(0,0);B(0,1)}
+  \edef\hankeiA{1}
+  \edef\hankeiB{1}
+  \En\A\hankeiA
+  \En\B\hankeiB
+  \CandC\A\hankeiA\B\hankeiB\P\Q
+  \Put\A{\yumigata**<%
+    syanurisiteiten=\Q>\hankeiA{%
+    hazimeten=\Q}{owariten=\P}}
+  \Put\B{\yumigata**<%
+    syanurisiteiten=\Q>\hankeiB{%
+    hazimeten=\P}{owariten=\Q}}
+\end{zahyou}
+\end{showEx}
+
+一見つながったように見えますが，よく目を凝らすとちょっとずれています。
+これが気になれば，斜線塗りする領域の境界線を多角形近似して，
+多角形を斜線塗りするコマンド \cmd{Nuritubusi} を使うことになりましょう。
+円弧を折れ線近似するには，
+\begin{verbatim}
+  $n$次関数のグラフを折れ線近似する \KinziOresen
+  一般の関数のグラフを折れ線近似する \yKinziOresen
+  媒介変数表示の曲線を折れ線近似する \bKinziOresen
+\end{verbatim}
+などを用いれば可能ですが，この際，円弧を折れ線近似するコマンド
+を作ってみました。名付けて \cmd{KinziEnko}
+書式はあとで記述することにして，とりあえず使用効果を見てみましょう。
+
+\begin{showEx}(.65,.29){2円の共通部分の斜線塗り(1)}
+\unitlength12mm\drawaxisfalse
+\begin{zahyou}(-1.1,1.1)(-1.5,2.5)
+  \tenretu*{A(0,0);B(0,1)}
+  \edef\hankeiA{1}\edef\hankeiB{1}
+  \En\A\hankeiA\En\B\hankeiB
+  \CandC\A\hankeiA\B\hankeiB\P\Q
+  \Put\P[w]{P}\Put\Q[e]{Q}
+  \KinziEnko\A\hankeiA{hazimeten=\Q}{%
+    owariten=\P}\oresenA
+  \KinziEnko\B\hankeiB{hazimeten=\P}{%
+    owariten=\Q}\oresenB
+  \edef\oresen{\Q\oresenA\P\oresenB\Q}
+  \Nuritubusi*\oresen
+\end{zahyou}
+\end{showEx}
+きれいに斜線塗りができたようです。
+
+\cmd{KinziEnko} の書式です。
+
+\begin{boxnote}
+\begin{verbatim}
+円弧を近似する折れ線
+\KinziEnko<#1>#2#3#4#5#6
+  #1 : 刻み値
+  #2 : 中心
+  #3 : 半径を直接与えるか
+       tuukaten=xx として，円弧の周上の一点を与える
+  #4 : 始め角を直接与えるか
+       hazimeten=xx として，中心を始点，xx を終点とするベクトルの
+       方向角を 始め角とするように指定する。
+  #5 : 終り角を直接与えるか
+       owariten=xx として，中心を始点，xx を終点とするベクトルの
+       方向角を 終り角とするように指定する。
+  #6 : 近似折れ線を受け取る制御綴
+\end{verbatim}
+\end{boxnote}
+
+\subsection{破線による斜線塗り}\label{S-hasen}
+斜線を破線で引くには
+\begin{jquote}
+\verb/\def\sensyu{\hasen}%/
+\end{jquote}
+などとします．
+
+\showexample[破線による斜線塗り](0.5)(0.45){example/hatch08}
+
+なお，斜線を \verb/\color{lightgray}/ などとするのも有力な手法です．
+ただし，gray の濃度はプリンタ環境によって調整する必要があります．
+
+\showexample[グレースケールによる斜線塗り](0.5)(0.45){example/hatch09}
+
+\subsection{斜線塗りの制約条項}
+%\begin{jquote}
+\begin{description}
+\item[\textgt{斜線塗りの制約条項}]
+        斜線の方向角を$\theta$として，直線群 $y\cos\theta-x\sin\theta=k$ 
+        が領域によってきり取られる線分は単一の連結な線分であること．
+
+    　　駄目な場合の典型は，ドーナッツです．これはどのような方向で切っても
+        中心を通る直線がドーナッツによって切り取られる部分は２個の線分に
+        なってしまします．このような領域の斜線塗りはいっぺんにはできません．
+        ドーナッツの場合は，大きい円の内部全部を一旦斜線塗りしたうえで，
+        小さい円の内部を白塗りすることで実現できます．
+\end{description}
+%\end{jquote}

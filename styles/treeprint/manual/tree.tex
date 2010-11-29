@@ -1,0 +1,17 @@
+\documentstyle[tree]{article}
+\newcommand{\sstack}[1]{\fbox{\shortstack{#1}}}
+\newcommand{\treeroot}[2]{\tree \sstack{#1}#2 \endtree}
+\newcommand{\branch}[2]{\subtree \sstack{#1}#2 \endsubtree}
+\newcommand{\LEAF}[1]{\leaf{\sstack{#1}}}
+\begin{document}
+\treeroot{Animal}
+ {\branch{Bird}
+   {\LEAF{Penguin\\Cardinal}
+    \LEAF{Ostrich}
+    \LEAF{Robin}}
+  \branch{Mammal}
+   {\LEAF{Human Being}
+    \branch{Dog}{\LEAF{Sheep Dog}
+                 \LEAF{Dachshund}}
+    \LEAF{Cat}}}
+\end{document}

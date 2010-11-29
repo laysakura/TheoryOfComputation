@@ -1,0 +1,88 @@
+% EMrgbcolornam.def
+%
+\ProvidesFile{EMrgbcolornam.def}[2008/08/16 v0.01]
+%
+%      \definecolor{lightgray}{gray}{.8}%
+%      \definecolor{lightlightgray}{gray}{.88}%
+%      \definecolor{darkgray}{gray}{.2}%
+%      \definecolor{skyblue}{rgb}{0.529412,0.807843,0.921569}%
+%      \definecolor{gold}{rgb}{1.000000,0.843137,0.000000}%
+%      \definecolor{yellowgreen}{rgb}{0.603922,0.803922,0.196078}%
+%      \definecolor{teal}{rgb}{0.000000,0.501961,0.501961}%
+%      \definecolor{forestgreen}{rgb}{0.133333,0.545098,0.133333}%
+%      \definecolor{seagreen}{rgb}{0.180392,0.545098,0.341176}%
+%      \definecolor{maroon}{rgb}{0.501961,0.000000,0.000000}%
+%      \definecolor{olive}{rgb}{0.501961,0.501961,0.000000}%
+%      \definecolor{navy}{rgb}{0.000000,0.000000,0.501961}%
+%      \definecolor{purple}{rgb}{0.501961,0.000000,0.501961}%
+%      \definecolor{royalblue}{rgb}{0.254902,0.411765,0.882353}%
+%      \definecolor{plum}{rgb}{0.866667,0.627451,0.866667}%
+%      \definecolor{lavender}{rgb}{0.901961,0.901961,0.980392}%
+%      \definecolor{orchid}{rgb}{0.854902,0.439216,0.839216}%
+%      \definecolor{violet}{rgb}{0.933333,0.509804,0.933333}%
+%      \definecolor{indigo}{rgb}{0.294118,0.000000,0.509804}%
+%      \definecolor{pink}{rgb}{1.000000,0.752941,0.796078}%
+%      \definecolor{linen}{rgb}{0.980392,0.941176,0.901961}%
+%      \definecolor{ivory}{rgb}{1.000000,1.000000,0.941176}%
+%      \definecolor{snow}{rgb}{1.000000,0.980392,0.980392}%
+%      \definecolor{silver}{rgb}{0.752941,0.752941,0.752941}%
+%      \definecolor{crimson}{rgb}{0.862745,0.078431,0.235294}%
+%      \definecolor{brown}{rgb}{0.647059,0.164706,0.164706}%
+%      \definecolor{salmon}{rgb}{0.980392,0.501961,0.447059}%
+%      \definecolor{coral}{rgb}{1.000000,0.498039,0.313725}%
+%      \definecolor{tomato}{rgb}{1.000000,0.388235,0.278431}%
+%      \definecolor{chocolate}{rgb}{0.823529,0.411765,0.117647}%
+%      \definecolor{orange}{rgb}{1.000000,0.647059,0.000000}%
+%      \definecolor{khaki}{rgb}{0.941176,0.901961,0.549020}%
+%      \definecolor{darkgreen}{rgb}{0.000000,0.392157,0.000000}%
+%      \definecolor{lightgreen}{rgb}{0.564706,0.933333,0.564706}%
+%      \definecolor{darkcyan}{rgb}{0.000000,0.545098,0.545098}%
+%
+\def\EMps@black{0 0 0}%
+\def\EMps@red{1 0 0}%
+\def\EMps@green{0 1 0}%
+\def\EMps@blue{0 0 1}%
+\def\EMps@white{1 1 1}%
+\def\EMps@cyan{0 1 1}%
+\def\EMps@magenta{1 0 1}%
+\def\EMps@yellow{1 1 0}%
+\edef\EM@white{white}%
+%
+    \def\EMps@ivory{1.000000 1.000000 0.941176}%
+    \def\EMps@snow{1.000000 0.980392 0.980392}%
+    \def\EMps@gold{1.000000 0.843137 0.000000}%
+    \def\EMps@pink{1.000000 0.752941 0.796078}%
+    \def\EMps@orange{1.000000 0.647059 0.000000}%
+    \def\EMps@coral{1.000000 0.498039 0.313725}%
+    \def\EMps@tomato{1.000000 0.388235 0.278431}%
+    \def\EMps@linen{0.980392 0.941176 0.901961}%
+    \def\EMps@salmon{0.980392 0.501961 0.447059}%
+    \def\EMps@khaki{0.941176 0.901961 0.549020}%
+    \def\EMps@violet{0.933333 0.509804 0.933333}%
+    \def\EMps@lavender{0.901961 0.901961 0.980392}%
+    \def\EMps@plum{0.866667 0.627451 0.866667}%
+    \def\EMps@crimson{0.862745 0.078431 0.235294}%
+    \def\EMps@orchid{0.854902 0.439216 0.839216}%
+    \def\EMps@chocolate{0.823529 0.411765 0.117647}%
+    \def\EMps@silver{0.752941 0.752941 0.752941}%
+    \def\EMps@brown{0.647059 0.164706 0.164706}%
+    \def\EMps@yellowgreen{0.603922 0.803922 0.196078}%
+    \def\EMps@lightgreen{0.564706 0.933333 0.564706}%
+    \def\EMps@skyblue{0.529412 0.807843 0.921569}%
+    \def\EMps@olive{0.501961 0.501961 0.000000}%
+    \def\EMps@purple{0.501961 0.000000 0.501961}%
+    \def\EMps@maroon{0.501961 0.000000 0.000000}%
+    \def\EMps@indigo{0.294118 0.000000 0.509804}%
+    \def\EMps@royalblue{0.254902 0.411765 0.882353}%
+    \def\EMps@seagreen{0.180392 0.545098 0.341176}%
+    \def\EMps@forestgreen{0.133333 0.545098 0.133333}%
+    \def\EMps@darkcyan{0.000000 0.545098 0.545098}%
+    \def\EMps@teal{0.000000 0.501961 0.501961}%
+    \def\EMps@darkgreen{0.000000 0.392157 0.000000}%
+    \def\EMps@navy{0.000000 0.000000 0.501961}%
+    \def\EMps@lightlightgray{0.88 0.88 0.88}%
+    \def\EMps@lightgray{0.827540 0.827540 0.827540}%
+    \def\EMps@gray{0.500000 0.500000 0.500000}%
+    \def\EMps@darkgray{0.662745 0.662745 0.662745}%
+    \def\EMps@timgray{0.411 0.411 0.411}%
+\endinput

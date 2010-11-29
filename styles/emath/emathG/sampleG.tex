@@ -1,0 +1,1100 @@
+\documentclass[a4j]{jarticle}
+\usepackage{color}
+\usepackage{emathPxy}
+\usepackage{emathG}
+\usepackage{emathMw}
+\usepackage{showexample}
+\usepackage{multido}
+
+\setcounter{tocdepth}{4}
+
+\begin{document}
+\title{統計グラフ描画マクロ\\
+emathG.sty {\normalsize ver.0.06α}\\使用例}
+\author{tDB}
+\date{2006/09/11}
+
+\maketitle\thispagestyle{empty}
+\begin{abstract}%
+\parindent1zw%
+円グラフ，帯グラフ，折れ線グラフ，棒グラフなどを描画するための
+スタイルファイルです。
+
+現時点ではプロトタイプで，仕様の変更などが頻繁に行われますので，
+そのおつもりでお付き合い願います。
+
+このマクロ集のマクロについてのご質問，バグ報告，修正・追加の提案等は
+\begin{center}
+http://emath.s40.xrea.com/
+\end{center}
+の掲示板へどうぞ。
+\end{abstract}
+\pagebreak
+\pagenumbering{roman}%
+
+
+\tableofcontents
+
+\pagebreak
+
+\pagenumbering{arabic}
+
+\section{円グラフ}
+\subsection{\cmd{EnGurafu}}
+円グラフを描画するコマンドが\cmd{EnGurafu}です。
+
+\begin{showEx}(.6,.34){\cmd{EnGurafu}}
+\EnGurafu{2,3,4,6}
+\end{showEx}
+
+\subsection{\cmd{EnGurafu}のオプション}
+\subsubsection{半径を指定するオプション}
+円グラフの半径は，デフォルトでは2\,cmとしてありますが，
+これを変更するオプションが
+\begin{jquote}
+\begin{verbatim}
+Hankei=.. （右辺値は単位を伴う長さ）
+\end{verbatim}
+\end{jquote}
+です。
+
+\begin{showEx}(.6,.34){\texttt{[Hankei=..]}オプション}
+\EnGurafu[Hankei=1cm]{2,3,4,6}
+\end{showEx}
+
+\subsubsection{ラベル表示法を指定するオプション}
+\paragraph{位置}
+扇形の中に度数を白抜きで表示しますが，
+デフォルトでは半径の3/4の位置に表示されます。
+この位置を変更するオプションが
+\begin{jquote}
+\begin{verbatim}
+EnGurafuLabelpos=.. （右辺値は無名数で，デフォルト値は0.75）
+\end{verbatim}
+\end{jquote}
+です。
+
+\begin{showEx}(.6,.34){\texttt{[EnGurafuLabelpos=..]}オプション}
+\EnGurafu[EnGurafuLabelpos=.5]{6,4,3,2}
+\end{showEx}
+
+\paragraph{\cmd{fboxsep}}
+白抜きにおける\cmd{fboxsep}の値を変更するオプションが
+\begin{jquote}
+\begin{verbatim}
+fboxsep=.. （右辺値は単位を伴う長さ）
+\end{verbatim}
+\end{jquote}
+です。
+
+\begin{showEx}(.6,.34){\texttt{[fboxsep=..]}オプション}
+\EnGurafu[fboxsep=1pt]{6,4,3,2}
+\end{showEx}
+
+\paragraph{非表示}
+度数を表示したくないときは\verb+[EnGurafuLabelpos=0]+とします。
+
+\begin{showEx}(.6,.34){\texttt{[EnGurafuLabelpos=..]}オプション}
+\EnGurafu[EnGurafuLabelpos=0]{6,4,3,2}
+\end{showEx}
+\clearpage
+
+\section{帯グラフ}
+\subsection{\textsf{ObiGurafu}環境}
+帯グラフを描画するには，\textsf{ObiGurafu}環境内に，
+\cmd{Obi}コマンドで，帯グラフを一つずつ指定します。
+
+\begin{showEx}(1,.9){\textsf{ObiGurafu}環境}
+\begin{ObiGurafu}{G1}
+  \Obi{北海道}{40,30,20,10}
+  \Obi{東京都}{100,200,300,400}
+  \Obi{鹿児島県}{20,20,20,20}
+\end{ObiGurafu}
+\end{showEx}
+
+\textsf{ObiGurafu}環境は，実質\textsf{picture}環境ですが，
+そのサイズなどを得るため，相互参照機能を利用します。
+そのため，\textsf{ObiGurafu}環境には，「識別名」が必要となりますので，
+\verb+\begin{ObiGurafu}+は，その識別名を第1引数に与えなければなりません。
+
+\subsection{\textsf{ObiGurafu}環境のオプション}
+\subsubsection{帯の高さを指定するオプション}
+帯の高さを変更するオプションが
+\begin{jquote}
+\begin{verbatim}
+ObiTakasa=.. （右辺値は単位を伴う長さ，デフォルトは3zh）
+\end{verbatim}
+\end{jquote}
+です。
+
+\begin{showEx}(1,.9){\texttt{[ObiTakasa=..]}オプション}
+\begin{ObiGurafu}[ObiTakasa=1zh,fboxsep=1pt]{G2}
+  \Obi{北海道}{40,30,20,10}
+  \Obi{東京都}{100,200,300,400}
+  \Obi{鹿児島県}{20,20,20,20}
+\end{ObiGurafu}
+\end{showEx}
+
+\subsubsection{帯の間隔を指定するオプション}
+帯の間隔を変更するオプションが
+\begin{jquote}
+\begin{verbatim}
+ObiKankaku=.. （右辺値は単位を伴う長さ，デフォルトは1zh）
+\end{verbatim}
+\end{jquote}
+です。
+
+\begin{showEx}(1,.9){\texttt{[ObiKankaku=..]}オプション}
+\begin{ObiGurafu}[ObiKankaku=.5zh]{G3}
+  \Obi{北海道}{40,30,20,10}
+  \Obi{東京都}{100,200,300,400}
+  \Obi{鹿児島県}{20,20,20,20}
+\end{ObiGurafu}
+\end{showEx}
+
+\subsubsection{帯間を結ぶ線の形状を指定するオプション}
+デフォルトでは，帯と帯の間を\cmd{Hasen}で結んでいますが，
+これを変更するオプションが
+\begin{jquote}
+\begin{verbatim}
+ObiMusubisen=..
+\end{verbatim}
+\end{jquote}
+です。
+
+\begin{showEx}(1,.9){\texttt{[ObiMusubisen=..]}オプション}
+\begin{ObiGurafu}[ObiMusubisen=\emDottedline]{G4}
+  \Obi{北海道}{40,30,20,10}
+  \Obi{東京都}{100,200,300,400}
+  \Obi{鹿児島県}{20,20,20,20}
+\end{ObiGurafu}
+\end{showEx}
+
+なお，結びたくないときは
+\begin{jquote}
+\begin{verbatim}
+[ObiMusubisen=]
+\end{verbatim}
+\end{jquote}
+とします。
+
+\begin{showEx}(1,.9){帯間を線で結ばない}
+\begin{ObiGurafu}[ObiMusubisen=]{G5}
+  \Obi{北海道}{40,30,20,10}
+  \Obi{東京都}{100,200,300,400}
+  \Obi{鹿児島県}{20,20,20,20}
+\end{ObiGurafu}
+\end{showEx}
+
+\subsubsection{目盛りをつけるオプション}
+\paragraph{目盛りの刻み値指定}
+帯グラフに，百分比の目盛りをつけるオプションが
+\begin{jquote}
+\begin{verbatim}
+ObiMemoriKankaku=.. （右辺値は整数）
+\end{verbatim}
+\end{jquote}
+です。
+
+\begin{showEx}(1,.9){\texttt{[ObiMemoriKankaku=..]}オプション}
+\begin{ObiGurafu}[ObiMemoriKankaku=20]{GM}
+  \Obi{北海道}{40,30,20,10}
+  \Obi{東京都}{100,200,300,400}
+  \Obi{鹿児島県}{20,20,20,20}
+\end{ObiGurafu}
+\end{showEx}
+
+\paragraph{目盛り線を引く}
+目盛り線を引くオプションが
+\begin{jquote}
+\begin{verbatim}
+ObiMemorisen=.. （右辺値は\cmd{Drawline}などのコマンド）
+\end{verbatim}
+\end{jquote}
+です。
+
+\begin{showEx}(1,.9){\texttt{[ObiMemorisen=..]}オプション}
+\begin{ObiGurafu}[ObiMemoriKankaku=20,%
+    ObiMemorisen=\Drawline]{GMs}
+  \Obi{北海道}{40,30,20,10}
+  \Obi{東京都}{100,200,300,400}
+  \Obi{鹿児島県}{20,20,20,20}
+\end{ObiGurafu}
+\end{showEx}
+
+\paragraph{目盛り線とオブグラフの上下関係}
+デフォルトでは，目盛り線の上に帯グラフが乗りますが，
+これを逆転させるオプションが
+\begin{jquote}
+\begin{verbatim}
+ObiMemoriHaiti=b
+\end{verbatim}
+\end{jquote}
+です。
+
+\begin{showEx}(1,.9){\texttt{[ObiMemoriHaiti=b]}オプション}
+\begin{ObiGurafu}[ObiMemoriKankaku=20,%
+    ObiMemorisen=\Hasen,ObiMemoriHaiti=b]{GMb}
+  \Obi{北海道}{40,30,20,10}
+  \Obi{東京都}{100,200,300,400}
+  \Obi{鹿児島県}{20,20,20,20}
+\end{ObiGurafu}
+\end{showEx}
+
+\section{塗りパターンの指定}
+各項目を塗りつぶすパターンは，デフォルトでは
+\begin{jquote}
+\begin{verbatim}
+\def\NuriFi{}           デフォルトの濃度(0.5)で塗りつぶす
+\def\NuriFii{*}         斜線塗り（角度はデフォルトの45度）
+\def\NuriFiii{[0]}      白塗り
+\def\NuriFiv{*[-45,45]} 方向角-45度, 45度のクロス塗り
+\end{verbatim}
+\end{jquote}
+と4項目が指定されています。
+
+必要に応じて再定義します。
+
+\begin{showEx}(.6,.34){塗りパターン追加}
+\def\NuriFv{*[0,90]}
+\EnGurafu{2,3,4,6,3}
+\end{showEx}
+
+カラー塗りも可能です。
+
+\begin{showEx}(1,.9){塗りパターン変更}
+\def\NuriFi{[nuriiro=red]}
+\def\NuriFii{[nuriiro=green]}
+\def\NuriFiii{[nuriiro=cyan]}
+\def\NuriFiv{[nuriiro=lavender]}
+\begin{ObiGurafu}{GC}
+  \Obi{北海道}{40,30,20,10}
+  \Obi{東京都}{100,200,300,400}
+  \Obi{鹿児島県}{20,20,20,20}
+\end{ObiGurafu}
+\end{showEx}
+\newpage
+
+\section{凡例}
+凡例をつけるには，\cmd{hanrei}を用います。
+
+\begin{showEx}(1,.9){凡例}
+\begin{ObiGurafu}[ObiMusubisen=]{GH}
+  \Obi{北海道}{40,30,20,10}
+  \Obi{東京都}{100,200,300,400}
+  \Obi{鹿児島県}{20,20,20,20}
+\end{ObiGurafu}
+
+\centerline{\hanrei{賛成,どちらでもない,反対,無答}}
+\end{showEx}
+\newpage
+
+\cmd{hanrei}では，べた並びとなりますが，
+\cmd{Thanrei}は，表形式となります。
+
+\begin{showEx}(1,.9){表形式の凡例}
+\def\NuriFi{[nuriiro=red]}
+\def\NuriFii{[nuriiro=cyan]}
+\def\NuriFiii{[nuriiro=yellow]}
+\def\NuriFiv{[nuriiro=green]}
+\def\NuriFv{[nuriiro=lavender]}
+\dimenref{WTH}\whanrei
+\setlength{\templa}{\linewidth-\whanrei-1zw}
+\begin{minipage}{\templa}
+\begin{ObiGurafu}[ObiTakasa=2zh,fboxsep=1pt]{CGi}
+  \Obi{2001}{1,2,3,4,1}
+  \Obi{2002}{2,5,1,6,1}
+  \Obi{2003}{3,4,2,8,2}
+  \Obi{2004}{4,5,2,7,1}
+\end{ObiGurafu}
+\end{minipage}
+\hfill
+\begin{minipage}{\whanrei}
+\getWHD{TH}{\fbox{\Thanrei{非常に良い,良い,普通,悪い,非常に悪い}}}%
+\end{minipage}
+\end{showEx}
+
+\begin{jquote}(6zw)
+ここでは，左の帯グラフの部分と右の凡例の部分を\\
+それぞれ\textsf{minipage}環境に入れて，並べています。\\
+\textsf{mawarikomi}環境を用いるのもありますが，厄介です。
+\end{jquote}
+
+\section{折れ線グラフ}
+現時点では，折れ線グラフは\textsf{zahyou(*)}環境で記述することになります。
+ただし，複数の折れ線が登場する場合などでは
+\begin{jquote}
+線種の変更\\
+マーカーの付加
+\end{jquote}
+ということが問題となりますので
+\cmd{OreG}というコマンドを用意します。
+
+\subsection{\cmd{OreG}}
+折れ線描画コマンド \cmd{OreG} の書式です。
+
+\begin{boxnote}
+\begin{verbatim}
+\OreG#1#2#3
+  #1 : 線種
+         ex. \Drawline, \Hasen, \Chainline, ....
+  #2 : マーカー
+         ex. $\bullet$, $\blacktriangle$, ......
+  #3 : yの値列（コンマ区切り）
+\end{verbatim}
+\end{boxnote}
+
+一例です。
+
+\begin{showEx}(1,.9){折れ線グラフ}
+\begin{zahyou*}[ul=10mm,yscale=.2](0,4)(0,35)
+%--- 折れ線描画
+  \OreG{\Drawline}{$\bullet$}{10,20,10,30}
+  \OreG{\Hasen}{$\scriptscriptstyle\blacksquare$}{5,2,12,10}
+%  \OreG{\Chainline}{$\scriptstyle\blacktriangle$}{8,25,18,22}
+  \OreG{\color{red}\Drawline}{{\color{green}{$\ast$}}}{28,25,20,14}
+%--- 目盛り線など
+  \multido{\ix=1+1}{3}{\emDottedline{(\ix,0)(\ix,\ymax)}}%
+  \multido{\iy=5+5}{6}{\emDottedline{(0,\iy)(\xmax,\iy)}}%
+%--- 座標軸
+  \Drawline{\XMAX\O\YMAX}
+\end{zahyou*}
+\end{showEx}
+
+\subsection{見出し}
+殺風景ですから，見出し，目盛り数値をつけましょう。
+
+見出しをつけるコマンドが\cmd{OreGmidasi}です。
+縦書きをしたくなることがありますから，\cmd{OreGmidasiF}で，
+見出しの表示法を指定できるようにしてあります。
+
+\begin{showEx}(1,.9){折れ線グラフに見出し}
+\begin{zahyou*}[ul=10mm,yscale=.2,Hidariyohaku=2em,Sitayohaku=3em](0,4)(0,35)
+  \OreG{\Drawline}{$\bullet$}{10,20,10,30}
+  \OreG{\Hasen}{$\scriptscriptstyle\blacksquare$}{5,2,12,10}
+%  \OreG{\Chainline}{$\scriptstyle\blacktriangle$}{8,25,18,22}
+  \OreG{\color{red}\Drawline}{{\color{green}{$\ast$}}}{28,25,20,14}
+  \multido{\ix=1+1}{3}{\emDottedline{(\ix,0)(\ix,\ymax)}}%
+  \multido{\iy=5+5}{6}{\emDottedline{(0,\iy)(\xmax,\iy)}%
+      \Put{(0,\iy)}[w]{\iy}}%
+  \Drawline{\XMAX\O\YMAX}
+%--- 見出し表示を縦書き指定
+  \def\OreGmidasiF#1{\hbox{\tate #1}}
+% \def\OreGmidasiF{\EMparbox<t>}% こちらでもよいが，plext.sty が必要
+%--- 見出し
+  \OreGmidasi{2001,2002,2003,2004}
+\end{zahyou*}
+\end{showEx}
+
+\section{棒グラフ（縦）}
+\subsection{\textsf{bouG}環境}
+\textsf{emathG.sty v 0.05α}で，
+棒グラフを描画する環境\textsf{bouG}を新設しました。
+
+これは，実質\textsf{zahyou*}環境です。縦横の単位長が異なる場合が多いでしょうから,
+その場合は \textsf{emathPxy}を別途ロードしなければなりません。
+
+簡単な一例をご覧ください。
+
+\begin{showEx}(.64,.3){\textsf{bouG}環境}
+\begin{bouG}[ul=8mm,yscale=.5,Sitayohaku=1zh]%
+              (0,4)(0,10)
+  \bou{4}{A}
+  \bou{9}{B}
+  \bou{8}{C}
+\end{bouG}
+\end{showEx}
+
+上で述べたように，\textsf{bouG}環境は実質\textsf{zahyou*}環境ですから，
+引数の記述は\textsf{zahyou*}環境に従います。
+
+その環境内に
+\begin{jquote}
+\begin{verbatim}
+\bou{度数}{横軸下に配置するラベル名}
+\end{verbatim}
+\end{jquote}
+を並べていきます。
+
+なお，棒の横幅は$x$軸の単位長です。
+
+\subsection{棒のギャップ}
+棒と棒の間を空けるには,\textsf{bouG}の\verb+<boukankaku=..>+オプションを用います。
+
+\textsf{bouG}環境特有のオプションは，\textsf{zahyou*}環境の\verb+[...]+オプションに先立ち，
+\verb+<...>+で指定します。
+
+\begin{showEx}(.64,.3){\texttt{<boukankaku=..>}オプション}
+\begin{bouG}<boukankaku=.2>
+      [ul=8mm,yscale=.5,Sitayohaku=1zh]%
+      (0,4)(0,10)
+  \bou{4}{A}
+  \bou{9}{B}
+  \bou{8}{C}
+\end{bouG}
+\end{showEx}
+
+\verb+<boukankaku=.2>+によって，$x$軸の単位長を1として
+\begin{jquote}
+棒と棒のギャップが 0.2\\
+棒の横幅が $1-0.2=0.8$
+\end{jquote}
+となります。
+
+棒の横位置の修正法を述べて置きます。
+デフォルトでは，一番左の棒の左辺が$y$軸と重なります。
+これを動かすには，\verb+<bouxo=..>+オプションを用います。
+
+\begin{showEx}(.64,.3){\texttt{<bouxo=..>}オプション}
+\begin{bouG}<bouxo=.5,boukankaku=.5>
+      [ul=8mm,yscale=.5,Sitayohaku=1zh]%
+      (0,4)(0,10)
+  \bou{4}{A}
+  \bou{9}{B}
+  \bou{8}{C}
+\end{bouG}
+\end{showEx}
+
+\subsection{棒の塗り}
+\subsubsection{べた塗り}
+棒を塗るには，\verb+\bou*+と，アスタリスクをつけます。
+
+\begin{showEx}(.64,.3){棒の塗り}
+\begin{bouG}[ul=8mm,yscale=.5,Sitayohaku=1zh]%
+              (0,4)(0,10)
+  \bou*{4}{A}
+  \bou*[1]{9}{B}
+  \bou*[nuriiro=red]{8}{C}
+\end{bouG}
+\end{showEx}
+
+\cmd{bou*}の\verb+[..]+オプションで，塗りの濃さ，色などを指定するのは\cmd{Nuritubusi}と同様です。
+
+\subsubsection{斜線塗り}
+棒を斜線で塗るには，\verb+\bou**+と，2個のアスタリスクをつけます。
+
+\begin{showEx}(.64,.3){棒の斜線塗り}
+\begin{bouG}[ul=8mm,yscale=.5,Sitayohaku=1zh]%
+              (0,4)(0,10)
+  \bou**{4}{A}
+  \bou**[-45]<.2>{9}{B}
+  \bou**[-60,60]<syanurikankaku=.3>{8}{C}
+\end{bouG}
+\end{showEx}
+
+斜線の角度，間隔などの変更法は\cmd{Nuritubusi*}と同様です。
+
+\subsubsection{一括指定}
+棒の塗りが共通な場合は，\textsf{bouG}環境の中で
+\cmd{NuriF}を指定します。
+
+\begin{showEx}(.64,.3){塗りの一括指定}
+\begin{bouG}<boukankaku=.2>
+      [ul=8mm,yscale=.5,Sitayohaku=1zh]%
+      (0,4)(0,10)
+  \def\NuriF{[.5]}
+  \bou{4}{A}
+  \bou{9}{B}
+  \bou{8}{C}
+\end{bouG}
+\end{showEx}
+
+\begin{showEx}(.64,.3){塗りの一括指定（カラー）}
+\begin{bouG}<boukankaku=.2>
+      [ul=8mm,yscale=.5,Sitayohaku=1zh]%
+      (0,4)(0,10)
+  \def\NuriF{[nuriiro=blue]}
+  \bou{4}{A}
+  \bou{9}{B}
+  \bou{8}{C}
+\end{bouG}
+\end{showEx}
+
+\begin{showEx}(.64,.3){塗りの一括指定（斜線）}
+\begin{bouG}<boukankaku=.2>
+      [ul=8mm,yscale=.5,Sitayohaku=1zh]%
+      (0,4)(0,10)
+  \def\NuriF{*[45]}
+  \bou{4}{A}
+  \bou{9}{B}
+  \bou{8}{C}
+\end{bouG}
+\end{showEx}
+
+\subsubsection{背景色}
+背景色を指定するには，\textsf{bouG}環境，すなわち\textsf{zahyou}環境で
+座標平面全体を背景色で塗りつぶし，その上に棒グラフなどを配置していきます。
+
+\begin{showEx}(.64,.3){背景色}
+\begin{bouG}<boukankaku=.2>
+      [ul=8mm,yscale=.5,Sitayohaku=1zh]%
+      (0,4)(0,10)
+  \def\NuriF{[nuriiro=cyan]}
+  \Nuritubusi[nuriiro=silver]{\LT\LB\RB\RT}
+  \bou{4}{A}
+  \bou{9}{B}
+  \bou{8}{C}
+\end{bouG}
+\end{showEx}
+
+\subsection{度数の表示}
+デフォルトでは，度数は棒の先端に表示されます。
+これを変更するオプションについての説明です。
+
+\subsubsection{表示位置}
+度数を表示する基準点（デフォルトは棒の先端）を変更するには，
+\verb+<bouDosuuiti=..>+オプションを用います。右辺値は0と1の間の数値で，
+1のとき棒の先端，0のとき棒の根元となります。
+
+\begin{showEx}(.64,.3){\texttt{<bouDosuuiti=..>}}
+\begin{bouG}
+    <bouDosuuiti=.5>%
+    [ul=8mm,yscale=.5,Sitayohaku=1zh]%
+              (0,4)(0,10)
+  \bou*{4}{A}
+  \bou*[1]{9}{B}
+  \bou*[nuriiro=red]{8}{C}
+\end{bouG}
+\end{showEx}
+
+\verb+<bouDosuuiti=.5>+としたのに，中央になっていないですね。
+これは，基準点は中央になっているのですが，\verb+\Put+の配置オプションが
+デフォルトの\verb+[n]+のままだからです。これも修正しましょう。
+
+\begin{showEx}(.64,.3){\texttt{<bouDosuuopt=..>}}
+\begin{bouG}
+    <bouDosuuopt={(0,0)[c]},bouDosuuiti=.5>%
+    [ul=8mm,yscale=.5,Sitayohaku=1zh]%
+              (0,4)(0,10)
+  \bou*{4}{A}
+  \bou*[1]{9}{B}
+  \bou*[nuriiro=red]{8}{C}
+\end{bouG}
+\end{showEx}
+
+\verb+bouDosuuopt={(0,0)[c]}+オプションで，配置オプションを変更することで
+度数は棒の中央に配置されました。
+
+\subsubsection{白抜き}
+度数が見えない棒がありますね。塗りつぶしの色との兼ね合いです。\\
+では，度数を\verb+\colorbox{white}{度数}+としてみましょう。
+
+\begin{showEx}(.64,.3){\texttt{<prDosuu=..>}}
+\begin{bouG}
+    <prDosuu={\colorbox{white}},%
+    bouDosuuopt={(0,0)[c]},bouDosuuiti=.5>%
+    [ul=8mm,yscale=.5,Sitayohaku=1zh]%
+              (0,4)(0,10)
+  \bou*{4}{A}
+  \bou*[1]{9}{B}
+  \bou*[nuriiro=red]{8}{C}
+\end{bouG}
+\end{showEx}
+
+\verb+<fboxsep=..>+オプションと併用が可能なのはいうまでもありません。
+
+\begin{showEx}(.64,.3){\texttt{<fboxsep=..>}}
+\begin{bouG}
+    <fboxsep=1pt,%
+    prDosuu={\colorbox{white}},%
+    bouDosuuopt={(0,0)[c]},bouDosuuiti=.5>%
+    [ul=8mm,yscale=.5,Sitayohaku=1zh]%
+              (0,4)(0,10)
+  \bou*{4}{A}
+  \bou*[1]{9}{B}
+  \bou*[nuriiro=red]{8}{C}
+\end{bouG}
+\end{showEx}
+
+\subsubsection{フォント・サイズ変更}
+度数のフォントを変更するにも，\verb+<prDosuu=..>+オプションは有効です。
+
+\begin{showEx}(.64,.3){\texttt{<fboxsep=..>}}
+\begin{bouG}<prDosuu=%
+    {\sffamily\footnotesize\colorbox{white}},%
+    fboxsep=1pt,%
+    bouDosuuopt={(0,0)[c]},bouDosuuiti=.5>%
+    [ul=8mm,yscale=.5,Sitayohaku=1zh]%
+              (0,4)(0,10)
+  \bou*{4}{A}
+  \bou*[1]{9}{B}
+  \bou*[nuriiro=red]{8}{C}
+\end{bouG}
+\end{showEx}
+
+\subsubsection{度数非表示}
+度数を表示したくない，ですって？
+
+そういうこともありますかね。では
+
+\begin{showEx}(.64,.3){\texttt{<fboxsep=..>}}
+\begin{bouG}
+    <prDosuu={\notpr}>%
+    [ul=8mm,yscale=.5,Sitayohaku=1zh]%
+              (0,4)(0,10)
+  \bou*{4}{A}
+  \bou*[1]{9}{B}
+  \bou*[nuriiro=red]{8}{C}
+\end{bouG}
+\end{showEx}
+
+
+\subsection{縦目盛り}
+縦軸に目盛りを入れるには，\textsf{zahyou*}環境の機能を利用します。
+
+\begin{showEx}(.64,.3){縦目盛り}
+\begin{bouG}<boukankaku=.2>[ul=8mm,yscale=.5,%
+      Sitayohaku=1zh,Hidariyohaku=1zw]%
+      (0,4)(0,11)
+  \multido{\iy=2+2}{5}{\yMemori{\iy}}
+  \bou**{4}{A}
+  \bou**[-45]<.2>{9}{B}
+  \bou**[-60,60]<syanurikankaku=.3>{8}{C}
+\end{bouG}
+\end{showEx}
+
+目盛り線も入れますか。
+
+\begin{showEx}(.64,.3){目盛り線}
+\begin{bouG}<boukankaku=.2>[ul=8mm,yscale=.5,%
+      Sitayohaku=1zh,Hidariyohaku=1zw]%
+      (0,4)(0,11)
+  \multido{\iy=2+2}{5}{\yMemori{\iy}}
+  \multido{\iy=2+2}{5}{%
+    \Hasen{(0,\iy)(\xmax,\iy)}}
+  \bou**{4}{A}
+  \bou**[-45]<.2>{9}{B}
+  \bou**[-60,60]<syanurikankaku=.3>{8}{C}
+\end{bouG}
+\end{showEx}
+
+目盛り線と棒塗りとの上下関係は，
+目盛り線描画と棒描画の前後関係です。
+
+目盛り線を先に引いてから，棒塗りをすれば目盛り線は棒の下となります。
+
+\begin{showEx}(.64,.3){目盛り線を棒で隠す}
+\begin{bouG}<boukankaku=.5,bouxo=.5>%
+      [ul=8mm,yscale=.5,%
+      Sitayohaku=1zh,Hidariyohaku=1zw]%
+      (0,4)(0,11)
+  \Nuritubusi[nuriiro=silver]{\LT\LB\RB\RT}
+  \def\NuriF{[nuriiro=cyan]}%
+  \multido{\iy=2+2}{5}{\yMemori{\iy}}
+  \multido{\iy=2+2}{5}{%
+    \Hasen{(0,\iy)(\xmax,\iy)}}
+  \bou{4}{A}
+  \bou{9}{B}
+  \bou{8}{C}
+\end{bouG}
+\end{showEx}
+
+えっ？ 目盛り線が棒の上になっていますか。
+グラフィックスは，dvi-ware依存です。
+さらに，dviout.exe の場合は，設定によっても変わってきます。
+同梱してある newG06.pdf でご確認ください。
+
+逆の記述にすれば
+
+\begin{showEx}(.64,.3){目盛り線を棒の上に}
+\begin{bouG}<boukankaku=.5,bouxo=.5>%
+      [ul=8mm,yscale=.5,%
+      Sitayohaku=1zh,Hidariyohaku=1zw]%
+      (0,4)(0,11)
+  \Nuritubusi[nuriiro=silver]{\LT\LB\RB\RT}
+  \def\NuriF{[nuriiro=cyan]}%
+  \multido{\iy=2+2}{5}{\yMemori{\iy}}
+  \bou{4}{A}
+  \bou{9}{B}
+  \bou{8}{C}
+  \multido{\iy=2+2}{5}{%
+    \Hasen{(0,\iy)(\xmax,\iy)}}
+\end{bouG}
+\end{showEx}
+
+\section{棒グラフ（横）}
+\subsection{\textsf{yokobouG}環境}
+\textsf{emathG.sty v 0.05α}で，
+棒グラフを描画する環境\textsf{yokobouG}を新設しました。
+
+これは，実質\textsf{zahyou*}環境です。縦横の単位長が異なる場合が多いでしょうから,
+その場合は \textsf{emathPxy}を別途ロードしなければなりません。
+
+簡単な一例をご覧ください。
+
+\begin{showEx}(.6,.34){\textsf{yokobouG}環境}
+\begin{yokobouG}%
+    [ul=8mm,xscale=.5,Hidariyohaku=1zh]%
+    (0,10)(0,4)
+  \bou{4}{A}
+  \bou{9}{B}
+  \bou{8}{C}
+\end{yokobouG}
+\end{showEx}
+
+上で述べたように，\textsf{yokobouG}環境は実質\textsf{zahyou*}環境ですから，
+引数の記述は\textsf{zahyou*}環境に従います。
+
+その環境内に
+\begin{jquote}
+\begin{verbatim}
+\bou{度数}{横軸下に配置するラベル名}
+\end{verbatim}
+\end{jquote}
+を並べていきます。
+
+なお，棒の横幅は$y$軸の単位長です。
+
+\subsection{棒のギャップ}
+棒と棒の間を空けるには,\textsf{yokobouG}の\verb+<boukankaku=..>+オプションを用います。
+
+\textsf{yokobouG}環境特有のオプションは，\textsf{zahyou*}環境の\verb+[...]+オプションに先立ち，
+\verb+<...>+で指定します。
+
+\begin{showEx}(.6,.34){\texttt{<boukankaku=..>}オプション}
+\begin{yokobouG}<boukankaku=.2>
+      [ul=8mm,xscale=.5,Hidariyohaku=1zh]%
+      (0,10)(0,4)
+  \bou{4}{A}
+  \bou{9}{B}
+  \bou{8}{C}
+\end{yokobouG}
+\end{showEx}
+
+\verb+<boukankaku=.2>+によって，$y$軸の単位長を1として
+\begin{jquote}
+棒と棒のギャップが 0.2\\
+棒の縦幅が $1-0.2=0.8$
+\end{jquote}
+となります。
+
+棒の縦位置の修正法を述べて置きます。
+デフォルトでは，一番下の棒の下辺が$x$軸と重なります。
+これを動かすには，\verb+<bouyo=..>+オプションを用います。
+
+\begin{showEx}(.6,.34){\texttt{<bouyo=..>}オプション}
+\begin{yokobouG}<bouyo=.5,boukankaku=.5>
+      [ul=8mm,xscale=.5,Hidariyohaku=1zh]%
+      (0,10)(0,4)
+  \bou{4}{A}
+  \bou{9}{B}
+  \bou{8}{C}
+\end{yokobouG}
+\end{showEx}
+
+\subsection{棒の塗り}
+\subsubsection{べた塗り}
+棒を塗るには，\verb+\bou*+と，アスタリスクをつけます。
+
+\begin{showEx}(.6,.34){棒の塗り}
+\begin{yokobouG}%
+    [ul=8mm,xscale=.5,Hidariyohaku=1zh]%
+    (0,10)(0,4)
+  \bou*{4}{A}
+  \bou*[1]{9}{B}
+  \bou*[nuriiro=red]{8}{C}
+\end{yokobouG}
+\end{showEx}
+
+\cmd{bou*}の\verb+[..]+オプションで，塗りの濃さ，色などを指定するのは\cmd{Nuritubusi}と同様です。
+
+\subsubsection{斜線塗り}
+棒を斜線で塗るには，\verb+\bou**+と，2個のアスタリスクをつけます。
+
+\begin{showEx}(.6,.34){棒の斜線塗り}
+\begin{yokobouG}%
+    [ul=8mm,xscale=.5,Hidariyohaku=1zh]%
+    (0,10)(0,4)
+  \bou**{4}{A}
+  \bou**[-45]<.2>{9}{B}
+  \bou**[-60,60]<syanurikankaku=.3>{8}{C}
+\end{yokobouG}
+\end{showEx}
+
+斜線の角度，間隔などの変更法は\cmd{Nuritubusi*}と同様です。
+
+\subsubsection{一括指定}
+棒の塗りが共通な場合は，\textsf{yokobouG}環境の中で
+\cmd{NuriF}を指定します。
+
+\begin{showEx}(.6,.34){塗りの一括指定}
+\begin{yokobouG}<boukankaku=.2>
+      [ul=8mm,xscale=.5,Hidariyohaku=1zh]%
+      (0,10)(0,4)
+  \def\NuriF{[.5]}
+  \bou{4}{A}
+  \bou{9}{B}
+  \bou{8}{C}
+\end{yokobouG}
+\end{showEx}
+
+\begin{showEx}(.6,.34){塗りの一括指定（カラー）}
+\begin{yokobouG}<boukankaku=.2>
+      [ul=8mm,xscale=.5,Hidariyohaku=1zh]%
+      (0,10)(0,4)
+  \def\NuriF{[nuriiro=blue]}
+  \bou{4}{A}
+  \bou{9}{B}
+  \bou{8}{C}
+\end{yokobouG}
+\end{showEx}
+
+\begin{showEx}(.6,.34){塗りの一括指定（斜線）}
+\begin{yokobouG}<boukankaku=.2>
+      [ul=8mm,xscale=.5,Hidariyohaku=1zh]%
+      (0,10)(0,4)
+  \def\NuriF{*[45]}
+  \bou{4}{A}
+  \bou{9}{B}
+  \bou{8}{C}
+\end{yokobouG}
+\end{showEx}
+
+\subsubsection{背景色}
+背景色を指定するには，\textsf{yokobouG}環境，すなわち\textsf{zahyou}環境で
+座標平面全体を背景色で塗りつぶし，その上に棒グラフなどを配置していきます。
+
+\begin{showEx}(.6,.34){背景色}
+\begin{yokobouG}<boukankaku=.2>
+      [ul=8mm,xscale=.5,Hidariyohaku=1zh]%
+      (0,10)(0,4)
+  \def\NuriF{[nuriiro=cyan]}
+  \Nuritubusi[nuriiro=silver]{\LT\LB\RB\RT}
+  \bou{4}{A}
+  \bou{9}{B}
+  \bou{8}{C}
+\end{yokobouG}
+\end{showEx}
+
+\subsection{度数の表示}
+デフォルトでは，度数は棒の先端に表示されます。
+これを変更するオプションについての説明です。
+
+\subsubsection{表示位置}
+度数を表示する基準点（デフォルトは棒の先端）を変更するには，
+\verb+<bouDosuuiti=..>+オプションを用います。右辺値は0と1の間の数値で，
+1のとき棒の先端，0のとき棒の根元となります。
+
+\begin{showEx}(.6,.34){\texttt{<bouDosuuiti=..>}}
+\begin{yokobouG}
+    <bouDosuuiti=.5>%
+    [ul=8mm,xscale=.5,Hidariyohaku=1zh]%
+              (0,10)(0,4)
+  \bou*{4}{A}
+  \bou*[1]{9}{B}
+  \bou*[nuriiro=red]{8}{C}
+\end{yokobouG}
+\end{showEx}
+
+\verb+<bouDosuuiti=.5>+としたのに，中央になっていないですね。
+これは，基準点は中央になっているのですが，\verb+\Put+の配置オプションが
+デフォルトの\verb+[e]+のままだからです。これも修正しましょう。
+
+\begin{showEx}(.6,.34){\texttt{<bouDosuuopt=..>}}
+\begin{yokobouG}
+    <bouDosuuopt={(0,0)[c]},bouDosuuiti=.5>%
+    [ul=8mm,xscale=.5,Hidariyohaku=1zh]%
+              (0,10)(0,4)
+  \bou*{4}{A}
+  \bou*[1]{9}{B}
+  \bou*[nuriiro=red]{8}{C}
+\end{yokobouG}
+\end{showEx}
+
+\verb+bouDosuuopt={(0,0)[c]}+オプションで，配置オプションを変更することで
+度数は棒の中央に配置されました。
+
+\subsubsection{白抜き}
+度数が見えない棒がありますね。塗りつぶしの色との兼ね合いです。\\
+では，度数を\verb+\colorbox{white}{度数}+としてみましょう。
+
+\begin{showEx}(.6,.34){\texttt{<prDosuu=..>}}
+\begin{yokobouG}
+    <prDosuu={\colorbox{white}},%
+    bouDosuuopt={(0,0)[c]},bouDosuuiti=.5>%
+    [ul=8mm,xscale=.5,Hidariyohaku=1zh]%
+              (0,10)(0,4)
+  \bou*{4}{A}
+  \bou*[1]{9}{B}
+  \bou*[nuriiro=red]{8}{C}
+\end{yokobouG}
+\end{showEx}
+
+\verb+<fboxsep=..>+オプションと併用が可能なのはいうまでもありません。
+
+\begin{showEx}(.6,.34){\texttt{<fboxsep=..>}}
+\begin{yokobouG}
+    <fboxsep=1pt,%
+    prDosuu={\colorbox{white}},%
+    bouDosuuopt={(0,0)[c]},bouDosuuiti=.5>%
+    [ul=8mm,xscale=.5,Hidariyohaku=1zh]%
+              (0,10)(0,4)
+  \bou*{4}{A}
+  \bou*[1]{9}{B}
+  \bou*[nuriiro=red]{8}{C}
+\end{yokobouG}
+\end{showEx}
+
+\subsubsection{フォント・サイズ変更}
+度数のフォントを変更するにも，\verb+<prDosuu=..>+オプションは有効です。
+
+\begin{showEx}(.6,.34){\texttt{<fboxsep=..>}}
+\begin{yokobouG}<prDosuu=%
+    {\sffamily\footnotesize\colorbox{white}},%
+    fboxsep=1pt,%
+    bouDosuuopt={(0,0)[c]},bouDosuuiti=.5>%
+    [ul=8mm,xscale=.5,Hidariyohaku=1zh]%
+              (0,10)(0,4)
+  \bou*{4}{A}
+  \bou*[1]{9}{B}
+  \bou*[nuriiro=red]{8}{C}
+\end{yokobouG}
+\end{showEx}
+
+\subsubsection{度数非表示}
+度数を表示したくない，ですって？
+
+そういうこともありますかね。では
+
+\begin{showEx}(.6,.34){\texttt{<fboxsep=..>}}
+\begin{yokobouG}
+    <prDosuu={\notpr}>%
+    [ul=8mm,xscale=.5,Hidariyohaku=1zh]%
+              (0,10)(0,4)
+  \bou*{4}{A}
+  \bou*[1]{9}{B}
+  \bou*[nuriiro=red]{8}{C}
+\end{yokobouG}
+\end{showEx}
+
+
+\subsection{横目盛り}
+横軸に目盛りを入れるには，\textsf{zahyou*}環境の機能を利用します。
+
+\begin{showEx}(.54,.4){横目盛り}
+\begin{yokobouG}<boukankaku=.2>%
+      [ul=8mm,xscale=.5,%
+      Sitayohaku=1zh,Hidariyohaku=1zw]%
+      (0,11)(0,4)
+  \multido{\iy=2+2}{5}{\xMemori{\iy}}
+  \bou**{4}{A}
+  \bou**[-45]<.2>{9}{B}
+  \bou**[-60,60]<syanurikankaku=.3>{8}{C}
+\end{yokobouG}
+\end{showEx}
+
+目盛り線も入れますか。
+
+\begin{showEx}(.54,.4){目盛り線}
+\begin{yokobouG}<boukankaku=.2>%
+      [ul=8mm,xscale=.5,%
+      Sitayohaku=1zh,Hidariyohaku=1zw]%
+      (0,11)(0,4)
+  \multido{\iy=2+2}{5}{\xMemori{\iy}}
+  \multido{\iy=2+2}{5}{%
+    \Hasen{(\iy,0)(\iy,\ymax)}}
+  \bou**{4}{A}
+  \bou**[-45]<.2>{9}{B}
+  \bou**[-60,60]<syanurikankaku=.3>{8}{C}
+\end{yokobouG}
+\end{showEx}
+
+目盛り線と棒塗りとの上下関係は，
+目盛り線描画と棒描画の前後関係です。
+
+目盛り線を先に引いてから，棒塗りをすれば目盛り線は棒の下となります。
+
+\begin{showEx}(.56,.38){目盛り線を棒で隠す}
+\begin{yokobouG}<boukankaku=.5,bouxo=.5>%
+      [ul=8mm,xscale=.5,%
+      Sitayohaku=1zh,Hidariyohaku=1zw]%
+      (0,11)(0,4)
+  \Nuritubusi[nuriiro=silver]{\LT\LB\RB\RT}
+  \def\NuriF{[nuriiro=cyan]}%
+  \multido{\iy=2+2}{5}{\xMemori{\iy}}
+  \multido{\iy=2+2}{5}{%
+    \Hasen{(\iy,0)(\iy,\ymax)}}
+  \bou{4}{A}
+  \bou{9}{B}
+  \bou{8}{C}
+\end{yokobouG}
+\end{showEx}
+
+えっ？ 目盛り線が棒の上になっていますか。
+グラフィックスは，dvi-ware依存です。
+さらに，dviout.exe の場合は，設定によっても変わってきます。
+同梱してある newG06.pdf でご確認ください。
+
+逆の記述にすれば
+
+\begin{showEx}(.56,.38){目盛り線を棒の上に}
+\begin{yokobouG}<boukankaku=.5,bouxo=.5>%
+      [ul=8mm,xscale=.5,%
+      Sitayohaku=1zh,Hidariyohaku=1zw]%
+      (0,11)(0,4)
+  \Nuritubusi[nuriiro=silver]{\LT\LB\RB\RT}
+  \def\NuriF{[nuriiro=cyan]}%
+  \multido{\iy=2+2}{5}{\xMemori{\iy}}
+  \bou{4}{A}
+  \bou{9}{B}
+  \bou{8}{C}
+  \multido{\iy=2+2}{5}{%
+    \Hasen{(\iy,0)(\iy,\ymax)}}
+\end{yokobouG}
+\end{showEx}
+
+\section{積み上げ棒グラフ}
+積み上げ棒グラフを描画する環境が\textsf{TbouG}です。
+
+\begin{showEx}(.6,.34){\textsf{TbouG}環境}
+\begin{TbouG}<bouxo=.5,boukankaku=.5,%
+    fboxsep=1pt,Musubisen={\Hasen}>%
+    [ul=12mm,yscale=.2,Sitayohaku=1zh]%
+    (0,3.5)(0,25)
+  \Nuritubusi[nuriiro=gold]{\LB\LT\RT\RB}
+  \def\NuriFi{}
+  \def\NuriFii{*<.1>}
+  \def\NuriFiii{[nuriiro=white]}
+  \Tbou{10,4,5}{2003}
+  \Tbou{12,5,4}{2004}
+  \Tbou{15,6,3}{2005}
+\end{TbouG}
+\end{showEx}
+
+凡例を付けたければ，\texttt{sampleG.tex}で説明した\cmd{Thanrei}コマンドなどを
+使うことも可能です。
+
+\begin{showEx}(.8,.9){凡例を附加}
+\begin{TbouG}<bouxo=.5,boukankaku=.5,%
+    fboxsep=1pt,Musubisen={\Hasen}>%
+    [ul=12mm,yscale=.2,Sitayohaku=1zh,haiti=c]%
+    (0,3.5)(0,25)
+  \Nuritubusi[nuriiro=gold]{\LB\LT\RT\RB}
+  \def\NuriFi{}
+  \def\NuriFii{*<.1>}
+  \def\NuriFiii{[nuriiro=white]}
+  \Tbou{10,4,5}{2003}
+  \Tbou{12,5,4}{2004}
+  \Tbou{15,6,3}{2005}
+\end{TbouG}\quad
+\EMparbox{\colorbox{gold}{\Thanrei{A社,B社,C社}}}
+\end{showEx}
+
+\section{積み上げ横棒グラフ}
+積み上げ横棒グラフを描画するのは\textsf{TyokobouG}環境です。
+
+\begin{showEx}(.8,1){\textsf{TyokobouG}環境}
+\begin{TyokobouG}<bouxo=.5,boukankaku=.5,%
+    fboxsep=1pt,Musubisen={\Hasen}>%
+    [ul=18mm,xscale=.2,haiti=c](0,25)(0,3.5)
+  \Nuritubusi[nuriiro=gold]{\LB\LT\RT\RB}
+  \def\NuriFi{}
+  \def\NuriFii{*<.1>}
+  \def\NuriFiii{[nuriiro=white]}
+  \Tbou{10,4,5}{2003}
+  \Tbou{12,5,4}{2004}
+  \Tbou{15,6,3}{2005}
+\end{TyokobouG}\quad
+\EMparbox{\colorbox{gold}{\Thanrei{A社,B社,C社}}}
+\end{showEx}
+\end{document}

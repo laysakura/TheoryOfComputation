@@ -1,0 +1,218 @@
+% emathPa.sty by CQB00260@nifty.ne.jp
+
+\NeedsTeXFormat{LaTeX2e}%
+\ProvidesPackage{emathPa}[2008/09/04 v 0.10β]%
+\RequirePackage{emathPh}%
+
+% azahyou 環境における点の座標を zahyou 環境に翻訳する。
+\def\aztoz#1#2{%
+  \edef\aztoz@tmp{#1}\expandafter\@aztoz\aztoz@tmp#2}%
+\def\@aztoz(#1,#2)#3{%
+  \Mulvec{#1}\az@ex\az@x
+  \Mulvec{#2}\az@ey\az@y
+  \Addvec\az@x\az@y\az@x
+  \Addvec\az@o\az@x #3}%
+
+% 点列の翻訳
+\def\azTenretutoz#1#2{%
+  \edef\azTenretu@a{#1}%
+  \edef\azTenretu@b{}%
+  \@azTenretutoz\edef#2{\azTenretu@b}}%
+\def\@azTenretutoz{\expandafter\@azTenretutoz@sub\azTenretu@a}%
+\def\@azTenretutoz@sub{\@ifnextchar({\@@azTenretutoz@sub}{}}%
+\def\@@azTenretutoz@sub(#1,#2){\@aztoz(#1,#2)\azTenretu@c
+  \edefappend\azTenretu@b{\azTenretu@c}\@azTenretutoz@sub}%
+
+% 点列の定義とラベル配置
+\def\aztenretu{\@ifstar{\ntenretu}{\laztenretu}}%
+\def\laztenretu#1{\let\tenretu@Put\azPut\ltenretu{#1}\let\tenretu@Put\emathPut}%
+
+% 点列を azahyou 環境の座標で指定して折れ線で結ぶ
+\def\azDrawline{\@ifnextchar<{\@azDrawline}{\@azDrawline<\empty>}}%
+\def\@azDrawline<#1>#2{%
+  \azTenretutoz{#2}\azDrawline@a\@Drawline<#1>\azDrawline@a}%
+
+\def\azHasen#1{%
+  \azTenretutoz{#1}\azHasen@a\Hasen\azHasen@a}%
+
+\def\azTyokusen{\@ifstar{\azTyokusen@}{\@azTyokusen}}%
+\def\azTyokusen@#1#2{%
+  \aztoz{#1}\azTyoku@i
+  \aztoz{#2}\azTyoku@ii
+  \Tyokusen*\azTyoku@i\azTyoku@ii}%
+\def\@azTyokusen#1#2{%
+  \aztoz{#1}\azTyoku@i
+  \aztoz{#2}\azTyoku@ii
+  \Tyokusen\azTyoku@i\azTyoku@ii}%
+%
+% azahyou 環境の座標で指定した点に文字列等を配置する
+\def\azPut#1{%
+  \aztoz{#1}\azPut@P\emathPut\azPut@P}%
+
+% azahyou 環境の座標で指定した点に黒丸を打つ
+\def\azKuromaru{\@ifnextchar[{\@azKuromaru}{\@azKuromaru[\Kuromaru@Hankei]}}%
+\def\@azKuromaru[#1]#2{%
+  \aztoz{#2}\azKuromaru@P\Kuromaru[#1]\azKuromaru@P}%
+\def\azkuromaru{\@ifnextchar[{\@azkuromaru}{\@azkuromaru[\Kuromaru@Hankei]}}%
+\def\@azkuromaru[#1]#2{%
+  \Cfor{\edef\azkuromaru@a{#2}}{\not\equal{\azkuromaru@a}{\empty}}{}\do{%
+    \strsep{\azkuromaru@a}{;}\azkuromaru@a\azkuromaru@b%
+    \azKuromaru[#1]\azkuromaru@a
+    \edef\azkuromaru@a{\azkuromaru@b}}}%
+
+% azahyou 環境の座標で指定した2点を矢線で結ぶ
+\def\azArrowLine{\@ifnextchar<{\@azArrowLine}{\@azArrowLine<\empty>}}%
+\def\@azArrowLine<#1>{\@ifnextchar[{\@@azArrowLine<#1>}{\@@azArrowLine<#1>[1]}}%
+\def\@@azArrowLine<#1>[#2]#3#4{%
+  \aztoz{#3}\azArrowLine@a
+  \aztoz{#4}\azArrowLine@b
+  \ArrowLine<#1>[#2]\azArrowLine@a\azArrowLine@b}%
+
+% azahyou 環境の単位ベクトルを基準として格子を描画する。
+\def\azkousi#1#2{%
+  \Cfor{\edef\azkousi@x{-1}}{\azkousi@x<#1}{}\do{\Incr\azkousi@x%
+    \aztoz{(\azkousi@x,0)}\azkousi@a
+%    \Subvec\azkousi@a\az@o\azkousi@a
+    \aztoz{(\azkousi@x,#2)}\azkousi@b
+%    \Subvec\azkousi@b\az@o\azkousi@b
+    \Sensyu{\azkousi@a\azkousi@b}}%
+  \Cfor{\edef\azkousi@y{-1}}{\azkousi@y<#2}{}\do{\Incr\azkousi@y%
+    \aztoz{(0,\azkousi@y)}\azkousi@a
+%    \Subvec\azkousi@a\az@o\azkousi@a
+    \aztoz{(#1,\azkousi@y)}\azkousi@b
+%    \Subvec\azkousi@b\az@o\azkousi@b
+    \Sensyu{\azkousi@a\azkousi@b}}}%
+%
+% 塗りつぶし
+%
+%\def\azNuritubusi#1{%
+%  \azTenretutoz{#1}\azNuritubusi@a\Nuritubusi\azNuritubusi@a}%
+\def\azNuritubusi{\@ifstar{\azHatchpolygon}{\azNuritubusi@}}%
+\def\azNuritubusi@{\@ifnextchar[{\azNuritubusi@@}{\azNuritubusi@@[.5]}}%
+\def\azNuritubusi@@[#1]{\@ifnextchar<{\@azNuritubusi[#1]}{%
+  \@azNuritubusi[#1]<\empty>}}%
+\def\@azNuritubusi[#1]<#2>#3{\azTenretutoz{#3}\azNuritubusi@a
+  \@Nuritubusi[#1]<#2>{\azNuritubusi@a}}%
+\def\azHatchpolygon{\@ifnextchar[{\@azHatchpolygon}{\@azHatchpolygon[45]}}%
+\def\@azHatchpolygon[#1]{\@ifnextchar<{\@@azHatchpolygon[#1]}{%
+  \@@azHatchpolygon[#1]<\empty>}}%
+\def\@@azHatchpolygon[#1]<#2>#3{\azTenretutoz{#3}\azHatchpolygon@a
+  \@@Hatchpolygon[#1]<#2>{\azHatchpolygon@a}}%
+%
+% azahyou 環境
+% \begin{zahyou}[#1]#2#3
+%   #1 : 座標原点（デフォルトは(0,0)）
+%   #2 : x軸方向の単位ベクトル
+%   #3 : y軸方向の単位ベクトル
+%   （以上はすべて，zahyou 環境での数値）
+
+\def\azahyou{\@ifnextchar[{\@azahyou}{\@azahyou[{(0,0)}]}}%
+\def\@azahyou[#1]#2#3{%
+  \edef\az@o{#1}%
+  \edef\az@ex{#2}%
+  \edef\az@ey{#3}%
+}%
+\def\endazahyou{\relax}%
+
+% \azyasen[#1]<#2>(#3,#4)
+% \azYasen[#1]<#2>#3
+%   #1 : ラベルを置く位置（デフォルト=0.5, 中点）
+%   #2 : ラベル（位置指定を含めて）
+%   (#3,#4) : 終点（始点は \put で指定）
+\newtoks\azyasen@toks
+\def\azyasen{\@ifnextchar[{\@azyasen}{\@azyasen[.5]}}%
+\def\@azyasen[#1]{\@ifnextchar<{\@@azyasen[#1]}{\@@azyasen[#1]<\empty>}}%
+\def\@@azyasen[#1]<#2>(#3,#4){%
+  \def\azyasen@O{(0,0)}%
+  \aztoz{(#3,#4)}\azyasen@P
+  \Mulvec{#1}\azyasen@P\azyasen@M
+  \azyasen@toks={\azyasen@M#2}%
+  \expandafter\emathPut\the\azyasen@toks
+  \ArrowLine\azyasen@O\azyasen@P
+}%
+\def\azYasen{\@ifnextchar[{\@azYasen}{\@azYasen[.5]}}%
+\def\@azYasen[#1]{\@ifnextchar<{\@@azYasen[#1]}{\@@azYasen[#1]<\empty>}}%
+\def\@@azYasen[#1]<#2>#3{\vecXY{#3}\azYasen@x\azYasen@y
+  \azyasen[#1]<#2>(\azYasen@x,\azYasen@y)}%
+%
+% \azHen_ko
+%
+\def\azHen_ko{\@ifnextchar[{\azHen@ko}{\azHen@ko[\empty]}}%
+\def\azHen@ko[#1]{\@ifnextchar<{\@azHenko[#1]}{\@azHenko[#1]<.25>}}%
+\def\@azHenko[#1]<#2>#3#4{%
+  \aztoz{#3}\azhenko@i\aztoz{#4}\azhenko@ii
+  \@Henko[#1]<#2>\azhenko@i\azhenko@ii}%
+%
+% \azKakukigou
+%
+\def\azKakukigou{\edef\Kaku@nuri{0}\@ifstar{\azKakukigou@s}{\azKakukigou@}}%
+\def\azKakukigou@s{\@ifnextchar[{\azKakukigou@@}{\azKakukigou@@[.5]}}%
+\def\azKakukigou@@[#1]{\edef\Kaku@nuri{#1}\azKakukigou@}%
+\def\azKakukigou@{\@ifnextchar[{\@azKakukigou}{\@azKakukigou[\empty]}}%
+\def\@azKakukigou[#1]{\@ifnextchar<{\@@azKakukigou[#1]}{%
+  \@@azKakukigou[#1]<1>}}%
+\def\@@azKakukigou[#1]<#2>#3#4#5{%
+  \aztoz{#3}\azKaku@i
+  \aztoz{#4}\azKaku@ii
+  \aztoz{#5}\azKaku@iii
+  \@@Kakukigou[#1]<#2>{\azKaku@i}{\azKaku@ii}{\azKaku@iii}}%
+%
+% 座標軸上に目盛り
+%   \azxmemori[#1]#2
+%   \azymemori[#1]#2
+%
+%          #1 : key=val
+%                 memorinagasa=.. （無名数）デフォルト=1(pt)
+%                 putoption=(dx,dy)[pos]
+%
+\def\azxmemori{\@ifnextchar[{\@azxmemori}{\@azxmemori[\empty]}}%
+\def\@azxmemori[#1]#2{\def\put@opt{}\def\memori@nagasa{1}%
+  \Strchr{#1}{=}\azxmemori@tmp
+  \ifnum\azxmemori@tmp>\z@\setkeys{emP}{#1}\fi
+  \Div{\memori@nagasa}{\strip@pt\unitlength}\memori@u@pt%
+  \aztoz{(#2,0)}\azxm@x
+  \Rotvec[\memori@u@pt]\azxm@x{90}\azxm@x@
+  \Rotvec[\memori@u@pt]\azxm@x{-90}\azxm@x@@
+  \Put\azxm@x{\Drawline{\azxm@x@\azxm@x@@}}%
+  \edef\azxmemori@tmp{{\azxm@x}\put@opt{#2}}%
+  \expandafter\Put\azxmemori@tmp
+}%
+\def\azymemori{\@ifnextchar[{\@azymemori}{\@azymemori[\empty]}}%
+\def\@azymemori[#1]#2{\def\put@opt{}\def\memori@nagasa{1}%
+  \Strchr{#1}{=}\azymemori@tmp
+  \ifnum\azymemori@tmp>\z@\setkeys{emP}{#1}\fi
+  \Div{\memori@nagasa}{\strip@pt\unitlength}\memori@u@pt%
+  \aztoz{(0,#2)}\azxm@x
+  \Rotvec[\memori@u@pt]\azxm@x{90}\azxm@x@
+  \Rotvec[\memori@u@pt]\azxm@x{-90}\azxm@x@@
+  \Put\azxm@x{\Drawline{\azxm@x@\azxm@x@@}}%
+  \edef\azymemori@tmp{{\azxm@x}\put@opt{#2}}%
+  \expandafter\Put\azymemori@tmp
+}%
+\endinput
+%
+v 0.01 2002/03/28
+  \azTyokusen#1#2
+v 0.02 2002/04/05-13
+  \azyasen, \azYasen 新設
+  \azArrowLine 拡張
+v 0.03 2002/09/13-27
+  \azkuromaru
+  \aztenretu
+v 0.04 2002/11/30
+  \azHen_ko
+  \azKakukigou
+v 0.05 2003/03/23
+  \azxmemori
+  \azymemori
+V 0.06 2003/06/25
+  \azHasen
+v 0.07 2004/07/28
+  \azNuritubusi
+v 0.08 2004/09/28
+  \azNuritubusi*
+v 0.09 2008/07/18
+  \azTyokusen*
+  \azkousi
+v 0.10 2008/09/04
+  空白の混入対策

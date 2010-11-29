@@ -1,0 +1,241 @@
+\section{塗りつぶし(1)}
+\subsection{多角形内部の塗りつぶし}
+多角形の内部を塗りつぶすコマンド \cmd{Nuritubusi} です．
+\cindex{Nuritubusi}
+
+\showexample[多角形の塗りつぶし](0.51)(0.44){example/shade01}
+
+\cmd{Nuritubusi} の書式は
+
+\begin{boxnote}
+\begin{verbatim}
+\Nuritubusi[#1]#2
+  #1 : 塗る濃さ 
+      ( 0 と 1 の間の数． 0 は真っ白，1は真っ黒．
+        デフォルトは 0.5)
+  #2 : 多角形の点列（閉じていなければなりません．)
+\end{verbatim}
+\end{boxnote}
+
+\subsection{円内部の塗りつぶし}
+円の内部を塗りつぶすのが \cmd{En*} コマンドです．\cindex{En*}
+
+\showexample[円の塗りつぶし](0.5)(0.45){example/shade03}
+
+\begin{boxnote}
+\begin{verbatim}
+\En*[#1]#2#3
+    #1 : 塗る濃さ 
+      ( 0 と 1 の間の数． 0 は真っ白，1は真っ黒．
+        デフォルトは 0.5)
+        #2 : 中心の座標
+        #3 : 半径
+\end{verbatim}
+\end{boxnote}
+
+オプション引数\texttt{[..]}で濃さを指定することができます．
+デフォルトは0.5です．特に0を指定すると白抜きとなります．
+
+\showexample[白抜き](0.5)(0.45){example/shade04}
+
+\subsection{扇形の塗りつぶし}
+\showexample[扇形の塗りつぶし](0.5)(0.45){example/shade05}
+\cindex{ougigata*}
+
+\begin{boxnote}
+\begin{verbatim}
+\ougigata*[#1]<#2>#3#4#5
+  #1 : 塗りつぶしの濃さ
+  #2 : 境界線描画オプション
+        <border=1> で境界線を描画する。
+  #3 〜 #5 : \ougigata の #1〜#3 と同じ
+  （中心は \put (\Put) で指定する．）
+\end{verbatim}
+\end{boxnote}
+
+\subsection{弓形の塗りつぶし}
+\showexample[弓形の塗りつぶし](0.5)(0.45){example/shade06}
+\cindex{yumigata*}
+
+\begin{boxnote}
+\begin{verbatim}
+\yumigata*[#1]<#2>#3#4#5
+  #1 : 塗りつぶしの濃さ
+  #2 : 境界線描画オプション
+        <border=1> で境界線を描画する。
+  #3 〜 #5 : \yumigata の #1〜#3 と同じ
+  （中心は \put (\Put) で指定する．）
+\end{verbatim}
+\end{boxnote}
+
+
+\subsection{楕円の塗りつぶし}
+\showexample[楕円の塗りつぶし](0.5)(0.45){example/shade07}
+\cindex{Daen*}
+
+\begin{boxnote}
+\begin{verbatim}
+\Daen*[#1]#2#3#4
+    #1 : 塗る濃さ 
+      ( 0 と 1 の間の数． 0 は真っ白，1は真っ黒．
+        デフォルトは 0.5)
+        #2 : 中心の座標
+        #3 : 横軸方向の半径
+        #4 : 縦軸方向の半径
+\end{verbatim}
+\end{boxnote}
+
+
+\subsection{弓形（楕円弧）の塗りつぶし}
+\showexample[弓形（楕円弧）の塗りつぶし](0.5)(0.45){example/shade08}
+\cindex{Daenko*}
+
+\begin{boxnote}
+\begin{verbatim}
+\Daenko*[#1]#2#3#4#5
+    #1 : 塗る濃さ 
+         ( 0 と 1 の間の数． 0 は真っ白，1は真っ黒．
+         デフォルトは 0.5)
+    #2 : 横軸方向の半径
+    #3 : 縦軸方向の半径
+    #4 : 始め角
+    #5 : 終り角
+        （中心は \put (\Put) で指定する．）
+\end{verbatim}
+\end{boxnote}
+
+\subsection{カラー指定}
+\edef\saveUL{\the\unitlength}%
+\unitlength=1pt\relax
+\verb+\En*+, \verb+\Nuritubusi+において，色をつけるときは少々厄介なことがあります。
+\subsubsection{\cmd{color}による塗り色指定}
+次の例では，
+\begin{showEx}(.64,.3){\cmd{color}による塗り色指定}
+\begin{picture}(50,50)
+  \color{red}\put(25,25){\circle*{40}}
+\end{picture}
+\end{showEx}
+
+さて，あなたの環境では円は何色で塗りつぶされていますか。
+実は，それは \verb+dvi-ware+に依存するのです。\textsf{emath}では
+\begin{jquote}
+\begin{verbatim}
+ .tex ----> .dvi by platex
+ .dvi ----> .ps  by dvipsk
+(.ps  ----> .pdf by Distiller)
+\end{verbatim}
+\end{jquote}
+を標準としていますが，この方式で作成される .ps(, .pdf) は真っ黒に塗りつぶされています。
+赤はかけらも見えません。
+
+\begin{description}
+  \item[注] このあたり，さらに分析をしておきます。
+  
+    \verb+\color{red}\circle*{..}+は分析すると
+    \begin{jquote}
+\begin{verbatim}
+\color{red}\special{bk}\circle{..}
+\end{verbatim}
+    \end{jquote}
+    となります。この順序を一部入れ替えて
+    \begin{jquote}
+\begin{verbatim}
+\special{bk}\color{red}\circle{..}
+\end{verbatim}
+    \end{jquote}
+    とすると，\texttt{dvipsk}で作られる .ps ファイルも円の内部が赤くなります。
+
+\begin{showEx}(.7,.24){\cmd{color}コマンド発行のタイミング}
+\begin{picture}(50,50)
+  \put(25,25){\color{red}\special{bk}\circle{40}}
+\end{picture}
+\begin{picture}(50,50)
+  \put(25,25){\special{bk}\color{red}\circle{40}}
+\end{picture}
+\end{showEx}
+
+2つの円が描画されますが，\texttt{dvipsk}で変換した .ps ファイルでは，円の内部は
+\begin{jquote}
+上は黒\\
+下は赤
+\end{jquote}
+で塗りつぶされます。
+
+\end{description}
+\subsubsection{\cmd{En*}の\texttt{[nuriiro=..]}オプション}
+そこで，\textsf{emath}では，\verb+En*+などに\verb+[nuriiro=...]+オプションをつけることで
+内部に色をつけることにしています。
+
+
+\begin{showEx}(.64,.3){\cmd{En*}の\texttt{[nuriiro=..]}オプション}
+\begin{picture}(50,50)
+  \En*[nuriiro=red]{(25,25)}{20}
+\end{picture}
+\end{showEx}
+
+\begin{description}
+  \item[注] 現時点では，\verb+[nuriiro=..]+オプションではなく，\verb+\color+コマンドを用いても，
+    同様の結果を得ることができます。
+
+\begin{showEx}(.64,.3){暫定仕様}
+\begin{picture}(50,50)
+  \color{red}\En*{(25,25)}{20}
+\end{picture}
+\end{showEx}
+
+しかし，将来的にはこの方式は破産する予感がありますので，\verb+[nuriiro=..]+オプションの使用を
+推奨します。
+\end{description}
+
+\subsubsection{円周の色は？}
+円の内部は色付けができましたが，円周は黒のままですねぇ〜。
+これは\verb+tpic specials+の仕様かも知れません。いや，そもそも\verb+tpic specials+は
+カラー対応しているんでしょうか。浅学にしてわかりません。\verb+(^^ゞ+
+
+そこで何とかの上塗りをすることとします。
+
+\begin{showEx}(.64,.3){\cmd{En*}の\texttt{[border=..]}オプション}
+\begin{picture}(50,50)
+  \En*[nuriiro=red,border=red]{(25,25)}{20}
+\end{picture}
+\end{showEx}
+
+\verb+[border=red]+オプションで円周を赤で上塗りしました。
+円周も赤になったかに見えますが，よく見ると元の黒が一部はみ出していますね。
+赤の上塗りをもう少し線を太くすれば良いかもしれませんが．．．．．．．
+
+しかし，労多くして何とやらという気もします。
+カラーはやはり\verb+PostScript+で扱うべきものでしょうか。
+
+\begin{description}
+  \item[注] \verb+tpic specials+でも
+    \begin{jquote}
+\begin{verbatim}
+円・楕円
+　と
+多角形
+\end{verbatim}
+    \end{jquote}
+    では，結果が異なり，前者は境界が黒で描画されますが，
+    後者は境界は描画されません。
+    どうも，\verb+tpic specials+でカラーを扱うのは気が進みませんね。
+
+\begin{showEx}(.64,.3){\cmd{Nuritubusi}の場合}
+\begin{picture}(50,50)
+  \Nuritubusi[nuriiro=red]{%
+    (0,0)(50,0)(50,50)(10,40)}
+\end{picture}
+\end{showEx}
+    
+\end{description}
+
+\subsubsection{\texttt{PostScript}では}
+以上の考察から，カラー塗りつぶしは\texttt{PostScript --- pszahyou環境}を
+使用するのがよさそうです。
+\unitlength=\saveUL\relax
+
+%\begin{showEx}(.64,.3){\textsf{pszahyou}環境}
+%\begin{pszahyou*}(0,50)(0,50)
+%  \En*[nuriiro=red]{(25,25)}{20}
+%\end{pszahyou*}
+%\end{showEx}

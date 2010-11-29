@@ -1,0 +1,434 @@
+\section{円・楕円}
+\subsection{円}
+\subsubsection{円}
+\paragraph{中心と半径を指定}
+円を描画するには，\LaTeX で \cmd{circle} がありますが，
+直径を指定することになっています．半径の方が使いやすいので，
+\cmd{En} を用意しました．次のように使います．\cindex{En}
+
+\showexample[\cmd{En}](0.55)(0.35){example/en01}
+\bigskip
+
+すなわち，\cmd{En} は，中心と半径の2つの引数をとります．
+
+\paragraph{半径の間接指定}
+半径を指定する代わりに，円周上の1点を指定して描画する方法もあります。
+
+\showexample[円周上の1点を指定](0.55)(0.35){example/en22}
+\bigskip
+
+\paragraph{直径を指定}
+2点を指定して，それを結ぶ線分を直径とする円を描画するコマンド\cmd{EnT}
+もあります。
+
+\showexample[直径を指定](0.55)(0.35){example/en23}
+\bigskip
+
+\subsubsection{円の破線描画}
+円を破線で描画するには，
+
+\showexample[円周を破線で](0.55)(0.35){example/en15}
+
+と\verb/<hasen=[破線の長さ][破線の間隔]>/オプションを与えます。
+
+\begin{boxnote}
+\begin{verbatim}
+\En<#1>#2#3
+  <#1>: hasen=xx で円弧を破線で描画するときの
+                  [破線の長さ][破線の間隔]
+   #2 : 中心の座標
+   #3 : 半径
+\end{verbatim}
+\end{boxnote}
+
+
+\subsubsection{円弧}
+円弧を描画するために，\cmd{Enko} を用意しました．\cindex{Enko}
+
+\showexample[\cmd{Enko}](0.55)(0.4){example/en04}
+
+すなわち，\cmd{Enko} は，
+\begin{jquote}
+\begin{verbatim}
+\Enko{中心}{半径}{開始角}{終了角}
+\end{verbatim}
+\end{jquote}
+中心，半径，開始角，終了角と4つの引数を取ります．
+\bigskip
+
+円弧を破線で描画するには，\verb/<#1>/ に
+\begin{verbatim}
+   <hasen=[破線の長さ][破線の間隔]>
+\end{verbatim}
+オプションを与えます。
+
+\showexample[円弧を破線で](0.55)(0.4){example/en16}
+
+点線で描画するには，\verb/<#1>/に
+\begin{verbatim}
+   <ten=周上に置く点の個数>
+\end{verbatim}
+オプションを与えます。
+
+\showexample[円弧を点線で](0.55)(0.4){example/en21}
+
+\cmd{Enko}の書式です。
+
+\begin{boxnote}
+\begin{verbatim}
+% 円弧
+\Enko<#1>#2#3#4#5
+  #1 : オプション
+         hasen=xx で円弧を破線で描画するときの
+                  [破線の長さ][破線の間隔]
+                オプションを与える。
+         ten=xx 円周を点線で描画するときの周上の点の個数
+         yazirusi=a : 正方向に矢印をつける
+                 =r : 負方向に矢印をつける
+                 =b : 両方向に矢印をつける
+                 =n : 矢印をつけない
+  #2 : 中心
+  #3 : 半径を直接与えるか
+         tuukaten=xx として，円弧の周上の一点を与える
+  #4 : 始め角を直接与えるか
+        hazimeten=xx として，中心を始点，xx を終点とするベクトルの
+         方向角を 始め角とするように指定する。
+  #5 : 終り角を直接与えるか
+         owariten=xx として，中心を始点，xx を終点とするベクトルの
+         方向角を 終り角とするように指定する。
+\end{verbatim}
+\end{boxnote}
+
+始め角，終り角を六十分法の角度で与える代わりに，
+点を指定して，中心から指定した点に向かうベクトルの
+方向角で与えるオプションの利用例です。
+
+\showexample[両端の間接的指定](0.55)(0.4){example/en17}
+
+半径も円周上の一点を指定することにより，間接的に与えることもできます。
+
+\showexample[半径の間接的指定](0.55)(0.4){example/en18}
+
+\subsubsection{矢印付きの円弧(1) 偏角指定}
+円弧に矢印をつけるには，\cmd{Enko}に\verb+<yazirusi=a>+オプションを
+つけます。
+
+\showexample[\texttt{<yazirusi=a>}](0.55)(0.4){example/en10}
+
+矢印を逆向きにしたいときは，オプションの右辺値を`r'とします。
+
+\showexample[\texttt{<yazirusi=r>}](0.55)(0.4){example/en11}
+
+また，オプションの右辺値を`b'とすれば，両向きの矢印がつきます。
+
+\showexample[\texttt{<yazirusi=b>}](0.55)(0.4){example/en19}
+
+さらには，\verb+<hasen=..>+オプションと併用も可能です。
+
+\showexample[\texttt{<yazirusi=b>}](0.55)(0.4){example/en20}
+
+\subsubsection{矢印付きの円弧(2) 端点指定}
+矢印付きの円弧を，半径と端点を指定して描画するのが
+\cmd{ArrowArc} コマンドです．\cindex{ArrowArc}
+
+\showexample[\cmd{ArrowArc}](0.55)(0.4){example/en12}
+
+%\verb+[r]+ オプションをつけると，
+%回転が負の方向となるように描画されます．
+
+半径に負の値を与えると，
+回転が負の方向となるように描画されます．
+
+\showexample[回転の向き](0.55)(0.4){example/en13}
+
+
+\begin{boxnote}
+\begin{verbatim}
+\ArrowArc[#1]#2#3#4
+      #1 : 
+      #2 : 半径（負のときは回転が負となる）
+      #3 : 始点
+      #4 : 終点
+\end{verbatim}
+\end{boxnote}
+
+このコマンドを造った理由の一つは，
+図が込み入って来たりして，文字列を該当個所に置けないとき，
+ゆったりしたところに文字列を置き，そこから矢線を引こう，
+というねらいがあります．少し曲げた方が見やすいのではないか，
+と思います．
+
+\showexample[\cmd{ArrowArc}の一応用](0.55)(0.4){example/en14}
+
+\subsubsection{等弧記号}
+二つの円弧の長さが等しいことを表すのに，
+円弧の中央部分に短い縦線を入れるコマンドが
+\cmd{Toukokigou}です。
+
+\begin{showEx}(.6,.345){\cmd{Toukokigou}}
+\begin{zahyou}[ul=15mm](-0.2,2.5)(-1.2,1.5)
+\small
+\def\O{(1,0)}
+\rtenretu[\O]{A(1,0)ne;B(1,60)ne;
+C(1,90)nw;D(1,150)nw}
+\Enko\O{1}{0}{60}
+\Enko\O{1}{90}{150}
+\Toukokigou<2>\O\A\B
+\Toukokigou<2>\O\C\D
+\Drawlines{\A\O\B;\C\O\D}
+\end{zahyou}
+\end{showEx}
+
+書式は
+\begin{boxnote}
+\begin{verbatim}
+\Toukokigou<#1>#2#3#4
+  #1 : 中央に配置する短い縦棒の個数（デフォルト値=1）
+  #2 : 円弧の中心
+  #3 : 弧の端点1
+  #4 : 弧の端点2
+\end{verbatim}
+\end{boxnote}
+\cindex{Toukokigou}
+
+\subsubsection{扇形}
+扇形を描画するために，\cmd{ougigata} を用意しました．\cindex{ougigata}
+
+\showexample[\cmd{ougigata}](0.55)(0.4){example/en02}
+
+すなわち，\cmd{ougigata} は，半径，開始角，終了角と３つの引数を取ります．
+
+\begin{boxnote}
+\begin{verbatim}
+\ougigata#1#2#3
+  #1 : 半径を直接与えるか
+       tuukaten=xx として，円弧の周上の一点を与える
+  #2 : 始め角を直接与えるか
+       hazimeten=xx として，中心を始点，xx を終点とするベクトルの
+       方向角を 始め角とするように指定する。
+  #3 : 終り角を直接与えるか
+       owariten=xx として，中心を始点，xx を終点とするベクトルの
+       方向角を 終り角とするように指定する。
+ （中心は \put (\emathPut) で指定する．）
+\end{verbatim}
+\end{boxnote}
+
+\subsubsection{弓形}
+弓形を描画するために，\cmd{yumigata} を用意しました．\cindex{yumigata}
+
+\showexample[\cmd{yumigata}](0.55)(0.4){example/en03}
+
+すなわち，\cmd{yumigata} は，半径，開始角，終了角と３つの引数を取ります．
+
+\begin{boxnote}
+\begin{verbatim}
+\yumigata#1#2#3
+  #1 : 半径を直接与えるか
+       tuukaten=xx として，円弧の周上の一点を与える
+  #2 : 始め角を直接与えるか
+       hazimeten=xx として，中心を始点，xx を終点とするベクトルの
+       方向角を 始め角とするように指定する。
+  #3 : 終り角を直接与えるか
+       owariten=xx として，中心を始点，xx を終点とするベクトルの
+       方向角を 終り角とするように指定する。
+ （中心は \put (\emathPut) で指定する．）
+\end{verbatim}
+\end{boxnote}
+
+\subsection{楕円}
+\subsubsection{楕円}
+軸が水平，垂直な楕円を描画するコマンドは \cmd{Daen} です．\cindex{Daen}
+
+\showexample[\cmd{Daen}](0.45)(0.45){example/en05}
+
+中心，横方向半径，縦方向半径 と三つの引数をとります．
+
+\begin{boxnote}
+\begin{verbatim}
+\Daen#2#3#4
+        #1 : 中心の座標
+        #2 : 横軸方向の半径
+        #3 : 縦軸方向の半径
+\end{verbatim}
+\end{boxnote}
+
+\subsubsection{楕円弧}
+楕円の一部を描画する \cmd{Daenko} です．\cindex{Daenko}
+
+\showexample[\cmd{Daenko}](0.45)(0.45){example/en06}
+
+\begin{boxnote}
+\begin{verbatim}
+\Daenko<#1>#2#3#4#5
+        #1 : key=val
+             hasen=[破線の長さ][破線の間隔]
+             yazirusi=a : 正方向に矢印をつける
+                     =r : 負方向に矢印をつける
+                     =b : 両方向に矢印をつける
+                     =n : 矢印をつけない
+        #2 : 横軸方向の半径
+        #3 : 縦軸方向の半径
+        #4 : 始め角
+        #5 : 終り角
+             （中心は \put (\emathPut) で指定する．）
+\end{verbatim}
+\end{boxnote}
+
+\subsubsection{破線}
+（楕）円（弧）を破線で描画するには \cmd{Daenko} に
+\verb+<hasen=..>+オプションを与えます．
+
+\showexample[楕円弧の破線](0.5)(0.45){example/en07}
+
+破線の長さを変更するには，オプションの値を変更します．
+上の図を標準として比率を指定します．
+
+\showexample[破線の長さ](0.5)(0.45){example/en08}
+
+破線の間隔を調整するには，第2の \texttt{[..]}オプションです．
+やはり，標準に対する比率です．
+
+\showexample[破線の間隔](0.5)(0.45){example/en09}
+
+なお，横軸方向の半径と縦軸方向の半径を同じ値にすれば，円（弧）を
+破線で描画することもできます．
+
+\subsubsection{矢印}
+（楕）円（弧）に矢印をつけるには \cmd{Daenko} に
+\verb+<yazirusi=..>+オプションを与えます．
+
+\begin{showEx}{楕円弧に矢印}
+\begin{picture}(4,2)%
+\Put{(2,1)}{%
+\Daenko<yazirusi=b>%
+  {2}{1}{0}{90}}%
+\end{picture}
+\end{showEx}
+
+\subsubsection{回転記号}
+楕円弧に矢印を付ける機能を利用して，
+回転軸の周りに回転を表す記号を付けることができます。
+
+\begin{showEx}(.5,.44){\cmd{kaitenkigou}}
+\begin{zahyou}[ul=10mm](-2,2)(-1,1)
+\Put{(1.5,0)}{\kaitenkigou}
+\end{zahyou}
+\end{showEx}
+
+$y$軸の周りの回転を表すには，\verb+[90]+オプションを付けます。
+
+\begin{showEx}(.5,.44){$y$軸の周りの回転}
+\begin{zahyou}[ul=10mm](-2,2)(-2,2)
+\Put{(0,1.5)}{\kaitenkigou[90]}
+\end{zahyou}
+\end{showEx}
+
+ここで，矢印は正の回転を表すようにつきますが，これを負の回転を表すように
+つけるためには
+\begin{jquote}
+\begin{verbatim}
+<muki=r>
+\end{verbatim}
+\end{jquote}
+オプションを用います。
+
+\begin{showEx}(.54,.4){矢印を逆向き}
+\begin{zahyou}[ul=10mm](-1,3.5)(-.5,.5)
+  \Put{(3,0)}{\kaitenkigou<muki=r>}
+\end{zahyou}
+\end{showEx}
+
+\verb+<..>+オプションは，本来は倍率指定オプションです。
+
+\begin{showEx}(.54,.4){倍率指定}
+\begin{zahyou}[ul=10mm](-1,3.5)(-.5,.5)
+  \Put{(3,0)}{\kaitenkigou<1.5>}
+\end{zahyou}
+\end{showEx}
+
+倍率指定と矢印向きなど他のオプションと併用したいときは
+\verb+<bairitu=..>+オプションを用います。
+
+\begin{showEx}(.54,.4){倍率指定}
+\begin{zahyou}[ul=10mm](-1,3.5)(-.5,.5)
+  \Put{(3,0)}{%
+    \kaitenkigou<bairitu=1.5,muki=r>}
+\end{zahyou}
+\end{showEx}
+
+楕円のサイズは，デフォルトでは
+\begin{jquote}
+\begin{verbatim}
+tyouhankei=3mm
+tanhankei=1.5mm
+\end{verbatim}
+\end{jquote}
+としてあります。これを変更するオプションです：
+
+\begin{showEx}(.54,.4){サイズ変更}
+\begin{zahyou}[ul=10mm](-1,3.5)(-.5,.5)
+  \Put{(3,0)}{%
+    \kaitenkigou<tanhankei=3mm>}
+\end{zahyou}
+\end{showEx}
+
+楕円の右端を一部切って矢印をつけていますが，
+切る場所を変えるオプションを紹介します。
+
+\begin{showEx}(.54,.4){矢印の位置変更}
+\begin{zahyou}[ul=10mm](-1,3.5)(-.5,.5)
+  \Put{(3,0)}{\kaitenkigou%
+    <hazimekaku=-165,owarikaku=165>}
+\end{zahyou}
+\end{showEx}
+
+デフォルト値は
+\begin{jquote}
+\begin{verbatim}
+hazimekaku=15, owarikaku=345
+\end{verbatim}
+\end{jquote}
+となっています。
+
+回転オプションと併用するときは，上記の指定角は回転する前の状況での値です。
+上の図を$90\Deg$回転してみましょう。
+
+\begin{showEx}(.54,.4){回転との併用}
+\begin{zahyou}[ul=10mm]%
+    (-1,3.5)(-.5,1.5)
+  \Put{(0,1)}{\kaitenkigou%
+    <hazimekaku=-165,%
+    owarikaku=165>[90]}
+\end{zahyou}
+\end{showEx}
+
+最後に，\cmd{kaitenkigou}の書式です。
+
+\begin{boxnote}
+\begin{verbatim}
+直線のまわりに回転させることを表す記号
+\kaitenkigou<#1>[#2]
+   #1 : 倍率
+     または key=val
+            bairitu= （倍率）デフォルト値 : 1
+            muki = r/n                      n
+                r で，負の向き
+                n で，正の向き
+            hazimekaku=                     15
+            owarikaku=                     345
+            tyouhankei=                      3mm
+            tanhankei=                     1.5mm
+   #2 : 回転角
+   位置は \emathPut で指定
+\end{verbatim}
+\end{boxnote}
+
+直線$y=x$の周りに回転させる記号を，2倍のサイズで描いてみます。
+
+\begin{showEx}(.5,.44){$y$軸の周りの回転}
+\begin{zahyou}[ul=10mm](-2,2)(-2,2)
+\Put{(1.8,1.8)}{\kaitenkigou<2>[45]}
+\kTyokusen\O{45}{}{}
+\end{zahyou}
+\end{showEx}
+

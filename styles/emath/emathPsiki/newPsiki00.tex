@@ -1,0 +1,92 @@
+\documentclass[a4j]{jarticle}
+\usepackage{graphicx,color}
+\usepackage{emathPsiki}
+\usepackage{showexample}
+
+\begin{document}
+\section{\textsf{emathPsiki.sty v 0.00α}}
+\textsf{emathPh.sty}で定義されていた
+\begin{jquote}
+\begin{sffamily}
+sikipicture, bunpicuture
+\end{sffamily}
+\end{jquote}
+環境を独立させ，\textsf{emathPsiki.sty}とします。
+併せて，複数行の数式に\textsf{picture}環境を併置することを試みます。
+
+\subsection{\textsf{Sikipicture}環境}
+複数行の数式に\textsf{picture}環境を併置するための環境を\textsf{Sikipicture}環境と称します。
+
+\begin{showEx}{\textsf{Sikipicture}環境}
+\begin{Sikipicture}{namae}{%
+    y=ax+b;
+    \protect\bunsuu12;
+    \protect\sqrt{x}}
+  \kuromaru{\Li;\Lii;\Liii}
+\end{Sikipicture}
+\end{showEx}
+
+書式は
+
+\begin{boxnote}
+\begin{jquote}
+\begin{verbatim}
+\begin{Sikipicture}#1#2
+  #1 : 当該環境の識別名
+  #2 : 複数行の数式を`;'で区切って並べる
+併置されたpicture環境において
+　　数式の1行目，2行目，3行目,....
+の左端，ベースライン上の点が
+　　\Li,Lii, \Liii, ....
+に得られる。
+\end{verbatim}
+\end{jquote}
+\end{boxnote}
+
+\begin{description}
+\item[　注]\verb+#1 : 当該環境の識別名+で指定した"識別名.tex"なるファイルが作られます。
+同名のファイルが存在する場合は，無条件に上書きします。
+\end{description}
+\clearpage
+
+先の図で，3行目から1行目に矢線を引いてみましょう。
+
+\begin{showEx}(.74,.2){上の図で，3行目から1行目に矢線}
+\hspace*{1zw}
+\begin{Sikipicture}{foo}{%
+    y=ax+b;
+    \protect\bunsuu12;
+    \protect\sqrt{x}}
+    \HenKo<henkotype=bracket,yazirusi=r>\Li\Liii{}
+\end{Sikipicture}
+\end{showEx}
+
+ベースラインから少し浮かせましょうか。
+
+\begin{showEx}(.74,.2){上にずらす}
+\hspace*{1zw}
+\begin{Sikipicture}{hoge}{%
+    y=ax+b;
+    \protect\bunsuu12;
+    \protect\sqrt{x}}
+  \HenKo<henkotype=bracket,yazirusi=r,%
+    Agezokovi={(0,.5ex)},Agezokovii={(0,.5ex)}>%
+    \Li\Liii{}
+\end{Sikipicture} 
+\end{showEx}
+
+矢線を式から少し離しますか。
+
+\begin{showEx}(.74,.2){左にずらす}
+\hspace*{1zw}
+\begin{Sikipicture}{hogehoge}{%
+    y=ax+b;
+    \protect\bunsuu12;
+    \protect\sqrt{x}}
+  \HenKo<henkotype=bracket,yazirusi=r,%
+    Agezokovi={(-3pt,.5ex)},Agezokovii={(-3pt,.5ex)}>%
+    \Li\Liii{}
+\end{Sikipicture} 
+\end{showEx}
+
+\end{document}

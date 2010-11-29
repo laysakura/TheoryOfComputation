@@ -1,0 +1,42 @@
+\begin{caprm}
+\begin{nagarezu}(22.5zw,27\baselineskip)(7.5zw,0pt)
+  \termbox{始め}
+  \downto
+  \opbox(10zw){$MAX=A(1)$}
+  \opbox(10zw){$MIN=A(1)$}
+  \downto
+  \begin{kurikaesi}(11zw){I=2,3,4,5,6}{I}
+    \downto
+    \begin{ifbox}<.7><1.4>{\strut$A(I)>MAX$}
+      \begin{sitabunki}
+        \downto(61pt)"Yes"
+        \opbox{$MAX=A(I)$}
+        \downto[skipminmax]
+        \pushcurrentP
+      \end{sitabunki}
+      \begin{migibunki}
+        \rightto<n>(40pt)"No"
+        \downto
+        \begin{ifbox}<.7><1.4>{\strut$A(I)<MIN$}
+          \begin{branch}{d}
+            \downto"Yes"
+            \opbox{$MIN=A(I)$}%
+            \downto<n>`skipminmax'
+            \leftto`skipminmax'
+            \pushcurrentP
+          \end{branch}%
+          \begin{branch}{r}
+            \rightto<n>"No"
+            \downto<n>`skipminmax'
+            \leftto`skipminmax'
+          \end{branch}
+        \end{ifbox}
+      \end{migibunki}
+    \end{ifbox}
+  \end{kurikaesi}
+  \downto
+  \iobox{MAX, MIN}
+  \downto
+  \termbox{終り}
+\end{nagarezu}%
+\end{caprm}

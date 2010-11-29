@@ -1,0 +1,36 @@
+% EMceo.sty by tDB (emath@nifty.com)
+%
+\NeedsTeXFormat{LaTeX2e}%
+\ProvidesPackage{EMceo}[2010/03/22 v0.00]%
+%
+\let\ltxsqrt\sqrt
+%
+\RequirePackage{ceo}%
+%
+\def\bekutoru@sityuu{\vphantom{PQ}}%
+%
+\let\ceokaku\kaku
+\let\ceosankaku\sankaku
+\let\ceoheikou\heikou
+\let\ceosyutten\syutten
+\let\ceosyuttenC\syuttenC
+\let\ceovabs\vabs
+\let\ceonearrow\nearrow
+\let\ceosearrow\searrow
+%
+\let\geqq\geq
+\let\leqq\leq
+\let\therefore\yueni
+\let\because\nazenara
+%
+\edef\em@ceo{1}%
+%
+\AtBeginDocument{%
+  \RequirePackage{ceoMaru}%
+  \RequirePackage{ceoNagamaru}%
+}
+\renewcommand{\ttdefault}{pcr}
+\endinput
+
+エンコード JIS
+v 0.00 2010/03/22

@@ -1,0 +1,535 @@
+\documentclass[a4j]{jarticle}
+\usepackage{color}
+\usepackage{emathN}
+\usepackage{array}
+\usepackage{emathOld}
+\usepackage{showexample}
+\usepackage{makeidx}
+
+\makeindex%
+\newcommand{\cindex}[1]{\index{#1@\texttt{\protect\cmd{#1}}}}
+
+\begin{document}
+\changeArrowHeadSize{1.5}
+\title{流れ図描画マクロ\\
+emathN.sty {\normalsize ver.0.16}\\使用例}
+\author{tDB}
+\date{2006/06/18}
+
+\maketitle\thispagestyle{empty}
+\begin{abstract}%
+\parindent1zw%
+中学・高校で数学のプリントにつける流れ図の作成に必要な記号，コマンド，
+環境を集めたマクロ集です．
+\LaTeX2e が前提です．
+
+このマクロ集のマクロについてのご質問，バグ報告，修正・追加の提案等は
+\begin{center}
+http://emath.s40.xrea.com/
+\end{center}
+の掲示板へどうぞ。
+\end{abstract}
+\pagebreak
+\pagenumbering{roman}%
+
+\tableofcontents
+
+\pagebreak
+
+\pagenumbering{arabic}
+
+\section{このパッケージで取り扱う図形}
+まずは右下の例をご覧ください．
+このパッケージで取り扱う図形は左下の通りです．
+
+なお，これ以外の記号で \texttt{JIS X 0121} にあるものも
+使用可能です。それらについては，巻末の記号表をご覧ください。
+\bigskip
+
+\begin{nidan}{12em}{\vspace{-.75\baselineskip}\par\input{example/ex00}}%
+\begin{tabular}[t]{|p{4zw}|p{3zw}|p{8zw}|}\hline
+\begin{nagarezu}(4zw,2\baselineskip)\tansi{　　}\end{nagarezu} 
+& 端子 & 手順の開始・終了を表す．\\\hline
+\begin{nagarezu}(4zw,2\baselineskip)\nyuusyuturyoku{　 }\end{nagarezu} 
+& 入出力 & 数値などのデータの入力，計算結果の出力を表す．\\\hline
+\begin{nagarezu}(4zw,2\baselineskip)\syori{　 }\end{nagarezu} 
+& 処理 & 計算・代入などの処理を表す．\\\hline
+\begin{nagarezu}(4zw,2\baselineskip)\handan{　　}\end{nagarezu} 
+& 判断 & 条件の判断を表す．記号の中には比較条件を書き，
+記号から出る流れ線に，その流れ線の順序に従う条件を付記する．\\\hline
+\begin{nagarezu}(4zw,4.5\baselineskip)\begin{kurikaesi}{　　}{}\end{kurikaesi}
+\end{nagarezu} 
+& 繰返し & 繰り返し処理を表す。\\\hline
+\begin{nagarezu}(4zw,2\baselineskip)\sitahe\end{nagarezu} 
+& 流れ線 & 上記の記号を結び，処理の流れを表す．\\\hline
+\end{tabular}
+\end{nidan}
+
+これらの図形を組み合わせて流れ図を作りますが，
+このパッケージでは，\textsf{nagarezu}環境の中に流れ図を記述します．
+
+
+\section{端子記号}
+端子記号を描画するコマンドは \cmd{tansi} です．（別名 \cmd{termbox}）
+\cindex{tansi}\cindex{termbox}
+
+\showexample[\cmd{tansi}](0.55)(0.35){example/tansi01}
+
+\textsf{nagarezu}環境の中に，§1で紹介した記号を配置していきます．
+上の例では端子記号を1個だけ配置しました．
+\textsf{nagarezu}環境は実質的には\textsf{picture}環境で，
+座標原点は上辺中央にあります．（オプションで変更可能）
+その書式は\index{nagarezu@nagarezu 環境}
+
+\begin{boxnote}
+\begin{verbatim}
+\begin{nagarezu}[#1](#2,#3)(#4,#5)
+  #1 : 原点の位置比率 （デフォルト値 0.5）
+  #2 : 流れ図の横幅
+  #3 : 　　　　縦幅
+  #4 : 原点の位置を修正する x成分
+  #5 : 原点の位置を修正する y成分
+\end{verbatim}
+\end{boxnote}
+
+となっています．
+
+\verb/(#2,#3)/は必須の引数で流れ図のサイズを指定します．
+数値は単位を伴います．
+
+デフォルトでは，原点は\verb/(#2,#3)/で指定された長方形の上辺中央にあります．
+これを修正するオプション引数が \verb/(#4,#5)/ です．
+
+長方形の左上を始点として \verb/(#4,#5)/ を成分とする
+ベクトルの終点を原点とします．この成分も単位を伴う数値です．
+
+例えば，\verb/\begin{nagarezu}(2cm,3cm)(0.5cm,-1cm)%/ としたときの
+確保される領域と原点の位置は下のようになります．
+
+\showexample[\cmd{tansi}](0.55)(0.35){example/tansi03}
+
+\verb/[#1]/は旧版との互換性を保つために残してあります．
+
+次に，端子の書式は
+
+\begin{boxnote}
+\begin{verbatim}
+\tansi[#1]#2
+  #1 : 塗りつぶしをするためのオプション引数で，
+       塗りつぶしの濃さを 0.1〜1 の数値で指定します．
+  #2 : 中に記述する文字列
+\end{verbatim}
+\end{boxnote}
+
+となっています．
+
+描画後のカレントポイントは，下辺の中点です．また，次の点が定義されています．
+\begin{jquote}
+\begin{verbatim}
+\migityuuten   : 右側の半円の右端
+\hidarityuuten : 左側の半円の左端
+\uetyuuten     : 上辺の中点
+\sitatyuuten   : 下辺の中点（カレントポイント)
+\end{verbatim}
+\end{jquote}
+後で，必要となる点があれば，\cmd{nahuda}コマンドで保存しておきます．
+その一例です．
+
+\showexample[\cmd{nahuda}](0.55)(0.35){example/tansi02}
+
+\cmd{nahuda} の書式です．\cindex{nahuda}
+
+\begin{boxnote}
+\begin{verbatim}
+\nahuda#1#2
+    #1 : 名札（ラベル）を付ける点
+    #2 : ラベル名
+\end{verbatim}
+\end{boxnote}
+
+ラベルを付けた点への戻り方は「流れ線」のところで解説します．
+
+\section{入出力記号}
+キーボードからの入力，画面への出力などを表す図形を描画するコマンドが
+\cmd{nyuusyuturyoku}です．長たらしいコマンド名ですから，別名 \cmd{iobox}
+も使用できます．\cindex{nyuusyuturyoku}\cindex{iobox}
+
+\showexample[\cmd{nyuusyuturyoku}](0.55)(0.35){example/iobox01}
+
+入出力記号中に複数行を記述する方法については，
+次節「処理記号」で解説します．
+
+描画後のカレントポイントは，下辺の中点です．また，次の点が定義されています．
+\begin{jquote}
+\begin{verbatim}
+\migityuuten   : 右辺の中点
+\hidarityuuten : 左辺の中点
+\uetyuuten     : 上辺の中点
+\sitatyuuten   : 下辺の中点（カレントポイント)
+\end{verbatim}
+\end{jquote}
+
+\section{処理記号}
+処理記号を描画するコマンドは \cmd{syori} です．（別名 \cmd{opbox}）
+\cindex{syori}\cindex{opbox}
+
+\showexample[\cmd{syori}](0.6)(0.3){example/syori01}
+
+処理記号の中に複数行を入れたいときは，\textsf{minipage}環境
+あるいは \verb/\parbox/コマンドなどを用います．
+
+\showexample[複数行](0.6)(0.3){example/syori02}
+
+複数行が数式の場合は，\textsf{align*}環境などを用いるのもあります．
+
+\showexample[\textsf{align}環境](0.6)(0.3){example/syori03}
+
+ただし，\textsf{align*}環境を用いると，
+上に空白がつきますので \verb/\vspace/ で詰める方がよさそうです．
+
+\showexample[\textsf{align}環境の頭部空白](0.6)(0.3){example/syori04}
+
+描画後のカレントポイントは，下辺の中点です．また，次の点が定義されています．
+\begin{jquote}
+\begin{verbatim}
+\migityuuten   : 右辺の中点
+\hidarityuuten : 左辺の中点
+\uetyuuten     : 上辺の中点
+\sitatyuuten   : 下辺の中点（カレントポイント)
+\end{verbatim}
+\end{jquote}
+\cindex{migityuuten}\cindex{hidarityuuten}
+\cindex{uetyuuten}\cindex{sitatyuuten}
+
+\section{流れ線}
+処理の流れを示すのに「流れ線」を用います．流れ線の方向は4種類あります．
+オプションによって，矢印をつけないもの，二重線を引くことも可能です．
+\begin{center}
+\begin{tabular}[t]{|p{5zw}|p{8zw}|}\hline
+コマンド & 流れ線 \\\hline
+\verb/\sitahe/\par\verb/\downto/
+&\vspace{1zh}\par\begin{nagarezu}(8zw,4zh)\sitahe\end{nagarezu}\\\hline
+\verb/\migihe/\par\verb/\rightto/
+&\vspace{1zh}\par\begin{nagarezu}(8zw,4zh)\migihe\end{nagarezu}\\\hline
+\verb/\hidarihe/\par\verb/\leftto/
+&\vspace{1zh}\par\begin{nagarezu}(8zw,4zh)\hidarihe\end{nagarezu}\\\hline
+\verb/\uehe/\par\verb/\upto/
+&\vspace{1zh}\par\begin{nagarezu}(8zw,4zh)\uehe\end{nagarezu}\\\hline
+\end{tabular}
+\end{center}
+書式は4つのコマンドすべて共通ですから，\cmd{sitahe} について解説します．
+\cindex{sitahe}\cindex{uehe}\cindex{migihe}\cindex{hidarihe}
+\cindex{downto}\cindex{upto}\cindex{rightto}\cindex{leftto}
+
+\begin{boxnote}
+\begin{verbatim}
+\sitahe<#1>(#2)[#3]"#4""#5"`#6'
+  #1：線の形状指定オプション
+      a = 矢印をつける（デフォルト）
+      n = 矢印なし
+      r = 逆方向に矢印
+      w = 二重線
+      （重複指定可能） 
+  #2：線の長さ（デフォルト値 20pt）
+  #3：ラベル
+  #4：矢線の上に置く文字列
+  #5：矢線の下に置く文字列
+  #6：流れ線の行き先ラベル
+\end{verbatim}
+\end{boxnote}
+
+\subsection{流れ線の形状}
+単に \cmd{sitahe} とすると，長さ20pt の下向き矢印を描画します．
+\texttt{<n>} オプションをつけると矢印なしの線分となります．
+
+\showexample[\cmd{sitahe<n>}](0.55)(0.4){example/sen01}
+
+\texttt{<w>} オプションで二重線となります．\texttt{<n>} と併用する例です．
+
+\showexample[\cmd{migihe<wn>}](0.5)(0.44){example/sen02}
+
+\subsection{流れ線の長さ}
+流れ線の長さはデフォルトでは 20pt となっています．
+これを変更するには \texttt{(...)} オプションを用います．
+長さは単位を伴った数値で指定します．
+
+\showexample[\cmd{sitahe(4zh)}](0.55)(0.4){example/sen03}
+
+\subsection{流れ線に文字列の添付}
+流れ線の傍に文字列を添付するオプションが \texttt{"..."} です．
+\begin{jquotation}
+\cmd{sitahe}, \cmd{uehe} では，第1の\texttt{"..."} で流れ線の左中央部に，
+第2の\texttt{"..."}で流れ線の右中央部に文字列を出力します．
+
+\cmd{hidarihe}, \cmd{migihe} では，第1の\texttt{"..."} で流れ線の上中央部に，
+第2の\texttt{"..."}で流れ線の下中央部に文字列を出力します．
+\end{jquotation}
+
+\showexample[流れ線に文字列を添付](0.55)(0.39){example/sen05}
+
+\subsection{流れ線のラベル}
+\texttt{[...]} オプションで指定したラベル名に，
+流れ線の中点の座標が保存されます．
+
+\subsection{流れ線の行き先指定}
+流れ線の行き先をラベルによって指定することができます．
+\texttt{`...'} オプションです．
+ただし，このスタイルファイルでは斜線は引きませんから，
+\begin{jquotation}
+\cmd{sitahe}, \cmd{uehe} では，流れ線の終点の$y$座標がラベルの点の
+$y$座標と等しくなります．
+
+\cmd{migihe}, \cmd{hidarihe} では，流れ線の終点の$x$座標がラベルの点の
+$x$座標と等しくなります．
+
+\showexample[流れ線の行き先指定](0.55)(0.39){example/sen04}
+
+\end{jquotation}
+
+\section{判断記号}
+条件を与えて分岐させる環境が \textsf{handan} です（別名 \textsf{ifbox}）．
+コマンドではなく，環境仕立てになっています．
+\index{handan@handan 環境}\index{ifbox@ifbox 環境}
+
+また，右・左・下方向の分岐もそれぞれ
+\begin{jquote}
+\textsf{migibunki}, \textsf{hidaribunki}, \textsf{sitabunki}
+\end{jquote}
+環境内に記述します．
+\index{migibunki@migibunki 環境}
+\index{hidaribunki@hidaribunki 環境}
+\index{sitabunki@sitabunki 環境}
+
+\showexample[\textsf{handan}環境](0.53)(0.41){example/handan01}
+
+書式は
+\begin{boxnote}
+\begin{verbatim}
+\begin{handan}[#1]<#2><#3>#4{%
+  #1 : 塗りつぶしの濃さ
+  #2 : 横方向伸縮率（デフォルト値 1）
+  #3 : 縦方向伸縮率（デフォルト値 1）
+  #4 : 判断記号内の文字列
+\end{verbatim}
+\end{boxnote}
+
+描画後のカレントポイントは，下辺の中点です．また，次の点が定義されています．
+\begin{jquote}
+\begin{verbatim}
+\migityuuten   : 右端
+\hidarityuuten : 左端
+\uetyuuten     : 上端
+\sitatyuuten   : 下端
+\end{verbatim}
+\end{jquote}
+
+\section{繰り返し記号}
+\verb+FOR .... NEXT+ などの繰り返しを表現するには，
+\textsf{kurikaesi}環境を用います。
+
+使用例をご覧ください。1から10までの和を求める流れ図です。
+
+\begin{showEx}(.6,.34){\textsf{kurikaesi}環境}
+\begin{nagarezu}%
+  (7em,18\baselineskip)
+\tansi{始め}
+\sitahe
+\syori{S=0}
+\sitahe
+\begin{kurikaesi}{N=1 to 10}{N}
+\sitahe
+\syori{S=S+K}
+\sitahe
+\end{kurikaesi}
+\sitahe
+\iobox{Sを出力}
+\sitahe
+\tansi{終り}
+\end{nagarezu}%
+\end{showEx}
+
+すなわち繰り返し部分を \textsf{kurikaesi}環境内に記述します。
+\textsf{kurikaesi}環境の書式です。
+
+\begin{boxnote}
+\begin{verbatim}
+\begin{kurikaesi}[#1](#2)#3#4{%
+  #1 : 塗りつぶしの濃さ
+  #2 : 横幅
+  #3 : 始めのボックス内に記述する内容
+  #4 : 終りのボックス内に記述する内容
+\end{verbatim}
+\end{boxnote}
+\index{kurikaesi@kurikaesi 環境}
+
+繰り返しボックスを塗りつぶすオプションを使用してみましょう。
+
+\begin{showEx}(.6,.34){塗りつぶしオプション}
+\begin{caprm}
+\begin{nagarezu}(7em,18\baselineskip)
+\tansi{始め}
+\sitahe
+\syori{$S=0$}
+\sitahe
+\begin{kurikaesi}[.5]{$N=1$ to 10}{N}
+\sitahe
+\syori{$S=S+N$}
+\sitahe
+\end{kurikaesi}
+\sitahe
+\iobox{Sを出力}
+\sitahe
+\tansi{終り}
+\end{nagarezu}%
+\end{caprm}
+\end{showEx}
+
+\bigskip
+
+繰り返し部分全部を塗りつぶしたいときは \textsf{kurikaesi*}環境を用います。
+\index{kurikaesi*@kurikaesi* 環境}
+
+\begin{showEx}(.6,.34){繰り返し部分全部を塗りつぶす}
+\begin{caprm}
+\begin{nagarezu}(7em,18\baselineskip)
+\tansi{始め}
+\sitahe
+\syori{$S=0$}
+\sitahe
+\begin{kurikaesi*}[.5]{$N=1$ to 10}{N}
+\sitahe
+\syori{$S=S+N$}
+\sitahe
+\end{kurikaesi*}
+\sitahe
+\iobox{Sを出力}
+\sitahe
+\tansi{終り}
+\end{nagarezu}%
+\end{caprm}
+\end{showEx}
+
+もう少し複雑な例です。
+
+A(1), A(2), ..... , A(6)のうち，最大値 MAX を出力する例です。
+
+\begin{showEx}(.54,.4){\cmd{pushcurrentP}}
+\begin{caprm}
+\begin{nagarezu}(15zw,22.5\baselineskip)
+  \termbox{始め}
+  \downto
+  \opbox{$MAX=A(1)$}
+  \downto
+  \begin{repbox*}%
+      [.5](12zw){I=2,3,4,5,6}{I}%
+    \downto
+    \begin{ifbox}<.7><1.4>%
+          {\strut$A(I)>MAX$}%
+      \begin{branch}{d}%
+        \downto"Yes"%
+        \opbox{$MAX=A(I)$}%
+        \downto[skip]%
+        \pushcurrentP
+      \end{branch}%
+      \begin{branch}{r}%
+        \rightto<n>"No"%
+        \downto<n>`skip'%
+        \leftto`skip'%
+      \end{branch}%
+    \end{ifbox}%
+  \end{repbox*}%
+  \downto
+  \iobox{MAX}
+  \downto
+  \termbox{終り}
+\end{nagarezu}%
+\end{caprm}
+\end{showEx}
+
+このリストには \cmd{pushcurrentP} という新しいコマンドが登場しています。
+これは \texttt{handan}環境（別名 \texttt{ifbox}環境）が終了した後，
+流れ図をどこに続けるかを指定するコマンドで，\cmd{pushcurrentP}直前の
+流れ線に続けるように指定したことになります。
+
+なお，\textsf{repbox}は\textsf{kurikaesi}の別名です。
+\index{repbox@repbox 環境}
+
+ついでですから，最小値も欲張ってみましょうか。
+ソースリストは \texttt{example}ディレクトリの\texttt{rep1.tex}を見てください。
+
+\begin{center}
+\input{example/rep1.tex}
+\end{center}
+
+\clearpage
+
+\section{記号表 (\texttt{JIS X 0121})}
+流れ図に使用する記号については，\texttt{JIS X 0121}に規定があります。
+そこにある記号の主なものも使用可能です。
+
+\noindent
+\begin{tabular}[t]{|p{4zw}|p{6zw}|p{20zw}|l|}\hline
+\multicolumn{4}{|c|}{データ記号}\\\hline
+\begin{nagarezu}(4zw,2\baselineskip)\nyuusyuturyoku{　 }\end{nagarezu} 
+& データ & 媒体を指定しないデータを表す．
+  &\EMparbox[t]{\cmd{iobox}\\\cmd{nyuusyuturyoku}}\\\hline
+\begin{nagarezu}(4zw,2\baselineskip)\kioku{　 }\end{nagarezu} 
+  & 記憶データ &処理に適した形で記憶されているデータを表す．
+  &\EMparbox[t]{\cmd{kioku}}\\\hline
+\begin{nagarezu}(4zw,2\baselineskip)\naibukioku{　 }\end{nagarezu} 
+  & 内部記憶 &内部記憶を媒体とするデータを表す．
+  &\EMparbox[t]{\cmd{naibukioku}}\\\hline
+\begin{nagarezu}(4zw,2\baselineskip)\Saccessbox{　 }\end{nagarezu} 
+  & 順次アクセス記憶 &順次アクセスだけ可能なデータを表す（媒体は磁気テープ等）．
+  &\EMparbox[t]{\cmd{Saccessbox}}\\\hline
+\begin{nagarezu}(4zw,2\baselineskip)\Daccessbox{　 }\end{nagarezu} 
+  & 直接アクセス記憶 &直接アクセス可能なデータを表す（媒体は磁気ディスク等）．
+  &\EMparbox[t]{\cmd{Daccessbox}}\\\hline
+\begin{nagarezu}(4zw,2\baselineskip)\syorui{　 }\end{nagarezu} 
+  & 書類 & {人の読める媒体上のデータを表す．\par\mbox{}\par}
+  &\EMparbox[t]{\cmd{syorui}}\\\hline
+\begin{nagarezu}(4zw,2\baselineskip)\tenyuryoku{　 }\end{nagarezu} 
+  & 手操作入力 & 手で操作して情報を入力するあらゆる媒体上のデータを表す（キーボード等）
+  &\EMparbox[t]{\cmd{tenyuryoku}}\\\hline
+\begin{nagarezu}(4zw,2\baselineskip)\cardbox{　 }\end{nagarezu} 
+  & カード &カードを媒体とするデータを表す．
+  &\EMparbox[t]{\cmd{cardbox}}\\\hline
+\begin{nagarezu}(4zw,2\baselineskip)\hyouzi{　 }\end{nagarezu} 
+  & 表示 & 人が利用する情報を表示するあらゆる媒体上のデータを表す（ＣＲＴ等）
+  &\EMparbox[t]{\cmd{dpbox}\\\cmd{hyouzi}}\\\hline
+\end{tabular}
+\clearpage
+
+\noindent
+\begin{tabular}[t]{|p{4zw}|p{6zw}|p{20zw}|l|}\hline
+\multicolumn{4}{|c|}{処理記号・特殊記号}\\\hline
+\begin{nagarezu}(4zw,2\baselineskip)\syori{　 }\end{nagarezu} 
+  & 処理 & 計算・代入などの処理を表す．
+  &\EMparbox[t]{\cmd{opbox}\\\cmd{syori}}\\\hline
+\begin{nagarezu}(4zw,2\baselineskip)\syorii{　 }\end{nagarezu} 
+  & 定義済み処理 & サブルーチンやモジュールなど別の場所で定義された処理を表す．
+  &\EMparbox[t]{\cmd{subopbox}\\\cmd{syorii}}\\\hline
+\begin{nagarezu}(4zw,2\baselineskip)\tesagyou{　 }\end{nagarezu} 
+  & 手作業 &人手による任意の処理を表す．
+  &\EMparbox[t]{\cmd{tesagyou}}\\\hline
+\begin{nagarezu}(4zw,2\baselineskip)\zyunbi{　 }\end{nagarezu} 
+  & 準備 &その後の動作に影響を与える準備 ．
+  &\EMparbox[t]{\cmd{zyunbi}}\\\hline
+\begin{nagarezu}(4zw,2\baselineskip)\handan{　　}\end{nagarezu} 
+& 判断 & 条件の判断を表す．記号の中には比較条件を書き，
+記号から出る流れ線に，その流れ線の順序に従う条件を付記する．
+  &\EMparbox[t]{\cmd{ifbox}\\\cmd{handan}}\\\hline
+\begin{nagarezu}(4zw,4.5\baselineskip)\begin{kurikaesi}{　　}{}\end{kurikaesi}
+\end{nagarezu} 
+  & 繰返し & 繰り返し処理を表す。
+  &\EMparbox[t]{\cmd{repbox}\\\cmd{kurikaesi}\\（環境）\\\cmd{endrepbox}\\\cmd{endkurikaesi}}\\\hline
+\begin{nagarezu}(4zw,2\baselineskip)\ketugousi{\phantom{9}}\end{nagarezu} 
+  & 結合子 &同じ流れ図の他の部分への出口、他の部分からの入り口を表す．
+  &\EMparbox[t]{\cmd{ketugousi}}\\\hline
+\begin{nagarezu}(4zw,2\baselineskip)\tansi{　　}\end{nagarezu} 
+& 端子 & 手順の開始・終了を表す．
+  &\EMparbox[t]{\cmd{termbox}\\\cmd{tansi}}\\\hline
+\end{tabular}
+
+\printindex
+\end{document}

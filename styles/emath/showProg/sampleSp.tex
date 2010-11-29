@@ -1,0 +1,100 @@
+\documentclass{jarticle}
+%
+% \usepackage[dvipdfm,bookmarks=true,bookmarksnumbered=true]{hyperref}
+%  \AtBeginDvi{\special{pdf:tounicode 90ms-RKSJ-UCS2}} %SJISの場合
+%
+\usepackage{amsmath}%   showProg に必須ではありません。
+\usepackage{showProg}
+
+\long\def\sample#1{%
+\input{example/#1.tex}
+
+これを実現しているソースリストは次のとおりです。
+
+\begin{itembox}{\texttt{#1.tex}}
+\verbatiminput{example/#1.tex}
+\end{itembox}}
+
+\listfiles
+
+\begin{document}
+\title{対訳 \TeX\\
+showProg.sty {\normalsize ver.0.00α}}
+\author{tDB}
+\date{2002/11/09}
+
+\maketitle\thispagestyle{empty}
+\begin{abstract}%
+\begin{center}
+\LaTeX のソースリストとタイプセット結果との対比
+\end{center}
+\end{abstract}
+\pagebreak
+\pagenumbering{roman}%
+
+\tableofcontents
+
+\pagebreak
+\pagenumbering{arabic}
+\section{\textsf{showProg.sty}とは}
+対訳形式で\TeX のソースとタイプセット結果を対比する
+\textsf{showexample.sty}の左側（ソースリスト）に
+乙部氏の作になる\textsf{program.sty}を使用する試みです。
+
+\subsection{\textsf{showProg}環境}
+まずは\textsf{program}環境を用いた\textsf{showProg}環境です。
+
+\sample{ex01}
+
+ここで，\verb+\begin{showProg}+の引数のうち，
+\verb+(1,.9)+はソース部とタイプセット部の横幅
+（単位は\verb+\linewidth+）で，
+次の2つの引数は\textsf{program}環境に引き渡されます。
+\clearpage
+
+\subsection{行番号の変更}
+ソース部の行番号を1からではなく，指定した番号からはじめるようにするには，
+\textsf{program.sty}で\textsf{nprogram}環境が用意されていますが，
+ここでは無精をして，\textsf{showProg}のオプション引数で調整することにしました。
+次の例では，行番号を11から始めています。
+
+\sample{ex02}
+\clearpage
+
+\subsection{行番号の継続}
+\textsf{showProg}環境は，行番号をリセットして1から始めますが，
+前の番号の続きにするために，
+\textsf{program.sty}の\textsf{cprogram}環境に倣い，
+\textsf{showcProg}環境を用意しました。
+次の例では，行番号をList \ref{lineno}に続けています。
+
+\sample{ex03}
+\clearpage
+
+\subsection{フッタ無しの様式}
+長いリストを途中で切って解説していくようなときは，
+まず，フッタ無しの様式で始めたいことがあります。
+
+\textsf{program.sty}の\textsf{nfprogram}に倣い，
+\textsf{shownfProg}環境を用意しました。
+行番号の初期値を指定するオプションを付けることは可能です。
+
+\sample{ex04}
+\clearpage
+
+\subsection{ヘッダ無しの様式}
+フッタ無しの対がヘッダ無しで\textsf{shownhProg}, \textsf{shownhcProg}環境です。
+下の例は，\textsf{shownhcProg}で行番号を続けています。
+
+\sample{ex05}
+\clearpage
+
+\subsection{ボックスの種類変更}
+タイプセットした結果を\textsf{ascmac.sty}で定義されている
+\textsf{shadebox}環境を用いていますが，
+これを変更することも可能です。次の例では，\textsf{screen}環境に変更しています。
+
+\sample{ex06}
+
+冒頭の1行がボックスの種類を指定しています。
+\end{document}

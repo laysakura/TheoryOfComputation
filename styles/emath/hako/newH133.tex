@@ -1,0 +1,31 @@
+\documentclass[a4j]{jarticle}
+\usepackage{arhako}
+\usepackage[debug]{emathAe}
+
+\makeatletter
+% 循環記号をつける（つける位置は \zHako の引数で指定）
+\def\zHako#1{%
+    \expandafter\@for\expandafter\zH@c\expandafter:\expandafter=#1\do{%
+      \expandafter\def\csname HakoFunc\romannumeral\zH@c\endcsname##1{\ensuremath{\dot{\textgt{##1}}}}}%
+  \Hako
+}%
+\makeatother
+
+\begin{document}
+\openHakoKaiFile
+\centermodetrue
+\hakosityuu{\vphantom{$\dot{ア}$}}
+\begin{align*}
+  \bunsuu13&=0.\zHako{1}<1>'\dot3'\\
+  \bunsuu4{11}&=0.\zHako{1,2}<2>'\dot3\dot6'\\
+  \bunsuu35&=0.\Hako'6'\\
+  \bunsuu{4}{15}&=0.\zHako{2}<2>'2\dot6'\\
+  \bunsuu{16}{37}&=0.\zHako{1,3}<3>'\dot{4}3\dot{2}'
+\end{align*}
+\closeHakoKaiFile
+\begin{Kaitou}
+      \HakoKaiKata{t}
+      \def\arraystretch{1.5}
+      \inputHakoKaiFile
+\end{Kaitou}
+\end{document}

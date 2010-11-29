@@ -1,0 +1,82 @@
+\documentclass[a4j]{jarticle}
+\usepackage{emathPp}
+\usepackage{verbatim}
+\usepackage{showexample}
+
+\begin{document}
+\section{\textsf{perl}スクリプトの実行}
+\textsf{emathPp.sty v 0.43}で，\texttt{perl script}を実行するための環境
+\textsf{EMcallperl}を新設しました。
+
+この環境内に記述されたものはすべて，
+外部ファイル --- デフォルトでは \verb+\jobname.pl+ --- に書き出され，
+\begin{jquote}
+\begin{verbatim}
+perl \jobname.pl > \jobname.txt
+\end{verbatim}
+\end{jquote}
+と，\textsf{perl}が呼び出されます。
+
+次ページの例では，階乗の計算を \textsf{perl} に実行させ，
+それを
+\begin{jquote}
+\begin{verbatim}
+\input \jobname.txt
+\end{verbatim}
+\end{jquote}
+で読み込んでいます。
+
+そのソースリストです：
+
+\begin{screen}
+\begin{verbatim}
+\begin{EMcallperl}
+  require "bigint.pl";
+  for ($i=1,$j=1; $i<=50; $i++){
+    $j=&bmul($j,$i);
+    printf "%d & %s\\\\ \n",$i,substr($j,1);
+    if($i % 5==0) {
+      print "\\hline\n";
+    }
+  }
+\end{EMcallperl}
+\[ 
+  \begin{array}{rr}\\ \hline
+    n & n! \\ \hline
+    \input \jobname.txt
+  \end{array}
+\]
+\end{verbatim}
+\end{screen}
+
+\begin{enumerate}[注 1.~]
+  \item \verb+\write18+を使用していますから，タイプセットには
+    \verb+-shell-escape+オプションを必要とします。
+  \item \verb+verbatim.sty+を読み込んでおく必要があります。
+  \item スクリプトファイル名，出力ファイル名を変更するには
+    \begin{jquote}
+\begin{verbatim}
+\begin{EMcallperl}[scriptfile=...,outputfile=...]
+\end{verbatim}
+    \end{jquote}
+    オプションを用います。
+\end{enumerate}
+\clearpage
+
+\begin{EMcallperl}
+  require "bigint.pl";
+  for ($i=1,$j=1; $i<=50; $i++){
+    $j=&bmul($j,$i);
+    printf "%d & %s\\\\ \n",$i,substr($j,1);
+    if($i % 5==0) {
+      print "\\hline\n";
+    }
+  }
+\end{EMcallperl}
+\[ 
+  \begin{array}{rr}\\ \hline
+    n & n! \\ \hline
+    \input \jobname.txt
+  \end{array}
+\]
+\end{document}

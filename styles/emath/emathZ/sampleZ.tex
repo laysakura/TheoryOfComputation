@@ -1,0 +1,305 @@
+\documentclass[a4j]{jarticle}
+  \usepackage{plext}
+  \usepackage{showexample}
+  \usepackage{graphicx}
+  \usepackage{emathZ}
+  \usepackage{emathOld}
+  \usepackage{emathR}
+
+\unitlength1cm
+
+\begin{document}
+\title{樹形図描画マクロ\\
+emathZ.sty {\normalsize ver.0.08}\\使用例}
+\author{tDB}
+\date{2002/11/20}
+
+\maketitle\thispagestyle{empty}
+\begin{abstract}%
+\parindent1zw%
+樹形図を描画するためのマクロです．
+ただし，数学のプリント作成をするため，という目的です．
+従って，emathP, emath などのパッケージの使用を前提とします．
+
+このマクロ集のマクロについてのご質問，バグ報告，修正・追加の提案等は
+\begin{center}
+http://emath.s40.xrea.com/
+\end{center}
+の掲示板へどうぞ。
+\end{abstract}
+\pagebreak
+\pagenumbering{roman}%
+
+\tableofcontents
+
+\pagebreak
+
+\pagenumbering{arabic}
+
+\section{基本的用法}
+\subsection{\textsf{zyukeizu}環境と\cmd{eda}コマンド}
+まずは，基本的な例からはじめます．
+
+\showexample[基本例](0.4)(0.3){example/Zex00}
+
+\noindent のように，\textsf{zyukeizu} 環境内で \cmd{eda} コマンドを
+用います．上の例は2分岐ですが，\cmd{eda} を書き並べれば，多分岐も
+可能です．
+
+\showexample[多分岐](0.4)(0.3){example/Zex01}
+
+逆に1本だけの枝も作れます．
+
+\showexample[一分岐](0.4)(0.3){example/Zex02}
+\clearpage
+
+\subsection{多重分岐}
+\textsf{zyukeizu}環境はネストさせることが出来ます．
+\cmd{eda}コマンド内に，\textsf{zyukeizu}環境を記述することで
+多重分岐の樹形図を描画することが出来ます．
+
+\showexample[多重分岐](0.45)(0.45){example/Zex03}
+\clearpage
+
+枝の数は不均等でも構いません．
+
+\showexample[不均等な分岐](0.45)(0.45){example/Zex04}
+\clearpage
+
+\section{枝の形状}
+\subsection{枝の長さ}
+枝の長さを調整するためのコマンドが \cmd{zyukeizuEdaNagasa} です．
+
+{\showexample[枝の長さ](0.5)(0.4){example/Zex40}}
+
+デフォルトは，\cmd{zyukeizuEdaNagasa}\texttt{\{30\}} です．
+数値の単位は，ポイントで，枝の$x$軸方向（横組では水平方向）の
+長さを整数で指定します．
+\clearpage
+
+\subsection{枝の開き}
+枝の開き具合を調整するのが \cmd{zyukeizuEdaVpitch} コマンドです．
+
+{\showexample[枝の開き具合](0.5)(0.4){example/Zex41}}
+
+デフォルトは，\cmd{zyukeizuEdaVpitch}\texttt{\{0\}} です．
+
+引数で与える数値は \cmd{zyukeizuEdaNagasa} と同じく，
+pt を単位とする整数値です．
+
+この数値が枝と枝の間の改行幅に追加されます．
+
+\subsection{角型 --- トーナメント表形式}
+枝は，デフォルトでは斜線になっていますが，これを縦横の線でトーナメント表
+のようにするためのコマンドが \cmd{zyukeizuKata} です．
+
+{\showexample[角型樹形図](0.5)(0.4){example/Zex00k}}
+
+このコマンドの引数は
+\begin{jquote}
+s : 斜線 （デフォルト）\\
+k : 角型
+\end{jquote}
+の2種類だけです．
+\clearpage
+
+\subsection{角型における枝の長さ}
+\cmd{zyukeizuEdaNagasa} コマンドで指定される数値は，
+縦線の左側の枝の長さと右側の枝の長さを加えたもので，
+これを2等分して左と右の枝が作られます．
+2等分ではない樹形図を作りたいときは \cmd{zyukeizuEdaNagasa} の
+\texttt{[..]} オプションで左側の長さを指定します．
+
+{\showexample[角型における長さ指定](0.5)(0.4){example/Zex43}}
+
+\cmd{zyukeizuEdaNagasa}の書式です．
+\begin{boxnote}
+\begin{verbatim}
+\zyukeizuEdaNagasa[#1]#2
+    #1 : 角型樹形図の場合，縦線で区切られた左側の長さ
+    #2 : 左・右を合わせた全体の長さ
+\end{verbatim}
+\end{boxnote}
+
+\subsection{枝の線種}
+枝の線種を変更するには，\cmd{sensyu}を再定義します。
+
+\begin{showEx}{枝の線種変更}
+\def\sensyu{\hasen}
+色 %
+\begin{zyukeizu}%
+    \eda{ 赤 }%
+    \eda{ 白 }%
+\end{zyukeizu}%
+\end{showEx}
+
+\subsection{枝の太さ}
+すべての枝の太さを変更するには\cmd{edahutosa}コマンドを使用します。
+
+\begin{showEx}{枝の太さ変更}
+\edahutosa{2pt}
+色 %
+\begin{zyukeizu}%
+    \eda{ 赤 }%
+    \eda{ 白 }%
+\end{zyukeizu}%
+\end{showEx}
+
+一部の枝の太さを変更するには，当該の枝を描画する\cmd{eda}に\verb+<hutosa=..>+
+オプションで指定します。
+
+\begin{showEx}{一部の枝の太さ変更}
+色 %
+\begin{zyukeizu}%
+    \eda<hutosa=2pt>{ 赤 }%
+    \eda{ 白 }%
+\end{zyukeizu}%
+\end{showEx}
+
+
+%\clearpage
+
+\section{枝の傍への文字配置}
+\subsection{\texttt{[...]} オプション}
+確率の問題解説では，樹形図の枝に確率の値を付記したいことがあります．
+そのために \cmd{eda} はオプション引数を取ることが出来ます．
+
+\showexample[確率樹形図](0.6)(0.3){example/Zex30}
+
+すなわち \cmd{eda} の \texttt{[..]} オプション内に，
+枝に付記したい文字列を与えます．
+しかし，この例では，上の枝と下の枝に付記した数値が重なっています．
+配置オプションで文字の位置を調整します．
+
+\subsection{配置オプション \texttt{[...]}}
+\showexample[文字位置調整(1)](0.6)(0.3){example/Zex31}
+
+\subsection{基準点調整オプション \texttt{(x,y)}}
+下の枝は良いとして，上の枝の数値が枝にかかっています．
+さらに調整します．
+
+\showexample[文字位置調整(2)](0.6)(0.3){example/Zex32}
+
+\subsection{基準点の変更}
+文字を配置する基準点は，枝の中点です。
+これを変更するのが\verb+<..>+オプションです。
+
+\begin{showEx}(.6,.3){基準点の変更}
+\begin{zyukeizu}%
+  \eda[$\frac12$]<1>(0,3pt)[rb]{ 表 }%
+  \eda[$\frac12$]<1>[rt]{ 裏 }%
+\end{zyukeizu}%
+\end{showEx}
+
+オプションは0と1の間の数値で，デフォルトは0.5（枝の中点）となっています。
+
+%\clearpage
+
+\subsection{\cmd{eda} コマンドの書式}
+\cmd{eda}の書式です．
+\begin{boxnote}
+\begin{verbatim}
+\eda[#1]<#2>(#3,#4)[#5]#6
+    #1      : 枝の傍に置く文字列（デフォルトは空文字列）
+    #2      : #1 の文字列を置く位置 (0 〜 1) 
+                （デフォルトは 0.5 すなわち枝の中点）
+              または
+                  hutosa=..
+                  iti=..
+    (#3,#4) : 文字列を置く位置の修正ベクトル 
+                （デフォルトは (0,0)）
+    #5      : 文字列の配置 (l, c, r; t, b)
+    #6      : 枝の末端に置く文字列
+（注）#1〜#5は
+    \sPut[#2]{枝の左端}{枝の右端}(#3,#4)[#5]{#1} として\sPutに渡されます。
+\end{verbatim}
+\end{boxnote}
+
+\section{縦型}
+\subsection{\textsf{plext} パッケージで縦組}
+樹形図はデフォルトでは右の方向に枝が分岐していきます．
+これを下方向に分岐させたい，という話しです．
+一案として \cmd{rotatebox} で回転する，ということも考えられますが，
+文字も回転してしまいます．文字部分を逆回転させるのもありますが．．．
+
+ここでは，縦組を利用してみます．
+さりとて，\textsf{tarticle} クラスを使うのは，数学では気乗りしません．
+そこで，\textsf{plext} パッケージで \textsf{minipage}環境などに附加された
+組方向オプションを利用してみました．
+
+ただし，縦組の\verb+tpic specials+ はDVI-wareに依存します。
+
+\begin{enumerate}[(1)]
+  \item dviout.exe を使用する場合は，
+\begin{jquote}
+\begin{verbatim}
+Option
+    Setup Parameters
+        Graphic
+で tpic specials の
+        tate
+\end{verbatim}
+\end{jquote}
+にチェックを入れる必要があります。
+
+  \item dvipdfm で PDF 化する際は
+\begin{jquote}
+\begin{verbatim}
+\usepackage[EMdvipdfm]{emathZ}
+\end{verbatim}
+\end{jquote}
+とロードオプションを附加する必要があります。
+
+（この場合，dvi ファイルを dviout で見ると，線が乱れることでしょう。
+上述の tate チェックをつけなければ dviout でも乱れません。）
+
+  \item 同様に，dvipdfmx で PDF 化する際も，
+\begin{jquote}
+\begin{verbatim}
+\usepackage[EMdvipdfmx]{emathZ}
+\end{verbatim}
+\end{jquote}
+とロードオプションを附加する必要があります。
+
+  \item dvipsk+distiller で PDF化する際は，
+\begin{jquote}
+\begin{verbatim}
+\usepackage{emathZ}
+\end{verbatim}
+\end{jquote}
+としなければなりません。
+\end{enumerate}
+
+\subsection{角型の縦組}
+
+\showexample[基本例（縦）](0.6)(0.3){example/Zex00t}
+
+
+\showexample[角型（縦）](0.6)(0.3){example/Zex00kt}
+\clearpage
+
+\section{応用例}
+最後に，数学の問題や解説で登場する樹形図をご覧いただきましょう．
+
+\subsection{約数の個数}
+下の例のソースリストは \texttt{example} フォルダ内の
+\texttt{Zex20.tex} をご覧ください．
+
+\input{example/Zex20}
+\clearpage
+
+\subsection{確率樹形図}
+つぎは，確率樹形図の例です．ソースリストは \texttt{Zex21.tex} です．
+
+\input{example/Zex21}
+
+\subsection{トーナメント表}
+次いで，トーナメント表です．ソースリストは \texttt{Zex22.tex} です．
+
+\input{example/Zex22}
+
+最後に少し大きい例です。
+2002サッカーワールドカップの決勝トーナメント結果表です。
+
+\ReadTeXFile{example/wc2T}
+\end{document}

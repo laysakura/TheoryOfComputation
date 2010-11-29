@@ -1,0 +1,530 @@
+% arhako.sty by tDB(emath@nifty.com)
+%
+\@ifundefined{ifpapersize}{\newif\ifpapersize\papersizefalse}{}%
+%
+  \NeedsTeXFormat{LaTeX2e}
+  \ProvidesPackage{arhako}[2010/06/09 v1.13]%
+  \DeclareOption{tpic}{\def\renhako@tpic{}}%
+  \DeclareOption{notMy}{\def\not@My{}}%
+  \DeclareOption{papersize}{\papersizetrue}
+  \ProcessOptions\relax
+  \@ifundefined{renhako@tpic}{}{\RequirePackage{emathPh}}%
+  \RequirePackage{hako}
+%
+\newif\ifh@ko網掛%
+\def\amiHako{\h@ko網掛true\Hako}
+\def\refamiHako{\h@ko網掛true\refHako}
+%
+\edef\hako@nuri@iro{lightgray}
+\def\HakoNuriIro#1{\edef\hako@nuri@iro{#1}}
+\newif\ifh@konuri%
+\def\nuriHako{\h@konuritrue\Hako}
+\def\refnuriHako{\h@konuritrue\refHako}
+%
+\newif\ifren@hako%
+%
+%
+\def\sikirisen@haba{0.2pt}%
+\@ifundefined{renhako@tpic}{%
+  \def\renhako@sikiri#1{%
+    \if m\h@komozisyu
+      \setbox\H@kobox=\hbox{\maru1}%
+    \else
+      \setbox\H@kobox=\hbox{\h@komozisyu}%
+    \fi
+    \templa=\ht\H@kobox\advance\templa\h@koyohaku
+    \templb=\dp\H@kobox\advance\templb\h@koyohaku
+    \kern\h@koyohaku\vrule height \templa width #1 depth \templb}%
+}{%
+% \sikirisen#1#2#3
+%   #1 : 仕切り線を引く描画関数
+%         ex: \empty(=\vrule:default), \drawline,
+%             \hasen, \hasen[L=2pt,G=1pt],....
+%   #2 : 横幅(default=0.2pt)
+%   #3 : ハコに入る，最大の高さを持つ文字
+%
+  \def\sikirisen#1#2#3{%
+    \setbox\H@kobox=\hbox{#3}%
+    \edef\sikirisen@haba{#2}%
+    \templa=\ht\H@kobox\advance\templa\h@koyohaku
+    \templb=\dp\H@kobox\advance\templb\h@koyohaku
+    \ifx\empty#1\relax
+      \setbox\sikiri@box=\hbox{%
+      \vrule height \templa width #2 depth \templb}%
+    \else
+      \edef\sikiri@h{\strip@pt\templa}%
+      \edef\sikiri@d{\strip@pt\templb}%
+      \setbox\sikiri@box=\hbox{%
+        \unitlength=\p@
+        \allinethickness{#2}%
+        \begin{picture}(0,0)\relax
+          #1(0,-\sikiri@d)(0,\sikiri@h)\relax
+        \end{picture}\relax
+      }%
+    \fi
+  }%
+  \newbox\sikiri@box
+  \if m\h@komozisyu
+    \sikirisen{\empty}{.2pt}{\maru1}
+  \else
+    \sikirisen{\empty}{.2pt}{あ}
+  \fi
+  \def\renhako@sikiri#1{{%
+    \if m\h@komozisyu
+      \setbox\H@kobox=\hbox{\maru1}%
+    \else
+      \setbox\H@kobox=\hbox{\h@komozisyu}%
+    \fi
+    \templa=\ht\H@kobox\advance\templa\h@koyohaku
+    \templb=\dp\H@kobox\advance\templb\h@koyohaku
+    \kern\h@koyohaku
+    \ifdim #1>\z@
+      \templa=#1\relax
+      \kern .5\templa
+      \copy\sikiri@box
+      \kern .5\templa
+    \else
+     \vrule height \templa width \z@ depth \templb
+    \fi
+  }}%
+}%
+%
+%
+% 枠線の細い\refrenHako*
+%
+\def\RefrenHako{\@ifnextchar({\@RefrenHako}{\@RefrenHako(\h@koxyohaku)}}
+\def\@RefrenHako(#1)#2{{%
+  \hakosyotai{\mcfamily}\hakosenhaba{0.4pt}\refrenHako*(#1){#2}}}
+%
+\def\renHako{%
+%  \ifh@kosyokika\else%
+%   \errmessage{コマンド：hakosyokika が実行されていません}\fi%
+%   \ifmmode\ifchg@catcode\catcode` =10\fi\fi%
+% \h@ko網掛false
+  \ren@hakotrue\Hako}%
+\def\refrenHako{%
+  \ifh@kosyokika\else%
+    \errmessage{コマンド：hakosyokika が実行されていません}\fi%
+  \ren@hakotrue\refHako}%
+%
+\def\refamirenHako{%
+  \ifh@kosyokika\else%
+    \errmessage{コマンド：hakosyokika が実行されていません}\fi%
+  \h@ko網掛true\ren@hakotrue\refHako}%
+\def\nurirenHako{%
+  \ifh@kosyokika\else%
+    \errmessage{コマンド：hakosyokika が実行されていません}\fi%
+  \h@konuritrue\ren@hakotrue\Hako}%
+\def\refnurirenHako{%
+  \ifh@kosyokika\else%
+    \errmessage{コマンド：hakosyokika が実行されていません}\fi%
+  \h@konuritrue\ren@hakotrue\refHako}%
+%
+%
+\def\@@@@@@@@Hako<#1>(#2)(#3)[#4][#5]"#6"'#7'/#8/{{%
+%  \edef\Hako@label{#4}%
+  \ifx\empty #4
+    \edef\Hako@label{\empty}%
+  \else
+    \edef\Hako@label{\prelabel #4}%
+  \fi
+  \ifx\empty #4\relax
+\@ifundefined{autoHako@label@name}{}{%
+%    \ifx\empty\autoHako@label@name\else
+    \@ifundefined{autoHako@label@num}{}{%
+      \xIncr\autoHako@label@num
+      \edef\Hako@label{\autoHako@label@name\autoHako@label@num}%
+    }%
+%    \fi
+}%
+  \fi
+% \h@ko網掛false
+  \def\h@Hako{0pt}\def\d@Hako{0pt}%
+  \edef\left@str{\empty}%
+  \edef\width@Hako{\width@Hako@}%
+  \Strchr{#2}{=}\tmp@Hako
+  \ifnum\tmp@Hako>\z@
+    \def\w@Hako{\h@koxyohaku}%
+    \define@key{emH}{W}{\def\w@Hako{##1}}%
+    \define@key{emH}{width}{\def\width@Hako{##1}}%
+    \define@key{emH}{H}{\def\h@Hako{##1}}%
+    \define@key{emH}{D}{\def\d@Hako{##1}}%
+    \define@key{emH}{leftstr}{\def\left@str{##1}}%
+    \setkeys{emH}{#2}%
+    \ifdim\h@Hako>\z@\hakosityuu{\vrule width\z@ height\h@Hako depth\d@Hako}\fi
+    \ifdim\d@Hako>\z@\hakosityuu{\vrule width\z@ height\h@Hako depth\d@Hako}\fi
+  \else
+    \def\w@Hako{#2}%
+  \fi
+  \ifmmode\ifchg@catcode\catcode` =10\fi\fi%
+  \EMedef\hako@moziretu{\left@str}%
+%  \def\hako@@@moziretu{\empty}%
+  \EMedef\hako@@@moziretu{\left@str}%
+    \setcounter{xh@koban}{\c@hakoban}%
+    \setcounter{xh@kobanaiu}{\c@hakobanaiu}%
+    \setcounter{xh@kobaniro}{\c@hakobaniro}%
+    \setcounter{xh@kobanAIU}{\c@hakobanAIU}%
+    \setcounter{xh@kobanIRO}{\c@hakobanIRO}%
+    \setcounter{xh@kobanara}{\c@hakobanara}%
+    \setcounter{xh@kobanalp}{\c@hakobanalp}%
+    \setcounter{xh@kobanrma}{\c@hakobanrma}%
+    \setcounter{xh@kobanALP}{\c@hakobanALP}%
+    \setcounter{xh@kobanRMA}{\c@hakobanRMA}%
+    \setcounter{xh@kobanmar}{\c@hakobanmar}%
+    \setcounter{xh@kobankan}{\c@hakobankan}%
+  \if#8z\edef\m@zisyu{\h@komozisyu}\else\def\m@zisyu{#8}\fi%
+\ifx\empty #6%
+  \def\m@ziretu{}%
+  \def\m@@@ziretu{}%
+  \let\m@@ziretu=\empty%
+  \@kosuuban=0\relax%
+  \ifx\empty#1\setcounter{hako@mozisuu}{1}\else\setcounter{hako@mozisuu}{#1}\fi
+  \ifcentermode\ifx\empty#1\strlen{#7}\hako@tmp
+    \setcounter{hako@mozisuu}{\hako@tmp}\fi\fi%
+  \@whilenum\@kosuuban<\value{hako@mozisuu}\do{%
+    \ifren@hako\ifnum\@kosuuban>0\relax%
+      \EMedefappend\m@ziretu{\renhako@sikiri{\sikirisen@haba}%
+          \kern\h@koyohaku}%
+    \else
+      \EMedefappend\m@ziretu{\renhako@sikiri{\z@}}%
+    \fi\fi%
+    \stepcounter{hakoban}%
+    \let\@c=\empty%
+    \advance\@kosuuban by\@ne\relax%
+    \expandafter\@tfor\expandafter\@c\expandafter:\expandafter=\m@zisyu%
+    \do {%
+            \ifx\@c\@aiueo%               /ア/    ア,イ,ウ,エ,オ,・・・
+              \stepcounter{hakobanaiu}%
+              \EMedef\Hako@c{\カタカナ{hakobanaiu}}%
+            \else\ifx\@c\@iroha%
+              \stepcounter{hakobaniro}%
+              \EMedef\Hako@c{\イロハ{hakobaniro}}%
+            \else\ifx\@c\@AIUEO%
+              \stepcounter{hakobanAIU}%
+              \EMedef\Hako@c{\ひらがな{hakobanAIU}}%
+            \else\ifx\@c\@IROHA%
+              \stepcounter{hakobanIRO}%
+              \EMedef\Hako@c{\いろは{hakobanIRO}}%
+            \else\ifx\@c\@kan%
+              \stepcounter{hakoban}%
+              \EMedef\Hako@c{\いろは{hakobankan}}%
+            \else\if\@c a%
+              \stepcounter{hakobanalp}%
+              \EMedef\Hako@c{\alph{hakobanalp}}%
+            \else\if\@c A%
+              \stepcounter{hakobanALP}%
+              \EMedef\Hako@c{\Alph{hakobanALP}}%
+            \else\if\@c 1%
+              \stepcounter{hakobanara}%
+              \EMedef\Hako@c{\protect\hakofmt{\arabic{hakobanara}}}%
+            \else\if\@c i%
+              \stepcounter{hakobanrma}%
+              \EMedef\Hako@c{\roman{hakobanrma}}%
+            \else\if\@c I%
+              \stepcounter{hakobanRMA}%
+              \EMedef\Hako@c{\Roman{hakobanRMA}}%
+            \else\if\@c m%
+              \stepcounter{hakobanmar}%
+              \EMedef\Hako@c{\protect\hakomaru{\the\c@hakobanmar}}%
+            \else%
+              \EMedef\Hako@c{\@c}%
+            \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            \@ifundefined{HakoFunc\romannumeral\@kosuuban}{%
+              \EMedefappend\m@ziretu{\Hako@c}%
+              \ifx\empty\m@@@ziretu
+                \EMedefappend\m@@@ziretu{\Hako@c}%
+              \else
+                \EMedefappend\m@@@ziretu{{\hakokai@kugiri}\Hako@c}%
+              \fi
+            }{%
+              \EMedefappend\m@ziretu{\csname HakoFunc\romannumeral\@kosuuban\endcsname{\Hako@c}}%
+              \EMedefappend\m@@@ziretu{\csname HakoFunc\romannumeral\@kosuuban\endcsname{\Hako@c}}%
+              \global\expandafter\let\csname HakoFunc\romannumeral\@kosuuban\endcsname\undefined
+            }%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    }%
+%    \advance\@kosuuban by 1 \relax%
+  }%
+  \EMedefappend\hako@moziretu{\m@ziretu}\EMedefappend\hako@@@moziretu{\m@@@ziretu}%
+%  \ifx\empty #4\else%
+%        {\ifx\m@@ziretu\empty\def\m@@ziretu{\hako@moziretu}\fi%
+%%        \writeLabel{#4}{\m@@ziretu}%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 09/03/25 ???
+%        }%
+%  \fi%
+{\ifx\empty \Hako@label\else\writeLabel{\Hako@label}{\hako@moziretu}\fi}%
+  \ifx\empty #5\else%            個別ラベルの出力
+    \@for\@dummy:=#5\do{%
+        \stepcounter{xh@koban}%
+        \def\m@ziretu{}%
+        \let\@c=\empty%
+    \expandafter\@tfor\expandafter\@c\expandafter:\expandafter=\m@zisyu%
+    \do {%
+            \ifx\@c\@aiueo%
+              \stepcounter{xh@kobanaiu}%
+              \EMedef\Hako@c{\カタカナ{xh@kobanaiu}}%
+            \else\ifx\@c\@iroha%
+              \stepcounter{xh@kobaniro}%
+              \EMedef\Hako@c{\イロハ{xh@kobaniro}}%
+            \else\ifx\@c\@AIUEO%
+              \stepcounter{xh@kobanAIU}%
+              \EMedef\Hako@c{\ひらがな{xh@kobanAIU}}%
+            \else\ifx\@c\@IROHA%
+              \stepcounter{xh@kobanIRO}%
+              \EMedef\Hako@c{\いろは{xh@kobanIRO}}%
+            \else\ifx\@c\@kan%
+              \stepcounter{xh@koban}%
+              \EMedef\Hako@c{\いろは{xh@kobankan}}%
+            \else\if\@c a%
+              \stepcounter{xh@kobanalp}%
+              \EMedef\Hako@c{\alph{xh@kobanalp}}%
+            \else\if\@c A%
+              \stepcounter{xh@kobanALP}%
+              \EMedef\Hako@c{\Alph{xh@kobanALP}}%
+            \else\if\@c 1%
+              \stepcounter{xh@kobanara}%
+              \EMedef\Hako@c{\arabic{xh@kobanara}}%
+            \else\if\@c i%
+              \stepcounter{xh@kobanrma}%
+              \EMedef\Hako@c{\roman{xh@kobanrma}}%
+            \else\if\@c I%
+              \stepcounter{xh@kobanRMA}%
+              \EMedef\Hako@c{\Roman{xh@kobanRMA}}%
+            \else\if\@c m%
+              \stepcounter{xh@kobanmar}%
+              \EMedef\Hako@c{\protect\hakomaru{\the\c@xh@kobanmar}}%
+            \else%
+              \EMedef\Hako@c{\@c}%
+            \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \ifren@hako
+      \EMedefappend\m@ziretu{\renhako@sikiri{\z@}}%
+    \fi%
+            \EMedefappend\m@ziretu{\Hako@c}%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    }%
+%    \immediate\write\@auxout{\string\newlabel{\@dummy}%
+%        {{\m@ziretu}{\arabic{page}}}}%
+    \writeLabel{\prelabel\@dummy}{\m@ziretu}%
+    }%
+  \fi%
+\else\def\hako@moziretu{#6}\def\m@@ziretu{#6}\fi
+\ifx\empty #7\else\if@push\else
+  \ifkai@mode\else\openHakoKaiFile\fi%
+  \ifcentermode
+    \expandafter\verbatimR@addtoline\expandafter{\hako@@@moziretu,#7}%
+    \immediate\write\hako@kai@hndl{\the\verbatim@line}%
+    \verbatim@startline
+  \else
+    \IFempty{\m@@ziretu}{%
+%    \expandafter\verbatimR@addtoline\expandafter{\m@ziretu,#7}%
+     \expandafter\verbatimR@addtoline\expandafter{\hako@@@moziretu,#7}%
+      \immediate\write\hako@kai@hndl{\the\verbatim@line}%
+      \verbatim@startline
+    }{%
+    \edef\@@@tmp{\m@@ziretu}%
+    \expandafter\verbatimR@addtoline\expandafter{\@@@tmp,#7}%
+    \immediate\write\hako@kai@hndl{\the\verbatim@line}%
+    \verbatim@startline
+    }%
+%    \expandafter\verbatimR@addtoline\expandafter{\hako@@@moziretu,#7}%
+%    \immediate\write\hako@kai@hndl{\the\verbatim@line}%
+%    \verbatim@startline
+  \fi
+\fi\fi
+  \ifren@hako{%
+   \EMedefappend\hako@moziretu{\renhako@sikiri{0pt}}%
+    \def\h@koyohaku{0pt}\hak@(\z@)(c){\hako@moziretu}}%\ren@hakofalse%
+  \else\hak@(\w@Hako)(#3){\hako@moziretu}\fi%
+}\ren@hakofalse
+}%
+
+\def\hak@(#1)(#2)#3{{%
+    \setlength{\fboxrule}{\h@kosenhaba}%
+    \setlength{\fboxsep}{\h@koyohaku}%
+    \setlength{\h@koraise}{0pt}%
+%   \hako@skipa=#1\relax\divide\hako@skipa 2\relax
+\ifx\empty\width@Hako
+    \hako@skipa=#1\relax\divide\hako@skipa 2\relax
+\else
+    \settowidth\@tempdima{\h@kosyotai{#3}}%
+    \hako@skipa=\width@Hako\advance\hako@skipa-\@tempdima
+    \divide\hako@skipa 2\relax
+\fi
+    \h@ko上付false%
+    \h@ko左寄false%
+    \h@ko左外false%
+    \h@ko縦仕切false%
+    \headchar{#2}\@top\@remain
+    \if r\@top\setlength{\h@koraise}{\@remain}\else%
+      \@tfor\@c:=#2\do{%
+        \if\@c L%
+            \h@ko左外true%
+        \else\if\@c ^%
+            \h@ko上付true%
+        \else\if\@c l%
+            \h@ko左寄true%
+        \else\if\@c |%
+            \h@ko縦仕切true%
+        \else\if\@c b%
+          \setlength{\h@koraise}{\fboxsep}%
+          \addtolength{\h@koraise}{\fboxrule}%
+        \else\if\@c t%
+          \setlength{\h@koraise}{-\fboxsep}%
+          \addtolength{\h@koraise}{-\fboxrule}%
+        \fi\fi\fi\fi\fi%
+        \fi%
+      }%
+  \fi%
+    \kern\hako@sep%
+    \ifh@ko左外%
+      \ensuremath{{\vrule width 0pt height .5\baselineskip}%
+        ^{\text{\h@kosityuu\h@kosyotai{#3}}}}%
+        \hakoframe{\h@kosityuu\kern\hako@skipa{　}\kern\hako@skipa}%
+%
+    \else\ifh@ko上付%
+        \hakoframe{\h@kosityuu${}^{\text{\h@kosyotai{#3}}}$%
+          \kern\hako@skipa\kern\hako@skipa}%
+    \else\ifh@ko左寄%
+        \ifh@ko縦仕切%
+            \ensuremath{\text{\hakoframe{%
+                \h@kosityuu\h@kosyotai{#3}}}}%
+                \kern-1pt
+                \ensuremath{\text{\hakoframe{%
+                \vphantom{\h@kosityuu\h@kosyotai{#3}}
+                \h@kosityuu\h@kosyotai{#3}\vphantom{\h@kosyotai{#3}}%
+                \kern\hako@skipa\kern\hako@skipa}}}%
+        \else%
+            \ensuremath{\text{\hakoframe{%
+                \h@kosityuu\h@kosyotai{#3}\kern\hako@skipa\kern\hako@skipa}}}%
+       \fi%
+    \else%
+      \ifdim\h@koraise=\z@%
+        \ifh@ko網掛%
+            \mask{\ensuremath{\text{\hakoframe{%
+              \h@kosityuu\kern\hako@skipa\h@kosyotai{#3}\kern\hako@skipa}}}}{B}%
+        \else
+          \bgroup
+            \ifh@konuri
+              \def\hakoframe##1{\fcolorbox{black}{\hako@nuri@iro}{##1}}%
+            \fi
+            \ensuremath{\text{%
+              \setlength{\fboxsep}{\h@koyohaku}%
+%             \hako@skipa=#1\relax\divide\hako@skipa 2\relax
+              \hakoframe{%
+              \h@kosityuu\kern\hako@skipa\h@kosyotai{%
+              \protect\hako@out{#3}\kern\hako@skipa}}}}%
+          \egroup
+        \fi
+      \else\ensuremath{\text{%\hako@skipa=#1\relax\divide\hako@skipa 2\relax
+          \setlength{\fboxsep}{\h@koyohaku}%
+          \raisebox{\h@koraise}{\hakoframe{%
+          \h@kosityuu\kern\hako@skipa
+              \h@kosyotai{{\protect\hako@out{#3}}}\kern\hako@skipa}}}}%
+      \fi%
+    \fi\fi\fi%
+    \kern\hako@sep%
+  }%
+  \ifh@ko網掛\global\h@ko網掛false\fi%
+  \ifh@konuri\global\h@konurifalse\fi%
+}%
+
+\def\@@@@refHako@a(#1)(#2)/#3/#4{{%
+  \edef\Hlbl@nm{\prelabel #4}%
+  \edef\width@Hako{\width@Hako@}%
+   \ifren@hako{%
+    \def\h@koyohaku{0pt}\hak@(\z@)(c){\ref{\Hlbl@nm}\,}}%\ren@hakofalse%
+%    \def\h@koyohaku{0pt}\hak@(\z@)(c){\strut\ref{#4}\,}}\ren@hakofalse%
+%%  \ifren@hako
+%%   \def\h@koyohaku{0pt}\hak@(\z@)(c){\!\ref{#4}}\ren@hakofalse
+  \else
+%    \expandafter\ref@chk\csname r@#4\endcsname
+    \expandafter\ref@chk\csname r@\Hlbl@nm\endcsname
+    \if 1\@miteigi
+        \protect\G@refundefinedtrue
+        \nfss@text{\reset@font\bfseries ??}%
+      \@latex@warning{Reference `#4' on page \thepage \space
+             undefined}%
+        \hak@(#1)(#2){1}%
+    \else
+      \protected@edef\tmp@@{\protect\ref{\Hlbl@nm}}%
+      \hak@(#1)(#2)\tmp@@
+    \fi
+  \fi
+}\ren@hakofalse}%
+%
+\def\kitiHako{\@ifnextchar[{\@kitiHako}{\@kitiHako[r]}}%
+\def\@kitiHako[#1]#2{%
+  \edef\width@Hako{\width@Hako@}%
+  \if r#1\relax\hspace{-.2em}\hspace{-.4pt}%
+  \fi
+  \hak@(0pt)(c){\makebox[1zw]{#2}}%
+  \if r#1\relax\hspace{\hako@sep}%
+  \else\if l#1\relax\hspace{-.2em}\hspace{-.4pt}%
+  \fi\fi
+  }%
+%
+\def\HakoKaiKugiri#1{\edef\hakokai@kugiri{#1}}%
+%
+\endinput
+
+v 0.84
+    \renHako : \hakosyokika のチェックを外す。（\Hako に任せる。）
+v 0.85
+    (#2)に，key=val が含まれる場合に対応
+v 0.86
+    \hakokaisyotai 導入に伴う改変
+v 0.87
+    notMy オプション
+v 0.88
+    \refrenHako* 余白調整
+v 0.89 2005/02/07
+    丸囲み数字をセンターモードで使用する試み
+v 0.90 2005/02/08
+    丸囲みを2桁でも
+v 0.91 2005/04/04
+    ロードオプション tpic : \renHako の仕切り線を tpic で
+v 0.92 2005/04/07
+    ロードオプション tpic : デフォルトは \vrule （tpic 不要）
+v 0.93 2005/06/25
+    \hakomozisyu{m}に対する修正
+v 0.94 2005/07/03
+    \ren@hakofalse のタイミング修正
+v 0.95 2005/09/03
+    丸付き数字使用に対する修正
+v 0.96 2005/11/03
+    \tmHako に対応
+v 0.97 2005/12/02
+    \refamiHako
+v 0.98 2006/03/06
+    \HakoFunci, ii, iii ... でハコ文字を修飾する機能を付加
+v 0.99 2006/04/14
+    \refamirenHako 新設
+v 1.00 2006/04/25
+    \RefrenHako : 枠線の細い \refrenHako*
+v 1.01 2006/05/13
+    \nuriHako
+v 1.02 2006/06/05
+    \AstHako, \astHako に対応
+v 1.03 2006/06/21
+    \widthHako, (widthHako=..)
+v 1.04 2007/03/30
+    個別相互参照の\renHako 対応
+v 1.05 2007/04/15
+    "#6"を指定した場合の処理
+v 1.06 2007/08/06
+    \m@@@ziretu : \, で区切る
+v 1.07 2008/03/24
+    \strlen の仕様変更に対応
+v 1.08 2009/01/25
+    \autoHakolabel 対応
+v 1.09 2009/03/25
+    ラベル出力が二重になっているのを修正 (BBS #8046)
+v 1.10 2010/01/24
+    ラベルに \jobname をかぶせる。
+v 1.11 2010/03/21
+    prelabel
+v 1.12 2010/03/24
+    autoHakolabel としていない場合には，ラベルを発行しない。
+v 1.13 2010/06/09
+    \HakoKaiKugiri

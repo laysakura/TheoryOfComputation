@@ -1,0 +1,38 @@
+\documentclass{jarticle}
+\usepackage{graphicx,color}
+\usepackage{emathT}
+
+\makeatletter
+\newcounter{tateNagareBan}
+\def\tateNagare{\@testopt\@tateNagare{0}}
+\def\@tateNagare[#1]{%
+  \setbox0=\hbox{\gyousityuu}%
+  \@tempdima\ht0
+  \advance\@tempdima\dp0
+  \advance\@tempdima-4.5pt\relax%       流れ線の終点：baseline より 4.5pt 上
+  \edef\TN@hd{\strip@pt\@tempdima}%
+  \Addself\TN@hd{#1}%
+  \refstepcounter{tateNagareBan}
+  \begin{zahyou*}[ul=1pt](0,8)(0,0)
+    \tenretu*{A(0,2);B(0,-\TN@hd)}%     流れ線の始点：baseline より 2pt 上
+    \HenKo<henkotype=bracket,yazirusi=r,putoption={[e]}>\B\A{\tmaru{\thetateNagareBan}}
+  \end{zahyou*}
+}
+\makeatother
+
+\begin{document}
+\setbox0=\hbox{$\bunsuu14$}
+\gyoudaka[\the\dp0]{24pt}
+\begin{enumerate}[(1)]
+  \item $\begin{array}[t]{>{\gyousityuu}r@{}>{{}}c<{{}}@{}l@{\ }l}
+    2x-5 &=& 15 & \tateNagare\\
+      2x &=& 20 & \tateNagare\\
+       x &=& 10 
+  \end{array}$
+  \item $\begin{array}[t]{>{\gyousityuu}r@{}>{{}}c<{{}}@{}l@{\ }l}
+    \bunsuu14x+3 &=& 10 & \tateNagare\\
+      \bunsuu14x &=& 7  & \tateNagare\\
+               x &=& 28
+  \end{array}$
+\end{enumerate}
+\end{document}

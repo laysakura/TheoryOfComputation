@@ -1,0 +1,223 @@
+\section{空間座標}
+\subsection{\textsf{Zahyou} 環境}
+\textsf{zahyou}環境が平面座標を扱ったのに対して，
+\textsf{Zahyou}環境は空間座標を扱います。
+
+単純な例です。
+
+\showexample[空間座標](0.58)(0.36){example/zahyou31}
+
+簡単に解説します。
+
+まず，\textsf{Zahyou}環境は
+\index{Zahyou@Zahyou 環境}
+\begin{jquote}
+$x$の範囲，$y$の範囲，$z$の範囲
+\end{jquote}
+を\vspace{-\baselineskip}
+\begin{jquote}
+\begin{verbatim}
+(xの下限,xの上限),(yの下限,yの上限),(zの下限,zの上限)
+\end{verbatim}
+\end{jquote}
+の形で与えます。これらの値は，\textsf{Zahyou}環境内では，順に
+\begin{jquote}
+\begin{verbatim}
+\Xmin, \Xmax, \Ymin, \Ymax, \Zmin, \Zmax
+\end{verbatim}
+\end{jquote}
+で引用することができます。
+
+点は \verb/\def\P{(1,2,3)}/のように3次元ベクトルで与えます。
+
+次いで，\verb/\iiiKuromaru\P/で点Pに黒丸を打ちます。\cindex{iiiKuromaru}
+座標平面で定義された多くのコマンドの先頭に\texttt{`iii'}をつけた
+空間座標用のコマンドが定義されています。現時点で定義されているコマンドは
+次の通りです。\vspace{-.5\baselineskip}
+\begin{jquote}
+\begin{verbatim}
+\iiiPut, \iiiPutStr
+\iiiBunten
+\iiiDrawline, \iiiDashline, \iiiArrowLine
+\iiiTyokkakukigou, \iiiHenKo
+\iiiKuromaru, \iiiSiromaru
+\iiiKyori, \iiiKyorii
+\iiiAddvec, \iiiSubvec, \iiiMulvec
+\iiiNuritubusi
+\iiibGurafu
+\end{verbatim}
+\end{jquote}
+\cindex{iiiPut}\cindex{iiiPutStr}
+\cindex{iiiKyori}\cindex{iiiKyorii}
+\cindex{iiiBunten}
+\cindex{iiiDrawline}\cindex{iiiDashline}\cindex{iiiArrowLine}
+\cindex{iiiTyokkakukigou}\cindex{iiiHenKo}
+\cindex{iiiKuromaru}\cindex{iiiSiromaru}
+\cindex{iiiKyori}\cindex{iiiKyorii}\cindex{iiiNuritubusi}
+\cindex{iiiAddvec}\cindex{iiiSubvec}\cindex{iiiMulvec}
+
+空間特有のコマンドについては，次節以降でとりあげます。
+
+さて，座標軸の向き，単位長の変更についてのオプション機能です。
+
+\textsf{Zahyou}環境の\texttt{[...]}オプションで$x$, $y$, $z$軸の
+単位ベクトルを指定できるようにしてあります。
+ただし，それらは描画する平面を座標平面と見立てての成分表示です。
+デフォルトでは
+\begin{jquote}
+\begin{verbatim}
+z軸：(0, 1)
+y軸：(1, 0)
+x軸は \kyokuTyoku(.667,-138)
+\end{verbatim}
+\end{jquote}
+となっています。これを変更してみます。
+
+\showexample[基本単位ベクトルの変更](0.58)(0.36){example/zahyou32}
+
+\subsection{角錐}
+角錐を描画するのにコマンド\cmd{Kakusui}を用意しました。
+O(0, 0, 0), A(1, 0, 0), B(0, 1, 0)を頂点とする三角形OABを底面とし，
+C(0, 0, 1)を頂点とする角錐---四面体を描画してみます。
+
+\showexample[角錐](0.58)(0.36){example/kakusui3}
+
+ここでは，座標軸を描画しないように指定するのに，
+\cmd{Drawaxisfalse}としています。
+
+\cmd{Kakusui}の書式です。\cindex{Kakusui}
+\begin{boxnote}
+\begin{verbatim}
+\Kakusui<#1>#2#3#4
+   #1 : 角錐台を描画する際の切断面の位置 (0〜1)
+   #2 : 見える頂点列
+   #3 : 見えない頂点列
+   #4 : 錐の頂点
+\end{verbatim}
+\end{boxnote}
+
+図の見えない部分の点線のスタイルは，デフォルトでは
+
+\begin{jquote}
+\begin{verbatim}
+\def\iiiTensen{\iiiDashline[40]{.1}}
+\end{verbatim}
+\end{jquote}
+となっていますが，これを再定義してみます。
+\cindex{iiiTensen}
+
+\showexample[\cmd{iiiTensen}の再定義](0.58)(0.36){example/kakusui4}
+
+\subsection{角柱}
+立方体，直方体，平行六面体を描画するために\cmd{Kakutyuu}を用意
+してあります。平行六面体を描画してみます。
+
+\showexample[角柱](0.58)(0.36){example/kakutyu3}
+
+直方体ではないことを示すため，$z$軸方向の単位ベクトルを
+変更した斜交座標系を用いています。
+
+\cmd{Kakutyuu}の書式です。\cindex{Kakutyuu}
+\begin{boxnote}
+\begin{verbatim}
+\Kakutyuu#1#2#3
+   #1 : 見える頂点列
+   #2 : 見えない頂点列
+   #3 : 高さベクトル
+\end{verbatim}
+\end{boxnote}
+
+
+
+\subsection{直線と平面の交点}
+直線と平面の交点を求めるコマンドは，次の4つを用意してあります。
+\begin{jquote}
+\cmd{PandL}, \cmd{Pandl}, \cmd{pandL}, \cmd{pandl}
+\end{jquote}
+ここで，
+\begin{jquote}
+\texttt P は3点を指定した平面\\
+\texttt p は点と法線ベクトルを指定した平面\\
+\texttt L は2点を指定した直線\\
+\texttt l は点と方向ベクトルを指定した直線
+\end{jquote}
+を意味します。
+
+一例として直方体OABC-DEFGの対角線OFと3点A, C, Dを含む平面との
+交点Pを描画してみます。
+
+
+\showexample[直線と平面](0.52)(0.425){example/PandL01}
+
+書式です。
+\cindex{iiiKuromaru}\cindex{iiiSiromaru}
+\begin{boxnote}
+\begin{verbatim}
+\PandL#1#2#3#4#5#6
+    3点#1, #2, #3を通る平面と，
+    2点#4, #5を通る直線との交点を#6に
+\Pandl#1#2#3#4#5#6
+    3点#1, #2, #3を通る平面と，
+    点#4を通り方向ベクトルが#5の直線との交点を#6に
+\pandL#1#2#3#4#5
+    点#1を通り法線ベクトルが#2の平面と，
+    2点#3, #4を通る直線との交点を#5に
+\pandl#1#2#3#4#5
+    点#1を通り法線ベクトルが#2の平面と，
+    点#3を通り方向ベクトルが#4の直線との交点を#5に
+\end{verbatim}
+\end{boxnote}
+
+
+\subsection{垂線}
+座標平面で，点から直線に下した垂線の足を求めるコマンド\cmd{Suisen}の
+3次元版の話しです。
+
+書式です。
+\cindex{LSuisen}\cindex{lSuisen}\cindex{PSuisen}\cindex{pSuisen}
+\begin{boxnote}
+\begin{verbatim}
+\LSuisen#1#2#3#4
+    点 #1 から直線 #2#3 へ下ろした垂線の足を #4 にセット
+\lSuisen#1#2#3#4
+    点#1から，点#2を通り，方向ベクトルが#3の直線への垂線
+    の足を #4 にセット
+\pSuisen#1#2#3#4
+    点#1から，#2を通り法線ベクトルが#3である平面
+    に下ろした垂線の足を#4に与える。
+\PSuisen#1#2#3#4#5
+    点#1から，三点#2,#3,#4を通る平面
+    に下ろした垂線の足を#5に与える。
+\end{verbatim}
+\end{boxnote}
+
+例として，四面体OABCの頂点Oから底面ABCに下した垂線OPと，
+Oから線分ABに下した垂線OHを作図します。
+
+\showexample[垂線](0.58)(0.36){example/PSuisen1}
+
+\subsection{空間曲線}
+座標平面で媒介変数表示された曲線を描画するコマンド\cmd{bGurafu}
+の3次元版が\cmd{iiibGurafu}です。書式は\cindex{iiibGurafu}
+
+\begin{boxnote}
+\begin{verbatim}
+\iiibGurafu(#1)(#2)#3#4#5#6#7
+   #1 : t の刻み値（デフォルト値は 0.05 ）
+   #2 : 点線で描画するときの描画する部分の t のレンジ
+   #3 : x=f(t)
+   #4 : y=g(t)
+   #5 : z=h(t)
+   #6 : t の始め値
+   #7 :     終り値
+\end{verbatim}
+\end{boxnote}
+
+具体例として，円柱螺旋を描画してみましょう。
+
+\showexample[円柱螺旋](1)(0.9){example/rasen31}
+
+なお，空間曲線を近似する折れ線を得るコマンド
+\cmd{iiiBKinziOresen}もありますが，これは \textsf{perl} との
+連携機能を必要とします。
+\cindex{iiiBKinziOresen}

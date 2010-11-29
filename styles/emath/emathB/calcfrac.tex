@@ -1,0 +1,55 @@
+\documentclass{jarticle}
+\usepackage{emathB}
+\usepackage{emathEy}
+\usepackage{emathAe}
+\usepackage{verbatim}
+
+\makeatletter
+\newwrite\Fkeisan@hndl
+\let\prfunc\prFK%   答の出力に用いるダミー関数の指定(仮分数表示を指定)
+%\let\prfunc\prFT%  答の出力に用いるダミー関数の指定(帯分数表示を指定)
+\def\Fkeisan{\@ifnextchar<{\@Fkeisan}{\@Fkeisan<M>}}
+\def\@Fkeisan<#1>#2{%
+  \if A#1\relax
+    \immediate\openout\Fkeisan@hndl=\jobname.tmp%
+    \immediate\write\Fkeisan@hndl{\string\Fkeisan{#2}}%
+    \immediate\write\Fkeisan@hndl{%
+      \string\kaitou{\string\Fcalc#2=\string\kotae
+      $\string\prfunc\string\kotae$}}%
+    \immediate\closeout\Fkeisan@hndl\input{\jobname.tmp}%
+  \else
+    $\prFkeisanSiki{#2}$%
+  \fi
+}
+\makeatother
+
+\begin{document}
+\openKaiFile
+次の計算をせよ．
+\setKaienum{edaenumerate<3>}
+\edef\x{(1/2)}%
+\edef\a{(1/3)}%
+\edef\b{(1/4)}%
+\edef\c{(1/5)}%
+\edef\d{(1/6)}%
+\edef\e{(1/7)}%
+\edef\f{(1/8)}%
+\begin{edaenumerate}[(1)]
+  \item \Fkeisan<A>{(1/2)-(2/3)}
+  \item \Fkeisan<A>{(1/2)-(1/3)*(3/4)}% 乗算優先
+  \item \Fkeisan<A>{(1/2)-(1/3)/(3/4)}% 除算優先
+  \item \Fkeisan<A>{(1/2)*((1/3)+(3/4))}% 括弧優先
+  \item \Fkeisan<A>{((1/2)+(3/4))*((1/4)+(3/5))}
+  \item \Fkeisan<A>{(1/2)-((1/3)-((3/4)-(4/5)))}%         二重括弧
+  \item \Fkeisan<A>{(1/2)-((1/3)-((3/4)-((4/5)-(5/6))))}% 三重括弧
+  \item \Fkeisan<A>{(1.5)-(2/3)}%                         小数・分数混合
+  \item<1>  \Fkeisan<A>{\a*\x+\b}%  一次関数値
+  \item<1>  \Fkeisan<A>{(\a*\x+\b)*\x+\c}%  二次関数値
+  \item<1>  \Fkeisan<A>{((\a*\x+\b)*\x+\c)*\x+\d}%  三次関数値
+  \item<1>  \Fkeisan<A>{(((\a*\x+\b)*\x+\c)*\x+\d)*\x+\e}%  四次関数値
+\end{edaenumerate}
+\closeKaiFile
+\hrule
+\begin{center}【答】\end{center}
+\inputKaiFile
+\end{document}

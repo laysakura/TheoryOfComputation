@@ -1,0 +1,46 @@
+%%% 考査用紙スタイル Ｂ４横三段組 サンプルファイル
+%%% 複数ページの例です．
+
+\documentclass[b4paper,landscape,fleqn]{jarticle}
+\usepackage[papersize]{emath}%
+\usepackage{b4yoko3}%
+
+\begin{document}
+%%% step 0 ------------------------------------------------------------
+%%% テストが複数ページのとき，ページ番号を印刷するか否かのフラッグ
+%\prpagetrue% ページを印刷するときは行頭の % を削除する．
+%
+\testname{\ 1学年『数学I』二学期中間考査\ \ 1998.10.22(木)\ }%
+\begin{sheet}
+  \begin{column}
+    \item 1段目の1問目です．\vspace{10cm}
+    \item 1段目の2問目です．
+  \end{column}%
+  \begin{column}%
+    \item 2段目のはじめの問題です．
+        \begin{enumerate}
+            \item 小問1 \vspace{4.5cm}
+            \item 小問2 \vspace{4.5cm}
+        \end{enumerate}
+    \item 2段目の次の問題です．
+  \end{column}%
+  \begin{column}%
+    \item 3段目の問題です．
+  \end{column}%
+\end{sheet}
+\begin{sheet}%  二枚目です．
+  \begin{column}
+    \item 2ページ目の1段目の1問目です．\vspace{10cm}
+    \item 2ページ目の1段目の2問目です．
+  \end{column}%
+  \begin{column}%
+    \item 2ページ目の2段目の問題です．\vspace{5cm}
+    \item 2ページ目の2段目の問題です．\vspace{5cm}
+    \item ここで問題番号が2桁になります．
+  \end{column}%
+  \begin{column}% 2ページ目が2段で終りで，3段目が無いときは
+                % 3段目の記述は省略することができます．
+    \item 2ページ目の3段目の問題です．
+  \end{column}%
+\end{sheet}% 二枚目の終りです．
+\end{document}

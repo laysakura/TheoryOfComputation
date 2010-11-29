@@ -1,0 +1,81 @@
+\documentclass[a4j]{jarticle}
+\usepackage{color}
+\usepackage{emathPp}
+\usepackage{emathG}
+\usepackage{emathR}
+\usepackage{showexample}
+
+\begin{document}
+\section{newPh248 --- クロスの斜線塗り}
+\subsection{斜線の方向角を複数指定}
+\cmd{Nuritubusi*}の斜線方向角をコンマ区切りで複数指定することを
+可能としました。
+
+\begin{showEx}(.7,.24){\texttt{[30,-30]}オプション}
+\begin{zahyou*}[ul=5mm](-2,2)(-2,2)
+  \Nuritubusi*[30,-30]<border=y>{\LT\LB\RB\RT}
+\end{zahyou*}
+\end{showEx}
+
+\begin{showEx}(.7,.24){2つとは限りません}
+\begin{zahyou*}[ul=5mm](-2,2)(-2,2)
+  \Nuritubusi*[0,45,90,135]<border=y>{\LT\LB\RB\RT}
+\end{zahyou*}
+\end{showEx}
+\newpage
+
+\subsection{帯グラフへの適用}
+はじめの例は
+\begin{jquote}
+\begin{verbatim}
+  \Nuritubusi*[30]{\LT\LB\RB\RT}
+  \Nuritubusi*[-30]<border=y>{\LT\LB\RB\RT}
+\end{verbatim}
+\end{jquote}
+と，2回発行すればよい，と思っていたのですが，
+現在試作中の帯グラフを描画するスタイル\textsf{emathG.sty}
+では，2回発行は面倒ですから，一度で済ますことを可能としました。
+
+\begin{showEx}(.9,.9){帯グラフ}
+%
+% emathG.sty v 0.03α を使用する場合の塗りパターン指定
+%
+   \def\NuriFi{*[0]}
+   \def\NuriFii{*[-45,45]}
+   \def\NuriFiii{*[90]}
+%
+% emathG.sty v 0.02α を使用する場合の塗りパターン指定
+%
+%  \def\ObiNuriFi{\Nuritubusi*[0]}
+%  \def\ObiNuriFii{\Nuritubusi*[45,-45]}
+%  \def\ObiNuriFiii{\Nuritubusi*[90]}
+%
+  \begin{ObiGurafu}{ex1}
+    \Obi{A}{10,20,30}
+    \Obi{B}{15,15,10}
+  \end{ObiGurafu}
+\end{showEx}
+\newpage
+
+\subsection{\cmd{YNurii*}などでも可}
+領域塗りつぶしコマンドでも，複数の方向角を指定することができます。
+
+\begin{showEx}(.5,.44){\cmd{YNurii*}で複数の方向角}
+\begin{zahyou}[ul=6mm](-3,3)(-1,6)
+  \def\Fx{X*X}
+  \def\Gx{2-X}
+  \YNurii*[60,-30]\Fx\Gx{-2}{1}
+  \YGurafu*\Fx
+  \YGurafu*\Gx
+\end{zahyou}
+\end{showEx}
+
+\begin{showEx}(.5,.44){\cmd{En**}でも}
+  \begin{zahyou*}[ul=6mm](-2,4)(-3,3)
+    \tenretu*{O(0,0);A(1,0)}
+    \En**[-45,45]\A{3}
+    \En*[0]\O{2}
+    \En\A{3}
+  \end{zahyou*}
+\end{showEx}
+\end{document}

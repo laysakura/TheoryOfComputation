@@ -1,0 +1,98 @@
+\documentclass[a4j]{jarticle}
+\usepackage{emathPh}
+\usepackage{bekutorukata}
+\usepackage{showexample}
+
+\bekutorukata<.25>{fill}
+
+\begin{document}
+\section{ベクトル・矢線記号の形状変更}
+今回の改版は，ベクトルの矢線記号を修正するためのコマンド
+\verb+\mybekutoru+の導入です。
+
+\subsection{デフォルト}
+まずは，デフォルトをみておきます。
+ただし，この文書では
+\begin{jquote}
+\begin{verbatim}
+\bekutorukata<.25>{fill}
+\end{verbatim}
+\end{jquote}
+が前提です。
+
+
+\begin{showEx}(.8,.14){デフォルト}
+\[ \bekutoru{AB}=\beku{a} \]
+\end{showEx}
+
+\subsection{\cmd{beku}の矢印}
+右辺\cmd{beku}の矢印を左辺\cmd{bekutoru}のそれと揃えるには，
+
+\begin{jquote}
+\begin{verbatim}
+\def\beku#1{\bekutoru*{\,#1\,}}
+\end{verbatim}
+\end{jquote}
+などとします。この定義における空白量は適宜修正してください。
+
+以下，これを前提とします。
+
+  \def\beku#1{\bekutoru*{\,#1\,}}
+
+\begin{showEx}(.8,.14){\cmd{beku}の矢印を\cmd{bekutoru}と揃える}
+\[ \bekutoru{AB}=\beku{a} \]
+\end{showEx}
+
+\subsection{矢線と文字の間隔}
+矢印の高さは，デフォルトでは
+
+\begin{jquote}
+\begin{verbatim}
+\bekutorusityuu{\vrule height .9zh width 0pt}%
+\end{verbatim}
+\end{jquote}
+となっています。
+この定義を変更することで間隔を調整できます。
+
+\begin{showEx}(.8,.14){矢印の高さ変更}
+\bekutorusityuu{\vrule height .75zh width 0pt}%
+\[ \bekutoru{AB}=\beku{a} \]
+\end{showEx}
+
+
+
+\beku{a}の矢印のほうだけ変更するには
+
+\begin{showEx}(.8,.14){\cmd{beku}のみ変更}
+\def\beku#1{{%
+  \bekutorusityuu{\vrule height .6zh width 0pt}%
+  \bekutoru*{\,#1\,}}}
+\[ \bekutoru{AB}=\beku{a} \]
+\end{showEx}
+
+\subsection{矢線の太さ}
+矢線の太さを調整する機構は用意してありません。
+この部分は，\cmd{bekutorukata}の定義に，固定サイズで記述されています。
+固定といっても，文字サイズ{\cmd{small}, \cmd{Huge}}などによって変動する仕掛けになっています。
+
+今回の改定で，矢線の太さなどをユーザーが変更するために，
+\cmd{mybekutoru}を導入しました。
+
+\begin{showEx}(.8,.14){矢線の太さ}
+\def\mybekutoru{\allinethickness{1pt}}
+\[ \bekutoru{AB}=\beku{a} \]
+\end{showEx}
+矢線の太さを約2倍の\texttt{1pt}としてみました。
+
+\subsection{鏃の形状}
+矢線の太さをいじると，鏃の形状も変更したくなりますか。
+これも\cmd{mybekutoru}に含めることが出来ます。
+
+\begin{showEx}(.8,.14){鏃も}
+\def\mybekutoru{%
+  \allinethickness{1pt}%
+  \changeArrowHeadSize{1.5}%
+}
+\[ \bekutoru{AB}=\beku{a} \]
+\end{showEx}
+\end{document}

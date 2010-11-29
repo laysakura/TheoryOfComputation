@@ -1,0 +1,332 @@
+\section{円・直線の交点}
+直線と直線，円と直線，円と円の交点を求めるコマンド類です．
+コマンド名は \verb+\*and*+ の形で \texttt{*} のところは
+
+\begin{jquote}
+\begin{verbatim}
+    C : 円
+    L : 2点を与えた直線
+    l : 1点と方向ベクトルを与えた直線
+    k : 1点と方向角を与えた直線
+\end{verbatim}
+\end{jquote}
+のいずれかで，
+\begin{jquote}
+\begin{verbatim}
+\CandC
+\CandL
+\Candl
+\Candk
+\LandL
+\Landl
+\landl
+\Landk
+\kandk
+\end{verbatim}
+\end{jquote}
+の9種類があります．
+
+\subsection{2直線の交点}
+%\subsubsection{2直線の交点(1) \texorpdfstring{\cmd{LandL}}{LandL}}
+\subsubsection{2直線の交点(1) \cmd{LandL}}
+
+\cmd{LandL} の使用例です．\cindex{LandL}
+
+\showexample[\cmd{LandL}](0.55)(0.4){example/LandL01}
+
+\begin{boxnote}
+\begin{verbatim}
+\LandL#1#2#3#4#5
+    2点 #1, #2 を通る直線と
+    2点 #3, #4 を通る直線の交点を #5 に与える．
+\end{verbatim}
+\end{boxnote}
+
+%\subsubsection{2直線の交点(2) \texorpdfstring{\cmd{Landl}}{Landl}}
+\subsubsection{2直線の交点(2) \cmd{Landl}}
+\sankaku{ABC} の辺AB上に $\kaku{BCD}=30\Deg$ となる点Dを求める例です．
+\cindex{Landl}
+
+\showexample[\cmd{Landl}](0.55)(0.4){example/LandL02}
+
+\begin{boxnote}
+\begin{verbatim}
+\Landl#1#2#3#4#5
+    2点 #1, #2 を通る直線と
+    点 #3 を通り，方向ベクトルが #4 の直線の交点を #5 に与える．
+\end{verbatim}
+\end{boxnote}
+
+%\subsubsection{2直線の交点(3) \texorpdfstring{\cmd{landl}}{landl}}
+\subsubsection{2直線の交点(3) \cmd{landl}}
+直線を1点と方向ベクトルで与える場合の，交点を求めるコマンドが
+\cmd{landl} です．\cindex{landl}
+
+\showexample[\cmd{landl}](0.6)(0.34){example/LandL03}
+
+\begin{boxnote}
+\begin{verbatim}
+\landl#1#2#3#4#5
+    点 #1 を通り, 方向ベクトルが #2 の直線と
+    点 #3 を通り，方向ベクトルが #4 の直線の交点を #5 に与える．
+\end{verbatim}
+\end{boxnote}
+
+%\subsubsection{2直線の交点(4) \texorpdfstring{\cmd{Landk}}{Landk}}
+\subsubsection{2直線の交点(4) \cmd{Landk}}
+直線を1点と方向角($x$軸の正の向きとなす角---六十分法）で与えた場合です。
+まずは \cmd{kandk} の使用例です。\cindex{Landk}
+
+\showexample[\cmd{kandk}](0.54)(0.4){example/LandL04}
+
+\begin{boxnote}
+\begin{verbatim}
+\kandk#1#2#3#4#5
+    点 #1 を通り, 方向角が #2 の直線と
+    点 #3 を通り，方向角が #4 の直線の交点を #5 に与える．
+\end{verbatim}
+\end{boxnote}
+
+ついで，\cmd{Landk} の使用例です。\cindex{Landk}
+
+\showexample[\cmd{Landk}](0.54)(0.4){example/LandL05}
+
+\begin{boxnote}
+\begin{verbatim}
+\Landk#1#2#3#4#5
+    2点 #1, #2 を通る直線と
+    点 #3 を通り，方向角が #4 の直線の交点を #5 に与える．
+\end{verbatim}
+\end{boxnote}
+
+\subsubsection{垂線の足}
+三角形の頂点から対辺（またはその延長）に下した垂線の足を求める
+コマンド \cmd{Suisen} です．\cindex{Suisen}
+
+\showexample[\cmd{Suisen}](0.55)(0.35){example/suisen01}
+
+\begin{boxnote}
+\begin{verbatim}
+\Suisen#1#2#3#4
+    点 #1 から直線 #2#3 へ下ろした垂線の足を #4 にセット
+\end{verbatim}
+\end{boxnote}
+
+関連して，直線が1点と方向ベクトルまたは方向角で与えられている場合に
+用いるコマンドがそれぞれ
+\cmd{mSuisen}, \cmd{kSuisen} です。使用例を一つずつあげます。
+\cindex{mSuisen}
+\cindex{kSuisen}
+
+\begin{showEx}(.5,.44){\cmd{mSuisen}}
+\unitlength9mm\footnotesize
+\begin{zahyou}(-3,3)(-3,3)
+\tenretu{A(-2,-1)s;P(-1,2)n}
+\def\houkouV{(1,1)}
+\mSuisen\P\A\houkouV\Q
+\kuromaru{\A;\P;\Q}
+\Put\Q[se]{Q}
+\Drawline{\P\Q}
+\Tyokkakukigou\P\Q\A
+\mTyokusen\A\houkouV{}{}
+\end{zahyou}
+\end{showEx}
+
+\begin{showEx}(.5,.44){\cmd{kSuisen}}
+\unitlength9mm\footnotesize
+\begin{zahyou}(-3,3)(-3,3)
+\tenretu{A(-2,-1)s;P(-1,2)n}
+\def\kaku{60}
+\kSuisen\P\A\kaku\Q
+\kuromaru{\A;\P;\Q}
+\Put\Q[s]{Q}
+\Drawline{\P\Q}\Tyokkakukigou\P\Q\A
+\kTyokusen\A\kaku{}{}
+\end{zahyou}
+\end{showEx}
+
+\subsubsection{直線に関する対称点}
+前節の垂線を発展させて，点の直線に関する対称点を求めるコマンド
+\begin{jquote}
+\begin{verbatim}
+\Taisyouten 2点を通る直線
+\mTaisyouten 1点と方向ベクトルを指定した直線
+\kTaisyouten 1点と方向角を指定した直線
+\end{verbatim}
+\end{jquote}
+を新設しました。以下，その使用例を並べます。
+\cindex{Taisyouten}
+\cindex{mTaisyouten}
+\cindex{kTaisyouten}
+
+\begin{showEx}(.5,.44){\cmd{Taisyouten}}
+\unitlength9mm\footnotesize
+\begin{zahyou}(-3,3)(-3,3)
+\tenretu{A(-2,-1)s;B(1,1)s;P(-1,2)n}
+\Taisyouten\P\A\B\Q
+\kuromaru{\A;\B;\P;\Q}
+\Put\Q[s]{Q}
+\Drawline{\P\Q}
+\Tyokusen\A\B{}{}
+\end{zahyou}
+\end{showEx}
+
+\begin{showEx}(.5,.44){\cmd{mTaisyouten}}
+\unitlength9mm\footnotesize
+\begin{zahyou}(-3,3)(-3,3)
+\tenretu{A(-2,-1)s;P(-1,2)n}
+\def\houkouV{(1,1)}
+\mTaisyouten\P\A\houkouV\Q
+\kuromaru{\A;\P;\Q}
+\Put\Q[s]{Q}
+\Drawline{\P\Q}
+\mTyokusen\A\houkouV{}{}
+\end{zahyou}
+\end{showEx}
+
+\begin{showEx}(.5,.44){\cmd{kTaisyouten}}
+\unitlength9mm\footnotesize
+\begin{zahyou}(-3,3)(-3,3)
+\tenretu{A(-2,-1)s;P(-1,2)n}
+\def\kaku{60}
+\kTaisyouten\P\A\kaku\Q
+\kuromaru{\A;\P;\Q}
+\Put\Q[s]{Q}
+\Drawline{\P\Q}
+\kTyokusen\A\kaku{}{}
+\end{zahyou}
+\end{showEx}
+\bigskip
+
+対称の中心（垂線の足）が必要なときは，オプション引数 \verb/[#4]/ に
+その点を受取る制御綴を与えておきます。
+
+\begin{showEx}(.5,.44){対称の中心}
+\unitlength9mm\footnotesize
+\begin{zahyou}(-3,3)(-3,3)
+\tenretu{A(-2,-1)s;B(1,1)s;P(-1,2)n}
+\Taisyouten\P\A\B[\H]\Q
+\kuromaru{\A;\B;\P;\Q;\H}
+\Put\Q[s]{Q}
+\Tyokkakukigou\P\H\A
+\touhenkigou<2>{\P\H;\H\Q}
+\Drawline{\P\Q}
+\Tyokusen\A\B{}{}
+\end{zahyou}
+\end{showEx}
+
+この機能は，\cmd{mTaisyouten}, \cmd{kTaisyouten} にも使用できます。
+
+\begin{showEx}(.5,.44){\cmd{mTaisyouten}}
+\unitlength9mm\footnotesize
+\begin{zahyou}(-3,3)(-3,3)
+\tenretu{A(-2,-1)s;P(-1,2)n}
+\def\houkouV{(1,1)}
+\mTaisyouten\P\A\houkouV[\H]\Q
+\kuromaru{\A;\P;\Q;\H}
+\Put\Q[s]{Q}
+\Drawline{\P\Q}
+\Tyokkakukigou\P\H\A
+\touhenkigou<2>{\P\H;\H\Q}
+\mTyokusen\A\houkouV{}{}
+\end{zahyou}
+\end{showEx}
+
+\begin{showEx}(.5,.44){\cmd{kTaisyouten}}
+\unitlength9mm\footnotesize
+\begin{zahyou}(-3,3)(-3,3)
+\tenretu{A(-2,-1)s;P(-1,2)n}
+\def\kaku{60}
+\kTaisyouten\P\A\kaku[\H]\Q
+\kuromaru{\A;\P;\Q;\H}
+\Put\Q[s]{Q}
+\Drawline{\P\Q}
+\Tyokkakukigou\P\H\A
+\touhenkigou<2>{\P\H;\H\Q}
+\kTyokusen\A\kaku{}{}
+\end{zahyou}
+\end{showEx}
+
+\subsection{円と直線の交点}
+%\subsubsection{円と直線の交点(1) \texorpdfstring{\cmd{CandL}}{CandL}}
+\subsubsection{円と直線の交点(1) \cmd{CandL}}
+\sankaku{ABC}の中線AMの延長が\sankaku{ABC}の外接円と交わる点Dを求めます．
+\cindex{CandL}
+
+\showexample[\cmd{CandL}](0.5)(0.45){example/CandL01}
+
+\begin{boxnote}
+\begin{verbatim}
+\CandL#1#2#3#4#5#6
+\CandL*#1#2#3#4#5#6
+        点 #1 を中心とし，半径 #2 の円と
+        2点 #3, #4 を通る直線との交点を #5 と #6 にセットする．
+円と直線の2つの交点のどちらを #5 とするかについては
+  \CandL の場合
+    2つの交点のうち，x座標の小さい方が #5
+    2つの交点のx座標が一致するときは，y座標の小さい方が #5
+  \CandL* の場合
+    円の中心(#1)と2つの交点(#5, #6)で作られる三角形の周を
+        #1 → #5 → #6 → #1
+    とたどる回り方が正の回転となるように定める。
+    （三角形がつぶれる場合は，\CandL の定め方に従う）
+\end{verbatim}
+\end{boxnote}
+
+%\subsubsection{円と直線の交点(2) \texorpdfstring{\cmd{Candl}}{Candl}}
+\subsubsection{円と直線の交点(2) \cmd{Candl}}
+原点中心，半径1の円と，点(2,0)を通り傾き$-\bunsuu13$の直線との交点を求めます．\cindex{Candl}
+
+\showexample[\cmd{Candl}](0.5)(0.45){example/CandL02}
+
+\begin{boxnote}
+\begin{verbatim}
+\Candl#1#2#3#4#5#6
+        点 #1 を中心とし，半径 #2 の円と
+        点 #3 を通り, 方向ベクトルが #4 の直線
+        との交点を #5 と #6 にセットする．
+    2つの交点のうち，どちらを #5 とするかは \CandL と同じ。
+\end{verbatim}
+\end{boxnote}
+
+%\subsubsection{円と直線の交点(3) \texorpdfstring{\cmd{Candk}}{Candk}}
+\subsubsection{円と直線の交点(3) \cmd{Candk}}
+原点中心，半径1の円と，点(2,0)を通り傾き方向角15\Deg の直線
+との交点を求めます．\cindex{Candk}
+
+\showexample[\cmd{Candl}](0.5)(0.45){example/CandL03}
+
+\begin{boxnote}
+\begin{verbatim}
+\Candk#1#2#3#4#5#6
+        点 #1 を中心とし，半径 #2 の円と
+        点 #3 を通り, 方向角が #4 の直線
+        との交点を #5 と #6 にセットする．
+    2つの交点のうち，どちらを #5 とするかは \CandL と同じ。
+\end{verbatim}
+\end{boxnote}
+
+%\subsection{円と円の交点 \texorpdfstring{\cmd{CandC}}{CandC}}
+\subsection{円と円の交点 \cmd{CandC}}
+線分BCの長さが7のとき，Bを中心とする半径5の円と，Cを中心とする半径3の
+円との交点をAとすれば，3辺の長さが7, 5, 3の三角形がえられます．
+\cindex{CandC}
+
+\showexample[\cmd{CandC}](0.5)(0.42){example/CandC01}
+
+\begin{boxnote}
+\begin{verbatim}
+\CandC#1#2#3#4#5#6
+        点 #1 を中心，半径 #2 の円と
+        点 #3 を中心，半径 #4 の円との交点を#5と#6にセット
+円と円の2つの交点のどちらを #5 とするかについては
+  \CandC の場合
+    2つの交点のうち，x座標の小さい方が #5
+    2つの交点のx座標が一致するときは，y座標の小さい方が #5
+  \CandC* の場合
+    円の中心(#1)と2つの交点(#5, #6)で作られる三角形の周を
+        #1 → #5 → #6 → #1
+    とたどる回り方が正の回転となるように定める。
+    （三角形がつぶれる場合は，\CandC の定め方に従う）
+\end{verbatim}
+\end{boxnote}

@@ -1,0 +1,1047 @@
+\section{座標平面}
+\subsection{数直線}
+目盛付きの数直線を描画するコマンドが \cmd{suutyokusen} です．
+\cindex{suutyokusen}
+
+\showexample[数直線](0.5)(0.45){example/sutyoku1}
+
+\begin{boxnote}
+\begin{verbatim}
+   \suutyokusen[#1](#2)#3#4
+       #1 : [+] としたときは正の目盛には + をつける．
+       #2 : 目盛の刻み値（デフォルトは 1）
+       #3 : x の下限
+       #4 : x の上限
+   描画位置は \put 文で数直線の原点位置を指定する．
+\end{verbatim}
+\end{boxnote}
+
+\subsection{連立不等式の解を図表示}
+連立方程式の解を数直線上に図表示する話です。
+
+%{\unitlength10mm\drawaxisfalse
+\begin{showEx}(.8,.8){例1}
+  連立不等式
+    \renritu{&x+1<0 \\ &x^2<4}
+  の解は
+
+\begin{zahyou*}[ul=10mm](-5,5)(-.5,1.5)%
+\ArrowLine{(\xmin,0)}{(\xmax,0)}%
+\Put{(\xmax,0)}[s]{$x$}%
+\Put{(0,0)}[s]{$0$}%
+\Put{(-1,0)}[s]{$-1$}%
+\Put{(-2,0)}[s]{$-2$}%
+\Put{(2,0)}[s]{$2$}%
+\KTkukan{(,-1);(-2,2)}{(-2,-1)}
+\end{zahyou*}
+\end{showEx}
+
+\begin{showEx}(.8,.8){例2}
+  連立不等式
+    \renritu{&x^2>x \label{E2-1}\\ &x^2\leqq 4\label{E2-2}}
+の解は
+
+\begin{zahyou*}[10mm](-5,5)(-.5,1.5)%
+\ArrowLine{(\xmin,0)}{(\xmax,0)}%
+\Put{(\xmax,0)}[s]{$x$}%
+\Put{(0,0)}[s]{$0$}%
+\Put{(1,0)}[s]{$1$}%
+\Put{(-2,0)}[s]{$-2$}%
+\Put{(2,0)}[s]{$2$}%
+\KTkukan[E2-1;E2-2]{{(,0)|(1,)};[-2,2]}{[-2,0)|(1,2]}
+\end{zahyou*}
+\end{showEx}
+%}
+
+\cmd{KTkukan}の書式です。
+
+\begin{boxnote}
+\begin{verbatim}
+\KTkukan[#1]#2#3
+    #1 : 各区間のラベル指定オプション
+    #2 : 各区間を`;'区切りで並べる
+    #3 : 結果の区間
+
+    区間は
+        開区間   : (-3,5)
+        閉区間   : [-3,5]
+        半開区間 : (-3,5], [-3,5)
+        無限区間 : (,-3), (5,)
+      などと表す。
+      2つの区間の和集合は (,-3)|(5,) などのように，`|'を用いる
+
+    ラベル指定オプションは，
+        デフォルトは [auto] で，\maru1, \maru2, .....が付与される。
+        各不等式に \label がついているときは，ラベル名を`;'区切りで並べる。
+        [] と指定すれば，区間にラベルはつかない。
+        下の \kukantakasa を用いて，自由に配置してもよい。
+
+    区間を表す横罫線の y座標は \kukantakasa で，そのデフォルト値は 0.5
+        層を重ねるときは，その 2, 3, ... 倍となる。
+\end{verbatim}
+\end{boxnote}
+
+\subsection{\textsf{zahyou} 環境}
+座標軸を描きます．
+
+基本的な使用法は
+
+\begin{jquote}
+\begin{verbatim}
+\begin{zahyou}(xの下限, xの上限)(yの下限, yの上限)
+\end{verbatim}
+\end{jquote}
+
+例えば，
+
+\showexample[座標平面](0.5)(0.45){example/zahyo01}
+
+\textsf{zahyou}環境は，実質 \textsf{picture} 環境です．
+ここへ，1次関数，2次関数のグラフを描こうという魂胆です．
+
+なお，座標軸を描画したくないときは，\verb/*/付の
+\textsf{zahyou*}環境を使用します。
+下の例は，\cmd{drawXaxis}で$x$軸だけを描画しています。
+\cindex{drawaxisfalse}\cindex{drawXaxis}
+
+\showexample[\cmd{drawaxisfalse}](0.5)(0.45){example/zahyo08}
+
+$y$軸のみを描画する\cmd{drawYaxis}も定義されています。
+\cindex{drawYaxis}
+
+\subsection{座標軸描画のタイミング}
+座標軸を描画するタイミングは，zahyou環境の最後ですが，
+座標軸を描画した後に，座標軸上の点に\cmd{Siromaru}で白丸をつけたいときなどは
+うまくありません。下の図のように，白丸の中を座標軸が突き抜けてしまいます。
+
+\showexample[座標軸描画のタイミング](.6)(.34){example/zahyo15}
+
+そのようなときは\verb+zahyou*+環境を用いて，
+適切なタイミングで\cmd{drawXYaxis}を発行して，座標軸を別途描画します。
+\cindex{drawXYaxis}
+
+\showexample[\cmd{drawXYaxis}](.6)(.34){example/zahyo16}
+
+\subsection{\textsf{zahyou}環境のオプション}
+\textsf{zahyou}環境については，一番初めに紹介しましたが，
+細かい点を修正するオプションについて説明します。
+
+\textsf{zahyou}環境の細かい指定をするのに，
+オプション引数を用意しています。これらは
+\begin{jquote}
+\begin{verbatim}
+key = val
+\end{verbatim}
+\end{jquote}
+の形式で，コンマで区切ることで複数のオプションを指定できます。
+%\subsubsection{\texorpdfstring{\cmd{unitlength}}{unitlength}の指定}
+\subsubsection{\cmd{unitlength}の指定}
+\textsf{picture}環境の単位長(\cmd{unitlength})は，デフォルトでは
+\verb/1pt/となっています。これを変更するオプションが
+\begin{jquote}
+\begin{verbatim}
+ul=...
+\end{verbatim}
+\end{jquote}
+で，右辺値は単位を伴った長さです。
+
+\begin{showEx}(.5,.44){\texttt{ul=...}オプション}
+\begin{zahyou}[ul=8mm]%
+  (-3,3)(-2,2)%
+  \xmemori{1}%
+\end{zahyou}%
+\end{showEx}
+
+\begin{enumerate}[注 1.~]
+  \item \TeX が扱える実数値は
+\begin{jquote}
+\begin{verbatim}
+\maxdimen=16383.99999pt % the largest legal <dimen>
+\end{verbatim}
+\end{jquote}
+が上限とされています。\textsf{emathPh}における計算もこの制限を受けます。
+距離計算では平方計算が必要ですが，$128^2$でオーバーフローしてしまいます。
+従って座標の値を大きくしないように，\cmd{unitlength}を\verb/1cm/前後に
+しておく方が良いでしょう。
+  \item
+\begin{jquote}
+\begin{verbatim}
+\unitlength8mm
+\begin{zahyou}....
+
+\end{zahyou}
+\end{verbatim}
+\end{jquote}
+と
+\begin{jquote}
+\begin{verbatim}
+\begin{zahyou}[ul=8mm]....
+
+\end{zahyou}
+\end{verbatim}
+\end{jquote}
+との大きな違いは，\cmd{unitlength}変更の有効範囲です。
+
+前者は\textsf{zahyou}環境が終わった後でもこの変更が有効（残ってしまう）
+のに対して，後者はこの変更が当該\textsf{zahyou}環境内のみに有効である，
+すなわちこの\textsf{zahyou}環境が終われば，\cmd{unitlength}は以前の値に
+戻ることです。
+
+\textsf{zahyou}の\verb+[...]+オプションによる変更はすべて当該
+\textsf{zahyou}環境内に限定されます。
+\end{enumerate}
+
+\subsubsection{座標軸の名称変更}
+デフォルトでは，
+\begin{jquote}
+原点には O\\
+横軸には $x$\\
+縦軸には $y$
+\end{jquote}
+が表示されますが，これを変更するオプションが
+\begin{jquote}
+\begin{verbatim}
+\gentenkigou=
+\yokozikukigou=
+\tatezikukigou=
+\end{verbatim}
+\end{jquote}
+で，右辺値は文字列です。
+
+原点記号を変更します。
+\begin{showEx}(.5,.44){原点記号の変更}
+\begin{zahyou}%
+  [%
+    ul=8mm,
+    gentenkigou=O$'$
+  ]%
+  (-3,3)(-2,2)%
+  \xmemori{1}%
+\end{zahyou}%
+\end{showEx}
+
+原点記号をつけたくない、という場面なら
+
+\begin{showEx}(.5,.44){原点記号なし}
+\begin{zahyou}%
+  [%
+    ul=8mm,
+    gentenkigou={}
+  ]%
+  (-3,3)(-2,2)%
+  \xmemori{1}%
+\end{zahyou}%
+\end{showEx}
+
+座標軸名称の変更例です。
+\begin{showEx}(.5,.44){座標軸名の変更}
+\begin{zahyou}%
+  [%
+    ul=8mm,
+    yokozikukigou=$a$,
+    tatezikukigou=$b$
+  ]%
+  (-3,3)(-2,2)%
+  \xmemori{1}%
+\end{zahyou}%
+\end{showEx}
+
+\subsubsection{軸記号の配置オプション}
+デフォルトでは，
+\begin{jquote}
+原点記号は 左下\\
+横軸名は   下\\
+縦軸名は   左
+\end{jquote}
+に表示されますが，これを変更するオプションが
+\begin{jquote}
+\begin{verbatim}
+\gentenhaiti=
+\yokozikuhaiti=
+\tatezikuhaiti=
+\end{verbatim}
+\end{jquote}
+で，右辺値は\cmd{Put}のオプションと同形式です。
+原点記号はデフォルトでは左下に配置されますが，
+これを右下に変更してみましょう。
+
+\begin{showEx}(.5,.44){原点記号の配置変更}
+\begin{zahyou}%
+  [%
+    ul=8mm,
+    gentenhaiti={[se]}
+  ]%
+  (-3,3)(-2,2)%
+  \xmemori{1}%
+\end{zahyou}%
+\end{showEx}
+
+\cmd{Put}の配置オプション \verb+[se]+を\texttt{gentenhaiti=}の
+右辺値に指定しますが，\verb+]+が\textsf{zahyou}環境に対する\verb+[...]+
+オプションの終了と解釈されるのを防ぐため\verb+{[se]}+と，\verb+{ }+ で
+括っておく必要があります。
+
+次に座標軸名の配置を変更する例です。
+
+\begin{showEx}(.5,.44){座標軸名の配置変更}
+\begin{zahyou}%
+  [%
+    ul=8mm,
+    yokozikuhaiti={[e]},
+    tatezikuhaiti={(-1pt,0)[r]}
+  ]%
+  (-3,3)(-2,2)%
+  \xmemori{1}%
+\end{zahyou}%
+\end{showEx}
+
+この場合，座標軸名$x$, $y$は\textsf{zahyou}環境の外に飛び出しています。
+これを防ぐために，周囲に少し余白を付けておきたい，
+というのが後述の
+\begin{jquote}
+\begin{verbatim}
+migiyohaku=
+hidariyohaku=
+ueyohaku=
+sitayohaku=
+\end{verbatim}
+\end{jquote}
+オプションです。
+
+\subsubsection{矢印のサイズ変更}
+座標軸の矢印を含め，\textsf{zahyou}環境内の矢印のサイズを変更する
+オプションが
+\begin{jquote}
+\begin{verbatim}
+arrowheadsize=
+\end{verbatim}
+\end{jquote}
+です。
+
+\begin{showEx}(.5,.44){矢印のサイズ変更}
+\begin{zahyou}%
+  [%
+    ul=8mm,
+    arrowheadsize=2.5
+  ]%
+  (-3,3)(-2,2)%
+  \xmemori{1}%
+\end{zahyou}%
+\end{showEx}
+
+矢印が大きくなりすぎましたか。
+\verb+arrowheadsize+の右辺値を適当に変更してください。
+この数値は，現在のサイズの何倍にするかを指定するものです。
+
+逆に矢印がいらない場合は，つぎの\verb/zikusensyu/オプションを用います。
+
+\subsubsection{軸の線種変更}
+座標軸には，デフォルトで矢印が付加されていますが，
+軸の線種を変更することで矢印を付けないようにすることができます。
+
+\begin{showEx}(.5,.44){軸の矢印なし}
+\begin{zahyou}%
+  [%
+    ul=8mm,
+    zikusensyu=\drawline
+  ]%
+  (-3,3)(-2,2)%
+  \xmemori{1}%
+\end{zahyou}%
+\end{showEx}
+
+軸を太くしてみましょうか。
+
+\begin{showEx}(.5,.44){軸を太目に}
+\begin{zahyou}%
+  [%
+    ul=8mm,
+    zikusensyu=\thicklines\drawline
+  ]%
+  (-3,3)(-2,2)%
+\end{zahyou}%
+\end{showEx}
+
+軸を太くし，矢印も付けるには，線種をデフォルトの
+\cmd{arrowdrawline}にして\cmd{thicklines}などをかぶせます。
+
+\begin{showEx}(.54,.4){軸を太目に，矢印も}
+\begin{zahyou}[%
+  ul=8mm,
+  zikusensyu=\thicklines\arrowdrawline,
+  arrowheadsize=2
+  ]%
+  (-3,3)(-2,2)%
+\end{zahyou}%
+\end{showEx}
+
+\subsubsection{描画領域の周辺に余白}
+描画領域の周辺に文字を配置するためなどに余白をとっておきたいことがあります。
+そのためのオプションが
+\begin{jquote}
+\begin{verbatim}
+migiyohaku
+hidariyohaku
+ueyohaku
+sitayohaku
+\end{verbatim}
+\end{jquote}
+です。
+
+まず基準の確認です。\TeX が認識している\textsf{zahyou}環境を\cmd{fbox}で
+枠をつけてみます。
+
+\begin{showEx}(.5,.44){基準サイズ}
+\fboxsep=0pt\fbox{%
+\begin{zahyou}%
+  [%
+    ul=8mm,
+    yokozikuhaiti={[e]},
+    tatezikuhaiti={[n]}
+  ]%
+  (-3,3)(-1,3)%
+  \xmemori{1}%
+  \def\Fx{X*X}
+  \YGraph\Fx
+\end{zahyou}}%
+\end{showEx}
+座標軸のラベルが枠外にはみだしています。
+
+上と右に余白を付けて見ます。
+
+\begin{showEx}(.5,.44){上と右に余白}
+\fboxsep=0pt\fbox{%
+\begin{zahyou}%
+  [%
+    ul=8mm,
+    yokozikuhaiti={[e]},
+    tatezikuhaiti={[n]},
+    ueyohaku=.75,
+    migiyohaku=.5
+  ]%
+  (-3,3)(-1,3)%
+  \def\Fx{X*X}
+  \Put{(1,1)}[syaei=xy]{}%
+  \YGraph\Fx
+  \Put{(1.732,3)}[n]{$y=x^2$}%
+\end{zahyou}}%
+\end{showEx}
+
+枠内に納まりましたね。
+
+\verb+ueyohaku+などの右辺値は，無名数で，単位は \cmd{unitlength} です。
+
+これに対して
+\begin{jquote}
+\begin{verbatim}
+Migiyohaku=
+Hidariyohaku=
+Ueyohaku=
+Sitayohaku=
+Yohaku=
+\end{verbatim}
+\end{jquote}
+は，右辺値に単位を伴う長さを与えます。
+
+\begin{showEx}(.5,.44){\cmd{Ueyohaku}}
+\fboxsep=0pt\fbox{%
+\begin{zahyou}%
+  [%
+    ul=8mm,
+    yokozikuhaiti={[e]},
+    tatezikuhaiti={[n]},
+    Ueyohaku=15pt,
+    Migiyohaku=10pt
+  ]%
+  (-3,3)(-1,3)%
+  \def\Fx{X*X}
+  \Put{(1,1)}[syaei=xy]{}%
+  \YGraph\Fx
+  \Put{(1.732,3)}[n]{$y=x^2$}%
+\end{zahyou}}%
+\end{showEx}
+
+（注）単位付の余白設定オプションは，内部では \cmd{unitlength}単位に換算されます。
+従って，\verb+[ul=..]+と併用するときは，\verb+ul=..+が先行する必要があります。
+
+\subsubsection{縦横比の変更}
+\textsf{zahyou}環境では，縦と横の単位長は同一になっています。
+これを別々に設定するためのオプション
+\begin{jquote}
+\begin{verbatim}
+yscale, xscale
+\end{verbatim}
+\end{jquote}
+があります。\cindex{xscale}\cindex{yscale}
+
+ただし，この機能は\textsf{emathPxy.sty}で定義されていますから，
+\begin{jquote}
+\begin{verbatim}
+\usepackage{emathPxy}
+\end{verbatim}
+\end{jquote}
+としておく必要があります。
+
+
+
+
+次のリストは\verb/yscale=.25/として，$y$軸方向を1/4に縮め，
+$y=x^2$ ($-4<x<4$)のグラフを描画しています。
+
+\begin{showEx}{\texttt{<yscale=...>}オプション}
+\begin{zahyou}%
+  [ul=6mm,yscale=.25]%
+  (-4,4)(-4,16)
+\def\Fx{X*X}
+\YGraph\Fx
+\zahyouMemori[g]<dx=1,dy=4>
+\end{zahyou}
+\end{showEx}
+
+グラフ描画コマンド \cmd{YGraph} については後述します。
+\bigskip
+
+次は横長の格子を描く例です。
+\begin{jquote}
+\begin{verbatim}
+ul=3mm,xscale=3,yscale=2
+\end{verbatim}
+\end{jquote}
+というオプションで
+\begin{jquote}
+\begin{verbatim}
+ul=3mm で \unitlength は 3mm
+x軸方向の単位長は ul×xscale 9mm で \xunitlength が 9mm
+y軸方向の単位長は ul×yscale 6mm で \yunitlength が 6mm
+\end{verbatim}
+\end{jquote}
+に設定されます。
+
+\begin{showEx}{横長の格子}
+\begin{zahyou*}[%
+    ul=3mm,xscale=3,%
+    yscale=2](0,4)(0,5)%
+  \Put\O{\kousi{4}{5}}%
+  \Kuromaru{(2,3)}%
+\end{zahyou*}%
+\end{showEx}
+
+\subsection{\textsf{zahyou}環境の縦方向配置}
+\bgroup
+\def\kizyunsen{{\color{red}\relax
+        \unitlength=1pt\relax
+        \begin{picture}(0,0)\relax
+          \Drawline{(0,0)(260,0)}%
+        \end{picture}}}%
+\fboxsep=0pt\relax
+まずは，
+\begin{jquote}
+\textsf{picture(zahyou)}環境で作成した図，\\
+\textsf{tabular(array)}環境で作成した表
+\end{jquote}
+を横に並べたときの縦位置に関する話から始めます。
+%\clearpage
+
+\subsubsection{デフォルトの確認}
+まずはデフォルトの状態の確認です。
+
+\begin{showEx}(1,.8){デフォルト}
+\kizyunsen
+あいう%
+\fbox{\begin{zahyou}[ul=10mm](-2,2)(-1,5)
+  \En\O{1}
+\end{zahyou}}%
+xyz%
+\begin{tabular}{|c|c|}\hline
+  1 & 1 \\\hline
+  1 & 1 \\\hline
+\end{tabular}%
+か漢字%
+\end{showEx}
+
+赤の横線が基準線（ベースライン）です。\TeX は，この線を文字通り基準として
+文字，表，図などボックスを配置して行きます。まずは，文字にご注目ください。
+`y'は基準線から下にはみ出す形で配置されています。
+すなわち「深さ」をもっています。全角文字も良く見ると一部基準線から下に
+はみ出しています。
+
+さて，図ですが，\textsf{picture}環境の下辺を基準線に重ねる，
+というのが\LaTeX の仕様です。
+
+表のほうは，デフォルトでは，縦方向中央揃えとなります。
+デフォルトでは，といったのは，オプションで変更可能ということで，
+次節でそれを見ていきます。
+%\clearpage
+
+\subsubsection{下揃え}
+表の下辺を基準線に重ねるのが，\textsf{tabular, array}の
+\verb+[b]+オプションです。
+
+\begin{showpEx}(1,.8){下揃え}
+!\kizyunsen
+!あいう%
+!\fbox{\begin{zahyou}[ul=10mm](-2,2)(-1,5)
+!  \En\O{1}
+!\end{zahyou}}%
+!xyz%
+\begin{tabular}[b]{|c|c|}\hline
+!  1 & 1 \\\hline
+!  1 & 1 \\\hline
+!\end{tabular}%
+!か漢字%
+\end{showpEx}
+
+ソースリストは，デフォルトのものから変更した行だけを記します。
+
+\subsubsection{上揃え}
+逆に，表の上辺を基準線に重ねるのが，\textsf{tabular, array}の
+\verb+[t]+オプションです。
+\textsf{zahyou}環境にも\verb+[haiti=t]+オプションがあります。
+
+\begin{showpEx}(1,.8){上揃え}
+!\kizyunsen
+!あいう%
+\fbox{\begin{zahyou}[ul=10mm,haiti=t](-2,2)(-1,5)
+!  \En\O{1}
+!\end{zahyou}}%
+!xyz%
+\begin{tabular}[t]{|c|c|}\hline
+!  1 & 1 \\\hline
+!  1 & 1 \\\hline
+!\end{tabular}%
+!か漢字%
+\end{showpEx}
+
+\textsf{zahyou}環境の上辺をさらに上に引っ張って文字の高さと揃えたい，
+というご要望もありそうです。
+そのために\verb+haiti=t/c/b+オプションには，そのあとに補正量を与えることが
+できるようにしてあります。
+
+\begin{showpEx}(1,.8){上揃え--さらに調整}
+!\kizyunsen
+!あいう%
+\fbox{\begin{zahyou}[ul=10mm,haiti=t+1zh](-2,2)(-1,5)
+!  \En\O{1}
+!\end{zahyou}}%
+!xyz%
+!\begin{tabular}[t]{|c|c|}\hline
+!  1 & 1 \\\hline
+!  1 & 1 \\\hline
+!\end{tabular}%
+!か漢字%
+\end{showpEx}
+
+正の補正量で上方に，負の補正量で下方に移動します。
+
+\subsubsection{中央揃え}
+表を縦方向センタリングするのが，\textsf{tabular, array}の
+\verb+[c]+オプションです。\\
+\textsf{zahyou}環境にも\verb+[haiti=c]+オプションがあります。
+
+\begin{showpEx}(1,.8){中央揃え}
+!\kizyunsen
+!あいう%
+\fbox{\begin{zahyou}[ul=10mm,haiti=c](-2,2)(-1,5)
+!  \En\O{1}
+!\end{zahyou}}%
+!xyz%
+\begin{tabular}[c]{|c|c|}\hline
+!  1 & 1 \\\hline
+!  1 & 1 \\\hline
+!\end{tabular}%
+!か漢字%
+\end{showpEx}
+
+\textsf{zahyou}環境には，\verb+[haiti=x]+オプションもあります。
+これは$x$軸を基準線に重ねます。
+
+
+\begin{showpEx}(1,.8){横軸揃え}
+!\kizyunsen
+!あいう%
+\fbox{\begin{zahyou}[ul=10mm,haiti=x](-2,2)(-1,5)
+!  \En\O{1}
+!\end{zahyou}}%
+!xyz%
+\begin{tabular}[c]{|c|c|}\hline
+!  1 & 1 \\\hline
+!  1 & 1 \\\hline
+!\end{tabular}%
+!か漢字%
+\end{showpEx}
+
+\textsf{emathPh.sty v 1.70}までは，\verb+[haiti=c]+オプションで，
+$x$軸を基準線に重ねていましたが，\textsf{v 1.71}で上記のように
+修正いたしました。
+\egroup
+
+\subsection{\textsf{zahyou}環境の書式}
+\begin{boxnote}
+\begin{verbatim}
+    \begin{zahyou}[#1](#2,#3)(#4,#5)
+      #1 : key=val の形式で，key には次のものが使えます。
+          yokozikukigou デフォルトは $x$
+          tatezikukigou デフォルトは $y$
+          gentenkigou   デフォルトは O
+          yokozikuhaiti デフォルトは (0,-3pt)[rt]
+          tatezikuhaiti デフォルトは (-3pt,0)[rt]
+          gentenhaiti   デフォルトは [sw]
+          ul            \unitlength を変更します。デフォルトは 1pt
+          yscale        デフォルトは1 --> emathPxy.sty
+          xscale        デフォルトは1 --> emathPxy.sty
+          arrowheadsize 矢印のサイズ（その時点のものに対する比率）
+          zikusensyu    座標軸の線種
+                        デフォルトは \arrowdrawline
+          ueyohaku      右辺値は無名数（単位は\unitlength)
+          sitayohaku
+          migiyohaku
+          hidariyohaku
+          Ueyohaku      右辺値は単位を伴う長さ
+          Sitayohaku
+          Migiyohaku
+          Hidariyohaku
+          haiti         t/c/b/x
+      (#2,#3) : xの範囲
+      (#4,#5) : yの範囲
+\end{verbatim}
+\end{boxnote}
+\index{zahyou@zahyou 環境}
+
+\subsection{目盛り}
+\subsubsection{座標軸上に等間隔の目盛り}
+座標軸に等間隔に目盛りを打つコマンドが \cmd{zahyouMemori} です．
+\cindex{zahyouMemori}
+
+\showexample[座標目盛り](0.95)(0.65){example/zahyo04}
+
+\begin{boxnote}
+\begin{verbatim}
+\zahyouMemori[#1][#2]<#3>
+   #1 : g : グリッド
+        + : 格子点に +マーク
+        o : 格子点に黒丸
+        z : 座標軸上の格子点に +マーク
+   #2 : n : グリッドのみで，目盛り数値を打たない．
+   #3 : 刻み
+        key=val の形式 ---> emathPxy.sty
+           key は
+            dx= xの刻み値
+            dy= yの刻み値
+            xo= xの基準値
+            yo= yの基準値
+\end{verbatim}
+\end{boxnote}
+
+目盛りの間隔はデフォルトでは1ですが，これを2に変更してみましょう。
+
+\begin{showEx}(.5,.44){間隔2の目盛線}
+\small
+\begin{zahyou}[ul=4mm](-5,5)(-5,5)
+\zahyouMemori<2>
+\end{zahyou}
+\end{showEx}
+
+$x$軸と$y$軸とで間隔を変えることもできます。
+
+\begin{showEx}{\texttt{<dx=..,dy=..>}オプション}
+\small
+\begin{zahyou}%
+  [ul=3mm](-7,7)(-5,5)
+\zahyouMemori<dx=3,dy=2>
+\end{zahyou}
+\end{showEx}
+
+\cmd{xscale}, \cmd{yscale} と併用して
+
+\begin{showEx}{\texttt{\cmd{xscale}と併用}オプション}
+\small
+\begin{zahyou}%
+  [ul=8mm,yokozikuhaiti={[n]},%
+    xscale=0.017453]%
+  (-5,400)(-1.5,1.5)
+\zahyouMemori<dx=90>
+\end{zahyou}
+\end{showEx}
+
+基準点はデフォルトでは原点ですが，
+これを変更するには，\verb+<xo=...,yo=...>+オプションを用います。
+
+\begin{showEx}{基準点の変更}
+\small
+\begin{zahyou}%
+  [ul=8mm,%
+    yokozikuhaiti={[n]},%
+    gentenhaiti={[se]},%
+    xscale=0.017453]%
+  (-60,360)(-1.5,1.5)
+\zahyouMemori<dx=90,xo=-30>
+\end{zahyou}
+\end{showEx}
+
+\subsubsection{グリッド線}
+\texttt{[g]}オプションをつけると方眼を描きます．
+
+\showexample[方眼 \& 目盛り](0.95)(0.65){example/zahyo05}
+
+グリッド線の線種を変更するには，
+\verb+<sensyu=...>+ オプションを用います。
+
+\showexample[線種の変更](0.95)(0.65){example/zahyo14}
+
+\texttt{[+]}オプションでは，格子点に + マークをつけます。
+
+\showexample[格子点に + ](0.95)(0.65){example/zahyo11}
+
+\texttt{[o]}オプションでは，格子点に黒丸をつけます。
+
+\showexample[格子点に $\bullet$ ](0.95)(0.65){example/zahyo12}
+
+なお，目盛りの数値は要らないというときは第2の\texttt{[n]}オプションを
+つけます．
+
+
+\showexample[方眼](0.45)(0.5){example/zahyo07}
+
+\subsubsection{軸上に目盛り}
+また，座標軸上の指定した位置に目盛りを打つコマンドが
+\begin{jquote}
+\cmd{xmemori}, \cmd{ymemori}
+\end{jquote}
+です．
+
+\showexample[目盛り](0.45)(0.4){example/zahyo06}
+
+目盛りの位置をずらしたいときは，
+\verb+[..]+オプションに\cmd{emathPut}の配置オプションを記述します。
+
+\begin{showEx}(1,1){\cmd{xmemori}の\texttt{[...]}オプション}
+\begin{zahyou}[ul=10mm](-5,5)(-1,1)
+  \xmemori[b]{1}
+  \xmemori[t]{2}
+  \xmemori[{[ne]}]{3}
+  \xmemori[{(-2pt,-3pt)[rt]}]{-1}
+\end{zahyou}
+\end{showEx}
+
+\begin{showEx}(.64,.3){\cmd{ymemori}の\texttt{[...]}オプション}
+\begin{zahyou}[ul=10mm](-1,1)(-2,4)
+  \ymemori[l]{1}
+  \ymemori[r]{2}
+  \ymemori[{[sw]}]{3}
+  \ymemori[{(-2pt,-3pt)[rt]}]{-1}
+\end{zahyou}
+\end{showEx}
+
+\cmd{xmemori}, \cmd{ymemori}の書式は
+
+\begin{boxnote}
+\begin{verbatim}
+座標軸上任意位置に目盛
+\xmemori[#1]<#2>#3
+\ymemori[#1]<#2>#3
+   #1 : t = 座標軸の下に目盛
+        b =         上
+        l =         右
+        r =         左
+        \emathPut の配置指定オプション
+   #2 : 目盛の文字
+       （省略すれば，#3 に指定したものが代用されます．）
+   #3 : 目盛の位置
+\end{verbatim}
+\end{boxnote}
+
+\cmd{xscale}と併用した例です。
+
+\begin{showEx}(.5,.44){\cmd{xscale}と併用}
+\footnotesize
+\begin{zahyou}[ul=5mm](-5,5)(-1.5,2)
+\zahyouMemori[g][n]<dx=1.57,dy=.5>
+\ymemori{1}
+\ymemori{-1}
+\xmemori<\pi>{3.14}
+\xmemori<-\pi>{-3.14}
+\end{zahyou}
+\end{showEx}
+
+\iffalse
+\texttt{dx}で指定した間隔で目盛を打つために \cmd{xmemori} の
+機能を強化した \cmd{xMemori} が \textsf{emathPxy.sty} で定義されています。
+
+下のリストは，$x$軸方向$\mbox{\cmd{Pis}}=\pi/6$間隔で目盛を入れています。
+
+\begin{showEx}(.5,.44){\cmd{xmemori}}
+\footnotesize
+\begin{zahyou}[ul=6mm](-1,7)(-1.5,2)
+\zahyouMemori[g][n]<%
+dx=\Pis,dy=.5,sensyu=\drawline>
+\ymemori{1}
+\ymemori{-1}
+\xMemori<label=\frac{\pi}{6}>{1}
+\xMemori<label=\frac{\pi}{3}>{2}
+\xMemori<label=\frac{\pi}{2}>{3}
+\xMemori<label=\pi>{6}
+\xMemori<label=\frac{3\pi}{2}>{9}
+\xMemori<label=2\pi>{12}
+\end{zahyou}
+\end{showEx}
+
+新設した\cmd{xMemori}, \cmd{yMemori}の書式です。
+
+\begin{boxnote}
+\begin{verbatim}
+座標軸上任意位置に目盛
+\xMemori[#1]<#2>(#3)#4
+\yMemori[#1]<#2>(#3)#4
+  #1 : t = 座標軸の下に目盛（デフォルト）
+       b =         上
+  #2 : 目盛の文字
+       （省略すれば，#4 に指定したものが代用されます．）
+  #3 : 単位の長さ（デフォルト値=\zahyouMemoriで指定したdx）
+  #4 : 単位の長さの#4倍の位置に目盛を打つ
+\end{verbatim}
+\end{boxnote}
+
+さらに，\verb+<xo=...,yo=....>+ オプションと併用した例です。
+
+\begin{showEx}(.5,.44){\texttt{xo,yo}オプションと併用}
+\footnotesize
+\begin{zahyou}[%
+ul=6mm,gentenhaiti={[se]}](%
+-1,7)(-1.5,2)
+\zahyouMemori[+][n]%
+  <xo=-\Pis,dx=\Pih>
+\ymemori{1}
+\ymemori{-1}
+\xMemori<-\frac{\pi}{6}>{0}
+\xMemori<\frac{\pi}{3}>{1}
+\xMemori<\frac{5\pi}{6}>{2}
+\xMemori<\frac{4\pi}{3}>{3}
+\xMemori<\frac{11\pi}{6}>{4}
+\end{zahyou}
+\end{showEx}
+\fi
+
+\subsection{座標軸への垂線}
+平面上に点をプロットしたとき，その点から座標軸に下ろした垂線を
+破線で描画したいときがあります。
+この目的のために \cmd{Put} にオプションを追加しました。
+
+\begin{boxnote}
+\begin{verbatim}
+\emathPut#1[#2].....
+  #1 : 文字列を置く位置（座標）
+  #2 : 方位
+          syaei=x|y|xy
+          houi=n|nw|w|sw|s|se|e|ne
+          xlabel=..
+          ylabel=..
+          xpos=..
+          ypos=..
+          syaeisensyu=..
+\end{verbatim}
+\end{boxnote}
+
+従来，\verb/[#2]/ オプションは，文字列の点に対する方位を指定するものでした。
+これはそのまま有効ですが，ここに
+\begin{verbatim}
+    syaei=xy
+\end{verbatim}
+とすれば，点から両座標軸への垂線を描画することができます。
+
+\begin{showEx}(.6,.34){\texttt{[syaei=xy]}}
+\unitlength10mm\footnotesize
+\begin{zahyou}(-1,3)(-1,3)
+  \tenretu{A(1,2)ne}
+  \Put\A[syaei=xy]{}
+\end{zahyou}
+\end{showEx}
+
+\begin{verbatim}
+    syaei=x
+\end{verbatim}
+とすれば，$x$軸への垂線が描画されます。
+
+\begin{showEx}(.6,.34){\texttt{[syaei=x]}}
+\unitlength10mm\footnotesize
+\begin{zahyou}(-1,3)(-1,3)
+  \tenretu{A(1,2)ne}
+  \Put\A[syaei=x]{}
+\end{zahyou}
+\end{showEx}
+
+従来の方位オプションもここに記述したいときは
+\begin{verbatim}
+  houi=..
+\end{verbatim}
+と記述します。
+
+\begin{showEx}(.6,.34){\texttt{[houi=..]}}
+\unitlength10mm\footnotesize
+\begin{zahyou}(-1,3)(-1,3)
+  \def\A{(1,2)}
+  \Put\A[syaei=xy,houi=sw]{A}
+\end{zahyou}
+\end{showEx}
+
+
+座標軸上のラベルですが，デフォルトでは指定点の $x$, $y$座標が表示されます。
+これが整数の場合は問題ないのですが，分数，無理数，文字を表示したいときは
+\begin{verbatim}
+  xlabel=..
+  ylabel=..
+\end{verbatim}
+オプションを用います。
+
+\begin{showEx}(.6,.34){\texttt{[xlabel=..]}}
+\unitlength10mm\footnotesize
+\begin{zahyou}(-1,3)(-1,3)
+  \tenretu{A(1.5,1.414)ne}
+  \Put\A[syaei=xy,xlabel=\frac32,
+    ylabel=\sqrt2]{}
+\end{zahyou}
+\end{showEx}
+
+このオプションの右辺値は数式モード内であるという前提です。
+また \verb/[...,xlabel=]/ と右辺値を空にすればラベルは打たれません。
+
+また，垂線の線種を変更するには，\verb+syaeisensyu=..+オプションを用います。
+
+\begin{showEx}(.6,.34){\texttt{[syaeisensyu=]}}
+\unitlength10mm\footnotesize
+\begin{zahyou}(-1,3)(-1,3)
+  \tenretu{A(1,2)ne}
+  \Put\A[syaei=x,%
+    syaeisensyu=\protect\emdottedline]{}
+\end{zahyou}
+\end{showEx}
+
+垂線の足につける目盛り位置を修正するときは，\verb+[xpos=..]+, \verb+[ypos=..]+
+オプションで，右辺値に\cmd{Put}の配置オプションを記述します。
+
+$x$軸に下ろした垂線の足位置につける文字位置は
+\verb+[xpos=..]+オプションで修正します。
+\index{xpos @ xpos オプション}
+
+\begin{showEx}{\texttt{xpos=..}オプション}
+\begin{zahyou}[ul=10mm]%
+    (-2.5,2.5)(-1.5,1.5)
+  \tenretu{A(2,1)ne;B(-2,-1)sw}
+  \Put\A[syaei=xy,xpos={[ne]}]{}
+  \Put\B[syaei=xy,%
+    xpos={(-2pt,-2pt)[rt]}]{}
+\end{zahyou}
+\end{showEx}
+
+$y$軸に下ろした垂線の足位置につける文字位置の調整は
+\verb+[ypos=..]+オプションです。
+\index{ypos @ ypos オプション}
+
+\begin{showEx}{\texttt{ypos=..}オプション}
+\begin{zahyou}[ul=10mm]%
+    (-2.5,2.5)(-1.5,1.5)
+  \tenretu{A(2,1)ne;B(-2,-1)sw}
+  \Put\A[syaei=xy,ypos={[ne]}]{}
+  \Put\B[syaei=xy,%
+    ypos={(-2pt,-2pt)[rt]}]{}
+\end{zahyou}
+\end{showEx}

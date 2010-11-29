@@ -1,0 +1,47 @@
+\documentclass{jarticle}
+\usepackage{emath}
+\usepackage{emathThm}
+\usepackage{emathThmbx}
+\usepackage{emathAe}
+
+\theorembodyfont{\normalfont}
+\newtheorem{monkai}{問題}
+\boxedtheorem<AeEnv=monkai>{mondai}{\bfseries 問題}
+
+\begin{document}
+\openKaiFile
+\section{AAA}
+\repeatstr{本文AAA}{50}
+\begin{mondai}
+\repeatstr{あ}{40}
+\begin{Kaitou}
+\repeatstr{ア}{100}
+\end{Kaitou}
+\end{mondai}
+
+\section{BBB}
+\repeatstr{本文BBB}{50}
+\begin{mondai}
+ううううううううううううううう
+ううううううううううううううう
+ううううううううううううううう
+\begin{Kaitou}
+\end{Kaitou}
+\begin{enumerate}[(1)]
+  \item えええええええ
+    \begin{Kaitou}
+      エエエエエ
+    \end{Kaitou}
+  \item おおおおおお
+    \begin{Kaitou}
+      オオオオオオ
+    \end{Kaitou}
+\end{enumerate}
+\end{mondai}
+
+\closeKaiFile
+\newpage
+
+\centerline{\Large\textgt{解答}}
+\inputKaiFile
+\end{document}

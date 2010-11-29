@@ -1,0 +1,85 @@
+% emFxabx.sty by tDB(CQB00260@nifty.ne.jp)
+%
+  \NeedsTeXFormat{pLaTeX2e}
+  \ProvidesPackage{emFxabx}[2008/11/02 v0.05]%
+%
+\Strchr{\emFx@abx}{a}\emFx@abx@a
+\Strchr{\emFx@abx}{b}\emFx@abx@b
+\Strchr{\emFx@abx}{x}\emFx@abx@x
+\ifnum\emFx@abx@a>\z@
+\DeclareSymbolFont{EMmatha}{U}{matha}{m}{n}
+\DeclareFontSubstitution{U}{matha}{m}{n}
+%%\DeclareSymbolFont{EMmathb}{U}{mathb}{m}{n}
+%%\DeclareFontSubstitution{U}{mathb}{m}{n}
+\DeclareMathSymbol{\abxpm}            {2}{EMmatha}{"08}
+\DeclareMathSymbol{\abxmp}            {2}{EMmatha}{"09}
+\DeclareMathSymbol{\abxpropto}        {0}{EMmatha}{"39}
+\DeclareMathSymbol{\abxemptyset}      {0}{EMmatha}{"48}
+\DeclareMathSymbol{\abxin}            {3}{EMmatha}{"50}
+\DeclareMathSymbol{\abxni}            {3}{EMmatha}{"51}
+\DeclareMathSymbol{\abxnotin}         {3}{EMmatha}{"52}
+\DeclareMathSymbol{\abxnotni}        {3}{EMmatha}{"53}
+\DeclareMathSymbol{\varnotin}      {3}{EMmatha}{"54}
+\DeclareMathSymbol{\varnotni}      {3}{EMmatha}{"55}
+\DeclareMathSymbol{\abxsubset}        {3}{EMmatha}{"80}
+\DeclareMathSymbol{\abxsupset}        {3}{EMmatha}{"81}
+\DeclareMathSymbol{\abxnsubset}       {3}{EMmatha}{"82}
+\DeclareMathSymbol{\abxnsupset}       {3}{EMmatha}{"83}
+\DeclareMathSymbol{\abxsubseteq}      {3}{EMmatha}{"84}
+\DeclareMathSymbol{\abxsupseteq}      {3}{EMmatha}{"85}
+\DeclareMathSymbol{\abxnsubseteq}     {3}{EMmatha}{"86}
+\DeclareMathSymbol{\abxnsupseteq}     {3}{EMmatha}{"87}
+\DeclareMathSymbol{\abxsubsetneq}     {3}{EMmatha}{"88}
+\DeclareMathSymbol{\abxsupsetneq}     {3}{EMmatha}{"89}
+\DeclareMathSymbol{\abxvarsubsetneq}  {3}{EMmatha}{"8A}
+\DeclareMathSymbol{\abxvarsupsetneq}  {3}{EMmatha}{"8B}
+%
+\DeclareMathSymbol{\abxsubseteqq}     {3}{EMmatha}{"8C}
+\DeclareMathSymbol{\abxsupseteqq}     {3}{EMmatha}{"8D}
+\DeclareMathSymbol{\abxnsubseteqq}    {3}{EMmatha}{"8E}
+\DeclareMathSymbol{\abxnsupseteqq}    {3}{EMmatha}{"8F}
+\DeclareMathSymbol{\abxsubsetneqq}    {3}{EMmatha}{"90}
+\DeclareMathSymbol{\abxsupsetneqq}    {3}{EMmatha}{"91}
+\DeclareMathSymbol{\abxvarsubsetneqq} {3}{EMmatha}{"92}
+\DeclareMathSymbol{\abxvarsupsetneqq} {3}{EMmatha}{"93}
+%
+\DeclareMathSymbol{\abxSubset}        {3}{EMmatha}{"94}
+\DeclareMathSymbol{\abxSupset}        {3}{EMmatha}{"95}
+\DeclareMathSymbol{\abxnSubset}       {3}{EMmatha}{"96}
+\DeclareMathSymbol{\abxnSupset}       {3}{EMmatha}{"97}
+\DeclareMathSymbol{\abxrightarrow}{3}{EMmatha}{"D1}
+\DeclareMathSymbol{\abxleqq}        {3}{EMmatha}{"AE}
+\DeclareMathSymbol{\abxgeqq}        {3}{EMmatha}{"AF}
+\DeclareMathSymbol{\abxlesseqqgtr}  {3}{EMmatha}{"BE}
+\DeclareMathSymbol{\abxgtreqqless}  {3}{EMmatha}{"BF}
+\DeclareMathSymbol{\abxlesssim}     {3}{EMmatha}{"C0}
+\DeclareMathSymbol{\abxrelbar}{3}{EMmatha}{"DD}
+\DeclareMathSymbol{\abxLeftarrow}             {3}{EMmatha}{"F0}
+\DeclareMathSymbol{\abxRightarrow}            {3}{EMmatha}{"F1}
+\DeclareMathSymbol{\abxsubsetneqq}    {3}{EMmatha}{"90}
+\fi
+%
+\ifnum\emFx@abx@x>\z@
+\DeclareSymbolFont{EMmathx}{U}{mathx}{m}{n}
+\DeclareFontSubstitution{U}{mathx}{m}{n}
+\DeclareMathSymbol{\abxsum}    {1}{EMmathx}{"B0}
+\DeclareMathSymbol{\abxintop}  {1}{EMmathx}{"B3}
+\def\abxint{\abxintop\nolimits}
+\ifnum\emFx@abx@a>\z@
+\DeclareMathDelimiter{\abxlbrack} {4}{EMmatha}{"72}{EMmathx}{"10}
+\DeclareMathDelimiter{\abxrbrack} {5}{EMmatha}{"73}{EMmathx}{"18}
+\DeclareMathDelimiter{\ldbrack}   {4}{EMmatha}{"76}{EMmathx}{"30}
+\DeclareMathDelimiter{\rdbrack}   {5}{EMmatha}{"77}{EMmathx}{"38}
+\fi
+\fi
+%
+\newcommand{\abxgauss}[1]{\ensuremath{%
+    \left\abxlbrack\mkern1mu #1\mkern1mu\right\abxrbrack}}%
+\endinput
+%
+v 0.00 2005/10/23
+v 0.01 2006/08/31 \abxsubseteqq, \abxsupseteqq
+v 0.02 2006/10/06 bekutorukata.sty のロードを停止
+v 0.03 2007/01/26 \abxsubsetneqq
+v 0.04 2007/05/16 \varnotin, \varnotni
+v 0.05 2008/11/02 \abxpropto

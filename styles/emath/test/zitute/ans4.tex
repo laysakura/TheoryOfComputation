@@ -1,0 +1,62 @@
+\documentclass[fleqn,b4j]{jarticle}
+\usepackage{multicol}
+\usepackage{emathPh}
+
+%%% 版面の指定です．
+\setlength{\oddsidemargin}{-0.5cm}
+\setlength{\evensidemargin}{-0.5cm}
+\setlength{\topmargin}{-20mm}
+\setlength{\headheight}{15pt}
+\setlength{\headsep}{15pt}
+\setlength{\textwidth}{21.5cm}
+\setlength{\textheight}{33cm}
+\AtBeginDvi{\special{papersize=25.7cm,36.4cm}}
+
+\begin{document}
+\begin{multicols}{2}
+  \begin{caprm}
+  \begin{enumerate}[(1)]
+    \item \sankaku{ABC}において余弦定理より
+      \begin{align*}
+        AC^2&=2^2+(\sqrt{3}+1)^2
+                -\teisei[r]2\cdot2\cdot(\sqrt{3}+1)\teisei[r]{\cos60\Deg}\\
+          &=4+4+\teisei{2\sqrt{3}}-\teisei{2\sqrt{3}}-2\\
+          &=6\\
+        \therefore \bm{AC}&=\bm{\sqrt{6}}
+      \end{align*}
+      \begin{center}
+        \begin{zahyou*}[ul=20mm](-.5,3)(-.5,2)
+          \rtenretu{A(2,60)n;B(0,0)s;C(2.732,0)s}
+          \rtenretu[\C]{D(1.414,105)e}
+          \Hen_ko[0]\A\B{2}
+          \Hen_ko[0]<.4>\B\C{$\sqrt3+1$}
+          \Hen_ko[0]<.4>\C\D{$\sqrt2$}
+          \Kakukigou<0>\C\B\A{60\Deg}
+          \Kakukigou<0>\D\C\B(4pt,3pt)[r]{75\Deg}
+          \Kakukigou\A\C\B<Hankei=.9cm>[nw]{45\Deg}
+          \Kakukigou<2>\D\C\A<Hankei=1.2cm>(2pt,4pt)[rb]{30\Deg}
+          {\thicklines\Drawline{\A\B\C\D\A}}%
+          \Hasen{\A\C}
+        \end{zahyou*}
+      \end{center}
+  \columnbreak
+    \item \sankaku{ABC}において，正弦定理より
+      \begin{gather*}
+        \bunsuu{\sqrt{6}}{\sin60\Deg}=\bunsuu{2}{\sin\kaku{ACB}}\\
+        \sin\kaku{ACB}=\bunsuu{2\sin60\Deg}{\sqrt{6}}=\bunsuu{1}{\sqrt{2}}\\
+        \intertext{$\kaku{ACB}<\kaku{DCB}=75\Deg$~であるから}
+        \bm{\kaku{ACB}}=\bm{45\Deg}
+      \end{gather*}
+    \item 求める面積は
+      \begin{align*}
+        &\dumyeq\sankaku{ABC}+\sankaku{ACD}\\
+        &=\bunsuu12\cdot2(\sqrt3+1)\sin60\Deg
+          +\bunsuu12\cdot\sqrt6\sqrt2\sin30\Deg\\
+        &=\bunsuu{\sqrt3(\sqrt3+1)}{2}+\bunsuu{\sqrt3}{2}\\
+        &=\bunsuu{3+\sqrt3+\sqrt3}{2}\\
+        &=\bm{\bunsuu{3+2\sqrt3}{2}}
+      \end{align*}
+  \end{enumerate}
+  \end{caprm}
+\end{multicols}
+\end{document}

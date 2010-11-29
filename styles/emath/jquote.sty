@@ -1,0 +1,127 @@
+%%% jquote.sty by tDB(emath@nifty.com)
+%
+\NeedsTeXFormat{LaTeX2e}%
+\ProvidesPackage{jquote}[2009/10/21 v0.11]%
+%
+    \RequirePackage{keyval}%
+%
+\@ifundefined{ltxitem}{\let\ltxitem\item}{}%
+%
+%
+%%% インデント
+%%% jquote(#1)(#2)[#3]
+%%%     #1 : 左インデント（デフォルト値 2zw）
+%%%     #2 : 右インデント（デフォルト値 0zw）
+%%%     #3 : \topsep
+%
+  \define@key{jquote}{tsep}{\edef\t@sep{#1}}%
+  \define@key{jquote}{bsep}{\edef\b@sep{#1}}%
+  \define@key{jquote}{vsep}{\edef\t@sep{#1}\edef\b@sep{#1}}%
+%
+\def\jquote{%
+  \def\t@sep{0pt}\def\b@sep{0pt}%
+  \@ifnextchar<{\jquote@}{\@jquote}}%
+\def\jquote@<#1>{\setkeys{jquote}{#1}\@jquote}%
+\def\@jquote{\@ifnextchar({\@@jquote}{\@@jquote(2zw)}}%
+\def\@@jquote(#1){%
+  \@ifnextchar({\@@@jquote(#1)}{\@@@jquote(#1)(\z@)}}%
+\def\@@@jquote(#1)(#2){%
+    \@ifnextchar[{\@@@@jquote(#1)(#2)}{\@@@@jquote(#1)(#2)[\topsep]}}%
+\def\@@@@jquote(#1)(#2)[#3]{%
+% \leavevmode%
+  \ifdim\t@sep=\z@\else\vspace*{\t@sep}\fi
+  \list{}{\setlength{\leftmargin}{#1}\setlength{\rightmargin}{#2}%
+    \parsep\z@ plus\p@\setlength{\topsep}{#3}}%
+  \@ifundefined{EMWR@list}{\ltxitem\relax}{\item\relax}%
+%  \hsize=\linewidth%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% for framed
+  \ignorespaces%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 2008/03/07
+}%
+\def\endjquote{\endlist
+  \ifdim\b@sep=\z@\else\vspace*{\b@sep}\fi
+}%
+%
+\def\jquotation{%
+  \def\t@sep{0pt}\def\b@sep{0pt}%
+  \@ifnextchar<{\jquotation@}{\@jquotation}}%
+\def\jquotation@<#1>{\setkeys{jquote}{#1}\@jquotation}%
+\def\@jquotation{\@ifnextchar({\@@jquotation}{\@@jquotation(2zw)}}%
+\def\@@jquotation(#1){\@ifnextchar({\@@@jquotation(#1)}{%
+\@@@jquotation(#1)(0zw)}}%
+\def\@@@jquotation(#1)(#2){\@ifnextchar[{\@@@@jquotation(#1)(#2)}{%
+    \@@@@jquotation(#1)(#2)[\z@ plus\p@]}}%
+\def\@@@@jquotation(#1)(#2)[#3]{%
+    \ifdim\t@sep=\z@\else\vspace*{\t@sep}\fi
+    \list{}{\setlength{\leftmargin}{#1}\setlength{\rightmargin}{#2}%
+    \listparindent\parindent%
+    \itemindent\parindent\parsep\z@ plus\p@
+    \topsep#3\relax}%
+%    \hsize=\linewidth%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% for framed
+    \item\relax}%
+\def\endjquotation{\endlist
+  \ifdim\b@sep=\z@\else\vspace*{\b@sep}\fi
+}%
+%
+\def\EMchangeLRskip{%
+  \edef\top@par{1}%
+  \define@key{LRskip}{toppar}{\edef\top@par{##1}}%
+  \@ifnextchar<{\@EMchangeLRskip}{\@EMchangeLRskip<\empty>}}%
+\def\@EMchangeLRskip<#1>{\@ifnextchar({\@@EMchangeLRskip<#1>}{\@@EMchangeLRskip<#1>(2zw)}}%
+\def\@@EMchangeLRskip<#1>(#2){\@ifnextchar({\@@@EMchangeLRskip<#1>(#2)}{\@@@EMchangeLRskip<#1>(#2)(\z@)}}%
+\def\@@@EMchangeLRskip<#1>(#2)(#3){%
+%
+\@ifundefined{Migi@Haiti}{}{%
+\def\Migi@Haiti(##1,##2)##3{%
+  \leavevmode\vadjust{\kern-\p@\smash{\vtop{%
+  \noindent\hspace*{\linewidth}\hspace*{-\EMWR@zuhaba}%
+%\@ifundefined{EMLR@lskip}{}{%
+  \hspace{-\EMLR@lskip}%
+  \hspace{-\EMLR@lskip}%
+  \hspace{-\EMLR@rskip}%
+%}%
+  \hspace{\@totalleftmargin}%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \@tempdimb ##2\relax
+  \relax\leavevmode\lower -\@tempdimb\hbox{\hspace*{##1}##3}}}\kern\p@}}%
+}%
+%
+  \ifx\empty #1\else
+    \setkeys{LRskip}{#1}%
+  \fi
+  \ifnum\top@par>\z@
+    \ifvmode\else\par\noindent\fi
+  \fi
+  \@tempdima=#2\relax
+  \@tempdimb=#3\relax
+  \edef\EMLR@lskip{\the\@tempdima}%
+  \edef\EMLR@rskip{\the\@tempdimb}%
+  \advance\leftskip#2\relax
+  \advance\rightskip#3\relax
+  \@ifundefined{mathindent}{}{\advance\mathindent#2\relax}%
+%  \advance\@totalleftmargin#2\relax%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \@ifundefined{mwrkmpar}{%
+    \advance\linewidth-\@tempdima%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \advance\@totalleftmargin\@tempdima%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \advance\linewidth-\@tempdimb%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  }{\let\par\mwrkmpar}%
+  \ignorespaces
+}%
+%
+\def\endEMchangeLRskip{\par
+  \@ifundefined{mwrkmpar}{}{%
+    \endgroup\par
+    \begingroup\def\@currenvir{EMchangeLRskip}%
+  }%
+}%
+\endinput
+
+v 0.00 2005/06/30 emath.sty から独立
+v 0.02 2006/06/07 EMchangeLRskip環境
+                  jquote を edaenumerate環境内で使用可能
+v 0.03 2006/07/30 mawarikomi環境内の使用に配慮して，上記を修正
+v 0.04 2008/01/12 0.03 の修正が逆だった
+v 0.05 2008/03/07 \ignorespaces 付加
+v 0.06 2008/09/04 空白の混入対策
+v 0.07 2009/01/10 \ltxitem 未定義対策
+v 0.08 2009/06/01 framed環境に対応 ---> framed で行う (6/16)
+v 0.09 2009/06/16 \hsize=\linewidth を ..framed.sty に移管
+v 0.10 2009/10/18 EMchangeLRskip 整備 (BBS #8386)
+v 0.11 2009/10/21 仝 (BBS #8398)

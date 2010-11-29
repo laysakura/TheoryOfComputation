@@ -1,0 +1,169 @@
+% emathBt.sty by tDB (CQB00260@nifty.ne.jp)
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{emathBt}[2008/03/28 v 0.02β]%
+%
+\RequirePackage{EMboutyuu}
+%
+% 本文と傍注の間の罫線の太さ
+\newdimen\marginparseprule\marginparseprule=.4pt
+
+% \@outputpage に罫線を含める
+%
+\def\@outputpage{%
+\begingroup % the \endgroup is put in by \aftergroup
+  \iftdir
+    \dimen\z@\textwidth \textwidth\textheight \textheight\dimen\z@
+  \fi
+  \let \protect \noexpand
+  \@resetactivechars
+  \global\let\@@if@newlist\if@newlist
+  \global\@newlistfalse
+  \@parboxrestore
+  \shipout\vbox{\yoko
+    \set@typeset@protect
+    \aftergroup\endgroup
+    \aftergroup\set@typeset@protect
+%    \end{macrocode}
+% \changes{v1.1g}{1998/02/03}{\cs{@shipoutsetup}を\cs{@outputpage}内に入れた}
+% ここから|\@shipoutsetup|の内容。
+%    \begin{macrocode}
+     \if@specialpage
+       \global\@specialpagefalse\@nameuse{ps@\@specialstyle}%
+     \fi
+%    \end{macrocode}
+% \changes{v1.1c}{1995/02/05}{\cs{oddsidemargin}と\cs{evensidemargin}が
+%    逆だったのを修正}
+%    \begin{macrocode}
+     \if@twoside
+       \ifodd\count\z@ \let\@thehead\@oddhead \let\@thefoot\@oddfoot
+          \iftdir\let\@themargin\evensidemargin
+          \else\let\@themargin\oddsidemargin\fi
+       \else \let\@thehead\@evenhead
+          \let\@thefoot\@evenfoot
+           \iftdir\let\@themargin\oddsidemargin
+           \else\let\@themargin\evensidemargin\fi
+     \fi\fi
+%    \end{macrocode}
+% トンボ出力オプションが指定されている場合、ここで用紙サイズを再設定します。
+% \TeX の加える左と上部の1インチは、トンボの内側に入ります。
+% \changes{v1.1a}{1995/11/10}{\cs{topmargin}が反映されないバグを修正}
+%    \begin{macrocode}
+     \@@topmargin\topmargin
+     \iftombow
+       \@@paperwidth\paperwidth \advance\@@paperwidth 6mm\relax
+       \@@paperheight\paperheight \advance\@@paperheight 16mm\relax
+       \advance\@@topmargin 1in\relax \advance\@themargin 1in\relax
+     \fi
+     \reset@font
+     \normalsize
+     \normalsfcodes
+     \let\label\@gobble
+     \let\index\@gobble
+     \let\glossary\@gobble
+     \baselineskip\z@skip \lineskip\z@skip \lineskiplimit\z@
+%    \end{macrocode}
+% ここまでが|\@shipoutsetup|の内容。
+%    \begin{macrocode}
+    \@begindvi
+    \@outputtombow
+    \vskip \@@topmargin
+    \moveright\@themargin\vbox{%
+      \setbox\@tempboxa \vbox to\headheight{%
+        \vfil
+        \color@hbox
+          \normalcolor
+          \hb@xt@\textwidth{\@thehead}%
+        \color@endbox
+      }%                        %% 22 Feb 87
+      \dp\@tempboxa \z@
+      \box\@tempboxa
+      \vskip \headsep
+% ------------------------------- ここから ------------------------------
+% 本文と傍注の間に罫線
+%   twocolumn, \reversemarginpar は考慮していない。
+%
+%\vbox{{\unitlength=\p@\begin{picture}(0,0)%
+%  \@tempdima\textwidth\advance\@tempdima.5\marginparsep
+%  \put(\strip@pt\@tempdima,0){\line(0,-1){\strip@pt\textheight}}%
+%\end{picture}}}%
+%
+\if@twoside
+    \ifodd\c@page
+%     \vbox{\hbox{\box\@outputbox\hskip.5\marginparsep
+%              \vrule width\marginparseprule}}%
+      \vbox{\@tempdima\textwidth\advance\@tempdima.5\marginparsep
+        \unitlength\p@
+        \begin{picture}(0,0)\relax
+          \put(\strip@pt\@tempdima,0){\vrule height\textheight width\marginparseprule}%
+        \end{picture}\box\@outputbox}%
+    \else
+      \vbox{\hbox to\textwidth{\hss \vrule width\marginparseprule
+        \hskip.5\marginparsep\box\@outputbox}}%
+    \fi
+\else
+     \vbox{\hbox{\box\@outputbox\hskip.5\marginparsep
+              \vrule width\marginparseprule}}%
+\fi
+% ------------------------------- ここまで ------------------------------
+      \baselineskip \footskip
+      \color@hbox
+        \normalcolor
+        \hb@xt@\textwidth{\@thefoot}%
+      \color@endbox
+    }%
+  }%
+%  \endgroup now inserted by \aftergroup
+%    \end{macrocode}
+% |\if@newlist|を初期化。
+%    \begin{macrocode}
+  \global\let\if@newlist\@@if@newlist
+  \global \@colht \textheight
+  \stepcounter{page}%
+  \let\firstmark\botmark
+}
+
+% 白紙ページは罫線を入れない。
+%
+\def\cleardoublepage{\clearpage\if@twoside
+  \ifodd\c@page
+    \iftdir
+      \edef\save@marginparseprule{\the\marginparseprule}%
+      \marginparseprule=\z@
+      \hbox{}\thispagestyle{empty}\newpage
+      \if@twocolumn\hbox{}\newpage\fi
+      \marginparseprule=\save@marginparseprule
+    \fi
+  \else
+    \ifydir
+      \edef\save@marginparseprule{\the\marginparseprule}%
+      \marginparseprule=\z@
+      \hbox{}\thispagestyle{empty}\newpage
+      \if@twocolumn\hbox{}\newpage\fi
+      \marginparseprule=\save@marginparseprule
+    \fi
+  \fi\fi}
+
+% nomarginparseprule 環境内は罫線を消す。
+%   この環境は color.sty を前提とします。
+%
+\newbox\Bt@boxa
+\def\nomarginparseprule{\par\noindent
+  \setbox\Bt@boxa=\hbox\bgroup\begin{minipage}{\textwidth}}
+\def\endnomarginparseprule{\end{minipage}\egroup
+  \ifodd\c@page
+    \hbox to\textwidth{\box\Bt@boxa\hskip.5\marginparsep{%
+    \color{white}\vrule width\marginparseprule}}%
+  \else
+    \hbox to\textwidth{\hss {\color{white}\vrule width\marginparseprule}%
+        \hskip.5\marginparsep\box\Bt@boxa}%
+  \fi
+\par}%
+\endinput
+
+ver 0.00 2002/10/01 QandA #11368 からのスレッドで提案
+ver 0.01 2002/10/02
+           傍注に \footnote と同じく，番号を附加する \boutyuu
+           部分的に罫線を消す nomarginparseprule環境
+ver 0.02 2008/03/28
+           \boutyuu を EMboutyuu.sty として独立

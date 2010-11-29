@@ -1,0 +1,117 @@
+\documentclass[a4j]{jarticle}
+\usepackage{emathPp}
+\usepackage{emathPxy}
+\usepackage{showexample}
+
+\checkPerl
+
+\begin{document}
+\section{\textsf{picture}環境との共存}
+\textsf{emathPxy}を導入すると，\textsf{picture}環境に対して，
+\cmd{unitlength}が無効となっていましたが，これを修正しました。
+
+\begin{showEx}(0.54,0.4){\textsf{picture}環境との共存}
+\unitlength10mm
+\begin{picture}(2,2)
+\put(1,1){\circle{2}}
+\put(0,0){%
+  \drawline(0,0)(2,0)(2,2)(0,2)(0,0)}
+\end{picture}
+\end{showEx}
+
+ただし，\textsf{picture}環境に対して，\texttt{yscale}オプションなどが
+有効になる，ということではありません。\textsf{emathPxy}を読み込んだだけで
+\cmd{unitlength}が無効になる事態を修正したということです。
+\cmd{yscale}などが必要な場合は，\textsf{picture}環境ではなく，
+\textsf{zahyou*}環境をご利用ください。
+
+\begin{showEx}(0.54,0.4){\textsf{zahyou*}環境で\texttt{yscale}オプション}
+\begin{zahyou*}%
+[ ul=10mm,
+  yscale=.6667
+](0,3)(0,4)%
+  \Put\O{\kousi{3}{4}}%
+\end{zahyou*}
+\end{showEx}
+
+\section{周囲に余白}
+\textsf{emathPh v 0.93}で新設した「周囲に余白を付ける」機能を
+\textsf{emathPxy}でも利用することができます。
+
+以下の例では，\TeX が認識している\textsf{zahyou}環境のサイズを
+示すために\cmd{framebox}で囲んでいます。
+
+
+\begin{showEx}(0.5,0.44){余白なし}
+\fboxsep=0pt\fbox{%
+\begin{zahyou}[%
+  ul=3mm,yscale=4,
+  yokozikuhaiti={[e]},
+  tatezikuhaiti={[n]}
+](-1,15)(-1.5,1.5)
+\zahyouMemori[z][n]<dx=\Pih>
+\YGurafu*{exp(-X/6)}
+\YGurafu*{-exp(-X/6)}
+\YGurafu*{exp(-X/6)*sin(X)}
+\ymemori{1}
+\ymemori{-1}
+\xMemori<\frac{\pi}{2}>{1}
+\xMemori<\pi>{2}
+\end{zahyou}}
+\end{showEx}
+
+座標軸名などの文字が枠外に飛び出しています。
+余白を付加してみましょう。
+
+\begin{showEx}(0.5,0.44){余白を付加}
+\fboxsep=0pt\fbox{%
+\begin{zahyou}[%
+  ul=3mm,yscale=4,
+  yokozikuhaiti={[e]},
+  tatezikuhaiti={[n]},
+  Migiyohaku=10pt,
+  Ueyohaku=10pt,
+  Hidariyohaku=12pt
+](-1,15)(-1.5,1.5)
+\zahyouMemori[z][n]<dx=\Pih>
+\YGurafu*{exp(-X/6)}
+\YGurafu*{-exp(-X/6)}
+\YGurafu*{exp(-X/6)*sin(X)}
+\ymemori{1}
+\ymemori{-1}
+\xMemori<\frac{\pi}{2}>{1}
+\xMemori<\pi>{2}
+\end{zahyou}}
+\end{showEx}
+文字も枠内に納まりました。
+
+\section{\textsf{zahyou}環境の書式}
+\begin{boxnote}
+\begin{verbatim}
+    \begin{zahyou}[#1](#2,#3)(#4,#5)
+      #1 : key=val の形式で，key には次のものが使えます。
+          yokozikukigou デフォルトは $x$
+          tatezikukigou デフォルトは $y$
+          gentenkigou   デフォルトは O
+          yokozikuhaiti デフォルトは (0,-3pt)[rt]
+          tatezikuhaiti デフォルトは (-3pt,0)[rt]
+          gentenhaiti   デフォルトは [sw]
+          ul            \unitlength を変更します。デフォルトは 1pt
+          yscale        デフォルトは1
+          xscale        デフォルトは1
+          arrowheadsize 矢印のサイズ（その時点のものに対する比率）
+          zikusensyu    座標軸の線種
+                        デフォルトは \arrowdrawline
+          ueyohaku      右辺値は無名数（単位は\unitlength)
+          sitayohaku
+          migiyohaku
+          hidariyohaku
+          Ueyohaku      右辺値は単位を伴う長さ
+          Sitayohaku
+          Migiyohaku
+          Hidariyohaku
+      (#2,#3) : xの範囲
+      (#4,#5) : yの範囲
+\end{verbatim}
+\end{boxnote}
+\end{document}

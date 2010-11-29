@@ -1,0 +1,36 @@
+\documentclass{jarticle}
+\usepackage{color}
+\usepackage{emathPsiki}
+\usepackage{emathPb}
+
+\begin{document}
+\unitlength=1pt\relax
+\begin{sikipicture}{%
+    x^2+,
+    \protect\emPmaru<iro=red>[\protect\mathstrut]{6},
+    x+,
+    \protect\emPmaru<iro=red>[\protect\mathstrut]{3},
+    ^2=1+,
+    \protect\emPmaru<iro=red>[\protect\mathstrut]{3},
+    ^2,
+  }
+  \Tyuuten\sikiBii\sikiBiv\P
+  \Addvec\P{(0,-8)}\P
+  {\color{red}%
+    \ArrowLine\sikiBii\P
+    \ArrowLine\P\sikiBiv
+    \ArrowLine\P\sikiBvi
+  }%
+  \Put\P(0,-1pt)[t]{\phovalbox{\small 半分の2乗}}
+\end{sikipicture}
+%
+\begin{picture}(20,10)
+\color{red}%
+\ArrowLine{(5,3)}{(15,3)}
+\end{picture}
+%
+\begin{sikipicture}{(x+3)^2+10}
+  \HenKo<henkoH=3pt,henkotype=bracket,henkocolor=red,putoption={[s]}>%
+    \LB\RB{\maru2 の形}
+\end{sikipicture}
+\end{document}

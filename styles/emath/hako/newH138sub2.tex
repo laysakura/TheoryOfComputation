@@ -1,0 +1,25 @@
+\documentclass{jarticle}
+\usepackage{hako}
+\usepackage{emathT}
+\usepackage[continue]{emathAe}
+
+\maskhakofalse
+
+\begin{document}
+\openHakoKaiFile
+\begin{caprm}
+$\kaku{ABC}=90\Deg$の直角三角形ABCにおいて
+  \begin{enumerate}[(1)]
+    \item $AB=3$, $BC=2$のとき$AC=\Hako'\sqrt{13}'$
+    \item $AB=3$, $AC=4$のとき$BC=\Hako'\sqrt{7}'$
+  \end{enumerate}
+\end{caprm}
+\closeHakoKaiFile
+\begin{Kaitou}
+\HakoKaiKata{a}%
+\inputHakoKaiFile
+\begin{tabular}{|>{\sityuu[1zw]{2zw}}*2{L{10zw}|}}\hline
+\HKi & \HKii\\\hline
+\end{tabular}
+\end{Kaitou}
+\end{document}

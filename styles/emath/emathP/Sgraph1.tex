@@ -1,0 +1,111 @@
+\section{関数のグラフ(1) 整関数}
+この節のマクロは,\textsf{emathPg.sty}で定義されています。
+
+\subsection{一次関数のグラフ}
+整関数は係数を降べき順にコンマで切って並べることにより表現します．
+例えば，$y=2x-1$ は \verb+{2,-1}+ と表されます．
+そのグラフを描かせてみます．\cindex{Gurafu}
+
+\showexample[一次関数のグラフ](0.5)(0.45){example/func11}
+\vspace{3\baselineskip}
+
+\begin{boxnote}
+\begin{verbatim}
+\Gurafu<#1>[#2]#3[#4]#5[#6]#7
+  #1 : xの刻み値（3次以上の場合）
+  #2 : 曲線上の点の個数
+  #3 : 整関数（コンマ区切りの係数並び）
+  #4 : y または Y
+  #5 : グラフを描画する x の下限
+  #6 : y または Y
+  #7 : グラフを描画する x の上限
+
+  #4 で y を指定したときは y=#5 となる x が下限となる．
+  #6 で y を指定したときは y=#7 となる x が上限となる．
+  二次関数では，y=y1 となる x は二つあるが，
+      y で小さい方を， Y で大きい方
+  を表す．
+\end{verbatim}
+\end{boxnote}
+
+これも引数の多いコマンドですが，基本的な使用法は
+\begin{jquote}
+\cmd{Gurafu}\verb+{整関数}{x の下限}{x の上限}+
+\end{jquote}
+です．
+
+なお，\textsf{zahyou}環境内では，$x$の下限，上限を \cmd{xmin},
+\cmd{xmax} で引用することができます．$y$ についても
+\cmd{ymin}, \cmd{ymax} が使えます．
+
+さて，上のグラフで左下が描画範囲から飛び出しています．
+
+この場合，\verb+/\xmin\leqq x \leqq xmax+ と指定するのではなく，
+左端は \texttt{y} が \verb+\ymin+ となるときの \texttt{x} の値，
+と指定したいものです．これを実現するのが \texttt{[y]} オプションです．
+
+\showexample(0.5)(0.45){example/func12}
+
+係数が分数のときは，それを小数で近似します。
+
+\showexample(0.5)(0.45){example/func13}
+
+分数のままで描画させる \cmd{GurafuB} もあります。
+分数は \verb+-1/2+ のように表現します。
+
+\showexample(0.5)(0.45){example/func14}
+
+\subsection{二次関数のグラフ}
+つぎは二次関数のグラフです．
+
+\showexample[二次関数のグラフ](0.5)(0.45){example/func21}
+
+これは，ベジェ曲線を描くコマンド \cmd{qbezier} を用いていますが，
+頂点の辺りと他の部分とで点の稠密度が異なるようです．
+頂点近辺と他の部分を分けて描く方が良さそうです．
+
+\showexample[二次関数のグラフ(2)](0.5)(0.45){example/func22}
+
+一部を点線で描画したいこともあります．
+その場合は，\cmd{qbezier} のオプション引数を与えます．
+
+\showexample[一部を点線で](0.7)(0.65){example/func23}
+
+\subsection{二直線の交点}
+2つの整関数のグラフの交点を求めるコマンドが \cmd{GKouten} です．
+\cindex{GKouten}
+
+\showexample[二直線の交点](0.75)(0.45){example/kouten11}
+
+\cmd{GKouten} の書式です．
+
+\begin{boxnote}
+\begin{verbatim}
+\GKouten#1#2#3#4
+  #1 : 整関数1
+  #2 : 整関数2
+
+#1, #2 がともに1次関数のときは
+  #3 : 交点のx座標
+  #4 : 交点のy座標
+#1, #2 のいずれかが2次関数のときは
+  #3 : 2つの交点のうち，x座標の小さい方
+  #4 : 2つの交点のうち，x座標の大きい方
+\end{verbatim}
+\end{boxnote}
+
+\subsection{直線と放物線の交点}
+
+\showexample[直線と放物線の交点](0.8)(0.45){example/kouten12}
+
+\subsection{三次関数のグラフ}
+三次以上の関数のグラフは折れ線で近似されます．
+xの刻み値のデフォルトは 0.05 です．この値は \verb+<#1>+ オプション
+で変更することができます．
+
+\showexample[三次関数のグラフ](0.65)(0.45){example/func31}
+
+範囲外は自動的にクリッピングされます．
+
+グラフ（の一部）を点線で描画するには，\cmd{Gurafu} ではなく，
+一般関数のグラフ描画コマンド \cmd{yGurafu} をご利用ください．

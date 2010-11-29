@@ -1,0 +1,127 @@
+\documentclass[a4j,fleqn]{jarticle}
+\usepackage{emathPp}
+\usepackage{showexample}
+\usepackage{jquote}
+\usepackage{multido}
+
+%\checkPerl*
+
+\begin{document}
+\section{newPp40---\cmd{BGurafu*}, \cmd{RGurafu*}コマンド}
+\subsection{\cmd{YGurafu}と\cmd{YGurafu*}の相違点}
+$y=f(x)$のグラフを描画するのに
+\begin{jquote}
+\begin{verbatim}
+\YGurafu\Fx\xmin\xmax
+\end{verbatim}
+\end{jquote}
+と記述するよりは
+\begin{jquote}
+\begin{verbatim}
+\YGurafu*\Fx
+\end{verbatim}
+\end{jquote}
+の方が簡潔で楽である，のは確かですが，この2方式の大きな違いは，
+前者が閉区間
+\begin{jquote}
+\heikukan[\text{\cmd{xmin}}, \text{\cmd{xmax}}]
+\end{jquote}
+で描画することを指示しているのに対して，後者は開区間
+\begin{jquote}
+\kaikukan(\text{\cmd{xmin}}, \text{\cmd{xmax}})
+\end{jquote}
+を指定していることにあります。
+
+従って，例えば
+\begin{jquote}
+\begin{verbatim}
+\YGurafu{tan(X)}{-$pi/2}{$pi/2}
+\end{verbatim}
+\end{jquote}
+はエラーとなりますが，
+\begin{jquote}
+\begin{verbatim}
+\YGurafu*[hidarix=-$pi/2,migix=$pi/2]{tan(X)}
+\end{verbatim}
+\end{jquote}
+は正しく実行されます。確認しましょう。
+
+\begin{showEx}(.64,.3){描画範囲の開区間指定}
+\begin{zahyou}[ul=6mm](-3,3)(-5,5)
+\YGurafu*[hidarix=-$pi/2,migix=$pi/2]{tan(X)}
+\YGurafu*[migix=-$pi/2]{tan(X)}
+\YGurafu*[hidarix=$pi/2]{tan(X)}
+\Hasen{(\Pih,\ymin)(\Pih,\ymax)}
+\Hasen{(-\Pih,\ymin)(-\Pih,\ymax)}
+\end{zahyou}
+\end{showEx}
+\newpage
+
+\subsection{\cmd{BGurafu*}}
+媒介変数表示の曲線描画コマンド\cmd{BGurafu}には，\verb+*+付はありませんでしたから，
+それが使えるようにしました。例として
+\begin{align*}
+  x&=\bunsuu{1}{\cos\theta}\\
+  y&=\tan\theta
+\end{align*}
+は双曲線$x^2-y^2=1$を表しますが，定義域はひとつの枝が開区間
+\retu(-\bunsuu{\pi}{2},\bunsuu{\pi}{2})です。
+
+\begin{showEx}(.64,.3){\cmd{BGurafu*}}
+\begin{zahyou}[ul=4mm](-4,4)(-4,4)
+  \def\Xt{1/cos(T)}
+  \def\Yt{tan(T)}
+  \BGurafu*[hazimet=-$pi/2,owarit=$pi/2]\Xt\Yt
+  \BGurafu*[hazimet=$pi/2,owarit=3*$pi/2]\Xt\Yt
+  \Hasens{\LB\RT;\LT\RB}
+\end{zahyou}
+\end{showEx}
+
+\subsection{\cmd{RGurafu*}}
+極方程式であらわされた曲線描画コマンド\cmd{RGurafu}に対しても\verb+*+付を定義しました。
+方程式$(y^2-4)y=(x^2-1)x$を極方程式に変換すると
+\[ r^2=\bunsuu{4\sin\theta-\cos\theta}{\sin^3\theta-\cos^3\theta} \]
+となります。$\arctan\bunsuu14=\alpha$ $\left(0<\alpha<\bunsuu{\pi}{2}\right)$とすると，
+$\theta$の範囲は半開区間$\left(\bunsuu\pi4,\pi+\alpha\right]$と，それを$\pi$ずつシフト
+した区間となります。
+
+描画結果は次ページへ
+\newpage
+
+\begin{showEx}(1,.9){\cmd{RGurafu*}}
+\begin{zahyou}[ul=10mm](-5,5)(-5,5)
+\calcval{atan2(1,4)}\xi
+\def\Ft{sqrt((4*sin(T)-cos(T))/(sin(T)**3-cos(T)**3))}
+\RGurafu*[hazimet=$pi/4,owarit=$pi+\xi](0.01)\Ft
+\RGurafu*[hazimet=$pi/4,owarit=$pi+\xi](0.01){-(\Ft)}
+\Takakkei{\LT\LB\RB\RT}
+\Hasen{(\xmin,\xmin)(\xmax,\xmax)}
+\end{zahyou}%
+\end{showEx}
+
+描画範囲を実線で囲んでいるのは，ちと魂胆があります。
+曲線がその枠に届く少し前で切れてしまっています。
+\cmd{RGurafu*}など\verb+*+付のコマンドでは，描画すべき両端を
+二分法で求めていますが，その収束判定数値をデフォルトでは0.001としています。
+それがこの場面では甘いようです。次ページの図では
+\begin{jquote}
+\begin{verbatim}
+\def\emLlim{0.0001}
+\end{verbatim}
+\end{jquote}
+と，収束判定数値を小さく設定してみました。効果は
+\newpage
+
+\begin{showEx}(1,.9){\cmd{emLlim}}
+\begin{zahyou}[ul=10mm](-5,5)(-5,5)
+\def\emLlim{0.0001}
+\calcval{atan2(1,4)}\xi
+\def\Ft{sqrt((4*sin(T)-cos(T))/(sin(T)**3-cos(T)**3))}
+\RGurafu*[hazimet=$pi/4,owarit=$pi+\xi](0.01)\Ft
+\RGurafu*[hazimet=$pi/4,owarit=$pi+\xi](0.01){-(\Ft)}
+\Takakkei{\LT\LB\RB\RT}
+\Hasen{(\xmin,\xmin)(\xmax,\xmax)}
+\multido{\ix=1+1}{4}{\xmemori{\ix}\ymemori{\ix}\xmemori{-\ix}\ymemori{-\ix}}
+\end{zahyou}%
+\end{showEx}
+\end{document}

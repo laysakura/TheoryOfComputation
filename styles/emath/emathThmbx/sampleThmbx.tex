@@ -1,0 +1,178 @@
+\documentclass[a4j]{jarticle}
+\usepackage{emathPh}
+\usepackage{emathThmbx}
+\usepackage{itembkbx}
+\usepackage{showexample}
+
+
+\begin{document}
+\section{\cmd{boxedtheorem}コマンド}
+例題などを枠で囲んで，それをナンバリングするためのスタイルファイルです。
+
+\begin{jquote}
+\begin{verbatim}
+コマンド \boxedtheorem#1#2 で，
+  環境 #1 が定義され，
+  見出しの名称 #2 の次にナンバリングされた数値がつきます。
+\end{verbatim}
+\end{jquote}
+
+たとえば
+
+\begin{jquote}
+\begin{verbatim}
+\boxedtheorem{rei}{例}
+\end{verbatim}
+\end{jquote}
+とすれば，以下のようになります。
+\boxedtheorem{rei}{例}
+
+\begin{showEx}{\cmd{boxedtheorem}}
+\begin{rei}
+ああああああああああああ
+ああああああああああああ
+\end{rei}
+
+\begin{rei}
+いいいいいいいいいいいい
+いいいいいいいいいいいい
+\end{rei}
+\end{showEx}
+
+\section{枠の種類変更}
+枠は，デフォルトでは \textsf{itembox}環境が使われますが，
+これを変更するオプションが\texttt{<frame=..>}です。
+下の例では，
+\begin{jquote}
+\begin{verbatim}
+\boxedtheorem<frame=itemshadebox>{teiri}{定理}
+\end{verbatim}
+\end{jquote}
+として，\textsf{teiri}環境の枠を\textsf{itemshadebox}に指定しています。
+\boxedtheorem<frame=itemshadebox>{teiri}{定理}
+
+\begin{showEx}{\texttt{<frame=..>}オプション}
+\begin{teiri}
+ああああああああああああ
+ああああああああああああ
+\end{teiri}
+
+\begin{teiri}
+いいいいいいいいいいいい
+いいいいいいいいいいいい
+\end{teiri}
+\end{showEx}
+
+\section{見出しの配置変更}
+見出しの位置は，デフォルトでは中央となっていますが，
+これを変更するには，\texttt{<frameoption=..>}オプションを用います。
+右辺値は，\textsf{itembox}環境などにそのまま渡されます。
+
+下の例は
+\begin{jquote}
+\begin{verbatim}
+\boxedtheorem<frameoption={[l]}>{reidai}{例題}
+\end{verbatim}
+\end{jquote}
+として見出しの位置を左に指定しています。
+\boxedtheorem<frameoption={[l]}>{reidai}{例題}
+
+\begin{showEx}{\texttt{<frameoption=..>}オプション}
+\begin{reidai}
+ああああああああああああ
+ああああああああああああ
+\end{reidai}
+
+\begin{reidai}
+いいいいいいいいいいいい
+いいいいいいいいいいいい
+\end{reidai}
+\end{showEx}
+
+\section{下辺見出しもつける場合}
+枠を\textsf{itemtbbox}など，上辺・下辺双方に見出しをつける環境を指定した場合，
+ナンバリング見出しは上辺につきます。下辺見出しは，定義した環境の引数で指定します。
+
+下の例は，
+\begin{jquote}
+\begin{verbatim}
+\boxedtheorem<frame=itemtbsquarebox,frameoption={<l>[r]}>{ruidai}{類題}
+\end{verbatim}
+\end{jquote}
+として，枠に\textsf{itemtbsquarebox}を指定しています。
+定義した環境\textsf{ruidai}の第1引数が，下辺見出しとなります。
+\boxedtheorem<frame=itemtbsquarebox,frameoption={<l>[r]}>{ruidai}{類題}
+
+\begin{showEx}{下辺見出し}
+\begin{ruidai}{2000 某大学}
+ああああああああああああ
+ああああああああああああ
+\end{ruidai}
+
+\begin{ruidai}{2005 ？大学}
+いいいいいいいいいいいい
+いいいいいいいいいいいい
+\end{ruidai}
+\end{showEx}
+
+\section{カウンタの名称}
+\cmd{boxedtheorem}で定義された環境のカウンタは環境と同名です。
+次の例は類題のカウンタ\texttt{ruidai}を例題のカウンタ\texttt{reidai}に従属させています。
+
+\begin{showEx}{カウンタの従属}
+\resetcounter{ruidai}[reidai]
+\def\theruidai{%
+  \arabic{reidai}.\arabic{ruidai}}
+\begin{reidai}
+うううううううううううう
+うううううううううううう
+\end{reidai}
+
+\begin{ruidai}{2000 某大学}
+ああああああああああああ
+ああああああああああああ
+\end{ruidai}
+
+\begin{ruidai}{2005 ？大学}
+いいいいいいいいいいいい
+いいいいいいいいいいいい
+\end{ruidai}
+\end{showEx}
+
+\section{ページをまたぐ}
+ページをまたぐ環境\textsf{breakitembox}に対しても適用できます。
+次の例は，
+
+\begin{jquote}
+\begin{verbatim}
+\boxedtheorem<frame=breakitembox>{rensyuumondai}{練習問題}
+\end{verbatim}
+\end{jquote}
+として，枠囲みを\textsf{breakitembox}に指定して，
+ページをまたがせています。
+
+\boxedtheorem<frame=breakitembox>{rensyuumondai}{練習問題}
+
+\ignorefirstline{1}%
+\begin{rensyuumondai}
+\leavevmode
+\begin{enumerate}[1.~]
+\item ああああああああああああああああああああああああああああああああ
+ ああああああああああああああああああああああああああああああああ
+ ああああああああああああああああああああああああああああああああ
+ ああああああああああああああああああああああああああああああああ
+\item いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+ いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+ いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+ いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+\item うううううううううううううううううううううううううううううううう
+ ううううううううううううううううううううううううううううううううう
+ ううううううううううううううううううううううううううううううううう
+ ううううううううううううううううううううううううううううううううう
+ ううううううううううううううううううううううううううううううううう
+\item えええ
+\item おおお
+\item かかか
+\end{enumerate}
+\end{rensyuumondai}
+\end{document}

@@ -1,0 +1,5688 @@
+\documentclass[fleqn,a4j]{jarticle}
+%
+%\usepackage[dvipdfm,bookmarks=true,bookmarksnumbered=true]{hyperref}
+%\usepackage{atbegshi}
+%\AtBeginShipoutFirst{\special{pdf:tounicode 90ms-RKSJ-UCS2}}
+%
+%\usepackage[dvips]{hyperref}
+%dvipsk -Ppdf -z -o -f sample |bkmk2uni -e >sample.ps
+%
+%\usepackage[hypertex]{hyperref}%
+%\usepackage[dvips]{hyperref}%
+%
+%platex foo
+%platex foo
+%out2uni foo
+%platex foo
+%dvipdfmx foo
+%
+     \usepackage{plext}%
+     \usepackage{graphicx,color}%
+     \usepackage{fancybox}%
+     \usepackage{ulem}%
+     \usepackage{makeidx}%
+     \usepackage{hako}%
+     \usepackage[pzd]{emathFx}%
+     \usepackage{emathEy}%
+     \usepackage{emathMw}%
+     \usepackage{emathThm}%
+     \usepackage{emathCap}%
+     \usepackage{emathAe}%
+     \usepackage{emathR}%
+     \usepackage{showexample}%
+     \usepackage{cases}%
+     \usepackage{emathPh}%
+     \usepackage{EMnidan}%
+     \usepackage{EMminipages}%
+%     \usepackage{emathLb}%
+     \usepackage{bekutorukata}%
+%
+\makeatletter
+  \@ifundefined{texorpdfstring}{\def\texorpdfstring#1#2{#1}}{}%
+\makeatother
+%
+\theorembodyfont{\normalfont}
+\newtheorem{reidai}{例題}
+
+\makeatletter
+  \def\AMSversion{\@ifundefined{inf@bad}{1}{2}}
+  \newcommand{\subsec}[2]{\subsection{%
+      \texorpdfstring{\protect\makebox[11zw][l]{#1}#2}{#1}}}%
+  \newcommand{\subsubsec}[2]{\subsubsection{%
+     \texorpdfstring{\protect\makebox[11zw][l]{#1}#2}{#1}}}%
+\makeatother
+
+   \makeindex%
+   \newcommand{\cindex}[1]{\index{#1@\texttt{\protect\cmd{#1}}}}
+
+\title{初等数学\\\LaTeX マクロ集\\
+emath.sty {\normalsize ver. 1.54}\\
+使用例}
+\author{tDB}
+\date{2005/10/31}
+
+\resetcounter{equation}[subsection]
+
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{4}
+
+\begin{document}
+%
+\maketitle\thispagestyle{empty}
+\begin{abstract}%
+\parindent1zw%
+中学・高校で数学のプリントを作る際に必要な記号，
+環境などを集めたマクロ集です。
+\LaTeXe を前提とします。
+
+このマクロ集のマクロについてのご質問，バグ報告，修正・追加の提案等は
+\begin{center}
+http://emath.s40.xrea.com/
+\end{center}
+の掲示板へどうぞ。
+\end{abstract}
+
+\pagebreak
+
+\abovedisplayskip2pt
+\belowdisplayskip2pt
+\pagenumbering{roman}%
+
+\tableofcontents
+
+\pagebreak
+\pagenumbering{arabic}
+
+\section{代数}
+\subsec{等しくない記号}{$\protect\neqq$}
+等しくない記号を表すには \cmd{ne} があります。
+しかし，日本では否定の斜線を逆向きにする習慣のようです。
+そのためのコマンド \cmd{neqq} を\cindex{neqq}
+定義しました。その効用は：
+
+\begin{showEx}(.7,.2){\cmd{ne}と\cmd{neqq}の違い}
+$a \ne b$\\
+$a \neqq b$
+\end{showEx}
+
+この記号は，数式の中で使われる位置によりサイズが自動的に変わります。
+
+\begin{showEx}(.7,.2){\cmd{neqq}のサイズ調整}
+  $i \neqq j$\\[1ex]
+  $\displaystyle\sum_{i \neqq j}A_{ij}$
+\end{showEx}
+
+\subsec{近似等号}{$\kinzi$\vspace{1ex}}
+AMSFontsには，\cmd{fallingdotseq}が用意されています。
+\textsf{emath}では，\cmd{kinzi}という同義語を定義してあります。
+\cindex{kinzi}
+
+\begin{itemshadebox}{\cmd{kinzi}}
+\begin{tabular}{l@{\ $\longrightarrow$\ }l}
+\verb/$(1+x)^n \kinzi 1+nx$/ & $(1+x)^n \kinzi 1+nx$
+\end{tabular}
+\end{itemshadebox}
+
+\subsec{分数記号}{$\bunsuu12$}
+分数を表すには，\cmd{frac} というコマンドがあります。
+しかし，分数罫線が短いという憾みがあります。
+また，分数罫線と分母・分子との縦間隔が空き過ぎである，とのご意見もあります。
+そこで\cindex{bunsuu}\cmd{bunsuu}というコマンドを作りました。
+次の2つを比較してください。
+
+\begin{itemshadebox}{\cmd{dfrac}と\cmd{bunsuu}の比較}
+\begin{tabular}{l@{\ $\longrightarrow$\ }l}
+\verb/$\dfrac12$/   & $\dfrac12$\\[1.6ex]
+\verb/$\bunsuu12$/  & $\bunsuu12$
+\end{tabular}
+\end{itemshadebox}
+
+\subsec{約分記号}{$\protect\yakubun{9}{6}{3}{2}$}
+\cindex{yakubun}
+分数で，分母・分子の数値に斜線を引いて約分後の数値を記述するための
+コマンド \cmd{yakubun} です。
+斜線の引き方に2種類，
+約分した後の数値を記述する位置に3通りの方法があります。
+デフォルトは元の数値の上下です。
+\index{やくぶん@約分}
+
+なお，この節のコマンドは，graphicx.sty の中で定義されている
+\cmd{rotatebox} を用いています。
+したがって graphicx.sty, emathPh.sty を読み込んでおくことが必要です。
+
+斜線の向きは\verb+[r]+オプションを付けると逆向きになります。
+
+\begin{itemshadebox}{\cmd{yakubun}}
+\begin{tabular}{l@{\ $\longrightarrow$\ }l}
+\verb/$\yakubun{16}{6}{8}{3}$/   & $\yakubun{16}{6}{8}{3}$ \\[2ex]
+\verb/$\yakubun[r]{16}{6}{8}{3}$/   & $\yakubun[r]{16}{6}{8}{3}$
+\end{tabular}
+\end{itemshadebox}
+
+次は，約分した数値を元の数値の右肩に乗せます。
+
+\begin{itemshadebox}{\cmd{yakubun<r>}}
+\begin{tabular}{l@{\ $\longrightarrow$\ }l}
+\verb/$\yakubun<r>{16}{6}{8}{3}$/   & $\yakubun<r>{16}{6}{8}{3}$ \\[2ex]
+\verb/$\yakubun[r]<r>{16}{6}{8}{3}$/   & $\yakubun[r]<r>{16}{6}{8}{3}$
+\end{tabular}
+\end{itemshadebox}
+
+最後は，約分した数値を元の数値の左肩に乗せます。
+
+\begin{itemshadebox}{\cmd{yakubun<l>}}
+\begin{tabular}{l@{\ $\longrightarrow$\ }l}
+\verb/$\yakubun<l>{16}{6}{8}{3}$/   & $\yakubun<l>{16}{6}{8}{3}$ \\[2ex]
+\verb/$\yakubun[r]<l>{16}{6}{8}{3}$/   & $\yakubun[r]<l>{16}{6}{8}{3}$
+\end{tabular}
+\end{itemshadebox}\bigskip
+
+\cmd{yakubun} の書式です。
+
+\begin{itemsquarebox}{\cmd{yakubun}の書式}
+\begin{verbatim}
+    \yakubun[#1](#2)<#3>#4#5#6#7
+        #1: 斜線の引き方を指定するオプション引数で，
+                s : 斜線（／） [デフォルト]
+                r : 斜線（＼）
+        #2: 線の色
+        #3: 約分した結果の表示位置を指定するオプション引数で，
+                c : 中央上下   [デフォルト]
+                l : 左肩
+                r : 右肩
+        #4: 約分する前の分子
+        #5: 約分する前の分母
+        #6: 約分した後の分子
+        #7: 約分した後の分母
+\end{verbatim}
+\end{itemsquarebox}
+
+なお，分母・分子の最大公約数を求め，自動的に既約分数にしてしまう
+コマンド \cmd{Yakubun} もあります。\cindex{Yakubun}
+\index{やくぶん@約分}
+
+%\showexample{example/ykbn01}
+
+書式は \cmd{yakubun} の書式とほとんど同様で，
+最後の2つの引数（約分後の分母・分子）が不要になる点だけが異なります。
+
+ただし，このコマンドを使用するときは，
+emathW.sty を読み込んでおく必要があります。
+
+また，いくつかの分数を掛ける式での約分を表現するには，
+後述の \cmd{Teisei} コマンドが有効です。
+
+\subsec{パーセント記号}{}
+\LaTeX でのパーセント記号は \verb+\%+ で出力できますが，
+その形状に不満がある，という方もあるようです。
+\textsf{pxfonts}のそれを\cmd{pxpercent}として用いることもできます。
+\cindex{pxpercent}
+当然，\textsf{pxfonts}がインストールしてあるという前提です。
+具体的な使用法は \textsf{sampleFx.tex}をご覧ください。
+
+\if0
+\begin{showEx}(.54,.4){パーセント記号}
+\begin{tabular}{ll}
+デフォルト & $12.5\,\%$\\
+\verb+\texttt+ & $12.5\,\texttt{\%}$\\
+全角 & $12.5％$\\
+\verb+\pxpercent+ & $12.5\,\pxpercent$
+\end{tabular}
+\end{showEx}
+\fi
+
+\subsec{訂正}{$\protect\teisei[d](red){誤り}[{訂正}]$}
+約分後の数値を表示せず，単に斜線だけを引くコマンドが \cmd{teisei} です。
+数学では，プラスとマイナスで相殺されるものに斜線を引く，
+などといったことができます。
+
+
+なお，この節のコマンドは，graphicx.sty の中で定義されている
+\cmd{rotatebox} を用いています。
+したがって graphicx.sty, emathPh.sty を読み込んでおくことが必要です。
+
+\begin{itembox}{\cmd{teisei}}
+\begin{verbatim}
+$\left(1-\teisei{\bunsuu12}\right)
++\left(\teisei{\bunsuu12}-\teisei{\bunsuu13}\right)
++\left(\teisei{\bunsuu13}-\teisei{\bunsuu14}\right)
++\cdots \cdots
++\left(\teisei{\bunsuu{1}{n}}-\bunsuu{1}{n+1}\right)
+= 1-\bunsuu{1}{n+1}$
+\end{verbatim}
+\end{itembox}
+
+をタイプセットすると，
+
+\begin{itemshadebox}{$+$と$-$で相殺されるものに斜線}
+$\left(1-\teisei{\bunsuu12}\right)
++\left(\teisei{\bunsuu12}-\teisei{\bunsuu13}\right)
++\left(\teisei{\bunsuu13}-\teisei{\bunsuu14}\right)
++\cdots \cdots
++\left(\teisei{\bunsuu{1}{n}}-\bunsuu{1}{n+1}\right)$
+
+$ = 1-\bunsuu1{n+1}$
+\end{itemshadebox}\vspace{\baselineskip}
+
+\cmd{teisei}\cindex{teisei} コマンドは指定した文字列に2種類の斜線を引く他，
+水平線，二本の水平線などで取消し線を引くことができます。
+その際，必要なら線の色を指定することができます。
+さらに，訂正前の文字列の上方に，訂正後の文字列をおくことができます。
+
+\begin{itemshadebox}{\cmd{teisei[h]}}
+\begin{tabular}{l@{\ $\longrightarrow$\ }l}
+\begin{minipage}{18zw}
+\begin{verbatim}
+$a_n=a_1+\retuwa{k=1}
+{\teisei[h](red){n}[%
+{\scriptstyle n-1}]}
+b_k$
+\end{verbatim}
+\end{minipage}
+& $a_n=a_1+\retuwa{k=1}{\teisei[h](red){n}%
+[\scriptstyle \textcolor{red}{n-1}]}b_k$
+\end{tabular}
+\end{itemshadebox}\vspace{\baselineskip}
+
+\cmd{teisei}の書式です。
+
+\begin{itemsquarebox}{\cmd{teisei}の書式}
+\begin{verbatim}
+\teisei[#1](#2)#3[#4]<#5>
+        #1: 線の引き方についてのオプション引数で，
+            s : 斜線（／） [デフォルト]
+            r : 斜線（＼）
+            h : 横線
+            d : 横二本線
+        #2: 線の色
+        #3: 線を引く対象
+        #4: 訂正後の文字列
+     #5: 斜線の位置を修正するベクトル
+        key=val の形式
+            dLT=(dx,dy), dLB=, dRT=, dRB= 右辺値は pt を単位とする数値
+\end{verbatim}
+\end{itemsquarebox}
+
+\verb+<#5>+オプションは，斜線の位置を修正するためのオプションですが，
+この機能は\textsf{emathPh.sty}を必要とします。
+
+まずは基本的な使用法の確認です。
+
+\begin{showEx}(.8,.14){\cmd{teisei}}
+\teisei{ab}
+\end{showEx}
+
+打ち消し線を，
+\begin{jquote}
+\begin{verbatim}
+左下(LB)を少し左へ(dLB={(-1,0)})，
+右上(RT)を少し右下へ(dRT={(1,-2)})
+\end{verbatim}
+\end{jquote}
+動かしてみます。ここで
+\begin{jquote}
+\begin{verbatim}
+L : left, R : right, T : top, B : bottom
+\end{verbatim}
+\end{jquote}
+右辺ベクトル成分は，\verb+pt+を単位とする無名数です。
+
+\begin{showEx}(.8,.14){\cmd{teisei}}
+\teisei{ab}<dLB={(-1,0)},dRT={(1,-2)}>
+\end{showEx}
+
+水平の打ち消し線は，左端を\verb+LT+, 右端を\verb+RT+としてあります。
+
+\begin{showEx}(.8,.14){\cmd{teisei}}
+\teisei[h]{ab}\\
+\teisei[h]{ab}<dLT={(-.5,-1)},dRT={(.5,-1)}>
+\end{showEx}
+\clearpage
+
+水平の二重線は
+\begin{jquote}
+\begin{verbatim}
+上のほうの左端がLT, 右端がRT
+下のほうの左端がLB, 右端がRB
+\end{verbatim}
+\end{jquote}
+
+\begin{showEx}(.8,.14){\cmd{teisei}}
+\teisei[d]{ab}\\
+\teisei[d]{ab}<dLT={(-.5,-1.5)},dRT={(.5,-1.5)},%
+               dLB={(-.5,-1)},dRB={(.5,-1)}>
+\end{showEx}
+
+\bigskip
+
+\cmd{teisei} は，訂正後の文字列を，
+訂正前の文字列と同じサイズで上方に配置します。
+
+それに対して \cmd{Teisei} は，訂正後の文字列を小さ目のサイズ (scriptstyle)
+で，配置場所をいろいろと指定することができます。\cindex{Teisei}
+使用例を見ていただきましょう。\index{やくぶん@約分}
+
+
+\showexample(.9)(.6){example/ykbn02}
+
+\cmd{Teisei}はネストすることもできます。
+
+\showexample(.95)(.6){example/ykbn03}
+
+
+\cmd{Teisei}の書式です。
+
+\begin{itemsquarebox}{\cmd{Teisei}の書式}
+\begin{verbatim}
+    \Teisei[#1](#2)#3[#4]#5
+            #1: 線の引き方についてのオプション引数で，
+                s : 斜線（／） [デフォルト]
+                r : 斜線（＼）
+                h : 横線
+                d : 横二本線
+            #2: 線の色
+            #3: 線を引く対象
+            #4: 訂正後の文字位置
+                    r = 右上 (=tr=rt)
+                    l = 左上 (=tl=lt)
+                    t = 上
+                    b = 下
+                    rb=br=右下
+                    lb=bl=左下
+            #5: 訂正後の文字列 (scriptstyle)
+\end{verbatim}
+\end{itemsquarebox}
+
+\begin{description}
+  \item[　注] \cmd{teisei}コマンドなどにより描画される斜線は\texttt{tpic-specials}を
+    用いています。\texttt{special}は\texttt{dvi-ware}に依存します。
+    そこで，\cmd{vrule}で描画した線を\cmd{rotatebox}で回転して斜線を描画する
+    道も用意してあります。もちろんこれも\texttt{dvi-ware}に依存しますから，
+    ケースバイケースで使い分けをする必要がありましょう。
+    
+    さて，その実現法は
+    \begin{jquote}
+\begin{verbatim}
+\def\syasen{\rotateline}
+\end{verbatim}
+    \end{jquote}
+    を宣言します。
+    
+    ただし，\cmd{rotatebox}はグラフィックスパッケージを必要としますから，
+    \textsf{emath}では，\textsf{emathPh.sty}を読み込んでおかなければなりません。
+\end{description}
+
+\subsec{整式の除法（縦書割算）}{$\protect\zyohou{x^2,-5x,+2}{x,-1}{x,-4}{,}$}
+
+整式の除法を縦書きで記述するためのコマンドが
+\cmd{zyohou}です。\cindex{zyohou}
+
+\showexample[縦書割算](.55)(.4){example/zyohou}
+
+係数に分数が登場するときは，\cmd{frac} をお使いください。
+
+\showexample[縦書割算](.55)(.4){example/zyohou2}
+
+%\cmd{dfrac} や \cmd{bunsuu} の場合は，\cmd{noexpand} を
+%併用することになりますが，面倒です。
+
+なお，係数が整数の範囲内の一変数の場合は emathW.sty で
+定義されている \cmd{izyohou} が便利です。
+こちらは，被除式，除式 の係数だけを与えれば，
+商はもちろん，途中の計算式もすべて \TeX が求めてくれますから，
+\begin{jquote}
+\begin{verbatim}
+\izyohou{1,-5,2}{1,-1}
+\end{verbatim}
+\end{jquote}
+と記述するだけです。\cindex{izyohou}
+詳しくは \textsf{emathW.sty}の使用例 \textsf{sampleW.tex} を
+ご覧ください。
+
+\subsec{組み立て除法}{$\protect\syndiv{1,3,4,-6,-2}{1}$}
+整式を1次式で割ったときの商，余りを求める計算法に`組み立て除法'があります。
+
+\showexample[組み立て除法](.475)(.475){example/syndiv01}%
+
+すなわち \cmd{syndiv}コマンドの第1引数に，
+被除式の係数を降べき順にコンマで区切ったものを並べ，
+第2引数に除式のゼロ点を与えます。\cindex{syndiv}
+
+第2引数にコンマ区切りで複数のものを与えれば，
+商をさらに割っていくことができます。
+
+\showexample[多段組み立て除法](.475)(.475){example/syndiv02}%
+
+\cmd{syndiv} は整数係数しか扱うことができませんが，
+\textsf{emathB.sty}には，分数係数を扱うことを可能とした
+\cmd{Fsyndiv}が用意してあります。\cindex{Fsyndiv}
+例えば%\vspace{-\baselineskip}
+\begin{verbatim}
+    $\Fsyndiv{3,-1,0,4}{-2/3}$
+\end{verbatim}
+とすることで，$f(x)=3x^3-x^2+4$に対して$f\left(-\bunsuu23\right)$を
+求めることができます。
+
+\subsec{タスキガケ}{\protect\parbox{14zw}{%
+    $\protect\tasuki{1}{2}{3}{5}$}}
+二次三項式を因数分解するとき，タスキガケの図を用いることがあります。
+\cindex{tasuki}
+
+\showexample[タスキ](.475)(.475){example/tasuki01}%
+\bigskip
+
+横幅を少し狭くしたいときは\cmd{stasuki}を用います。
+\cindex{stasuki}
+
+\showexample[\cmd{stasuki}](.475)(.475){example/tasuki07}%
+
+
+文字式の場合は，タスキ計算もこちらでしておく必要があります。
+
+\showexample[文字式のタスキ](.9)(.7){example/tasuki02}%
+\cindex{Tasuki}
+
+タスキの左側だけを表示したいときは，\cmd{tasuki}に\texttt{[l]}オプションを
+つけます。
+
+\showexample[\cmd{tasuki}の\texttt{[l]}オプション](.5)(.45){example/tasuki03}%
+
+文字式の場合も左側だけほしいときは \cmd{Tasuki} ではなく，
+\cmd{tasuki}の\texttt{[l]}オプションを使います。
+
+\showexample[\cmd{tasuki}の\texttt{[l]}オプション](.7)(.5){example/tasuki04}%
+
+なお，たすきがけの図第3行については，次の2種類の変形版があります。
+\cindex{tasukikata}
+
+\showexample[\cmd{tasukikata}=1](.475)(.475){example/tasuki05}%
+
+\showexample[\cmd{tasukikata}=2](.475)(.475){example/tasuki06}%
+
+なお，\cmd{tasukikata}のデフォルト値は0です。
+
+\subsec{加減法}{$\protect\kagenhou{-2,13,11}+{2,-3,-1}$}
+連立方程式を加減法で解くときの計算式を表示するためのマクロです。
+
+\showexample[加減法](.475)(.475){example/kagen01}%
+
+未知数の個数が増えたり，文字が$x$, $y$ではない場合については，
+オプション引数で未知数を表す文字を指定します。
+次の例は$a$, $b$, $c$ を未知数とする3元の連立です。
+\cindex{kagenhou}
+
+\showexample[加減法（3元）](.8)(.475){example/kagen02}%
+
+問題部分のみを表示させるには，\texttt{<M>}オプションを付加します。
+
+\begin{showEx}{\cmd{kagenhou}の\texttt{<M>}オプション}
+\kagenhou<M>{1,2,3}-{4,2,-1}
+\smallskip
+\end{showEx}
+
+縦方向の配置は，\textsf{array}環境に\verb+[b]+オプションを与えてあります。
+
+\begin{showEx}(.6,.34){\cmd{kagenhou}の縦配置}
+a\kagenhou<M>{1,2,3}-{4,2,-1}z
+\smallskip
+\end{showEx}
+
+これを変更するには，\verb+<pos=.>+オプションを用います。
+右辺値は\verb+t/b/c+のいずれかです。また，このオプションを\verb+<M>+
+オプションと併用するときは，\verb+<kotae=no>+の形式で与えます。
+
+\begin{showEx}(.6,.34){\cmd{kagenhou}の\texttt{<pos=t>}オプション}
+a\kagenhou<pos=t,kotae=no>{1,2,3}-{4,2,-1}z
+\smallskip
+\end{showEx}
+
+\subsec{累乗根}{$\protect\sqrt[3]{2}$}
+平方根，3乗根などを表記するには\LaTeX で \cmd{sqrt} が用意されています。
+\cindex{sqrt}
+\index{さんじょうこん@3乗根}
+
+\showexample[累乗根](.65)(.3){example/sqrt01}
+
+この記号は，中の数式のサイズにしたがって大きさが変化します。
+便利な反面，次の(1)では，高さが不揃いとなりますので，
+支柱 \cmd{mathstrut} をいれて高さをそろえるなどの工夫が必要なことがあります。
+
+\showexample[高さの調節(1)](.75)(.5){example/sqrt02}
+
+\cmd{mathstrut}は，`('の高さと深さを持つ支柱ですが，
+深さがある分根号が下の方に伸びてしまう，という批判もあります。
+このときは，支柱を \cmd{vphantom} を用いて
+
+\showexample[高さの調節(2)](.75)(.5){example/sqrt03}
+
+つぎに，二重根号を \cmd{displaystyle}で組むと
+\index{にじゅうこんごう@二重根号}
+
+\showexample[二重根号](.5)(.45){example/sqrt04}
+
+外側の根号が大きくなりすぎて2つの根号の縦間隔が空きすぎる，
+というご意見があります。対策は外側の根号に \cmd{textstyle}を
+つけることです。\textsf{emath.sty}では，
+\verb/\textstyle\sqrt/ の省略形として \cmd{tsqrt} \cindex{tsqrt}
+を用意しています。
+
+\showexample[\cmd{tsqrt}](.5)(.45){example/sqrt05}
+
+\subsec{累乗の累乗}{$\protect\dpower{a}{p}{q}$}
+累乗の累乗 \verb/(a^p)^q/ は，\verb/{(a^p)}^q/ と記述すると，
+${(a^p)}^q$ となり，2種の累乗 $p$ と $q$ のベースラインが
+異なります。高校の教科書などでは，これが揃っているものが多いようです。
+そのためのコマンドが \cmd{dpower} です。\cindex{dpower}
+次の2つを比較してください。
+\begin{itemshadebox}{\cmd{dpower}の効用}
+\begin{tabular}{l@{\ $\longrightarrow$\ }l}
+\verb/${(a^p)}^q$/ & ${(a^p)}^q$\\
+\verb/$\dpower{a}{p}{q}$/ & $\dpower{a}{p}{q}$
+\end{tabular}
+\end{itemshadebox}\vspace{\baselineskip}
+
+底 $a$ が複雑になり，カッコを含むときは，外側のカッコの種類を
+\cmd{dpower} のオプション引数で指定することができます。
+\begin{itemshadebox}{\cmd{dpower}のオプション引数}
+\begin{tabular}{l@{\ $\longrightarrow$\ }l}
+\small\verb/$\dpower[\{]{\left(\bunsuu yx\right)}{p}{q}$/
+    & $\dpower[\{]{\left(\bunsuu yx\right)}{p}{q}$\\[2ex]
+\small\verb/$\dpower[[]{\left(\bunsuu yx\right)}{p}{q}$/
+    & $\dpower[[]{\left(\bunsuu yx\right)}{p}{q}$\\
+\end{tabular}
+\end{itemshadebox}\vspace{\baselineskip}
+
+話が前後しますが，累乗の位置を気にされる方があります。
+次の3つを比較してください。
+
+\begin{showEx}{累乗の位置}
+$2^x$ \\
+$\displaystyle 2^x$ \\
+${2\mathstrut}^x$
+\end{showEx}
+
+\subsec{ベクトル記号}{$\protect\beku{a},~\protect\bekutoru{AB}$}
+\LaTeX で用意されている矢線付きのベクトル記号は \verb/\vec/ です。
+
+しかし，\verb/\vec{a}, \vec{b}/ などと並べたとき，
+矢線の高さが不揃いになります。その点を修正した\cmd{beku}を作りました。
+\cindex{beku}
+
+下の例で，矢線の高さにご注目ください。
+
+\begin{itemshadebox}{\cmd{vec}と\cmd{beku}の比較}
+\begin{tabular}{l@{\ $\longrightarrow$\ }l}
+\verb/$\vec{a}$, $\vec{b}$/ & $\vec{a}$, $\vec{b}$\\
+\verb/$\beku{a}$, $\beku{b}$/ & $\beku{a}$, $\beku{b}$
+\end{tabular}
+\end{itemshadebox}\vspace{\baselineskip}
+
+添字がついた場合です。
+
+\begin{itemshadebox}{添字付きベクトル(1)}
+\begin{tabular}{l@{\ $\longrightarrow$\ }l}
+\verb/$\beku{a_n}$/ & $\beku{a_n}$\\
+\verb/$\beku{a}_n$/ & $\beku{a}_n$\\
+\verb/$\overrightarrow{\mathstrut a_n}$/ &$\overrightarrow{\mathstrut a_n}$
+\end{tabular}
+\end{itemshadebox}\vspace{\baselineskip}
+
+上の3つのどれがお好みでしょうか。
+\bigskip
+
+次は始点と終点を並べてその上に矢線を付ける表現です。
+
+\LaTeX では，\verb/\overrightarrow/ を使いますが，
+これは数式モードの中でなければ使えません。
+\verb/$\overrightarrow{AB}$/ とすると，AB が斜体になります。
+教科書では，点を表す記号は立体となっています。その点を工夫したのが
+\cmd{bekutoru}コマンドです。\cindex{bekutoru}
+\begin{itemshadebox}{\cmd{bekutoru}}
+\begin{tabular}{l@{\ $\longrightarrow$\ }l}
+\verb/$\overrightarrow{AB}$/ & $\overrightarrow{AB}$\\
+\verb/$\bekutoru{AB}$/ & $\bekutoru{AB}$
+\end{tabular}
+\end{itemshadebox}\vspace{\baselineskip}
+
+添字がつくと面倒になります。下の二つどちらがお好みでしょうか。
+
+\begin{itemshadebox}{添字付きベクトル(2)}
+\begin{tabular}{l@{\ $\longrightarrow$\ }l}
+\verb/\bekutoru{AB$_n$}/ & \bekutoru{AB$_n$}\\
+\verb/$\bekutoru{AB}_n$/ & $\bekutoru{AB}_n$\\
+\end{tabular}
+\end{itemshadebox}\vspace{\baselineskip}
+
+矢線の高さを調整するコマンドが \cmd{bekutorusityuu}です。デフォルトは
+\begin{jquote}
+\begin{verbatim}
+\vrule height .9zh width \z@
+\end{verbatim}
+\end{jquote}
+すなわち\verb+.9zh+となっています。\cindex{bekutorusityuu}
+
+\begin{showEx}(.6,.34){\cmd{bekutorusityuu}}
+\bekutoru{OP}\\
+\bekutorusityuu{\vphantom{OP}}%
+\bekutoru{OP}
+\end{showEx}
+すなわち，自然な高さでは矢印が文字にかかるのを嫌って，
+高くしています。
+
+\cmd{beku} についても，\cmd{bekusityuu}で高さを変更できます。
+\cindex{bekusityuu}
+
+\begin{showEx}(.6,.34){\cmd{bekusityuu}}
+\beku{a}\\
+\bekusityuu{\vphantom{a}}%
+\beku{a}
+\end{showEx}
+こちらのデフォルトは，\verb+\vphantom{b}+としてあります。
+
+\cmd{bekutoru}にはアスタリスク付きのコマンド\cmd{bekutoru*}
+があります。これは後で述べる\textsf{caprm}環境下で用いることを
+想定していますので，§\ref{bekutoruAST} (p.\pageref{bekutoruAST})で
+解説します。
+
+\iffalse
+\subsubsec{鏃の形状}{{\protect\bekutorukata<.25>{fill}\protect\bekutoru{AB}}}
+鏃の形状にご不満をお持ちの方が多いようです。
+それを変更する方法もあります。
+まずは，鏃を塗りつぶした三角形にする方法です。
+
+\begin{showEx}{塗りつぶした鏃}
+\bekutoru{AB}
+
+\bekutorukata{fill}
+\bekutoru{AB}
+\end{showEx}
+
+すなわち，鏃の形状を変更するには，\cmd{bekutorukata}コマンドを用います。
+ただし，このコマンドを使用するには，\textsf{emathPh.sty, bekutorukata.sty}
+を読み込んでおく必要があります。
+
+さらに，塗りつぶした二等辺三角形に窪みをつけたい，というご要望もあります。
+
+\begin{showEx}{窪みも}
+\bekutoru{AB}
+
+\bekutorukata<.25>{fill}
+\bekutoru{AB}
+\end{showEx}
+
+\cmd{bekutorukata}の引数は，上記の\texttt{fill}の他に4種類
+\cindex{bekutorukata}
+--- \verb+cm, eu, tx, xy+ --- あります。
+ただし，\verb+tx+ を使用するには，\textsf{txfonts} が必要です。
+また，\verb+xy+ を使用するには，\textsf{Xy-pic}パッケージが必要です。
+さらに，\textsf{emathFx}をロードしておかねばなりません。
+具体的な実現方法については，\textsf{sampleFx.tex}をご覧ください。
+
+\begin{showpEx}(.7,.24){\cmd{bekutorukata}}
+\begin{tabular}{ll}
+cm & \bekutorukata{cm}\bekutoru{AB}\\
+eu & \bekutorukata{eu}\bekutoru{AB}\\
+tx &
+! \IfFileExists{txfonts.sty}{%
+  \bekutorukata{tx}\bekutoru{AB}\\
+!}{}
+xy &
+! \IfFileExists{xy.sty}{%
+  \bekutorukata{xy}\bekutoru{AB}
+!}{}\\
+\end{tabular}
+\end{showpEx}
+
+\bigskip
+\fi
+
+\subsec{絶対値記号}{\protect\zettaiti{\protect\beku{a}}，
+\protect\zettaiti{\protect\bunsuu{1+x}{1-x}}}
+
+\subsubsection{\cmd{zettaiti}}
+ベクトルの大きさを表すのにも使われる絶対値記号です。
+
+\LaTeX では \verb/$|\beku{b}|$/としますが，
+矢印が絶対値記号の上に飛び出しています。
+これを修正するコマンド\cindex{zettaiti}
+\cmd{zettaiti}を用意しました。
+上下を比べてみてください。
+
+\begin{itemshadebox}{\texttt{|...|}と\cmd{zettaiti}の比較}
+\begin{tabular}{l@{\ $\longrightarrow$\ }l}
+\verb/$|\bekutoru{AB}|$/ & $|\bekutoru{AB}|$\\
+\verb/\zettaiti{\bekutoru{AB}}/ & \zettaiti{\bekutoru{AB}}\\
+\end{tabular}
+\end{itemshadebox}\vspace{\baselineskip}
+
+この記号は中の式の高さにより伸縮します。
+
+\begin{itemshadebox}{絶対値記号の伸縮}
+\begin{tabular}{l@{\ $\longrightarrow$\ }l}
+\verb/\zettaiti{\bunsuu{1}{3}\bekutoru{AB}}/
+   & \zettaiti{\bunsuu{1}{3}\bekutoru{AB}}\\[1.5ex]
+\verb/\zettaiti{\bunsuu{m\bekutoru{OA}}{m+n}}/
+   & \zettaiti{\bunsuu{m\bekutoru{OA}}{m+n}}
+\end{tabular}
+\end{itemshadebox}\vspace{\baselineskip}
+
+
+このコマンドはベクトルに限らず一般の絶対値記号を表すことができます。
+
+$|1-|x||$ では，外側の絶対値記号と内側の絶対値記号が同じとなります。
+できれば外側の絶対値記号を大きくしたいものです。
+\index{ぜったいち@絶対値記号}
+
+\begin{itemshadebox}{絶対値記号の伸縮オプション}
+\begin{tabular}{l@{\ $\longrightarrow$\ }l}
+\verb/$|1-|x||$/
+& $|1-|x||$\\[1ex]
+\verb/$\bigl|1-|x|\bigr|$/
+& $\bigl|1-|x|\bigr|$ \\[1ex]
+\verb/\zettaiti[1.5pt]{1-\zettaiti{x}}/
+& \zettaiti[1.5pt]{1-\zettaiti{x}}
+\end{tabular}
+\end{itemshadebox}
+
+3行目は外側の \verb/\zettaiti/ コマンドのオプション引数に \texttt{1.5pt} を
+与えることで実現しています。この数値だけ，標準の高さを上下それぞれ
+引き伸ばします。これは2行目のものとほぼ同じです。
+
+なお，\cmd{zettaiti} の別名として，\cmd{EMabs} も用いることができます。
+\cindex{EMabs}
+
+\subsubsection{\cmd{emabs}}
+\cmd{zettaiti}は絶対値記号を付与する数式の高さ・深さを
+基準としていますから，上下不均等です。したがって他の括弧記号と併記すると
+おかしなことになります。
+
+\begin{showEx}(.5,.44){\cmd{zettaiti}}
+$\zettaiti{%
+  \bunsuu{a_1}{1+\bunsuu{1}{n}}}$\\
+だけをみているとよいのですが，
+\[ \bunsuu1n\left(
+  \zettaiti{
+    \bunsuu{a_1}{1+\bunsuu{1}{n}}}
+  +\cdots+
+  \zettaiti{
+    \bunsuu{a_n}{1+\bunsuu{n}{n}}}
+  \right) \]
+などと，他の括弧記号と並べると
+\end{showEx}
+
+\noindent
+上下不均等が目立ってしまいます。
+
+\noindent
+ということで，上下均等な絶対値記号を表すコマンド\cmd{emabs}を用意しました。
+\cindex{emabs}
+
+\begin{showEx}(.5,.44){\cmd{emabs}}
+\[ \bunsuu1n\left(
+  \emabs{
+    \bunsuu{a_1}{1+\bunsuu{1}{n}}}
+  +\cdots+
+  \emabs{
+    \bunsuu{a_n}{1+\bunsuu{n}{n}}}
+  \right) \]
+\end{showEx}
+
+括弧記号とのバランスはよくなりましたが，絶対値記号の中で天が空きすぎである，
+というご批判があるでしょうね。
+これは，式表現を工夫して
+
+\begin{showEx}(.5,.44){\cmd{emabs}}
+\[ \bunsuu1n\left(
+  \emabs{
+    \bunsuu{a_1}{1+1/n}}
+  +\cdots+
+  \emabs{
+    \bunsuu{a_n}{1+n/n}}
+  \right) \]
+\end{showEx}
+
+\noindent
+などとするのも一法でしょう。
+
+\subsubsection{\cmd{vabs}}
+次に，\bekutoru{AB}などベクトル記号に絶対値を付与することを考えてみます。
+\cmd{zettaiti}を用いると
+
+\begin{showEx}(.5,.44){\cmd{bekutoru}に\cmd{zettaiti}}
+$\zettaiti{\bekutoru{OP$_1$}}$
+だけをみているとよいのですが，
+\[ \bunsuu1n\left(
+  \zettaiti{\bekutoru{OP$_1$}}
+  +\cdots+
+  \zettaiti{\bekutoru{OP$_n$}}
+  \right) \]
+などと，他の括弧記号と並べると
+\end{showEx}
+
+\noindent
+上下不均等が目立ってしまいます。
+さりとて，\cmd{emabs}では
+
+\begin{showEx}(.5,.44){\cmd{bekutoru}に\cmd{emabs}}
+\[ \bunsuu1n\left(
+  \emabs{\bekutoru{OP$_1$}}
+  +\cdots+
+  \emabs{\bekutoru{OP$_n$}}
+  \right) \]
+\end{showEx}
+
+折衷案で
+
+\begin{showEx}(.5,.44){\cmd{bekutoru}に\cmd{absbeku}}
+\def\absbeku#1{\left\lvert
+  \EMvphantom[.5ex]{#1}%
+  \smash{\bekutoru*{#1}}\right\rvert
+  \vphantom{\bekutoru*{#1}}}
+\begin{caprm}
+\[ \bunsuu1n\left(
+  \absbeku{OP_1}
+  +\cdots+
+  \absbeku{OP_n}
+  \right) \]
+\end{caprm}
+\end{showEx}
+
+いっそのこと，矢印は無視して
+
+\begin{showEx}(.5,.44){単純に`$|$'}
+\[ \bunsuu1n\left(
+  |\bekutoru{OP$_1$}|
+  +\cdots+
+  |\bekutoru{OP$_n$}|
+  \right) \]
+\end{showEx}
+
+\subsubsection{絶対値記号のネスト}
+絶対値記号の中に更に絶対値記号が入る場合，例えば次のような場合，
+外側の絶対値記号を大きくしたいことがあります。
+
+\begin{showEx}(.54,.4){絶対値記号のネスト}
+\[ ||a|-|b|| \]
+\cmd{emabs}を用いると
+\[ \emabs{\emabs{a}-\emabs{b}} \]
+\end{showEx}
+
+外側の絶対値記号を大きくするには，
+\cmd{emabs}に\verb+[...]+オプションを附加します。
+数値は適宜で
+
+\begin{showEx}(.54,.4){\cmd{emabs}の\texttt{[...]}オプション}
+\[ \emabs[1pt]{\emabs{a}-\emabs{b}} \]
+\[ \emabs[2pt]{\emabs{a}-\emabs{b}} \]
+\end{showEx}
+
+\noindent
+などといった調子です。
+
+やっていることは，外側の絶対値記号の中身について，実際の高さ・深さそれぞれに
+オプション値を附加した支柱を立てています。
+
+\subsec{ガウス記号}{\gauss{x}}
+$x$を超えない最大の整数を表すガウス記号を\verb+[x]+とすると
+$[x]$となり，$x$とその左右の括弧の間が詰まりすぎています。
+それを修正したのが\cmd{gauss}です。
+
+このコマンドは \verb/\ensuremath/ でくるんでありますから，
+地の文でも数式内でも使用することが出来ます。\cindex{gauss}
+
+\showexample[ガウス記号](.4)(.5){example/gauss}
+%\pagebreak
+
+\subsec{行列}{$\protect\gyouretu{a}{b}{c}{d}$}
+高校では，二次の正方行列が登場します。\cindex{gyouretu}
+そこで二次の正方行列専用のコマンド \cmd{gyouretu} を作りました。
+
+\begin{itemshadebox}{\cmd{gyouretu}}
+\begin{tabular}{l@{\ $\longrightarrow$\ }l}
+\verb/\gyouretu{a}{b}{c}{d}/ & \gyouretu{a}{b}{c}{d}\\[3ex]
+単位行列 \verb/\gyouretu1001/ & \gyouretu1001
+\end{tabular}
+\end{itemshadebox}\vspace{\baselineskip}
+
+\cmd{gyouretu}では，各列の要素は中央揃えに配置されます。
+これを右揃えにするには\verb+[r]+オプションを用います。
+
+\begin{showEx}{配置オプション}
+$\gyouretu{12}{-3}{4}{5}$\\
+$\gyouretu[r]{12}{-3}{4}{5}$
+\end{showEx}
+\bigskip
+
+2次の列ベクトルも良く登場します。
+
+正方行列と絡めて，\cindex{retube}
+
+\begin{itemshadebox}{\cmd{retube}}
+\begin{tabular}{l@{\ $\longrightarrow$\ }l}
+\verb/\retube{x}{y}/ & \retube{x}{y}\\[3ex]
+\verb/$\gyouretu abcd\!\!\retube xy$/
+& $\gyouretu abcd\!\!\retube xy$
+\end{tabular}
+\end{itemshadebox}\vspace{\baselineskip}
+
+
+今後は三次の正方行列も登場するでしょう。\cindex{Gyouretu}
+
+\begin{itemshadebox}{\cmd{Gyouretu}}
+\begin{tabular}{l@{\ $\longrightarrow$\ }l}
+\verb/\Gyouretu {a}{b}{c}{d}{e}{f}{g}{h}{i}/ &
+ \Gyouretu abcdefghi\\[5ex]
+零行列 \verb/\Gyouretu000000000/ & \Gyouretu000000000
+\end{tabular}
+\end{itemshadebox}\vspace{\baselineskip}
+
+また，三次の列ベクトルは \cmd{Retube} です。\cindex{Retube}
+
+\showexample[三次の列ベクトル](.6)(.5){example/retube03}
+
+行ベクトルは\cmd{gyoube}です。\cindex{gyoube}
+
+\begin{showEx}(.9,.9){\cmd{gyoube}}
+すべての実数$x$, $y$について
+$\gyoube xy\gyouretu{a}{5a-2}{2-a}{3a+2}\retube xy \geqq 0$
+が成立するような実数$a$の値の範囲を求めよ。
+\syutten{2004 福島医科大学}
+\end{showEx}
+
+一般の行列を表すには，\cmd{pgyouretu}を用意してあります。
+列の区切りを`,', 行の区切りを`;'で表します。\cindex{pgyouretu}
+
+\begin{showEx}{\cmd{pgyouretu}}
+\pgyouretu{%
+  1 , 2 , 3;
+  4 , 5 , 6}
+\end{showEx}
+
+\textsf{amsmath.sty}には，\textsf{pmatrix}環境があります。
+
+\begin{showEx}{\textsf{pmatrix}環境}
+$
+  \begin{pmatrix}
+    1 & 2 & 3 \\
+    4 & 5 & 6
+  \end{pmatrix}
+$
+\end{showEx}
+
+\subsec{複素数}{$\protect\Cnum x+y$}
+複素数$x+yi$において，$y$と$i$の間を少し空けたい，
+という場合のために\cmd{Cnum}を用意しました。
+\cindex{Cnum}
+
+\begin{showEx}{\cmd{Cnum}}
+$2-3i$, $x+yi$\\
+$\Cnum{2}-{3}$, $\Cnum{x}+{y}$
+\end{showEx}
+
+\subsec{共役複素数}{$\protect\kyouyaku{z}$}
+\cindex{kyouyaku}
+共役複素数を表す\cmd{kyouyaku}です。
+
+\begin{itemshadebox}{\cmd{kyouyaku}}
+\small
+\begin{tabular}{l@{$\longrightarrow$}l}
+\verb/\kyouyaku{z\cdot w}=\kyouyaku z\cdot\kyouyaku w/&
+$\kyouyaku{z\cdot w}=\kyouyaku{z}\cdot\kyouyaku{w}$
+\end{tabular}
+\end{itemshadebox}\vspace{\baselineskip}
+
+文字と横棒の間隔は\verb+\mathstrut+で支柱を立てています。
+これを変更するオプションが\verb+[..]+です。
+
+\begin{showEx}(.6,.34){\cmd{kyouyaku[..]}}
+$\kyouyaku{a}$\\
+$\kyouyaku[\vphantom a]{a}$
+\end{showEx}
+
+なお，\cmd{kyouyaku}の別名として\cmd{conj}も使えます。\cindex{conj}
+
+広範囲で支柱の高さを変更するには\cmd{conjstrut}を用いることもできます。
+
+\begin{showEx}(.6,.34){\cmd{conjstrut}}
+\conjstrut{\vphantom{b}}
+$\conj b=\conj a$
+\end{showEx}
+
+
+\subsec{極形式}{$\protect\kyokukeisiki{\theta}$}
+\cindex{kyokukeisiki}
+
+複素数の極形式を表現するコマンド \cmd{kyokukeisiki} です。
+\texttt{[..]}オプションで絶対値を指定することもできます。
+
+なお，\cmd{kyokukeisiki}と同値なコマンド \cmd{polar} も使用できます。
+\cindex{polar}
+
+\begin{itemshadebox}{\cmd{kyoukukeisiki}}
+\begin{tabular}{l@{\ $\longrightarrow$\ }l}
+\verb/$\kyokukeisiki{\theta}$/ & $\kyokukeisiki{\theta}$\\
+\verb/$\polar{60\Deg}$/ & $\polar{60\Deg}$\\
+\verb/$\kyokukeisiki[r]{\theta}$/ & $\kyokukeisiki[r]{\theta}$\\
+\verb/$\kyokukeisiki[r][\{]{(-\theta)}$/ & $\kyokukeisiki[r][\{]{(-\theta)}$
+\end{tabular}
+\end{itemshadebox}\vspace{\baselineskip}
+
+共役なものをあらわすには，\verb+<c>+オプションをつけます。
+
+\begin{showEx}{\cmd{polar<c>}}
+$\polar[r]{\theta}$\\
+$\polar<c>[r]{\theta}$
+\end{showEx}
+\pagebreak
+
+\section{幾何}
+\subsec{度の記号(小さな丸)}{$60\Deg$}
+角度の単位，例えば60度を表すときの記号です。
+\index{ど@度の記号}\index{かくど@角度の記号}\cindex{Deg}\cindex{DEG}
+\cindex{degree}下の3種類，どれがお好みでしょうか。
+
+\begin{itemshadebox}{\cmd{Deg} \cmd{DEG} \cmd{degree}}
+\begin{tabular}{l@{\ $\longrightarrow$\ }l}
+\verb/$60\Deg$/ & $60\Deg$\\
+\verb/$60\DEG$/ & $60\DEG$\\
+\verb/$60\degree$/ & $60\degree$
+\end{tabular}
+\end{itemshadebox}
+
+\subsec{角, 三角形}{\protect\kaku{A},~\protect\sankaku{PQR}}
+角は \cmd{angle}, 三角形は \cmd{triangle} です。
+ただし，\verb/$\triangle{ABC}$/ などと数式環境で使うと，
+ABC が斜体になってしまいます。教科書などでは，点を表す記号は
+立体という習慣です。そこで\cindex{kaku}\cindex{sankaku}
+\index{かく@角（∠）}\index{さんかっけい@三角形}
+
+\begin{itemshadebox}{\cmd{kaku}, \cmd{sankaku}}
+\begin{tabular}{l@{\ $\longrightarrow$\ }l}
+\verb/$\kaku{ABC}<90\Deg$/ & $\kaku{ABC}<90\Deg$\\
+\verb/$\sankaku{ABC} \equiv \sankaku{DEF}$/
+& $\sankaku{ABC} \equiv \sankaku{DEF}$
+\end{tabular}
+\end{itemshadebox}
+
+\subsec{平行とその否定}{$\protect\heikou,~\protect\nheikou$}
+\LaTeX には平行記号を表すコマンド \cmd{parallel} が，
+またAMSFontsには，その否定を表すコマンド \cmd{nparallel}
+があります。しかし，日本で使われている記号とは違っています。
+そこで \cmd{heikou} と \cmd{nheikou} を定めました。
+\cindex{heikou}\cindex{nheikou}\index{へいこう@平行}
+
+次の上段と下段を比較してください。
+
+\begin{itemshadebox}{\cmd{heikou}と\cmd{nheikou}}
+\begin{tabular}%
+{l@{\ $\longrightarrow$\ }l@{\hspace{2zw}}l@{\ $\longrightarrow$\ }l}
+\verb/$l \parallel m$/ & $l \parallel m$
+& \verb/$l \nparallel m$/ & $l \nparallel m$\\
+\verb/$l \heikou m$/ & $l \heikou m$
+& \verb/$l \nheikou m$/ & $l \nheikou m$
+\end{tabular}
+\end{itemshadebox}
+
+\subsec{相似の記号}{$\souzi$}
+相似の記号は \LaTeX には用意されていません。
+ここでは全角の記号を使ってしまおうという，無精な案です。
+\cindex{souzi}\cindex{souzi}\index{そうじ@相似}
+
+\begin{itemshadebox}{\cmd{souzi}}
+\hfil\begin{tabular}{l@{\ $\longrightarrow$\ }l}
+\verb/$\sankaku{ABC} \souzi \sankaku{PQR}$/
+&  $\sankaku{ABC} \souzi \sankaku{PQR}$
+\end{tabular}\hfil
+\end{itemshadebox}
+
+この記号は，文字サイズの変更に追随するようになっています。
+\cmd{Huge}とすると
+
+\begin{showEx}(.4,.54){\cmd{Huge}}
+\Huge$\sankaku{ABC}
+\souzi \sankaku{PQR}$
+\end{showEx}
+
+\subsec{円弧を表す記号}{\protect\ko{AB}}
+次は円弧を表すお椀を伏せたような記号です。
+\cindex{ko}\index{こ@弧}\index{えんこ@円弧}
+
+\begin{itemshadebox}{\cmd{ko}}
+\begin{tabular}{l@{\ $\longrightarrow$\ }l}
+\verb/$\ko{AB}:\ko{BC}=3:4$/
+& $\ko{AB}:\ko{BC}=3:4$\\
+\verb/$\ko{APB}$/ & $\ko{APB}$ \\
+\verb/\ko{APQB}/ & \ko{APQB}\\
+\verb/\ko{A$_1$B$_1$}/ & \ko{A$_1$B$_1$}\\
+\verb/\ko{P$_n$P$_{n+1}$}/ & \ko{P$_n$P$_{n+1}$}
+\end{tabular}
+\end{itemshadebox}
+
+最後の \ko{P$_n$P$_{n+1}$} では，
+弧の記号が P の添字につられて右に寄ってしまいます。
+\verb/\ko/ のオプション引数で，弧の記号の位置を調整することができます。
+次の二つを比べてください。
+
+\begin{itemshadebox}{位置修正}
+\begin{tabular}{l@{\ $\longrightarrow$\ }l}
+\verb/\ko{P$_n$P$_{n+1}$}/ & \ko{P$_n$P$_{n+1}$}\\
+\verb/\ko[.6em]{P$_n$P$_{n+1}$}/ & \ko[.6em]{P$_n$P$_{n+1}$}
+\end{tabular}
+\end{itemshadebox}\vspace{\baselineskip}
+
+コマンド\cmd{ko}の引数はテキストモードとしてあります。
+したがって添え字をつけたいときは
+
+\begin{showEx}{\cmd{ko}}
+\ko{A$_1$A$_2$}
+\end{showEx}
+
+\noindent
+と，添え字部分を数式モードにする必要があります。
+数列がらみの問題では，ちょっと煩わしいので，引数が数式モードに入る
+\cmd{ko*}もあります。\cindex{ko*}
+
+\begin{showEx}{\cmd{ko*}}
+\begin{caprm}
+\ko*{A_1A_2}
+\end{caprm}
+\end{showEx}
+
+ただし，英大文字をローマン体とするには，
+\textsf{caprm}環境などを用いる必要があります。
+
+%\begin{itemize}
+%\item [（注）] Mac で xdvi を使われる場合は
+%\begin{quote}
+%xdvi(1998/2/16版)
+%\end{quote}
+%以降の版をお使いください。
+%（この件についても，トニイ さんにお世話になりました。
+%詳しくは，FPRINT MES(11)\#06919 からのツリーをご覧ください。）
+%\end{itemize}
+%\pagebreak
+
+\subsec{平行四辺形の記号}{\protect\shikaku}
+\cindex{shikaku}\index{へいこうしへんけい@平行四辺形}%
+平行四辺形を表す記号です。picture 環境で表現する方法を
+トニイさんが FPRINT で発表されました。
+ここで使うことを認めていただきましたので，
+それをこのマクロ集に入れさせていただきました。
+
+有り難うございます。＞ トニイさん。
+
+フォントサイズを大き目にします。
+
+\begin{itemshadebox}{\cmd{shikaku}}
+\begin{tabular}{l@{\ $\longrightarrow$\ }l}
+\verb/平行四辺形\shikaku{}ABCD/
+& \Large 平行四辺形 \shikaku{}ABCD
+\end{tabular}
+\end{itemshadebox}
+
+それでも平行四辺形の記号がやや大き目です。
+小さくできれば良いのですが，\LaTeX の picture 環境の制約で不可能です。
+そこで，epic というパッケージの助けを借りて小さくしたのが，
+私の修正案です。\cindex{heikousihenkei}
+
+\begin{itemshadebox}{\cmd{heikousihenkei}}
+\begin{tabular}{l@{\ $\longrightarrow$\ }l}
+\verb/平行四辺形 \heikousihenkei{}ABCD/
+& 平行四辺形\heikousihenkei{}ABCD
+\end{tabular}
+\end{itemshadebox}
+
+
+\section{解析}
+\subsec{数列記号}{\suuretu{a_n}, $\retuwa{k=1}{n}a_k$}
+\LaTeX では，数列 $\{a_n\}$ を書くには，
+\verb/$\{a_n\}$/ としますが，わずらわしいので，
+コマンド \cmd{suuretu} を作りました。
+次のように本文の中で使うことが多いでしょう。\cindex{suuretu}
+\cindex{suuretu}\index{すうれつ@数列記号}
+
+\begin{itemshadebox}{\cmd{suuretu}}
+\begin{tabular}{l@{\ $\longrightarrow$\ }l}
+\verb/等比数列 \suuretu{a_n} が・・・/
+& 等比数列 \suuretu{a_n} が・・・
+\end{tabular}
+\end{itemshadebox}\vspace{\baselineskip}
+
+数列の和記号も良く登場します。
+\verb/\displaystyle\sum/ のシグマ記号は少し大きいようです。
+\cindex{retuwa}\index{しぐま@シグマ}\index{すうれつのわ@数列の和}
+少し小さ目にしてみました。
+
+\begin{itemshadebox}{\cmd{retuwa}}
+\begin{tabular}{l@{\ $\longrightarrow$\ }l}
+\verb/$\displaystyle\sum_{k=1}^{n}{k(k+1)}$/
+& $\displaystyle\sum_{k=1}^{n}{k(k+1)}$\\[3ex]
+\verb/$\retuwa{k=1}{n}k(k+1)$/
+& $\retuwa{k=1}{n}k(k+1)$
+\end{tabular}
+\end{itemshadebox}
+
+上の話は本文中のことです。別行立ての場合は大きい方がよいでしょう。
+この場合も小さくするには，\cmd{tretuwa}を用います。\cindex{tretuwa}
+
+\begin{showEx}{\cmd{tretuwa}}
+\begin{gather*}
+  \retuwa{k=1}{n}k^2\\
+  \tretuwa{k=1}{n}k^2
+\end{gather*}
+\end{showEx}
+
+\subsec{極限}{$\protect\dlim{n \protect\to \protect\infty}a_n$}
+\verb/\displaystyle/ を毎回書くのは面倒だというだけです。
+\verb/\dfrac/ と同じねらいでしょう。\cindex{dlim}
+
+\begin{itemshadebox}{\cmd{dlim}}
+\begin{tabular}{l@{\ $\longrightarrow$\ }l}
+\verb/$\dlim{x \to \infty}e^{-x}=0$/
+& $\dlim{x \to \infty}e^{-x}=0$
+\end{tabular}
+\end{itemshadebox}
+
+\subsec{階差数列}{\protect\sityuu[2.2zh]{1zh}%
+  $\protect\Kaisasuuretu[kugirisi=\kern1em]<putoption={(0,-2pt)[t]}>%
+    {1,2,4,7,11,\cdots}%
+    {1,2,3,4,\cdots}$}
+階差数列の表現，あるいは
+数列の上下に，規則性を示すための矢印を配置する機能は\textsf{emathPh.sty}
+に用意されています。\textsf{sampleP.tex}をご覧ください。
+
+\subsec{増減・凹凸}{$\protect\sevarrow~\protect\nevarrow~%
+\protect\necarrow~\protect\secarrow$}
+増減表を作るときの矢印は，\LaTeX に\index{ぞうげんひょう@増減表}
+\begin{quote}
+\begin{verbatim}
+    \searrow, \nearrow
+\end{verbatim}
+\end{quote}
+が用意されています。
+\[\begin{array}{c||c|c|c|c|c|c|c}\hline
+x & -2 & \cdots & -1 & \cdots & 1 & \cdots & 2 \\\hline
+y'&    &   -    &  0 & +      & 0 &   -    &   \\\hline
+y &    & \searrow & \text{極小} & \nearrow &  \text{極大} & \searrow & \\\hline
+\end{array}
+\]
+凹凸を表す記号は，集合の演算子\index{おうとつ@凹凸}
+\begin{quote}
+\begin{verbatim}
+    \cup, \cap
+\end{verbatim}
+\end{quote}
+が流用できます。
+\[\begin{array}{c||c|c|c|c|c}\hline
+x & -2 & \cdots & 0 & \cdots & 2 \\\hline
+y''&    &   +    &  0 &   -   &   \\\hline
+y &    & \cup & \text{変曲点} & \cap & \\\hline
+\end{array}
+\]
+\begin{quote}
+\begin{verbatim}
+    \smile, \frown
+\end{verbatim}
+\end{quote}
+の方が良いという方もいらっしゃるかもしれません。
+\[\begin{array}{c||c|c|c|c|c}\hline
+x & -2 & \cdots & 0 & \cdots & 2 \\\hline
+y''&    &   +    &  0 &   -   &   \\\hline
+y &    & \smile & \text{変曲点} & \frown & \\\hline
+\end{array}
+\]
+増減と凹凸をいっしょにまとめた表を作るときに必要な矢印付きの四分円は
+\LaTeX, AMSFontsではみかけません。picture 環境で作ってみました。
+\index{ぞうげんとおうとつ@増減と凹凸}
+
+\begin{itemshadebox}{\cmd{?e?arrow}}
+\begin{tabular}{l@{\ $\longrightarrow$\ }l}
+\verb/\nevarrow/ & \nevarrow \\
+\verb/\necarrow/ & \necarrow \\
+\verb/\sevarrow/ & \sevarrow \\
+\verb/\secarrow/ & \secarrow
+\end{tabular}
+\end{itemshadebox}\vspace{\baselineskip}
+
+\cindex{nevarrow}%
+\cindex{necarrow}%
+\cindex{sevarrow}%
+\cindex{secarrow}%
+
+ne(se) と arrow の間の v, c は
+\begin{quote}
+    v: con\underline{v}ex \\
+    c: con\underline{c}ave
+\end{quote}
+からとりました。
+
+これらのコマンドを用いると増減表は下のようになります。
+
+\begin{itemshadebox}{\cmd{?e?arrow}}
+\[\begin{array}{c||c|c|c|c|c|c|c|c|c}\hline
+x & -2 & \cdots & -1 & \cdots & 0 & \cdots & 1 & \cdots & 2 \\\hline
+y'&    &   -    &  0 & \multicolumn{3}{c|}{+}&0&   -    &   \\\hline
+y''&   & \multicolumn{3}{c|}{+} &0& \multicolumn{3}{c|}{-} & \\\hline
+y &    & \sevarrow & \text{極小} & \nevarrow & \text{変曲点} & \necarrow
+& \text{極大} & \secarrow & \\\hline
+\end{array}
+\]
+\end{itemshadebox}
+
+増減表で，微分不能のところには斜線を引いたりしたいことがあります。
+\textsf{emathT.sty}では，\textsf{hyou}環境を定義して，それを可能としています。
+\textsf{emathP.sty}の説明書 \textsf{sampleP.tex} をご覧ください。
+
+\subsec{積分記号}{$\dint{a}{b}f(x)dx$}
+積分記号も \verb/\dfrac/ と同じ意味合いです。
+\cindex{dint}
+
+\begin{itemshadebox}{\cmd{dint}}
+\begin{tabular}{l@{\ $\longrightarrow$\ }l}
+\verb/$\dint{a}{b}f(x)\,dx$/ & $\dint{a}{b}f(x)\,dx$
+\end{tabular}
+\end{itemshadebox}
+
+\subsec{定積分}{$\protect\teisekibun{-\cos x}{0}{\pi}$}
+定積分の計算で登場する大括弧でくくった記号ですが，
+大括弧を大きくするため，最低でも分数式の高さ深さを加味しています。
+\cindex{teisekibun}
+
+\begin{showEx}{\cmd{teisekibun}}
+$\dint{0}{\pi}\sin x\,dx
+=[-\cos x]_0^{\pi}$\\
+$\dint{0}{\pi}\sin x\,dx
+=\teisekibun{-\cos x}{0}{\pi}$\\
+\end{showEx}
+
+
+\subsec{デルタ記号}{\protect\Deruta}
+変分を表す記号デルタはイタリック体のギリシャ文字が使用されますが，
+これをもっと傾けたいというための記号です。\cindex{Deruta}
+
+\begin{showEx}{\cmd{Deruta}}
+$\varDelta$\\
+$\Deruta$
+\end{showEx}
+
+ただし，この記号は\textsf{emathPh.sty}で定義されています。
+\textsf{emath.sty}にもありますが，コーナーがぎざぎざになっています。
+
+\pagebreak
+
+\section{確率}
+\subsec{集合の記号}{\protect\syuugou[x]{0<x<1}}
+集合を表す記号として，\cmd{syuugou}\cindex{syuugou}があります。
+
+\begin{showEx}{\cmd{syuugou}}
+\syuugou{1,2,3}\\
+\syuugou[x]{0<x<1}
+\end{showEx}
+\verb+\syuugou#1+は，\verb+#1+に要素を列挙します。
+
+\verb+\syuugou[#1]#2+は，\verb+#2+に条件を記述します。
+
+\subsubsec{\cmd{ni}の否定}{\protect$\notni$}
+次の記号は，標準的な\LaTeX に用意されています。
+
+\begin{showEx}{\cmd{in}など}
+\begin{gather*}
+a \in A\\
+a \notin A\\
+A \ni a
+\end{gather*}
+\end{showEx}
+
+しかし，\cmd{ni}の否定記号がありません。（\textsf{txfonts}には用意されています。）
+そこで，\textsf{emath}では\cmd{notni}を用意しました。
+
+\begin{showEx}{\cmd{notni}}
+\[ A \notni a \]
+\end{showEx}
+
+\subsec{階乗記号}{$n\protect\kaizyou$}
+階乗を表す記号は`!'ですが，前後に少し空白を附加したものが
+\cmd{kaizyou}です。\cindex{kaizyou}
+比較してみてください。
+
+\begin{showEx}{\cmd{kaizyou}}
+$5!=120$\\
+$5\kaizyou=120$
+\end{showEx}
+
+
+\subsec{順列・組合せの記号}{\protect\kumiawase{n}{r}~%
+\protect\zyunretu{n}{r}~%
+\protect\Kumiawase{n}{r}~%
+\protect\Zyunretu{n}{r}%
+}
+組合せの記号は \AmS-\LaTeX で \verb/\binom/ などが用意されていますが，
+列ベクトルのような記号です。
+\cindex{zyunretu}\cindex{kumiawase}
+
+\begin{itemshadebox}{\cmd{kumiawase}, \cmd{zyunretu}}
+\begin{tabular}{l@{\ $\longrightarrow$\ }l}
+    \verb/$\displaystyle\binom{n}{2}$/
+    & $\displaystyle\binom{n}{2}$ \\
+\verb/$\kumiawase{n}{2}$/
+& $\kumiawase{n}{2}$ \\
+\verb/\kumiawase{5}{3}/
+& \kumiawase{5}{3} \\
+\verb/$\zyunretu{n}{2}$/
+& $\zyunretu{n}{2}$
+\end{tabular}
+\end{itemshadebox}
+
+重複順列，重複組合せはそれぞれ\cmd{Zyunretu}, \cmd{Kumiawase}です。
+\cindex{Zyunretu}\cindex{Kumiawase}
+
+\begin{showEx}{重複順列，重複組合せ}
+\Zyunretu{n}{r}\\
+\Kumiawase{n}{r}
+\end{showEx}
+\pagebreak
+
+\section{数式番号}
+\subsec{丸付き文字}{}
+\subsubsec{丸付き文字}{\protect\maru{1}~\protect\maru{A}~%
+\protect\tmaru{ア}}
+式の番号などに丸付き数字がよく使われます。
+
+\LaTeX2e には，\cmd{textcircled}というコマンドがあります。
+
+\begin{showEx}(.64,.3){\cmd{textcircled}}
+\textcircled{1}, \textcircled{2} を連立させて
+\end{showEx}
+
+しかし，丸記号と中の数字とのバランスが悪いですね。
+そこで\textsf{emath.sty}では，中の数字を\verb+\scriptstyle+にした
+\cmd{maru}というコマンドを用意しました。
+
+\begin{showEx}(.64,.3){\cmd{maru}}
+\maru{1}, \maru{2} を連立させて
+\end{showEx}
+
+中の数字を小さくしすぎたようですが，数字が2桁になると
+
+\begin{showEx}(.64,.3){2桁の番号}
+\maru{19}, \maru{20} を連立させて
+\end{showEx}
+
+中の数字が外枠にかかってしまいます。さて，どうしましょうか。
+
+対策その1は，中の数字を\cmd{resizebox}で横幅を\verb+1zw+に
+圧縮しよう，というのが \cmd{zwmaru}です。
+
+\begin{showEx}(.64,.3){\cmd{zwmaru}}
+\zwmaru{19}, \zwmaru{20} を連立させて
+\end{showEx}
+
+対策その2は，逆に外枠の○を大きくしよう，という行きかたです。
+
+\textsf{ifsym}フォントに大き目の○が用意されています。
+
+ただし，このフォントはスタンダードなインストールでは，
+インストールされていませんから，ここで使用するのは遠慮しておきます。
+サンプルは emath のホームページ，目次から
+\begin{jquote}
+emath 講座\\
+　リファレンス編\\
+　　\cmd{maru}
+\end{jquote}
+とたどってください。
+
+文字サイズは\cmd{normalsize}のままで○を大きくするには，
+○を\textsf{picture}環境で描画した\cmd{emPmaru}が\textsf{emathPh.sty}で
+定義されています。
+
+\begin{showEx}(.64,.3){\cmd{emPmaru}}
+\emPmaru{19}, \emPmaru{20} を連立させて
+\end{showEx}
+
+対策その3は，独自にデザインされたフォントを探してくる方法です。
+その一つに\textsf{pifont}があります。
+下のリストをタイプセットするには，\textsf{emathFx}を\verb+[pzd]+
+オプションつきでロードしておく必要があります。
+
+\begin{showEx}(.64,.3){\cmd{pzdmaru}}
+\pzdmaru{9}, \pzdmaru{10} を連立させて
+\end{showEx}
+
+ただし，残念ながら10までしか用意されていません。
+もう少し大きな数値まで用意されているものに\textsf{go}フォントがあります。
+このフォントは，囲碁の棋譜を表示するために作成されたもので，
+252まで用意されています。
+
+このフォントもスタンダードなインストールでは，
+インストールされていませんから，
+上記 emath講座をご参照ください。
+
+最後に，\textsf{utf}パッケージを用いる方法です。
+ただし，この方法は \verb+dvi-ware & OS+ に依存します。
+やはり，ここにはサンプルを載せられませんから，上記 emath講座をご参照願います。
+
+\begin{description}
+  \item[　注]ベースライン
+  
+    \cmd{maru}で囲まれた文字は，その行のベースラインから少し上に上がっています。
+    これを，一致させるコマンドが\cmd{bmaru}です。
+    次の例では，ベースラインを赤で引いています。
+\end{description}
+
+\begin{showEx}(.7,.24){\cmd{bmaru}}
+\begin{picture}(0,0)
+\put(0,0){\color{red}\line(1,0){50}}
+\end{picture}
+\maru{1}
+
+\begin{picture}(0,0)
+\put(0,0){\color{red}\line(1,0){50}}
+\end{picture}
+\bmaru{1}
+\end{showEx}
+
+\cmd{maru}に代えて，\cmd{bmaru}を使いたければ
+\begin{jquote}
+\begin{verbatim}
+\let\maru\bmaru
+\end{verbatim}
+\end{jquote}
+を宣言します。
+
+\subsubsec{白黒反転の丸付き文字}{\protect\kmaru{1}~\protect\kmaru{A}~%
+\protect\kmaru{ア}}
+白黒反転の丸付き文字は\cmd{kmaru}コマンドです。
+ただし，このコマンドは\textsf{color}パッケージを必要とします。
+\textsf{emathPh}など\textsf{emathP}系のパッケージをロードする場合は
+自動的に\textsf{color}も読み込まれます。
+\cindex{kmaru}
+
+\begin{showEx}{\cmd{kmaru}}
+\kmaru{1}
+
+\kmaru{あ}
+
+\kmaru{\textgt{ア}}
+\end{showEx}
+
+番号付けに使ってみましょう。
+\begin{showEx}(1,.9){enumerate 環境に適用}
+\def\kanaban#1{\kmaru{\textgt{#1}}}
+\begin{enumerate}[\protect\expandafter\kanaban ア]
+  \item あああああ
+  \item いいいいい
+  \item ううううう
+\end{enumerate}
+\end{showEx}
+
+\subsubsec{縦長の丸付き文字}{\protect\nagamaru{1}~\protect\nagamaru{A}}
+縦長の○も使用できます。\cindex{nagamaru}
+
+\showexample(1)(0.9){example/nagamaru}
+
+白黒反転は\cmd{knagamaru}です。上の例を\cmd{knagamaru}に変更すると：
+\cindex{knagamaru}
+
+\begin{shadebox}
+\input{example/nagamar1}
+\end{shadebox}
+
+
+\subsubsec{横長の丸付き文字}{\protect\ynagamaru{1}~\protect\ynagamaru{A}}
+横長の○は，\cmd{ynagamaru}です。\cindex{ynagamaru}
+
+\begin{shadebox}
+\input{example/nagamar2}
+\end{shadebox}
+
+その白黒反転は\cmd{kynagamaru}です。\cindex{kynagamaru}
+
+\begin{shadebox}
+\input{example/nagamar3}
+\end{shadebox}
+\bigskip
+
+\iffalse
+\subsubsection{○のサイズ変更}
+○の中に桁数の多いものを入れたいときなど，○のサイズを変更するには
+\begin{jquote}
+  \cmd{nagamaruyokoHankei}, \cmd{nagamarutateHankei}
+\end{jquote}
+を用います。
+
+\showexample(.6)(.34){example/nagamar4}
+
+\cmd{ynagamaru}は
+
+\begin{jquote}
+\begin{verbatim}
+\nagamarutateHankei{1.3em}
+\nagamaruyokoHankei{.9em}
+\end{verbatim}
+\end{jquote}
+としてあります。\cmd{ynagamaru}については，この値が固定されています。
+変更したいときは，
+\begin{jquote}
+\cmd{ynagamaru}ではなく，\cmd{nagamaru}
+\end{jquote}
+を用います。
+\fi
+
+\subsection{数式番号のフォーマット}
+複数行の式を並べて式に番号を付ける際，\LaTeX では
+\[ (1), (2), (3), ... \]
+のようにカッコ付きの番号が振られます。
+これに対して，われらの日常環境では丸付きの番号を振ることが多いようです。
+
+この機能は，amsmath パッケージを前提とします。
+さらにその一部を書き換えていますので，
+パッケージの読み込み順序が問題となります。
+amsmath を読み込んだ後に emath を読み込んでください。
+
+\index{すうしきばんごう@数式番号}
+\index{すうしきばんごうのりーだーけい@数式番号のリーダー罫}
+\cindex{preEqlabel}
+
+\begin{itemshadebox}{数式番号に丸囲い数字}
+\begin{minipage}{12zw}
+\begin{verbatim}
+\begin{align}
+  y&=x \label{eq:1}\\
+  y&=x^2 \label{eq:2}
+\end{align}
+\eqref{eq:1}を
+\eqref{eq:2}に
+代入して
+\end{verbatim}
+\end{minipage}\hfill$\longrightarrow$\hfill
+\begin{minipage}{16zw}
+\begin{align}
+    y&=x \label{eq:1}\\
+    y&=x^2 \label{eq:2}
+\end{align}
+\eqref{eq:1}を\eqref{eq:2}に代入して
+\end{minipage}
+\end{itemshadebox}\vspace{\baselineskip}
+
+リーダー罫が長くて数式とダブるときは，
+\verb/\preEqlabel{$\cdots\cdots$}/ などとして，
+リーダー罫の長さを短くすることができます。
+
+\begin{itemshadebox}{\cmd{preEqlabel}}
+\begin{verbatim}
+    \preEqlabel{$\cdots\cdots$}%
+\end{verbatim}
+\begin{minipage}{12zw}
+\begin{verbatim}
+    \begin{align}
+        y&=x \\
+        y&=x^2
+    \end{align}
+\end{verbatim}
+\end{minipage}\hfill$\longrightarrow$\hfill
+\begin{minipage}{16zw}
+\preEqlabel{$\cdots\cdots$}%
+\begin{align}
+    y&=x \\
+    y&=x^2
+\end{align}
+\end{minipage}
+\end{itemshadebox}\vspace{\baselineskip}
+
+また，fleqn オプションを付けているときは，
+数式が短いと数式と式番号の間が長くなりますから，
+\textsf{jquote}環境で右マージンを設定するのも一法です。
+
+\begin{itemshadebox}{右マージン}
+\begin{minipage}{14.5zw}
+\begin{verbatim}
+  \begin{jquote}(0zw)(4zw)
+    \begin{align}
+        y&=x \\
+        y&=x^2
+    \end{align}
+  \end{jquote}
+\end{verbatim}
+\end{minipage}\hfill$\longrightarrow$\hfill
+\begin{minipage}{16zw}
+\preEqlabel{$\cdots\cdots$}%
+  \begin{jquote}(0zw)(4zw)
+    \begin{align}
+        y&=x \\
+        y&=x^2
+    \end{align}
+  \end{jquote}
+  \mbox{}
+\end{minipage}
+\mbox{}
+\end{itemshadebox}\vspace{\baselineskip}
+
+\textsf{jquote}環境については，\pageref{L-jquote}ページをご覧ください。
+
+あるいは，逆に \verb/\mathindent/ で，数式を右に寄せるのもありましょう。
+\cindex{mathindent}
+
+\begin{itemshadebox}{\cmd{mathindent}}
+\verb/    \mathindent=6zw/
+
+\begin{minipage}{12zw}
+\begin{verbatim}
+
+    \begin{align}
+        y&=x \\
+        y&=x^2
+    \end{align}
+\end{verbatim}
+\end{minipage}\hfill$\longrightarrow$\hfill
+\begin{minipage}{16zw}
+\mathindent=6zw%
+\preEqlabel{$\cdots\cdots$}%
+\begin{align}
+    y&=x \\
+    y&=x^2
+\end{align}
+\end{minipage}
+\end{itemshadebox}\vspace{\baselineskip}
+
+\cindex{mathindent}\index{すうしきのいんでんと@数式のインデント}
+
+\verb/\preEqlabel{}/ とすれば，
+リーダー罫をつけないこともできます。
+
+\begin{itemshadebox}{リーダー罫なし}
+\begin{minipage}{12zw}
+\begin{verbatim}
+    \preEqlabel{}%
+    \begin{align}
+        y&=x \\
+        y&=x^2
+    \end{align}
+\end{verbatim}
+\end{minipage}\hfill$\longrightarrow$\hfill
+\begin{minipage}{16zw}
+\preEqlabel{}%
+\begin{align}
+    y&=x \\
+    y&=x^2
+\end{align}
+\end{minipage}
+\end{itemshadebox}\vspace{\baselineskip}
+
+なお，数式番号をデフォルトの
+\index{すうしきばんごうのしょしき@数式番号の書式}
+\cindex{tagform}
+\begin{quote}
+    (1),(2),(3),....
+\end{quote}
+に戻したければ，
+\begin{quote}
+\begin{verbatim}
+    \renewcommand{\tagform}[1]{(#1)}%
+    \preEqlabel{}%
+\end{verbatim}
+\end{quote}
+とします。これをまとめて処理する\cmd{resettagform}コマンドもあります。
+\cindex{resettagform}
+
+\begin{showEx}{数式番号の形式をデフォルトに戻す。}
+    \resettagform
+    \begin{align}
+        y&=x \\
+        y&=x^2
+    \end{align}
+\end{showEx}
+
+\subsection{数式番号のリセット}
+デフォルトでは，数式番号は1つの文書で通し番号となります。
+これを変更するには\cmd{setcounter}を用いるのが普通です。
+
+\begin{showEx}{数式番号の変更}
+\setcounter{equation}{10}
+\begin{align}
+  y&=x \\
+  y&=x^2
+\end{align}
+\end{showEx}
+
+\cmd{setcounter}で設定した値（上の例では10）の
+次の番号から数式に付与されていきます。
+
+特に数式番号を1から振りなおすには\verb+\setcounter{equation}{0}+
+とすることになりますが，よく使いますので\textsf{emath}では，
+\verb+\resetcounter+というコマンドを作っています。
+
+\begin{showEx}{数式番号の初期化}
+\resetcounter{equation}
+\begin{align}
+  y&=x \\
+  y&=x^2
+\end{align}
+\end{showEx}
+
+このコマンドは，カウンタの親子関係を作るのが主目的で，
+数学の問題集を作るときなど，数式番号は大問ごとに
+リセットすることが多いでしょう。
+
+このようなときは
+\bgroup
+\preEqlabel{$\cdots\cdots$}
+\begin{showEx}{カウンタの親子関係}
+\resetcounter{equation}[enumi]
+\begin{enumerate}[問題1.~]
+  \item ああああああああああああ
+    \begin{align}
+      y&=x \\
+      y&=x^2
+    \end{align}
+  \item いいいいいいいいいいいい
+    \begin{gather}
+      x^2+y^2=1\\
+      x+y=1
+    \end{gather}
+\end{enumerate}
+\end{showEx}
+\egroup
+冒頭の1行は，enumi カウンタが更新されるたびに，equation カウンタを初期化せよ，
+という意味です。\cmd{resetcounter}の書式です。
+
+\begin{boxnote}
+\begin{verbatim}
+カウンタ値のリセット
+  \resetcounter{foo} カウンタ foo の値を初期化します．
+
+カウンタに親子関係を設定する．
+  \resetcounter{foo}[FOO] FOO の値が更新されると，foo は初期化されます．
+\end{verbatim}
+\end{boxnote}
+\cindex{resetcounter}
+
+\if0
+【注】
+残念ながら，次のような不具合が生ずることがわかっています。
+
+\textsf{alignat}環境内では，数式番号が版面の右に飛び出すことがあります。
+
+\begin{alignat}{2}
+& \text{原点を中心とする半径1の円} & \quad & x^2+y^2=1\\
+& \text{直線}                      &       & y=x
+\end{alignat}
+
+対策は \verb/\preEqlabel{$\cdots\cdots\cdots$}/などと
+リーダー罫を短くしてください。
+
+{
+\preEqlabel{$\cdots\cdots\cdots$}
+\begin{alignat}{2}
+& \text{原点を中心とする半径1の円} & \quad & x^2+y^2=1\\
+& \text{直線}                      &       & y=x
+\end{alignat}
+}
+\fi
+%\pagebreak
+
+\subsection{連立方程式}
+\AmS-\LaTeX で連立方程式を記述するのに，cases 環境を使う方法があります。
+  \begin{align}
+    \begin{cases}
+        a+b=2 \\
+        a-b=0
+    \end{cases}
+  \end{align}
+などという具合です。ただ，残念ながら align 環境の中に記述しても
+数式番号は，連立方程式全体に対して１つだけしか発行されません。
+連立方程式それぞれに番号が欲しいことがあります。
+
+そのためには，\textsf{cases.sty}で定義されている\textsf{numcases}環境
+を用います。
+
+\begin{showEx}{\textsf{numcases}環境}
+\preEqlabel{\Cdots\Cdots}
+\begin{numcases}{}
+      a+b=3 \label{eq:a}\\
+      a-b=1 \label{eq:b}
+\end{numcases}
+$\eqref{eq:a}+\eqref{eq:b}$
+から $2a=4$ ゆえに $a=2$
+\end{showEx}
+
+\textsf{numcases}環境の書式です。
+
+\begin{boxnote}
+\begin{verbatim}
+\begin{numcases}{括弧の左側に来る数式}
+数式1 & 説明1 \\
+数式2 & 説明2 \\
+...
+\end{numcases}
+\end{verbatim}
+\end{boxnote}
+
+この機能をフルに用いた例です。
+
+\begin{showEx}(.4,.54){\textsf{numcases}環境}
+\resettagform
+\begin{numcases}{|x|=}
+  x & $(x\geqq 0)$のとき\\
+  -x & $(x<0)$のとき
+\end{numcases}
+\end{showEx}
+
+\begin{enumerate}[(注~1~)]
+  \item \textsf{cases.sty}と\textsf{amsmath.sty}とで衝突する部分がありますから，    \textsf{emath.sty}よりも後で\textsf{cases.sty}を読み込む必要があります。
+
+  \item \textsf{cases.sty}のバージョンによっては，
+    エラーが発生することがあります。この節での記述は
+\begin{jquote}
+\begin{verbatim}
+cases.sty 2002/05/02 ver 2.5
+\end{verbatim}
+\end{jquote}
+    を前提としています。
+
+  \item \textsf{emath}には，\cmd{renritu}というコマンドもありますが，
+    \textsf{numcases}の方が一般的ですから，\cmd{renritu}はお蔵入りとします。
+\end{enumerate}
+
+\subsection{本文中の連立方程式に数式番号}
+連立方程式に数式番号を振る \cmd{renritu} は，別行立て数式となります。
+\textsf{cases}環境と\cmd{houteisiki}を併用して，
+本文中の連立方程式にも数式番号を振ることができます。
+
+\showexample[本文中の連立方程式](.9)(.8){example/renritu2}
+
+これを見ると，本文中では連立記号というか左括弧が大きく感じられます。
+それを修正した\textsf{emcases}環境を用意しました。
+\index{emcases@emcases 環境}
+
+\showexample[\textsf{emcases}環境](.9)(.8){example/renritu3}
+
+\textsf{emcases}環境には，オプションが2種類あります。
+
+オプションその1は括弧を右につけるためのもので，次のように使います。
+
+\showexample[\textsf{emcases}環境](.9)(.8){example/renritu4}
+
+第2のオプションは\textsf{cases}環境に内包されている\textsf{array}環境の
+引数を変更します。デフォルトでは，\verb/@{}l@{\quad}l@{}/となっており，
+方程式と数式番号の間に，\cmd{quad}による空白が入ります。
+これを取り除いて
+
+\showexample[\textsf{array}環境の引数指定](.9)(.8){example/renritu5}
+
+もう一段，括弧記号を小さくするのが \cmd{baaiwake}コマンドです。
+\cindex{baaiwake}
+
+\showexample[\cmd{baaiwake}](.9)(.8){example/renritu6}
+
+\subsec{ダッシュ付きの数式番号}{\protect\maru{1}$'$}%
+数式番号にダッシュ付きの丸付き数字を使用する方法です。
+
+\showexample[ダッシュ付き数式番号](.5)(.45){example/marudsh1}
+
+のように，ダッシュのつかない式へのラベルを用いて
+\begin{jquote}
+\cmd{marudashtag} でダッシュ付き番号をつけ，\\
+\cmd{marudashref} で参照します。
+\end{jquote}\medskip
+\cindex{marudashtag}\cindex{marudashref}
+
+本文中の数式に対してダッシュをつけるには \cmd{houteisiki} の
+オプション引数に \cmd{marudashtag} を記述します。
+
+\showexample[本文中の数式へのダッシュ付き数式番号](.8)(.9){example/marudsh2}
+
+\subsection{\textsf{align*}環境で数式番号}
+\textsf{align*}, \textsf{gather*}環境など数式番号を付けない
+環境において，特定の式だけは数式番号を付与したいときのために
+\cmd{atag}コマンドを用意しました。\cindex{atag}
+
+\begin{showEx}{\cmd{atag}}
+\begin{gather*}
+  |z-3i|^2=4|z|^2\\
+  (z-3i)(\conj z+3i)=4z\conj z\\
+  3(z\conj z-iz+i\conj z-3)=0\\
+  (z+i)(\conj z-i)=4\\
+  \therefore |z+i|=2\atag
+\end{gather*}
+\end{showEx}
+
+\subsection{等号の縦揃え}
+長い式の変形を表すとき，左端に等号を置いて式を並べます。
+\begin{showEx}{=による左揃え}
+  \begin{align*}
+    &|x|^2\\
+    &=|x|^2\\
+    &=|x|^2
+  \end{align*}
+\end{showEx}
+では，一番上の行の位置に不満があります。
+\cmd{phantom}を用いて，等号分だけ右にずらします。
+\begin{showEx}{\cmd{phantom=}を用いる}
+  \begin{align*}
+    &\phantom{=}|x|^2\\
+    &=|x|^2\\
+    &=|x|^2
+  \end{align*}
+\end{showEx}
+等号の幅分はずれましたが，1行目と2行目の先頭がいぜん不揃いです。
+\verb+=+の右に\verb+{}+を附加します。
+\begin{showEx}{\cmd{phantom\{=\{\}\}}と修正}
+  \begin{align*}
+    &\phantom{={}}|x|^2\\
+    &=|x|^2\\
+    &=|x|^2
+  \end{align*}
+\end{showEx}
+まだ少しずれています。透明の等号の属性を\cmd{mathrel}と指定すれば
+\begin{showEx}{\cmd{mathrel}\{\cmd{phantom}=\}と修正}
+  \begin{align*}
+    &\mathrel{\phantom=}|x|^2\\
+    &=|x|^2\\
+    &=|x|^2
+  \end{align*}
+\end{showEx}
+式の先端がきれいに揃います。これはよく使いますから
+\begin{jquote}
+\begin{verbatim}
+\def\dumyeq{\mathrel{\phantom=}}
+\end{verbatim}
+\end{jquote}
+と定義することにしました。\cindex{dumyeq}
+\begin{showEx}{\cmd{dumyeq}}
+  \begin{align*}
+    &\dumyeq |x|^2\\
+    &=|x|^2\\
+    &=|x|^2
+  \end{align*}
+\end{showEx}
+\bigskip
+
+別法です。等号の右に\verb+&+を置くのもあります。ただし，
+\begin{showEx}{\&の位置}
+  \begin{align*}
+    &|x|^2\\
+    =&|x|^2\\
+    =&|x|^2
+  \end{align*}
+\end{showEx}
+では，等号と右辺との間隔が詰まりすぎです。
+\begin{showEx}{\&の位置}
+  \begin{align*}
+    &|x|^2\\
+    ={}&|x|^2\\
+    ={}&|x|^2
+  \end{align*}
+\end{showEx}
+とすればよいのですが，すべての行に\verb+={}+とするのは煩雑ですね。
+
+\subsection{\cmd{item}直後の縦揃え数式}
+\subsubsection{\textsf{aligned}環境}
+\verb+\item+直後に別行立て数式を配置すると
+
+\begin{showEx}(.54,.4){\cmd{item}直後の別行立て数式}
+\begin{enumerate}[(1)]
+  \item
+    \begin{align*}
+      y&=(a+b)^2\\
+       &=a^2+2ab+b^2
+    \end{align*}
+\end{enumerate}
+\end{showEx}
+
+この結果について次のような不満の声を耳にします。
+\begin{jquote}
+    項目番号と数式が
+    \begin{enumerate}[(1)]
+      \item 縦方向にずれている（改行されている）
+      \item 横方向も空きすぎである。
+    \end{enumerate}
+\end{jquote}
+これは，不満を述べる方が心得違いをしています。
+\begin{verbatim}
+    (1)に対しては，
+         別行立て数式は改行する
+    (2)に対しては，
+         別行立て数式の横位置は
+                 センタリング(fleqn オプションがない場合）
+                 左寄せ（fleqn オプション付きの場合で，
+                 インデント量は \mathindent）
+\end{verbatim}
+という，別行立て数式の仕様に従って配置されているまでです。
+
+対応策のひとつは別行立てではなく，本文中数式モードで済ませる，
+というのがあります。（この節は，井汲 景太 さんからご教示いただきました。）
+
+\textsf{amsmath.sty}で定義されている\textsf{alinged}環境を
+配置オプション\verb+[t]+を付加して用います。
+
+\begin{showEx}(.54,.4){\textsf{aligned}環境}
+\begin{enumerate}[(1)]
+  \item
+    $\begin{aligned}[t]
+      y&=(x+1)^2\\
+       &=x^2+2x+1
+    \end{aligned}$
+\end{enumerate}
+\end{showEx}
+
+ただし，この環境は別行立てではありませんから，数式番号はつきません。
+
+数式番号など，別行立てにこだわるなら，次節で紹介する\cmd{itemtopmath}
+を用いるのも一法です。
+
+\subsubsection{\cmd{itemtopmath}}
+
+
+  別行立て数式は，説明文があって，それに続くもの，
+というのが正しい使い方でしょう。
+
+\begin{showEx}(.54,.4){別行立て数式の前には説明文}
+\begin{enumerate}[(1)]
+  \item 説明文の後に別行立て数式
+    \begin{align*}
+      y&=(a+b)^2\\
+       &=a^2+2ab+b^2
+    \end{align*}
+\end{enumerate}
+\end{showEx}
+
+\noindent
+にもかかわらず，なんとかならないか，という要望は却下すべきものではありますが，
+余りに多いので，emath パッケージでは，\verb+\itemtopmath+ というコマンドを
+用意してあります。\cindex{itemtopmath}
+
+\begin{showEx}(.54,.4){\cmd{itemtopmath}}
+\begin{enumerate}[(1)]
+  \item \itemtopmath
+    \begin{align*}
+      y&=(a+b)^2\\
+       &=a^2+2ab+b^2
+    \end{align*}
+\end{enumerate}
+\end{showEx}
+
+すなわち，\verb+\item+ 直後に
+\begin{verbatim}
+    \itemtopmath
+\end{verbatim}
+というコマンドを発行して，別行立て数式を上方に引っ張り上げます。
+
+\paragraph{左インデントの調整}
+  つぎは，項目番号と数式の横方向の間隔調整です。
+これは，その文書に
+\begin{verbatim}
+    fleqn オプション
+\end{verbatim}
+がついているか否かで対応が異なります。
+
+  まずは，fleqn オプションがついている場合です。
+この場合は，数式行の左インデントを
+\begin{verbatim}
+    \mathindent=0pt
+\end{verbatim}
+などと指定します。
+（その影響範囲を限定するため，グルーピングをしておくなどの対策が必要です。）
+\bigskip
+
+\begin{showEx}(.54,.4){左インデント(1)}
+\begin{enumerate}[(1)]
+  \item \itemtopmath
+    \mathindent=0pt\relax
+    \begin{align*}
+      y&=(a+b)^2\\
+       &=a^2+2ab+b^2
+    \end{align*}
+\end{enumerate}
+\end{showEx}
+
+  fleqn オプションをつけない文書の場合は，
+局所的に fleqn オプションがついた状態にします。すなわち，align 環境を
+fleqnon 環境に，左インデントをオプションで与えたものでくるみます：
+
+\begin{verbatim}
+    \begin{fleqnon}[0pt]
+      \begin{align}
+         ......
+         ......
+      \end{align}
+    \end{fleqnon}
+\end{verbatim}
+という具合です。
+
+\begin{showEx}(.54,.4){左インデント(2)}
+\begin{enumerate}[(1)]
+\item \itemtopmath
+\begin{fleqnon}[0pt]
+\begin{align*}
+F(x)&=(x+b)^2\\
+  &=x^2+2bx+b^2
+\end{align*}
+\end{fleqnon}
+\end{enumerate}
+\end{showEx}
+
+\paragraph{縦方向の補正}
+  さて，数式が複雑になると縦方向の補正量が \verb+\itemtopmath+ では
+間に合わなくなります。
+
+\begin{showEx}(.54,.4){数式が複雑になると}
+\medskip
+\begin{enumerate}[(1)]
+  \item \itemtopmath
+    \mathindent=0pt\relax
+    \begin{align*}
+      y&=\dint{}{}(ax+b)^2dx\\
+       &=\bunsuu{1}{3a}(ax+b)^3+C
+    \end{align*}
+\end{enumerate}
+\end{showEx}
+
+この場合は，1行目の数式で一番背の高いもの
+--- この場合は積分記号 \verb+\int+ --- を
+\verb+\itemtopmath+ の \verb+[...]+ オプションに与えます。
+
+\begin{showEx}(.54,.4){\cmd{itemtopmath}の\texttt{[...]}オプション}
+\medskip
+\begin{enumerate}[(1)]
+  \item \itemtopmath[\int]\relax
+    \mathindent=0pt\relax
+    \begin{align*}
+      y&=\int (ax+b)^2dx\\
+       &=\bunsuu{1}{3a}(ax+b)^3+C
+    \end{align*}
+\end{enumerate}
+\end{showEx}
+\bigskip
+
+縦方向の位置を，更に細かく調整するには
+\begin{verbatim}
+    \itemtopmath の <...> オプションを
+\end{verbatim}
+を利用します。
+
+\paragraph{\cmd{itemtopmath}の書式}
+最後に，\cmd{itemtopmath}の書式です。
+
+\begin{boxnote}
+\begin{verbatim}
+\itemtopmath<#1>[#2]
+   #1 : 微調整量（単位つき）+で上に，-で下に移動
+   #2 : 1行目の高さが高いとき，その部分を与える
+        ( \emtokena に保存される)
+\end{verbatim}
+\end{boxnote}
+
+\pagebreak
+
+\section{図の取り込み}
+この節のコマンド類は，emath.sty ではなく，
+emathMw.sty に含まれています。
+使用する際は
+\begin{jquote}
+\begin{verbatim}
+\usepackage{emathMw}
+\end{verbatim}
+\end{jquote}
+としておかねばなりません。
+
+\subsection{図の周りへの回り込み}\index{mawarikomi@mawarikomi 環境}
+\subsubsection{\textsf{mawarikomi} 環境}
+図のまわりにテキストを回り込ませる環境に，wrapfigure があります。
+しかし，この環境は \textsf{enumerate}環境など \textsf{list}環境下では
+使用できません。
+
+そこで，\textsf{list}環境と併用するために \textsf{mawarikomi}環境を
+作ってみました。
+
+その使用例を見ていただきましょう。
+
+\showexample[\textsf{mawarikomi}環境](.5)(0.45){example/ExFig01}
+
+基本的な使用法は
+\begin{verbatim}
+  \begin{mawarikomi}{図の横幅}{図の記述}
+    回り込ませるテキスト部の記述
+  \end{mawarikomi}
+\end{verbatim}
+
+\noindent
+となっています。細かな調整を行うためのオプション引数については
+後述します。
+
+\subsubsection{\textsf{mawarikomi*}環境}\label{S-hukusuumon}
+\index{mawarikomi*@mawarikomi* 環境}
+図が大きくて複数の問題で回り込みを行わせるには，
+
+\showexample[複数の問題で回り込み](.5)(0.45){example/ExFig02}
+\label{hukusuumon}
+
+この場合，回り込みを行うタイミングがずれてきています。
+回り込みの行数は，図のサイズから計算で求めていますが，
+この場合は，\textsf{enumerate}環境において，\cmd{item}間の
+縦間隔が大きめにとられる関係で計算値とずれてきました。
+この修正法は後述します。
+(p.\pageref{gyousuusitei}, §\ref{gyousuusitei})
+
+\subsubsection{\textsf{mawarikomi}環境内に\textsf{list}環境}
+\textsf{mawarikomi}環境内に\textsf{list}環境を入れることができます。
+
+\showexample[\textsf{mawarikomi}内に\textsf{list}](.5)(0.45){example/ExFig03}
+
+\subsubsection{回り込みの行数指定オプション}\label{gyousuusitei}
+回り込みを行う行数は，図の高さから計算で求めています。
+しかし，テキスト部分の状態によっては不適切な場合もでてきます。
+そこで\textsf{mawarikomi}環境に \verb/[...]/ オプションで
+行数の指定ができるようにしてあります。
+\pageref{hukusuumon}ページの例では，
+計算では8行となっていますが，テキスト部分の状況から
+7行とした方が良いようです。
+
+下の例では，
+\begin{verbatim}
+  \begin{mawarikomi}[7]{30pt}{図}
+\end{verbatim}
+としています。
+
+なお，この指定法は相対指定も可能で，数値に `+' `$-$' を付けることにより
+計算で得られた行数を増減させます。下の例を
+\begin{verbatim}
+  \begin{mawarikomi}[-1]{30pt}{図}
+\end{verbatim}
+としても同じ結果が得られます。
+
+\showexample[回り込み行数の調整](.5)(0.45){example/ExFig04}
+
+\subsubsection{テキストと図の横間隔}
+テキスト部分と図の部分との横間隔はデフォルトで
+\begin{verbatim}
+  \newlength{\mawarikomisep}%
+  \setlength{\mawarikomisep}{2pt}%
+\end{verbatim}
+としてあり，その2倍\verb/4pt/が空くようにしてあります。
+
+次の例では，
+\begin{verbatim}
+  \setlength{\mawarikomisep}{1zw}%
+\end{verbatim}
+として，その2倍\verb/2zw/の空きを作ってみました。
+\cindex{mawarikomisep}
+
+\showexample[テキストと図の横間隔](.5)(0.45){example/ExFig05}
+
+\subsubsection{図の位置の微調整}
+図の位置を細かく調整したいことがあります。そのために
+\textsf{mawarikomi}環境に\verb/(x,y)/オプションを用意しました。
+一例です。
+
+\showexample[図の位置（調整前）](.5)(0.45){example/ExFig06}
+
+図をもう少し右上に動かしたいですね。
+\textsf{mawarikomi}環境に\verb/(5pt,2pt)/ オプションを付加してみました。
+
+\showexample[図の位置（調整後）](.5)(0.45){example/ExFig07}
+
+\subsubsection{段落途中からの回り込み}
+\verb/<n>/ オプションで段落の始めからn行は回り込みをしないように
+指定することができます。下の例は\verb/<1>/としたものです。
+
+\showexample[\texttt{<n>}オプション](.5)(0.45){example/ExFig08}
+\bigskip
+
+ただしテキスト部に数式があるなど行ピッチが変わると，
+図の位置の調整が必要になります。下の例では，
+2行目の数式を回り込みの対象外にするため，
+\texttt{<2>}オプションをつけました。
+テキスト部はお望み通り3行目から回り込みが始まっていますが，
+図の位置が不適切です。
+
+\showexample[図位置の調整が必要](.5)(0.45){example/ExFig09}
+
+では，\verb/(0,-24pt)/オプションで図を下に動かしてみます。
+
+\showexample[図位置の調整後](.5)(0.45){example/ExFig10}
+
+\subsubsection{\cmd{caption} の使用}
+\textsf{mawarikomi}環境内では，\verb/\caption/を使用できません。
+そこで，
+\begin{jquote}
+  \textsf{Fmawarikomi}環境：図番号を使用\\
+  \textsf{Tmawarikomi}環境：表番号を使用
+\end{jquote}
+\index{Fmawarikomi@Fmawarikomi 環境}
+\index{Tmawarikomi@Tmawarikomi 環境}
+なる2つの環境を用意してあります。
+
+下の例では，\textsf{Tmawarikomi}環境，\textsf{Fmawarikomi}環境
+内で\verb/\caption/を使用しています。
+
+\showexample[\textsf{Fmawarikomi}, \textsf{Tmawarikomi 環境}](.9)(.9){%
+  example/ExFig11}
+\bigskip
+
+なお別法として，\textsf{mawarikomi}環境において，
+\begin{verbatim}
+   \fgcaption
+   \tbcaption
+\end{verbatim}
+コマンドで \verb/\caption/ の代行をさせることも可能です。
+ただし，これらのコマンドは\textsf{emathCap.sty}で定義されていますから、
+使用する際は
+\begin{jquote}
+\begin{verbatim}
+\usepackage{emathCap}
+\end{verbatim}
+\end{jquote}
+としておく必要があります。
+
+\subsubsection{書式}
+\textsf{mawarikomi}環境の書式です。
+\index{mawarikomi@mawarikomi 環境}
+
+\begin{boxnote}
+\begin{verbatim}
+\begin{mawarikomi}<#1>[#2](#3,#4)#5#6
+   #1 : 段落当初の回り込みをしない行数
+   #2 : 回り込み行数（相対指定可）
+        先頭に`l'を付けたときは図を左に配置
+   (#3,#4) : 図の位置修正ベクトル
+                #3 : (>0) 右，(<0) 左
+                #4 : (>0) 上，(<0) 下
+            #3,#4 共に単位必須（0のみは単位不要）
+   #5 : 図の横幅（単位必須）
+   #6 : 図，表など
+
+関連パラメータ
+   \mawarikomisep テキストと図の間隔（デフォルト値 2pt)
+     この2倍の空きができます。
+\end{verbatim}
+\end{boxnote}
+
+\subsubsection{図の左配置}
+行数指定オプション\verb/[#2]/で，引数の先頭に`l' (\underline{l}eft)をつけると
+図などが左に配置されます。
+
+\showexample[図の左配置](.5)(0.45){example/ExFig12}
+
+\subsubsection{図幅指定の省略}
+図幅を指定する引数を空にすると，\TeX が認識する図幅で代行されます。
+
+ただし，図の部分が複数の段落を持つときは省略できません。
+したがって，図（表）番号を付与するときはこの機能は使えません。
+
+\showexample[図幅省略](.5)(0.45){example/ExFig14}
+
+この場合，図とテキスト部の間隔は\verb+16pt+としてあります。
+増減したいときは，増減する数値を図幅指定の引数に，`$+$'あるいは`$-$'
+の符号付で与えます。極端な例です。
+
+\showexample[図幅省略時の本文と図の間隔](.5)(0.45){example/ExFig15}
+
+文書全体でこの間隔を変更したいときは，
+\verb+\mawarikomikankaku+の値を変更します。\cindex{mawarikomikankaku}
+デフォルトは
+\begin{jquote}
+\begin{verbatim}
+\mawrikomikankaku=8pt
+\end{verbatim}
+\end{jquote}
+となっており，その2倍の\verb/16pt/が空きます。
+
+文書全体でこの間隔を変更したければ，プリアンブルで
+\begin{jquote}
+\begin{verbatim}
+\mawrikomikankaku=10pt
+\end{verbatim}
+\end{jquote}
+などと，右辺値を変更します。
+（この変更で2倍の\verb/20pt/が空くことになります。）
+
+\subsubsection{テキスト部が短いとき}
+図に比して，テキスト部が短く，回り込みが始まる前に
+テキスト部が終わってしまうときの処理です。
+まずは，具合の悪い例をご覧ください。
+
+\begin{showEx}{テキストが短いとき}
+\begin{enumerate}[(1)]
+  \item \begin{mawarikomi}{}{%
+    \begin{zahyou*}[ul=5mm]%
+      (0,4)(0,6)
+      \framebox(4,6){図}
+    \end{zahyou*}}
+    あああああああああああああああ
+    \end{mawarikomi}
+  \item いいいいいいいいいい
+    いいいいいいいいいいいい
+    いいいいいいいいいいいい
+\end{enumerate}
+\end{showEx}
+
+この場合第1問の本文が短いので，第2問が図にかかってしまいました。
+第2問も引き続きまわりこみをさせる \textsf{mawarikomi*}環境については
+§\ref{S-hukusuumon} (p.\pageref{hukusuumon})
+で述べました。ここでは，第2問を図が終わった後に記述する方法について述べます。
+
+\begin{showEx}{\cmd{mawarikomiowari}}
+\begin{enumerate}[(1)]
+  \item \begin{mawarikomi}{}{%
+    \begin{zahyou*}[ul=5mm]%
+      (0,4)(0,6)
+      \framebox(4,6){図}
+    \end{zahyou*}}
+    あああああああああああああああ
+    \end{mawarikomi}
+    \mawarikomiowari
+  \item いいいいいいいいいい
+    いいいいいいいいいいいい
+    いいいいいいいいいいいい
+\end{enumerate}
+\end{showEx}
+
+すなわち，\textsf{mawarikomi}環境が終わったとき，
+\cmd{mawarikomiowari} と記述します。\cindex{mawarikomiowari}
+
+\begin{description}
+  \item [（注）] 本文が図のサイズに比して短い場合は，
+    \textsf{mawarikomi}環境ではなく，\textsf{nidan}環境あるいは
+    \textsf{EMminipages}環境の方が適切でしょう。
+
+\begin{showEx}{\textsf{nidan}環境}
+\begin{enumerate}[(1)]
+  \item \begin{nidan}{}{%
+    \begin{zahyou*}[ul=5mm]%
+      (0,4)(0,6)
+      \framebox(4,6){図}
+    \end{zahyou*}}
+    あああああああああああああああ
+    \end{nidan}
+  \item いいいいいいいいいい
+    いいいいいいいいいいいい
+    いいいいいいいいいいいい
+\end{enumerate}
+\end{showEx}
+
+\begin{showEx}{\textsf{EMminipages}環境}
+\begin{enumerate}[(1)]
+  \item \begin{EMminipages}{*,20mm}
+    あああああああああああああああ
+    \EMminipagesbreak
+    \begin{zahyou*}[ul=5mm,haiti=t]%
+      (0,4)(0,6)
+      \framebox(4,6){図}
+    \end{zahyou*}
+  \end{EMminipages}
+  \item いいいいいいいいいい
+    いいいいいいいいいいいい
+    いいいいいいいいいいいい
+\end{enumerate}
+\end{showEx}
+\begin{enumerate}[注1.~]
+  \item \textsf{nidan}環境は\textsf{EMninda.sty}で定義されています。
+  \item \textsf{EMminipages}環境は\textsf{EMminipages.sty}で定義されています。
+\end{enumerate}
+
+\end{description}
+\clearpage
+
+\subsubsection{改ページとの関係(1)}
+\textsf{mawarikomi}環境の図が，ページの境界にさしかかると，
+おかしなことがおきる可能性があります。
+完全に解決することはできませんが，いくつかの例を見ていただきましょう。
+
+まず，
+p.\pageref{std1}〜p.\pageref{std2}（この部分，背景色をivoryとしています）では，
+問題なしですが，
+
+\clearpage
+
+\label{std1}
+\pagecolor{ivory}
+\repeatchar{あ}{500}
+
+\repeatchar{い}{300}
+
+\begin{mawarikomi}{}{%
+  \begin{picture}(100,100)
+    \framebox(100,100){\Huge 図}
+  \end{picture}}
+\repeatchar{ず}{1200}
+\end{mawarikomi}
+\pagecolor{ivory}
+\label{std2}
+\clearpage
+
+\pagecolor{white}
+\textsf{mawarikomi}環境より前の部分が延びてくると，
+図は次ページに送られ，p.\pageref{nxt1}の下部には大きな空白ができます。
+（背景色はlavender）
+\clearpage
+
+\pagecolor{lavender}
+\label{nxt1}
+\repeatchar{あ}{500}
+
+\repeatchar{い}{1100}
+
+\begin{mawarikomi}{}{%
+  \begin{picture}(100,100)
+    \framebox(100,100){\Huge 図}
+  \end{picture}}
+\repeatchar{ず}{1200}
+\end{mawarikomi}
+\label{nxt2}
+\pagecolor{lavender}
+\clearpage
+
+\pagecolor{white}
+図が次ページに送られるのは仕方がないとして，
+テキスト部は一部を繰り上げて，空白ができないようにしたければ
+\begin{jquote}
+\begin{verbatim}
+\begin{mawarikomi}<0>{}{%
+\end{verbatim}
+\end{jquote}
+と，\textsf{mawarikomi}環境に\verb+<0>+オプションをつけます
+（背景色はskyblue）。
+その効用は：
+\clearpage
+
+\pagecolor{skyblue}
+\repeatchar{あ}{500}
+
+\repeatchar{い}{1100}
+
+\begin{mawarikomi}<0>{}{%
+  \begin{picture}(100,100)
+    \framebox(100,100){\Huge 図}
+  \end{picture}}
+\repeatchar{ず}{1200}
+\end{mawarikomi}
+\pagecolor{skyblue}
+\clearpage
+
+\pagecolor{white}
+
+
+\subsubsection{改ページとの関係(2)}
+\textsf{mawarikomi}環境部がページの境目に差し掛かると，
+いろいろ厄介な現象が生じます。
+
+その一事例です。
+
+この文書の\pageref{yatara}〜\pageref{tuduki}ページを見てください
+（この部分は黄色の背景色がついています）。
+p.\pageref{okuruna}は，たった2行で改ページされています。
+p.\pageref{tuduki}に配置されている\textsf{mawarikomi}環境は，
+p.\pageref{okuruna}の続きに配置できそうなのに，
+なぜか改ページされています。
+
+その理由の説明と，この現象を回避する一手段を見ていただきましょう。
+
+まずは，理由の推測です。
+
+\begin{enumerate}[1)]
+  \item \textsf{emathMw.sty}は，図がページの境目にひっかかる場合，
+    次ページに送る仕様となっています。\footnote{\textsf{emathMw.sty}を
+    \texttt{[samepage]}オプション付でロードすると，次ページ送りの処理を
+    禁止することもできます。
+    この場合，以下の議論は無意味です。}
+  \item この文書では，p.\pageref{okuruna}の終りで図がページの境目にひっかるので，
+    図の前で改ページされます。この時点では，フロート（脚注）はないものとして
+    判断が行われます。
+  \item そのあとで，フロートが入ることにより，p.\pageref{okuruna}の終りの
+    \begin{jquote}
+    \begin{verbatim}
+\section{mawarikomiを次ページに送らなくても良いのに}
+\repeatchar{い}{30}
+    \end{verbatim}
+    \end{jquote}
+    の2行が次ページに送られますが，図の前の改ページは取り消されることはありません。
+\end{enumerate}
+ということで，p.\pageref{okuruna}は，2行だけということとなってしまったのです。
+
+対症療法です。この文書では，p.\pageref{tuduki}に移された\textsf{mawarikomi}環境は，
+ページ境目にきても改ページをしないようにします。そのための環境が，新設された
+\textsf{Pmawarikomi}環境です。
+
+p.\pageref{kaiteis}〜p.\pageref{kaiteie}では
+（この部分の背景色はシアンです），この新設環境を用いています。
+
+\clearpage
+
+\pagecolor{yellow}
+\section*{やたら改ページのmawarikomi}\label{yatara}
+\repeatchar{あ}{500}\footnote{\repeatchar{脚注}{20}}
+
+\repeatchar{い}{1180}\footnote{\repeatchar{きゃくちゅう}{20}}
+
+\section*{mawarikomiを次ページに送らなくても良いのに}\label{okuruna}
+\repeatchar{い}{30}
+\pagecolor{yellow}
+
+\begin{mawarikomi}{}{%
+  \begin{picture}(100,100)
+    \framebox(100,100){\Huge 図}
+  \end{picture}}
+\repeatchar{ず}{500}\label{tuduki}
+\end{mawarikomi}
+\pagecolor{yellow}
+\newpage
+
+\pagecolor{cyan}
+\section*{Pmawarikomi の効用}\label{kaiteis}
+\repeatchar{あ}{500}\footnote{\repeatchar{脚注}{20}}
+
+\repeatchar{い}{1180}\footnote{\repeatchar{きゃくちゅう}{20}}
+
+\section*{Pmawarikomiで望みの位置に}
+\repeatchar{い}{30}
+\label{kaiteie}
+
+\begin{Pmawarikomi}{}{%
+  \begin{picture}(100,100)
+    \framebox(100,100){\Huge 図}
+  \end{picture}}
+\repeatchar{ず}{500}
+\end{Pmawarikomi}
+\pagecolor{cyan}
+\clearpage
+
+\pagecolor{white}
+
+\subsection{複数の図の周りへの回り込み}
+横幅の異なる複数の図の周りへテキストを回り込ませるのは面倒です。
+現時点では，自動ではなく手動で行う方法しかありません。
+
+\begin{jquote}
+\begin{enumerate}[(1)]
+  \item 図を配置する。
+  \item 図の周りに，テキストを回り込ませる。
+\end{enumerate}
+\end{jquote}
+という手順で実現することにします。
+
+\subsubsection{図の配置 --- \textsf{zuhaiti}環境}
+まずは，図の配置です。\cindex{zuhaiti}
+\begin{showEx}(.44,.5){図の配置}
+\begin{zuhaiti}
+  \haiti{%
+  \begin{tabular}{|c|c|c|}
+                    \hline
+    A & B & C \\\hline
+    1 & 2 & 3 \\\hline
+    x & y & z \\\hline
+    \end{tabular}}
+  \haiti{%
+    \begin{picture}(20,80)%
+      \framebox(20,80){図}
+    \end{picture}}
+\end{zuhaiti}%
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+\end{showEx}
+
+段落の先頭で\textsf{zuhaiti}環境を置き，その中で\cmd{haiti}コマンドで
+図表などを配置していきます。
+\clearpage
+
+\subsubsection{枠の設定 --- \cmd{wakudori}}
+この時点では，文字が図にかぶっています。
+この文字を図の周りに回りこませます。
+
+そのためには，図の横幅を知らねばなりません。
+この場合は，\textsf{zahyou}環境の\cmd{unitlength}と
+$x$の範囲から計算で求められますが，\TeX が認識している図の横幅が
+タイプセットした際にできるログファイルに記録されています：
+\begin{jquote}
+\begin{verbatim}
+図幅=57.8056pt
+図幅=20.0pt
+\end{verbatim}
+\end{jquote}
+
+図と文字部分との間隔を\verb/10pt/として，
+\begin{jquote}
+\begin{verbatim}
+初めの4行は 67.8pt,
+次の5行は，30pt 行の長さを短くしてみます。
+
+\end{verbatim}
+\end{jquote}
+
+\begin{showEx}(.45,.49){枠の設定}
+\begin{zuhaiti}
+  \haiti{%
+  \begin{tabular}{|c|c|c|}\hline
+    A & B & C \\\hline
+    1 & 2 & 3 \\\hline
+    x & y & z \\\hline
+    \end{tabular}}
+  \haiti{%
+    \begin{picture}(20,80)%
+      \framebox(20,80){図}
+    \end{picture}}
+\end{zuhaiti}%
+\wakudori{4*67.8pt;5*30pt}
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+\end{showEx}
+
+新設コマンド
+\begin{jquote}
+\begin{verbatim}
+\wakudori{4*67.8pt;5*30pt}
+\end{verbatim}
+\end{jquote}
+で，4行分右に67.8ptの空きを作り，引き続いて5行分30ptの空きを作ります。
+すなわち\cmd{wakudori}の引数には
+\begin{jquote}
+\begin{verbatim}
+行数*横幅
+\end{verbatim}
+\end{jquote}
+を`;'区切りで並べます。なお，このコマンドは\textsf{zuhaiti}環境の外に
+記述します。\cindex{wakudori}
+\clearpage
+
+\subsubsection{図の左配置}
+2番目の図を左に配置してみましょう。
+
+\begin{showEx}(.45,.49){図の左配置}
+\begin{zuhaiti}
+  \haiti{%
+  \begin{tabular}{|c|c|c|}\hline
+    A & B & C \\\hline
+    1 & 2 & 3 \\\hline
+    x & y & z \\\hline
+    \end{tabular}}
+  \haiti[l]{%
+    \begin{picture}(20,80)%
+      \framebox(20,80){図}
+    \end{picture}}
+\end{zuhaiti}%
+\wakudori{3*67.8pt;6*(30pt,0pt)}
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+\end{showEx}
+
+すなわち，図を左配置するには，\cmd{haiti}コマンドに
+\verb/[l]/オプションをつけます。
+
+また，左配置した図を回り込ませるには，\cmd{wakudori} の引数を
+\begin{jquote}
+\begin{verbatim}
+行数*(左空きのサイズ,右空きのサイズ)
+\end{verbatim}
+\end{jquote}
+の形で与えます。
+
+一見良さそうですが，よく見ると4行目が第1の図にかぶっています。
+この行は2つの図両方にかかっているのでした。
+
+その修正法を2つ紹介します。
+\clearpage
+
+\subsubsection{図の位置の微調整}
+修正法その1は，2番目の図を1行分下に動かし，
+4行目は第1の図に対して回り込ませます。
+
+\begin{showEx}(.45,.49){図の位置を調整}
+\begin{zuhaiti}
+  \haiti{%
+  \begin{tabular}{|c|c|c|}\hline
+    A & B & C \\\hline
+    1 & 2 & 3 \\\hline
+    x & y & z \\\hline
+    \end{tabular}}
+  \haiti[l]%
+      (0pt,-\baselineskip){%
+    \begin{picture}(20,80)%
+      \framebox(20,80){図}
+    \end{picture}}
+\end{zuhaiti}%
+\wakudori{4*67.8pt;6*(30pt,0pt)}
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+\end{showEx}
+
+すなわち，図の位置をずらすには，\cmd{haiti}コマンドに
+\verb/(dx,dy)/オプションをつけます。
+\verb/dx/, \verb/dy/ は単位を伴った長さで，
+\begin{jquote}
+\begin{verbatim}
+dx は左右の動きで
+   dx>0 のとき右へ，dx<0 のとき左へ動きます。
+dy は上下の動きで
+   dy>0 のとき上へ，dy<0 のとき下へ動きます。
+\end{verbatim}
+\end{jquote}
+ここでは，\verb/\haiti[l](0pt,-\baselineskip){.../により
+図を1行分下に動かしています。
+\clearpage
+
+\subsubsection{行の左右に枠}
+修正法その2です。
+2つの図にかかる行の左右双方に枠をあけてしまう，
+という方法です。
+
+\begin{showEx}(.45,.49){行の左右双方に枠}
+\begin{zuhaiti}
+  \haiti{%
+  \begin{tabular}{|c|c|c|}\hline
+    A & B & C \\\hline
+    1 & 2 & 3 \\\hline
+    x & y & z \\\hline
+    \end{tabular}}
+  \haiti[l]{%
+    \begin{picture}(20,80)%
+      \framebox(20,80){図}
+    \end{picture}}
+\end{zuhaiti}%
+\wakudori{%
+  3*67.8pt;
+  1*(30pt,67.8pt);
+  5*(30pt,0pt)}
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+\end{showEx}
+\clearpage
+
+\subsubsection{\textsf{list}との併用}
+\textsf{enumerate}など\textsf{list}系の環境下で用いるときの注意です。
+
+\begin{showEx}(.45,.49){\textsf{list}と併用 -- 失敗}
+\begin{enumerate}
+\item
+\begin{zuhaiti}
+  \haiti{%
+  \begin{tabular}{|c|c|c|}\hline
+    A & B & C \\\hline
+    1 & 2 & 3 \\\hline
+    x & y & z \\\hline
+    \end{tabular}}
+  \haiti[l]%
+       (0pt,-\baselineskip){%
+    \begin{picture}(20,80)%
+      \framebox(20,80){図}
+    \end{picture}}
+\end{zuhaiti}%
+\wakudori{4*67.8pt;6*(30pt,0pt)}
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+
+いいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいい
+
+\item
+ううううううううううううううううう
+ううううううううううううううううう
+ううううううううううううううううう
+ううううううううううううううううう
+\end{enumerate}
+\end{showEx}
+
+あらま。これでは困ります。
+\cmd{wakudori}は\TeX の\cmd{parshape}を用いています。
+普通は段落が変われば\cmd{parshape}は解消してしまいますが，
+\textsf{list}環境下では，段落が変わっても\cmd{parshape}を
+使い続けることになっています。
+
+対応法は\cmd{wakudori}で設定した枠どりが終った次の段落の先頭で
+\begin{jquote}
+\begin{verbatim}
+\wakudori{}
+\end{verbatim}
+\end{jquote}
+と枠どりの終了を宣言し，\cmd{parshape}を\textsf{list}環境のものに
+戻しておくことです。
+
+\begin{showEx}(.45,.49){\textsf{list}と併用 -- 成功}
+\begin{enumerate}
+\item
+\begin{zuhaiti}
+  \haiti{%
+  \begin{tabular}{|c|c|c|}\hline
+    A & B & C \\\hline
+    1 & 2 & 3 \\\hline
+    x & y & z \\\hline
+    \end{tabular}}
+  \haiti[l]%
+      (0pt,-\baselineskip){%
+    \begin{picture}(20,80)%
+      \framebox(20,80){図}
+    \end{picture}}
+\end{zuhaiti}%
+\wakudori{4*67.8pt;6*(30pt,0pt)}
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+
+\wakudori{}%
+いいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいい
+
+\item
+ううううううううううううううううう
+ううううううううううううううううう
+\end{enumerate}
+\end{showEx}
+\clearpage
+
+\subsubsection{\cmd{caption}の使用}
+\cmd{caption}をつけるときは，\cmd{fgcaption}, \cmd{tbcaption}を
+用いますが，
+\cmd{haiti}の引数は\cmd{hbox}に入れてサイズを測っていますので，
+複数の段落を含むものは記述できません。
+そのため\cmd{caption}を使用する際は，\textsf{minipage}環境に
+くるんでおく必要があります。
+
+\begin{showEx}(.5,.44){\cmd{caption}の使用}
+\begin{zuhaiti}
+  \haiti{%
+    \begin{minipage}{57.8pt}
+      \tbcaption{表の例}
+      \begin{tabular}{|c|c|c|}\hline
+        A & B & C \\\hline
+        1 & 2 & 3 \\\hline
+        x & y & z \\\hline
+      \end{tabular}
+    \end{minipage}}
+  \haiti[l](0pt,-\baselineskip){%
+    \begin{minipage}{50pt}
+      \begin{picture}(50,80)%
+        \framebox(50,80){図}
+      \end{picture}
+      \fgcaption{ず}
+    \end{minipage}
+    }
+\end{zuhaiti}%
+\wakudori{5*67.8pt;8*(60pt,0pt)}
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+あああああああああああああああああ
+\end{showEx}
+\clearpage
+
+\subsubsection{テキスト部が複数の段落を持つ場合}
+回り込むテキスト部が複数の段落を持つときは，ちと面倒です。
+\cmd{parshape}は複数の段落を通して与えることができませんから，
+段落ごとに，その段落の形を \cmd{wakudori}の引数に与えなければ
+なりません。
+
+\begin{showEx}(.45,.49){複数の段落を持つテキスト部}
+\begin{zuhaiti}
+  \haiti{%
+  \begin{tabular}{|c|c|c|}\hline
+    A & B & C \\\hline
+    1 & 2 & 3 \\\hline
+    x & y & z \\\hline
+    \end{tabular}}
+  \haiti[l]%
+      (0pt,-\baselineskip){%
+    \begin{picture}(20,80)%
+      \framebox(20,80){図}
+    \end{picture}}
+\end{zuhaiti}%
+\wakudori{2*67.8pt}
+あああああああああああああああああ
+ああああ
+
+\wakudori{2*67.8pt;6*(30pt,0pt)}
+いいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいい
+\end{showEx}
+
+\subsubsection{\cmd{unitlength}の変更について}
+\textsf{zuhaiti}環境は，実質的には\textsf{picture}環境です。
+そこでは，\cmd{unitlength}を\verb/1pt/としています。
+図を配置するコマンド\cmd{haiti}内で\cmd{unitlength}を変更するときは
+グルーピングをして\cmd{unitlength}の変更を局部的にしておかないといけません。
+
+\subsection{図番号の書式修正}
+\cmd{caption}コマンドによる図番号は
+\begin{jquote}(8zw)
+\begin{verbatim}
+図1: なんとかの図
+\end{verbatim}
+\end{jquote}
+という具合に番号の後ろにコロンがつきます。
+これが邪魔であるというご意見をよく聞きます。
+確かに，タイトルをつけないで使用する場合には
+コロンは不要ですね。
+そこで \cmd{EMcaption}を作りました。
+\cindex{EMcaption}
+
+使用例です。
+
+\showexample[\cmd{EMcaption}](.5)(0.45){example/ExFig13}
+
+関連して，
+\begin{verbatim}
+  \fgEMcaption, \tbEMcaption
+\end{verbatim}
+\cindex{tbEMcaption}
+も定義されています。
+ただし，これらのコマンドは\textsf{emathCap.sty}で定義されていますから、
+使用する際は
+\begin{jquote}
+\begin{verbatim}
+\usepackage{emathCap}
+\end{verbatim}
+\end{jquote}
+としておく必要があります。
+
+\section{\textsf{enumerate}環境の機能拡張}
+この節のコマンド類は，emath.sty ではなく，
+emathE.sty に含まれています。
+
+\subsection{小問を横に並べる。}
+\subsubsection{横に並べる個数指定}
+小問を横に並べる環境 \textsf{edaenumerate} です。
+\index{edaenumerate@edaenumerate 環境}
+\cindex{edaitem}
+
+ただし，\textsf{edaenumerate}環境は\textsf{emath.sty}ではなく，
+\textsf{emathEy.sty}で定義されています。使用するには
+\begin{jquote}
+\begin{verbatim}
+\usepackage{emathEy}
+\end{verbatim}
+\end{jquote}
+を宣言しておく必要があります。
+
+{
+\renewcommand{\labelenumi}{\Alph{enumi}.}%
+\renewcommand{\labelenumii}{【\arabic{enumii}】}%
+\renewcommand{\labelenumiii}{(\arabic{enumiii})}%
+%\fboxsep=0pt%
+\begin{enumerate}
+\item 一番多いのは，横に2問ずつ並べるタイプでしょうか。
+
+\showexample[\textsf{edaenumerate}環境](.95)(0.9){example/eda01}
+\clearpage
+
+\item 横に3問ずつ並べたいときは \texttt{<..>} オプションを使います。
+
+\showexample[\texttt{edaenumerate<3>}](.95)(0.9){example/eda02}
+
+なお，\LaTeXe で \textsf{enumerate} に [...] オプションを併用する場合は
+\begin{quote}\begin{verbatim}
+      \begin{edaenumerate}<3>[(1)]
+\end{verbatim}
+\end{quote}
+のように，\verb/<..>/ オプションを先に付けてください。
+
+\pagebreak
+
+\item 小問の一部は2問ずつ，一部は3問ずつ並べたい，という例です。
+
+\showexample[\texttt{変則}](.95)(0.9){example/eda05}
+
+\if0
+\item 小問の幅を直接指定する方法もあります。
+この場合は，\texttt{(..)} オプションを使います。
+この場合は，改行位置を \cmd{edakaigyou} \cindex{edakaigyou}
+コマンドで明示する必要があります。
+
+\showexample[\texttt{(...)}オプションと \cmd{edakaigyou}](.95)(0.9){%
+example/eda03}
+\fi
+
+\item 小問の位置（左インデント）を変更するには (...) オプションを用います。
+
+\showexample[edaenumerate(...)](.95)(0.9){example/eda06}
+
+%\pagebreak
+
+\if0
+\item 小問の内容がすべて数式モードのときは \verb/\item/ ではなく
+    \verb/\itemm/ とすれば，小問の内容を \verb/$..$/ で括る必要はありません。
+    さらに，全部の小問が数式モードのときは \textsf{edaenumerate}に替えて，
+    \textsf{edaenumeratem}を使うこともできます。
+    （いずれも末尾に `m' が付いているという紛らわしいネーミングです。）
+\cindex{edaitemm}
+\index{edaenumeratem@edaenumeratem 環境}
+
+\begin{itembox}{\cmd{itemm}}
+\begin{verbatim}
+\begin{enumerate}
+\item 次の関数の導関数を求めよ。
+    \begin{edaenumerate}
+    \itemm y=x
+    \itemm y=x^2
+    \itemm y=x^3
+    \itemm[\stepcounter{enumiii}
+        $^{\textstyle *}$\labelenumiii] y=x^4
+    \item<1> 以上から $y=x^n$ の導関数を推測せよ。
+    \end{edaenumerate}
+\end{enumerate}
+\end{verbatim}
+\end{itembox}
+
+から，
+
+\leavevmode
+\begin{shadebox}
+\begin{enumerate}
+\item 次の関数の導関数を求めよ。
+    \begin{edaenumerate}
+    \itemm y=x
+    \itemm y=x^2
+    \itemm y=x^3
+    \itemm[\stepcounter{enumiii}
+        $^{\textstyle *}$\labelenumiii] y=x^4
+    \item<1> 以上から $y=x^n$ の導関数を推測せよ。
+    \end{edaenumerate}
+\end{enumerate}
+\end{shadebox}
+\fi
+
+\pagebreak
+
+\item テスト問題などでは，縦方向に空白を作りたいことがあります。
+\verb+<...>+ オプションに
+\begin{jquote}
+\texttt{gyoukan=2cm}
+\end{jquote}
+などと行間の長さを指定します。
+
+\begin{showEx}{\texttt{<gyoukan=..>}}
+\begin{enumerate}[1.~]
+  \item 次の問いに答えよ。
+    \begin{edaenumerate}%
+    <gyoukan=2cm>[(1)]
+      \item aaa
+      \item bbb
+      \item ccc
+      \item ddd
+    \end{edaenumerate}
+\end{enumerate}
+\end{showEx}
+
+横に並べる小問数も指定したければ，オプションを
+\begin{jquote}
+\begin{verbatim}
+<retusuu=3,gyoukan=2cm>
+\end{verbatim}
+\end{jquote}
+などと記述します。
+\index{retusuu=}\index{gyoukan=}
+\clearpage
+
+均等割りなら，
+\verb+\vfill+ も使えますし，
+\begin{jquote}
+\begin{verbatim}
+<gyoukan=\vfill>
+\end{verbatim}
+\end{jquote}
+と指定するのもありです。
+
+%\showexample[\cmd{vfill} で縦方向の空白](.95)(.9){example/eda07}
+\begin{itembox}{\cmd{vfill} で縦方向の空白}
+\verbatiminput{example/eda07}
+\end{itembox}
+
+をタイプセットすると，下のようになります。
+
+\input{example/eda07}
+\clearpage
+
+また，横に並べた小問の間に縦罫線を入れたいことがあります。
+\cindex{edasikiri}
+解答の余白を縦 \texttt{2cm} として，縦罫線を入れる例です。
+
+\showexample[小問の間に縦罫線](.95)(.9){example/eda04}
+\pagebreak
+
+\item eda... の書式です。
+    \begin{enumerate}
+    \item 環境
+        \begin{verbatim}
+edaenumerate<横に並べる小問の個数(デフォルトは2）>
+            (小問の左インデント)
+            [enumerate のオプションと同じ(LaTeX2eのみ)]
+        \end{verbatim}
+    \item コマンド
+        \begin{verbatim}
+\item<横に並べる小問の個数
+    （デフォルトは \begin{edaenumerate}の指定値）>
+     (小問の横幅)
+     [\item のオプションと同じ]
+        \end{verbatim}
+    \end{enumerate}
+\end{enumerate}
+}
+
+\pagebreak
+
+\subsubsection{ベタ並べ}
+\textsf{edaenumerate}環境は，横に並べる個数を指定しますが，
+個数は指定せず，ベタに並べるのが\textsf{betaenumerate}環境です。
+\index{betaenumerate@betaenumerate 環境}
+
+\showexample[betaenumerate](.6)(.99){example/enumb01}
+
+%余白量はデフォルトで
+%\begin{jquote}
+%\begin{verbatim}
+%\def\betalabelwidth{3em}
+%\end{verbatim}
+%\end{jquote}
+%としてあります。
+%これを再定義して小さくすれば更に詰め込むことができます。
+
+\subsubsection{\textsf{yokoenumerate}}
+\textsf{betaenumerate}環境は追い込み式の横並べですが，
+項目幅は項目ごとに異なります。
+長さが最大の項目幅で横並べするのが \textsf{yokoenumerate} 環境です。
+\index{yokoenumerate@yokoenumerate 環境}
+
+\begin{showEx}(1,1){\textsf{yokoenumerate}環境}
+\begin{enumerate}[1.~]
+\item \textsf{betaenumerate}環境
+\begin{betaenumerate}
+  \item aaa
+  \item b
+  \item ccccc
+  \item ddddddddddd
+  \item ee
+  \item ffff
+  \item ggggg
+  \item hhhhhh
+\end{betaenumerate}
+
+\item \textsf{yokoenumerate}環境
+\begin{yokoenumerate}
+  \item aaa
+  \item b
+  \item ccccc
+  \item ddddddddddd
+  \item ee
+  \item ffff
+  \item ggggg
+  \item hhhhhh
+\end{yokoenumerate}
+\end{enumerate}
+\end{showEx}
+
+この環境と\textsf{edaenumerate}環境との違いは，
+\textsf{edaenumerate}環境は横に並べる項目数をこちらが指定するのに対して，
+\textsf{yokoenumerate}環境は項目幅と版面との兼ね合いで\TeX が決めてくれる
+という違いです。
+
+\subsection{\textsf{enumerate} 環境の中断・継続}
+enumerate 環境をいったん中断して，後刻再開したいことがあります。
+その際，番号を継続させるための環境
+\begin{center}
+\textsf{Enumerate},\quad \textsf{Enumerate*}
+\end{center}
+を定義しました。例えば，次のように用います。
+{\renewcommand{\labelenumi}{(\arabic{enumi})}%
+
+\showexample[enumerate 環境の中断・継続](.8)(.8){example/Enum00}}
+
+すなわち，\textsf{Enumerate} 環境で始めて，
+それを \textsf{Enumerate*} 環境で続けることになります。
+
+\textsf{Enumerate} 環境は，実質 \textsf{enumerate} 環境と同じですが，
+後で番号を継続させる仕掛けを追加してあります。
+\textsf{Enumerate*} 環境は直前の \textsf{Enumerate} 環境
+または \textsf{Enumerate*} 環境の番号を引き継ぎます。
+\pagebreak
+
+\subsection{指定した項目番号に\texttt{*}などを附加}
+問題集などで，一部の問題に\texttt{*}印などをつけようという話です。
+
+\begin{showEx}{\cmd{item*}}
+\begin{enumerate}[1.~]
+  \item 次の問いに答えよ。
+  \begin{edaenumerate}[%
+    \protect\preitem(1)]
+    \item* aaa
+    \item bbb
+    \item ccc
+    \item* ddd
+  \end{edaenumerate}
+\end{enumerate}
+\end{showEx}
+
+すなわち，書式指定に\cmd{preitem}を置き，\cindex{preitem}
+\texttt{*}を付けたい項目をアスタリスク付の \cmd{item*}
+で記述します。\cindex{item*}
+
+\texttt{*}を番号の後ろにおきたければ
+
+\begin{showpEx}{\cmd{item**}}
+!\begin{enumerate}[1.~]
+! \item 次の問いに答えよ。
+  \begin{edaenumerate}[(1){%
+  \makebox[0pt][l]\postitem}~]
+    \item** aaa
+    \item bbb
+    \item ccc
+    \item** ddd
+  \end{edaenumerate}
+!\end{enumerate}
+!\end{showpEx}
+書式指定に\cmd{postitem}を加え，アスタリスクを2個つけた\cmd{item**}を
+用います。\cindex{item**}\cindex{postitem}
+
+また，後置記号のありなしで番号部分の横幅が揃うように
+\begin{jquote}
+\begin{verbatim}
+  \begin{edaenumerate}[(1){\makebox[0pt][l]\postitem}~]
+\end{verbatim}
+\end{jquote}
+と，細工をしています。
+
+\texttt{*}以外の記号を使いたいときは，\cmd{item*}, \cmd{item**} に
+\verb+[..]+オプションをつけます。
+
+\begin{showpEx}{\cmd{item*[..]}}
+!\begin{enumerate}[1.~]
+! \item 次の問いに答えよ。
+  \begin{edaenumerate}[%
+    \protect\preitem(1)]
+    \item*[\dag] aaa
+    \item bbb
+    \item ccc
+    \item* ddd
+  \end{edaenumerate}
+!\end{enumerate}
+!\end{showpEx}
+
+後置する場合です。
+
+\begin{showpEx}{\cmd{item**[..]}}
+!\begin{enumerate}[1.~]
+! \item 次の問いに答えよ。
+  \begin{edaenumerate}[(1){%
+  \makebox[0pt][l]\postitem}~]
+    \item**[\dag] aaa
+    \item bbb
+    \item ccc
+    \item** ddd
+  \end{edaenumerate}
+!\end{enumerate}
+!\end{showpEx}
+
+前と後ろの両方に記号をつけたい，ということは起こりそうもありませんが，
+可能ではあります。
+
+\begin{showpEx}{前後置}
+!\begin{enumerate}[1.~]
+! \item 次の問いに答えよ。
+  \begin{edaenumerate}[%
+  \protect\preitem(1){%
+  \makebox[0pt][l]\postitem}~]
+    \item*[*][\dag] aaa
+    \item* bbb
+    \item**[\dag] ccc
+    \item*[][\ddag] ddd
+  \end{edaenumerate}
+!\end{enumerate}
+!\end{showpEx}
+と，\cmd{item*}に\verb+[前置記号][後置記号]+と2つのオプションをつけます。
+この場合，前置記号が`\texttt{*}'であっても，明示する必要があります。
+
+以上の例はすべて\textsf{edaenumerate}環境で示しましたが，
+一般の\textsf{enumerate}環境，各種の横並び\textsf{enumerate}環境でも
+有効です。
+
+\subsection{横幅一定のローマ数字}
+小問などの番号にローマ数字を用いると
+\begin{showEx}{小問番号にローマ数字}
+\begin{enumerate}[(i)]
+  \item あああ
+  \item いいい
+  \item ううう
+\end{enumerate}
+\end{showEx}
+
+ローマ数字が左にせり出す感じになります。その点を配慮して\cindex{emromannum}
+\begin{showEx}{\cmd{emromannum}}
+\begin{enumerate}[(%
+\protect\expandafter\emromannum 1)]
+  \item あああ
+  \item いいい
+  \item ううう
+\end{enumerate}
+\end{showEx}
+
+大文字のローマ数字に対しては\cindex{emRomannum}
+\begin{showEx}{\cmd{emRomannum}}
+\begin{enumerate}[(%
+\protect\expandafter\emRomannum1)]
+  \item あああ
+  \item いいい
+  \item ううう
+\end{enumerate}
+\end{showEx}
+
+\subsection{固定桁数のナンバリング 001, 002, 003, ...}
+左に0を補って固定桁数で番号付けをするためのコマンドが\cmd{Ofil}です。
+
+\showexample[\cmd{Ofil}](.9)(.8){example/Ofil01}
+
+すなわち，\cmd{Ofil}は，桁数と数値の2つの引数をとります。
+\cindex{Ofil}
+
+\subsection{番号付けにカタカナ・ひらがなを使う。}\label{byWaver}
+この節の機能は，Waver さんから使用を認めていただいたマクロ
+を使用させていただいています。
+
+有り難うございます。＞ Waver さん。
+
+enumerate 環境での番号付けは通常，
+\begin{quote}
+    1, 2, 3, ...\\
+    a, b, c, ...
+\end{quote}
+のように行われますが，これを
+\begin{quote}
+    ア,イ,ウ,...\\
+    イ,ロ,ハ,...
+\end{quote}
+のようにする例です。
+
+\begin{shadebox}
+\begin{tabular}{l@{\ $\longrightarrow$\ }l}
+\begin{minipage}{16zw}
+\begin{verbatim}
+{%
+\renewcommand{\labelenumi}{%
+(\カタカナ{enumi})}
+\begin{enumerate}
+\item $y=x$
+\item $y=x^2$
+\item $y=x^3$
+\end{enumerate}
+}%
+\end{verbatim}
+\end{minipage}
+&
+\begin{minipage}{6zw}
+\renewcommand{\labelenumi}{(\カタカナ{enumi})}
+\begin{enumerate}
+\item $y=x$
+\item $y=x^2$
+\item $y=x^3$
+\end{enumerate}
+\end{minipage}
+\end{tabular}
+\end{shadebox}
+
+\verb/\カタカナ/ というコマンドで，
+\begin{quote}
+    ア,イ,ウ,エ,オ,カ,...
+\end{quote}
+と，カタカナの五十音順にナンバリングされます。
+ここを次のように変更することもできます。
+
+\verb/\イロハ/ で
+\begin{quote}
+    イ,ロ,ハ,ニ,ホ,ヘ,...
+\end{quote}
+
+\verb/\ひらがな/ で
+\begin{quote}
+    あ,い,う,え,お,か,...
+\end{quote}
+
+\verb/\いろは/ で
+\begin{quote}
+    い,ろ,は,に,ほ,へ,...
+\end{quote}
+
+
+\subsection{\textsf{enumerate} 環境のオプション文字の追加}
+enumerate パッケージを使用すると，以下のオプション文字を用いて
+番号付けを制御することができます。
+\begin{jquote}
+        \begin{tabular}{l@{~:~}l}
+            1 & 1,2,3,4,5,6,7,.....\\
+            I & I,II,III,IV,V,VI,VII,.....\\
+            i & i,ii,iii,iv,v,vi,vii,.....\\
+            A & A,B,C,D,E,F,G,.....\\
+            a & a,b,c,d,e,f,g,.....
+        \end{tabular}
+\end{jquote}
+
+\textsf{emathE.sty} では，
+オプションに使用できる文字として，下の7個を追加してあります。
+\begin{jquote}
+\begin{tabular}{l@{~：~}l}
+    m  & \maru{1},\maru{2},\maru{3},\maru{4},\maru{5},\maru{6},\maru{7},.....\\
+    n  & \nagamaru{1},\nagamaru{2},\nagamaru{3},\nagamaru{4},\nagamaru{5},%
+    \nagamaru{6},\nagamaru{7},.....\\
+  ア & ア,イ,ウ,エ,オ,カ,キ,... \\
+  イ & イ,ロ,ハ,ニ,ホ,ヘ,ト,... \\
+  あ & あ,い,う,え,お,か,き,... \\
+  い & い,ろ,は,に,ほ,へ,と,... \\
+  一 & 一,二,三,四,五,六,七,...
+\end{tabular}
+\end{jquote}
+ただし，最後の「一」は \textsf{plext} パッケージを必要とします。
+\bigskip
+
+その他の文字はそのまま出力されますから
+\begin{quote}\begin{verbatim}
+\begin{enumerate}[（ア）]
+\end{verbatim}
+\end{quote}
+とすれば，番号付けが
+\begin{quote}
+（ア）,（イ）,（ウ）,（エ）,（オ）,（カ）,（キ）,...
+\end{quote}
+となります。
+
+このオプション文字の追加は，edaenumerate 環境に対しても有効です。
+その一例として \texttt{n} オプション --- 縦長の丸付き数字 --- を用いたものを
+ごらん頂きましょう。
+
+\showexample[enumerate 環境のオプション文字 \texttt{m}](.9)(.9){example/Enum01}
+
+ここで \cmd{setcurrentenum} というコマンドが登場しますが，
+\cindex{setcurrentenum}
+これは，enumerate 環境の現在の深さの番号変数の値を変更するものです。
+この例では，番号が1からではなく，0から始まっています。
+そのため，初期値を変更しておく必要があります。
+\begin{quote}
+\verb/\setcounter{enumi}{-1}/
+\end{quote}
+とするのが普通ですが，ある問題集の中にこの問題を収録したとき，
+問題集の番号を enumerate 環境で付けますと，
+enumerate 環境の深さが変わることにより
+\begin{quote}
+\verb/\setcounter{enumii}{-1}/
+\end{quote}
+と修正を必要とします。ここで用いた
+\begin{quote}
+\verb/\setcurrentenum{-1}/
+\end{quote}
+は，現在の enumerate 環境の深さを判断して，
+その番号を変更する機能を持つコマンドで，
+emath.sty の中で定義されています。
+
+これと対をなすコマンドが\cmd{getcurrentenum}で，
+現在の問題番号を取得します。\cindex{getcurrentenum}
+
+\subsection{\textsf{enumerate}環境における番号付けの初期値・刻み値変更}
+\textsf{enumerate}環境における番号付けで
+\begin{jquote}
+\begin{verbatim}
+初期値を1以外の値にしたい。
+刻み値を1以外に指定したい。
+\end{verbatim}
+\end{jquote}
+という要望にこたえるため，\textsf{enumerate}環境の
+\verb+<key=val>+オプションの\verb+key+に
+\begin{verbatim}
+    syokiti, kizamiti
+\end{verbatim}
+を新設しました。\index{syokiti=}\index{kizamiti=}
+
+\begin{showEx}(.9,.9){\texttt{<kizamiti=10>}}
+\begin{reidai}
+  刻み値を10に設定する例
+  \begin{jquote}
+    \begin{ttfamily}
+    \begin{enumerate}<syokiti=90,kizamiti=10>[1]
+      \item INPUT "分数A/B(0<A<B)を入力，A, B =";A, B
+      \item IF (B MOD A) = O THEN GOTO \ref{end}
+      \item N = INT(\Hako)+\Hako
+      \item PRINT N;
+      \item A = A*N-B
+      \item B = B*N
+      \item GOTO \Hako
+      \item \label{end}PRINT \Hako
+      \item END
+    \end{enumerate}
+    \end{ttfamily}
+  \end{jquote}
+\end{reidai}
+\end{showEx}
+
+次は，刻み値を負にする例です。
+
+\begin{showEx}(.9,.9){\texttt{<kizamiti=-1>}}
+\begin{reidai}
+  初期値を27, 刻み値を$-1$に設定する例
+  \begin{jquote}
+    \begin{enumerate}<syokiti=27,kizamiti=-1>[1.~]
+      \item zzz
+      \item yyy
+        \begin{align}
+          x&=1\\
+          y&=2\label{yy}\\
+          z&=3
+        \end{align}
+      \item xxx
+      \item www
+    \end{enumerate}
+    \eqref{yy}において
+  \end{jquote}
+\end{reidai}
+\end{showEx}
+
+\subsection{\textsf{enumerate}環境の前後左右の空き調整}
+\textsf{enumerate}環境の前後左右の空きを調整するには，
+\textsf{enumerate}環境の\verb+<...>+オプション
+\begin{jquote}
+\begin{verbatim}
+apnenum=....
+\end{verbatim}
+\end{jquote}
+を利用します。\index{apnenum=}
+
+まずは，標準の\textsf{enumerate}環境です。
+
+\begin{showEx}(.54,.4){\textsf{enumerate}環境}
+\begin{enumerate}[1.~]
+  \item 次の問いに答えよ。
+    \begin{enumerate}[(1)]
+      \item あああああああああああああ
+        あああああああああああああああ
+      \item いいいいいいいいいいいいい
+        いいいいいいいいいいいいいいい
+    \end{enumerate}
+\end{enumerate}
+\end{showEx}
+
+\clearpage
+
+\subsubsection{左インデント}
+では，左インデントの修正です。
+
+前ページ，標準の\textsf{enumerate}環境では，
+小問の左インデントは，大問のそれより全角2文字分深くなっています。
+それを同じにしてみましょう。
+
+\begin{showEx}(.54,.4){\cmd{leftmargin}の変更}
+\begin{enumerate}[1.~]
+  \item 次の問いに答えよ。
+    \begin{enumerate}%
+    <apnenum={\leftmargin=0zw}>[(1)]
+      \item あああああああああああああ
+        あああああああああああああああ
+      \item いいいいいいいいいいいいい
+        いいいいいいいいいいいいいいい
+    \end{enumerate}
+\end{enumerate}
+\end{showEx}
+
+小問番号が左に出すぎていますから，小問の1行目だけ右に押し込みます。
+\cmd{itemindent}を変更します。
+
+\begin{showEx}(.54,.4){\cmd{itemindent}の変更}
+\begin{enumerate}[1.~]
+  \item 次の問いに答えよ。
+    \begin{enumerate}%
+    <apnenum={\leftmargin=0zw%
+              \itemindent=1zw%
+             }>[(1)]
+      \item あああああああああああああ
+        あああああああああああああああ
+      \item いいいいいいいいいいいいい
+        いいいいいいいいいいいいいいい
+    \end{enumerate}
+\end{enumerate}
+\end{showEx}
+
+\clearpage
+
+\subsubsection{縦間隔}
+次は縦間隔の修正です。
+
+大問と小問の間を詰めたい，というご意見はよく耳にします。
+\cmd{topsep}, \cmd{parskip}を変更します。
+
+\begin{showEx}(.54,.4){大問と小問の縦間隔}
+\begin{enumerate}[1.~]
+  \item 次の問いに答えよ。
+    \begin{enumerate}%
+    <apnenum={\leftmargin=0zw%
+              \itemindent=1zw%
+              \topsep=0pt%
+              \parskip=0pt%
+             }>[(1)]
+      \item あああああああああああああ
+        あああああああああああああああ
+      \item いいいいいいいいいいいいい
+        いいいいいいいいいいいいいいい
+    \end{enumerate}
+\end{enumerate}
+\end{showEx}
+
+小問同士の間隔も詰めたい，となると，
+\cmd{itemsep}を修正します。
+
+\begin{showEx}(.54,.4){小問同士の縦間隔}
+\begin{enumerate}[1.~]
+  \item 次の問いに答えよ。
+    \begin{enumerate}%
+    <apnenum={\leftmargin=0zw%
+              \itemindent=1zw%
+              \topsep=0pt%
+              \parskip=0pt%
+              \itemsep=0pt%
+             }>[(1)]
+      \item あああああああああああああ
+        あああああああああああああああ
+      \item いいいいいいいいいいいいい
+        いいいいいいいいいいいいいいい
+    \end{enumerate}
+\end{enumerate}
+\end{showEx}
+\clearpage
+
+\subsubsection{縦間隔のグルー}
+ところで，縦間隔の初期値がどうなっているかを確認しておきます。
+
+\begin{jquote}
+\begin{verbatim}
+topsep  = 8.0pt plus 2.0pt minus 4.0pt
+parskip = 4.0pt plus 2.0pt minus 1.0pt
+itemsep = 4.0pt plus 2.0pt minus 1.0pt
+\end{verbatim}
+\end{jquote}
+
+ある意味で，グルーは \TeX の命です。
+これらを\verb+0pt+固定にするということは，ページ全体のバランスがとれなくなり，
+折角の \TeX の美しさを損なうこととなりかねません。
+
+ということでグルーを付けておきましょう。
+
+\begin{showEx}(.54,.4){\textsf{enumerate}環境}
+\begin{enumerate}[1.~]
+  \item 次の問いに答えよ。
+    \begin{enumerate}%
+    <apnenum={\leftmargin=0zw%
+              \itemindent=1zw%
+              \topsep=0pt plus 6pt%
+              \parskip=0pt plus 3pt%
+              \itemsep=0pt plus 3pt%
+             }>[(1)]
+      \item あああああああああああああ
+        あああああああああああああああ
+      \item いいいいいいいいいいいいい
+        いいいいいいいいいいいいいいい
+    \end{enumerate}
+\end{enumerate}
+\end{showEx}
+
+\subsubsection{\cmd{enumSep}}
+\verb+<apnenum=...>+オプションは，当該\textsf{enumerate}環境のみ
+に対する局所的な変更です。
+
+文書全体に対して同様の変更をするためには，
+\begin{jquote}
+\begin{verbatim}
+\enumSep, \enumSepi, \enumSepii, ...
+\end{verbatim}
+\end{jquote}
+コマンドが用意されています。
+
+\cmd{enumSep}コマンドの引数に
+\textsf{list}環境の第二引数に記述するものを与えます。例えば，\cindex{enumSep}
+\begin{verbatim}
+    \enumSep{\topsep=0pt\parskip=0pt%
+        \parsep=0pt\itemsep0pt}%
+\end{verbatim}
+と記述すると，行間は狭くなります。これはよく使いそうですから，
+
+\begin{verbatim}
+    \def\narrowenumsep{\topsep=0pt\parskip=0pt\parsep=0pt%
+      \itemsep0pt}%
+\end{verbatim}
+と，代名詞 \cmd{narrowenumsep} を定義してあります。\cindex{narrowenumsep}
+
+\showexample[enumerate環境の行間](.5)(.4){example/enumsep1}
+
+\cmd{enumSep}は\textsf{enumerate}環境4レベルすべてについて
+共通の設定をしますが，レベル毎に変更したいというときは，
+\cmd{enumSepi}, \cmd{enumSepii}, \cmd{enumSepiii}, \cmd{enumSepiv}
+を使用することもできます。
+
+なお，これらのコマンドと，\verb+<apnenum=...>+オプションを
+併用した場合は，当該\textsf{enumerate}環境に対しては
+\verb+<apnenum=...>+オプションが優先されます。
+
+\subsubsection{\cmd{enumLmargin}}
+文書全体で左マージンを変更するコマンドが \cmd{enumLmargin} です。
+
+例えば次のように用います。\cindex{enumLmargin}
+
+{\showexample[enumerate環境の左マージン](.55)(.4){example/enumsep2}}
+
+前節の行間を狭くするコマンドと併用すると，
+
+{\showexample[ケチケチ enumerate](.55)(.4){example/enumsep3}}
+
+\cmd{enumLmargin} は \textsf{enumerate}環境4レベルすべてについて
+左マージンを変更しますが，レベル毎に変更したいというときは，
+\cmd{enumLmargini}, \cmd{enumLmarginii}, \cmd{enumLmarginiii},
+\cmd{enumLmarginiv} を使用することもできます。
+
+なお，この目的にも\cmd{apnlist}を使用することができます。
+
+まずはデフォルトの確認です。
+\begin{showEx}{\textsf{enumerate}環境}
+あああああああああああああああああ
+あああああああああああああああああ
+\begin{enumerate}[1.~]
+  \item 次の問いに答えよ。
+    おおおおおおおおおおおおおおお
+    \begin{enumerate}[(1)]
+      \item あああああああああああ
+        ああああああああああああ
+      \item いいいいいいいいいいい
+        いいいいいいいいいいいい
+
+        うううううううううううう
+        うううううううううううう
+    \end{enumerate}
+  \item アアアアアアアアアアアアア
+    アアアアアアアアアアアア
+\end{enumerate}
+いいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいい
+\end{showEx}
+
+左インデントを調整した一例です。
+
+\begin{showpEx}{\cmd{apnlist}}
+あああああああああああああああああ
+あああああああああああああああああ
+\apnlist{\itemindent=1zw
+  \leftmargin=1zw
+  \listparindent=1zw}
+\begin{enumerate}[1.~]
+  \item 次の問いに答えよ。
+    おおおおおおおおおおおおおおお
+\apnlist{\narrowsep
+  \itemindent=1zw
+  \topsep=0zw
+  \leftmargin=1zw
+  \listparindent=1zw}
+    \begin{enumerate}[(1)]
+% 以下前の例と同じ
+!      \item あああああああああああ
+!       ああああああああああああ
+!      \item いいいいいいいいいいい
+!       いいいいいいいいいいいい
+!
+!       うううううううううううう
+!       うううううううううううう
+!    \end{enumerate}
+!  \item アアアアアアアアアアアアア
+!   アアアアアアアアアアアア
+!\end{enumerate}
+!いいいいいいいいいいいいいいいいい
+!いいいいいいいいいいいいいいいいい
+\end{showpEx}
+
+\subsection{\textsf{edaenumerate}環境の前後左右の空き調整}
+\textsf{edaenumerate}環境における項目周りのアキの調整です。
+
+\subsubsection{\textsf{edaenumerate}環境}
+デフォルトの\textsf{edaenumerate}環境を見ておきます。
+\begin{showEx}(.9,1){\textsf{edaenumerate}環境}
+\begin{enumerate}[1.~]
+  \item 次のおおおおおおおおおおおおおおおおおおお
+    \begin{edaenumerate}[(1)]
+      \item
+        ああああああああああああああああ
+        ああああああああああああああああ
+      \item
+        いいいいいいいいいいいいいいいい
+        いいいいいいいいいいいいいいいい
+    \end{edaenumerate}
+\end{enumerate}
+\end{showEx}
+
+\subsubsection{\texttt{preedasep=..}オプション}
+上のデフォルト状態に対して，「小項目の2行目以降を左に突き出したい」
+という要望があります。そこで，\verb+<preedasep=..>+オプションを新設しました。
+\index{preedasep=}
+
+（\texttt{preedasep}のデフォルト値は\texttt{1.75zw}です。）
+
+\begin{showEx}(.9,1){\texttt{preedasep=..}オプション}
+\begin{enumerate}[1.~]
+  \item 次のおおおおおおおおおおおおおおおおおおお
+    \begin{edaenumerate}<preedasep=0pt>[(1)]
+      \item
+        ああああああああああああああああ
+        ああああああああああああああああ
+      \item
+        いいいいいいいいいいいいいいいい
+        いいいいいいいいいいいいいいいい
+    \end{edaenumerate}
+\end{enumerate}
+\end{showEx}
+
+2行目以降のみならず，1行目も左に突き出てしまいましたから，
+\verb+<apnenum=..>+オプションで1行目を修正します。
+
+\begin{showEx}(.9,1){\texttt{apnenum=..}オプション}
+\begin{enumerate}[1.~]
+  \item 次のおおおおおおおおおおおおおおおおおおお
+    \begin{edaenumerate}
+        <preedasep=0pt,apnenum={\edaitemindent=1.75zw}>[(1)]
+      \item
+        ああああああああああああああああ
+        ああああああああああああああああ
+      \item
+        いいいいいいいいいいいいいいいい
+        いいいいいいいいいいいいいいいい
+    \end{edaenumerate}
+\end{enumerate}
+\end{showEx}
+
+\subsubsection{\textsf{postedasep=..}オプション}
+小項目間のアキは，\verb+<postedasep=..>+オプションで調整できます。
+\index{postedasep=}
+
+（\texttt{postedasep}のデフォルト値は\texttt{.75zw}です。）
+
+\begin{showEx}(.9,1){\texttt{postedasep=..}オプション}
+\begin{enumerate}[1.~]
+  \item 次のおおおおおおおおおおおおおおおおおおお
+    \begin{edaenumerate}
+        <preedasep=0pt,postedasep=2zw,
+        apnenum={\itemindent=1.75zw}>
+        [(1)]
+      \item
+        ああああああああああああああああ
+        ああああああああああああああああ
+      \item
+        いいいいいいいいいいいいいいいい
+        いいいいいいいいいいいいいいいい
+    \end{edaenumerate}
+\end{enumerate}
+\end{showEx}
+\newpage
+
+\subsubsection{\texttt{edatopsep=..}オプション}
+大問と\textsf{edaenumerate}環境との縦間隔は\verb+<edatopsep=..>+オプションで
+調整可能です。\index{edatopsep=}
+
+（\texttt{edatopsep}のデフォルト値は\texttt{0pt}です。）
+
+\begin{showEx}(.9,1){\texttt{edatopsep=..}オプション}
+\begin{enumerate}[1.~]
+  \item 次のおおおおおおおおおおおおおおおおおおお
+    \begin{edaenumerate}
+        <preedasep=0pt,postedasep=2zw,edatopsep=-.8zh,
+        apnenum={\edaitemindent=1.75zw}>[(1)]
+      \item
+        ああああああああああああああああ
+        ああああああああああああああああ
+      \item
+        いいいいいいいいいいいいいいいい
+        いいいいいいいいいいいいいいいい
+      \item
+        うううううううううううううううう
+        うううううううううううううううう
+      \item
+        ええええええええええええええええ
+        ええええええええええええええええ
+    \end{edaenumerate}
+\end{enumerate}
+\end{showEx}
+
+\subsection{\cmd{item}直後のedaenumerate環境}
+\subsubsection{問題提示}
+大問\verb+\item+には文章があって，そのあとに小問が続くのが普通ですが，
+
+\begin{showEx}(.9,.9){普通は}
+\begin{enumerate}[\protect\expandafter\fbox 1]
+  \item 次の問いに答えよ。
+    \begin{edaenumerate}[(1)]
+      \item 第1問
+      \item 第2問
+    \end{edaenumerate}
+\end{enumerate}
+\end{showEx}
+
+大問には文章はなく，いきなり小問をedaenumerate環境で記述するときの話です。
+
+\begin{showEx}(.9,.9){大問直後のedaenumerate環境}
+\begin{enumerate}[\protect\expandafter\fbox 1]
+  \item
+    \begin{edaenumerate}[(1)]
+      \item 第1問
+      \item 第2問
+    \end{edaenumerate}
+\end{enumerate}
+\end{showEx}
+
+特に問題はないようですが，大問の左インデントをいじっていると
+問題が発生します。
+
+\subsubsection{大問の左インデント操作との競合}
+大問の左インデントを変更している場合は問題が発生します。
+
+\begin{showEx}(.9,.9){\cmd{enumLmargin}との併用}
+\enumLmargini{0pt}
+\begin{enumerate}[\protect\expandafter\fbox 1]
+  \item
+    \begin{edaenumerate}[(1)]
+      \item 第1問
+      \item 第2問
+      \item 第3問
+      \item 第4問
+    \end{edaenumerate}
+\end{enumerate}
+\end{showEx}
+
+極端に
+\begin{jquote}
+\begin{verbatim}
+\enumLmargini{0pt}
+\end{verbatim}
+\end{jquote}
+として，大問の左マージンをなくしてしまうと，
+大問番号と小問番号が重なります。
+
+\begin{verbatim}
+＃　こんな馬鹿な使い方はしないほうがよろしいかと思いますが，
+＃　　　小問番号を横に並べる
+＃      enumerate の2行目以降を左に突き出す
+＃　などという発想の先にこのような事態もおこってくるということでしょうか。
+＃　どこまで続くぬかるみぞ，といいたくなりますが．．．．．
+\end{verbatim}
+
+\subsubsection{\textsf{edaenumerate}環境に\texttt{<edafirstindent=..>}オプション}
+\textsf{edaenumerate}環境に \texttt{<edafirstindent=..>}オプション
+を付加する解決法です。
+
+\begin{showEx}(.9,.9){\texttt{<edafirstindent=..>}オプション}
+\enumLmargini{0pt}
+\begin{enumerate}[\protect\expandafter\fbox 1]
+  \item
+    \begin{edaenumerate}<edafirstindent=2zw>[(1)]
+      \item 第1問
+      \item 第2問
+      \item 第3問
+      \item 第4問
+    \end{edaenumerate}
+\end{enumerate}
+\end{showEx}
+
+\subsubsection{\textsf{emathAe}との併用}
+\textsf{emathAe.sty}を用いて，解答を巻末に集めるときは
+この方式のほうがすっきりするようです。
+また，\cmd{kaitou}コマンドも使用可能となります。
+
+\begin{showEx}(.9,.9){\textsf{emathAe}との併用}
+  \enumLmargin{0pt}
+  \openKaiFile
+  \begin{enumerate}[\protect\expandafter\fbox1]
+    \item 大問1
+          \kaitou{\def\Kaienumerate{edaenumerate}%
+                  \def\Kaienumopt{<edafirstindent=2zw,retusuu=3>}}%
+      \begin{enumerate}[(1)]
+        \item 小問1 \kaitou{解答1}
+        \item 小問2 \kaitou{解答2}
+        \item 小問3 \kaitou{解答3}
+        \item 小問4 \kaitou{解答4}
+        \item 小問5 \kaitou{解答5}
+        \item 小問6 \kaitou{解答6}
+      \end{enumerate}
+  \end{enumerate}
+  \closeKaiFile
+  \hrule
+  【解答】
+
+  \inputKaiFile
+\end{showEx}
+\newpage
+
+\subsubsection{\textsf{betaenumerate}環境では}
+新設した\texttt{<edafirstindent=..>}は，
+\textsf{betaenumerate}環境に対しても有効です。
+
+\begin{showEx}(.9,.9){\textsf{betaenumerate}環境の場合}
+\enumLmargini{0pt}
+\begin{enumerate}[\protect\expandafter\fbox 1]
+  \item
+    \begin{betaenumerate}<edafirstindent=2zw>[(1)]
+      \item 第1問
+      \item 第2問
+      \item 第3問
+      \item 第4問
+      \item 第5問
+      \item 第6問
+      \item 第7問
+      \item 第8問
+    \end{betaenumerate}
+\end{enumerate}
+\end{showEx}
+\newpage
+
+\subsubsection{解答部の\textsf{betaenumerate}}
+\textsf{emathAe.sty}を用いて，解答部を\textsf{betaenumerate}とする場合も
+同様です。
+
+\begin{showEx}(.9,.9){\textsf{emathAe}で\textsf{betaenumerate}}
+  \enumLmargin{0pt}
+  \openKaiFile
+  \begin{enumerate}[\protect\expandafter\fbox1]
+    \item 大問1
+          \kaitou{\def\Kaienumerate{betaenumerate}%
+                  \def\Kaienumopt{<edafirstindent=2zw>}}%
+      \begin{enumerate}[(1)]
+        \item 小問1 \kaitou{解答1}
+        \item 小問2 \kaitou{かいとう2}
+        \item 小問3 \kaitou{answer3}
+        \item 小問4 \kaitou{解答4}
+        \item 小問5 \kaitou{解答5}
+        \item 小問6 \kaitou{解答6}
+        \item 小問7 \kaitou{解答7}
+        \item 小問8 \kaitou{解答8}
+      \end{enumerate}
+  \end{enumerate}
+  \closeKaiFile
+  \hrule
+  【解答】
+  \inputKaiFile
+\end{showEx}
+
+\subsection{\textsf{list}環境の行間}
+\textsf{enumerate}以外の\textsf{list}に基づく環境
+\begin{jquote}
+\begin{verbatim}
+description, itemize
+\end{verbatim}
+\end{jquote}
+環境について，行間の修正をするために
+\begin{jquote}
+\begin{verbatim}
+\apnlist
+\end{verbatim}
+\end{jquote}
+を用意してあります。\cindex{apnlist}
+
+\subsubsection{\textsf{itemize}環境}
+\textsf{itemize}環境のデフォルト状態は
+
+\begin{showEx}{\textsf{itemize}環境}
+あああああああああああああああああ
+あああああああああああああああああ
+\begin{itemize}
+  \item aaa
+  \item bbb
+  \item ccc
+\end{itemize}
+いいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいい
+\end{showEx}
+
+項目間の行間を狭くするには
+\cmd{apnlist}の引数に\textsf{list}環境の第2引数に
+引き渡すものを記述します。
+
+\begin{showpEx}{行間を狭く}
+あああああああああああああああああ
+あああああああああああああああああ
+\apnlist{\narrowsep}
+\begin{itemize}
+% 以下同じ
+! \item aaa
+! \item bbb
+! \item ccc
+!\end{itemize}
+!いいいいいいいいいいいいいいいいい
+!いいいいいいいいいいいいいいいいい
+\end{showpEx}
+
+\cmd{narrowsep}は\cindex{narrowsep}
+\begin{jquote}
+\begin{verbatim}
+\def\narrowsep{\parsep\z@\itemsep\z@\parskip\z@}
+\end{verbatim}
+\end{jquote}
+と\textsf{emathE.sty}で定義されています。すなわち
+\begin{jquote}
+\begin{verbatim}
+\parsep, \itemsep, \parskip
+\end{verbatim}
+\end{jquote}
+を\verb+0pt+としています。この値を細かく調整することで
+好みのスタイルを実現できます。
+
+本文との間も詰めるには，
+\verb+\topsep=0pt+を附加します。
+
+\begin{showpEx}{\textsf{itemize}環境}
+あああああああああああああああああ
+あああああああああああああああああ
+\apnlist{\narrowsep\topsep=0pt}
+\begin{itemize}
+% 以下同じ
+! \item aaa
+! \item bbb
+! \item ccc
+!\end{itemize}
+!いいいいいいいいいいいいいいいいい
+!いいいいいいいいいいいいいいいいい
+\end{showpEx}
+
+\subsubsection{\textsf{description}環境}
+\textsf{description}環境についても同様です。
+
+\begin{showEx}{\textsf{description}環境}
+あああああああああああああああああ
+あああああああああああああああああ
+\begin{description}
+  \item [AAA] aaa
+  \item [BB] bbbb
+  \item [C] ccccc
+\end{description}
+いいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいい
+\end{showEx}
+
+\begin{showpEx}{行間を狭く}
+あああああああああああああああああ
+あああああああああああああああああ
+\apnlist{\narrowsep}
+\begin{description}
+% 以下同じ
+! \item [AAA] aaa
+! \item [BB] bbbb
+! \item [C] ccccc
+!\end{description}
+!いいいいいいいいいいいいいいいいい
+!いいいいいいいいいいいいいいいいい
+\end{showpEx}
+
+\begin{showpEx}{本文との間隔}
+あああああああああああああああああ
+あああああああああああああああああ
+\apnlist{\narrowsep\topsep=0pt}
+\begin{description}
+% 以下同じ
+! \item [AAA] aaa
+! \item [BB] bbbb
+! \item [C] ccccc
+!\end{description}
+!いいいいいいいいいいいいいいいいい
+!いいいいいいいいいいいいいいいいい
+\end{showpEx}
+
+\subsubsection{\textsf{enumerate}環境}
+\textsf{enumerate}環境に対しても\cmd{apnlist}は
+有効ですが，層ごとに指定するのはちと面倒です。
+
+まずはデフォルトの \textsf{enumerate} 環境です。
+
+\begin{showEx}{\textsf{enumerate}環境}
+あああああああああああああああああ
+あああああああああああああああああ
+\begin{enumerate}[1.~]
+  \item 次の問いに答えよ。
+    \begin{enumerate}[(1)]
+      \item あああああああああああ
+        ああああああああああああ
+      \item いいいいいいいいいいい
+        いいいいいいいいいいいい
+    \end{enumerate}
+  \item アアアアアアアアアアアアア
+    アアアアアアアアアアアア
+\end{enumerate}
+いいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいい
+\end{showEx}
+
+第2層の\textsf{enumerate}環境の直前に
+\verb+\apnlist{\narrowsep\topsep=0pt}+
+を置いて，小問間の空き・大問と小問の間の空きを取り去ってみます。
+
+\begin{showpEx}{\cmd{apnlist}}
+あああああああああああああああああ
+あああああああああああああああああ
+\begin{enumerate}[1.~]
+  \item 次の問いに答えよ。
+\apnlist{\narrowsep\topsep=0pt}
+    \begin{enumerate}[(1)]
+% 以下前の例と同じ
+!      \item あああああああああああ
+!       ああああああああああああ
+!      \item いいいいいいいいいいい
+!       いいいいいいいいいいいい
+!    \end{enumerate}
+!  \item アアアアアアアアアアアアア
+!   アアアアアアアアアアアア
+!\end{enumerate}
+!いいいいいいいいいいいいいいいいい
+!いいいいいいいいいいいいいいいいい
+\end{showpEx}
+
+なお，\cmd{narrowsep}は
+\begin{jquote}
+\begin{verbatim}
+\def\narrowsep{\parsep=\z@\itemsep\z@\parskip\z@}
+\end{verbatim}
+\end{jquote}
+と\textsf{emathE.sty}で定義されています。すなわち
+\begin{jquote}
+\begin{verbatim}
+\parsep, \itemsep, \parskip
+\end{verbatim}
+\end{jquote}
+を\verb+0pt+としています。この値を細かく調整することで
+好みのスタイルを実現できます。
+
+先の例に戻り，大問間の行間も詰めたければ，第1層の\textsf{enumerate}環境の前に
+\begin{jquote}
+\begin{verbatim}
+\apnlist{narrowsep}
+\end{verbatim}
+\end{jquote}
+を入れますと，
+
+\begin{showpEx}{\cmd{apnlist}}
+あああああああああああああああああ
+あああああああああああああああああ
+\apnlist{\narrowsep}
+\begin{enumerate}[1.~]
+  \item 次の問いに答えよ。
+\apnlist{\narrowsep\topsep=0pt}
+    \begin{enumerate}[(1)]
+% 以下前の例と同じ
+!      \item あああああああああああ
+!       ああああああああああああ
+!      \item いいいいいいいいいいい
+!       いいいいいいいいいいいい
+!    \end{enumerate}
+!  \item アアアアアアアアアアアアア
+!   アアアアアアアアアアアア
+!\end{enumerate}
+!いいいいいいいいいいいいいいいいい
+!いいいいいいいいいいいいいいいいい
+\end{showpEx}
+
+本文と\textsf{enumerate}環境部との縦間隔も詰めたい，となると
+第1層にも\verb+\topsep=0pt+を附加します。
+
+\begin{showpEx}{\cmd{apnlist}}
+あああああああああああああああああ
+あああああああああああああああああ
+\apnlist{\narrowsep\topsep=0pt}
+\begin{enumerate}[1.~]
+  \item 次の問いに答えよ。
+    \begin{enumerate}[(1)]
+% 以下前の例と同じ
+!      \item あああああああああああ
+!       ああああああああああああ
+!      \item いいいいいいいいいいい
+!       いいいいいいいいいいいい
+!    \end{enumerate}
+!  \item アアアアアアアアアアアアア
+!   アアアアアアアアアアアア
+!\end{enumerate}
+!いいいいいいいいいいいいいいいいい
+!いいいいいいいいいいいいいいいいい
+\end{showpEx}
+この場合，第1層，第2層の\cmd{apnlist}の引数は同一となりますから，
+第2層は省略可能です。（省略すれば，第1層のものが第2層以下すべてに
+有効となります。第2層はデフォルトのままにしたい，ということなら
+第2層の前に
+\begin{jquote}
+\begin{verbatim}
+\apnlist{\relax}
+\end{verbatim}
+\end{jquote}
+などと指定する必要があります。）
+
+\subsection{問題番号の参照}
+\textsf{enumerate}環境で番号付けされた問題番号にラベルをつけて，あとで
+それを参照することができますが，第2層以下の場合，
+参照の形式がそれより上の層の番号まで含まれてしまいます。
+具体例を挙げてみましょう。
+{\renewcommand{\labelenumi}{\arabic{enumi}.~}
+\renewcommand{\labelenumii}{\alph{enumii}.~}
+\begin{quote}
+第1層の番号付けが 1,2,3,...\\
+第2層の番号付けが a,b,c,...
+\end{quote}
+であるとします。
+
+\showexample[問題番号の参照（デフォルト）](.75)(.75){example/sansyou0}
+しかし，この場合は小問c における参照は
+\begin{quote}
+1b において
+\end{quote}
+ではなく，大問番号を取り去って
+\begin{quote}
+b において
+\end{quote}
+で十分です。このように，当該番号だけの参照を実現するために
+\begin{quote}
+\cmd{refcurrentenum}\cindex{refcurrentenum}
+\end{quote}
+を用意しました。次のように用います。
+
+\showexample[\cmd{refcurrentenum}の効用](.75)(.75){example/sansyou1}
+
+デフォルト状態に戻すために，
+\cmd{refallenum} \cindex{refallenum}
+を用意しました。
+
+\showexample[\cmd{refallenum}でデフォルトに戻す](.75)(.75){example/sansyou2}
+}
+\clearpage
+
+\section{その他一般}
+\subsection{数式モードの中で英大文字をローマン体にする。}
+\subsubsection{\textsf{caprm}環境}
+数式モードの中ではアルファベットはすべて斜体となります。
+ところが，点を表す記号は立体（ローマン体）で表す習慣です。
+例えば点 \verb/$A(x_1,y_1)$/ などと記述すると，
+\texttt{A} が斜体となってしまいます。
+対応策は \verb/\mathrm{A}(x_1,y_1)/, \verb/\text{A}(x_1,y_1)/
+などと \texttt{A} を立体にするコマンドを記述するのが普通です。
+別の対策として，数式モードで英大文字は立体で，
+小文字は斜体で表示させようという方法もあります。
+そのための環境 \textsf{caprm} 環境です。
+\index{caprm@caprm 環境}
+\index{りったいとしゃたい@立体と斜体}
+\index{しゃたいとりったい@斜体と立体}
+
+\begin{itembox}{\textsf{caprm}}
+\begin{verbatim}
+\begin{caprm}
+二点 $A(a_1,a_2)$, $B(b_1,b_2)$ を結ぶ直線
+\end{caprm}
+\end{verbatim}
+\end{itembox}
+
+という記述をタイプセットすると\vspace{1ex}
+
+\begin{caprm}
+\noindent
+\begin{shadebox}
+二点 $A(a_1,a_2)$, $B(b_1,b_2)$ を結ぶ直線
+\end{shadebox}
+\end{caprm}\vspace{1ex}
+
+\noindent
+と，大文字は立体，小文字は斜体となります。
+しかし，大文字はいつでも立体にするというのも問題です。
+例えば正弦定理
+\[\frac{a}{\sin A}=\frac{b}{\sin B}=\frac{c}{\sin C}=2R \]
+では，大文字も斜体で書くのが習慣です。これは \textsf{caprm} 環境ではなく，
+通常の数式モードの方が良いでしょう。
+
+点を表す英大文字は立体で、三角形の頂角の大きさを表す英大文字は斜体で、
+などという区別はなかなかやっかいです。
+
+\begin{caprm}
+しかし，この \textsf{caprm} 環境はなかなか便利な場合もあります。例えば，
+
+\begin{shadebox}
+$ \text{点列 }P_1,~P_2,~P_3,\cdots\cdots,~P_n,\cdots\cdots $
+\end{shadebox}
+
+\noindent
+の表現は \textsf{caprm} 環境だと
+
+\begin{itembox}{\textsf{caprm}}
+\begin{verbatim}
+$ 点列 P_1,~P_2,~P_3,\cdots\cdots,~P_n,\cdots\cdots $
+\end{verbatim}
+\end{itembox}
+\end{caprm}
+\noindent
+と，簡潔に表されますが，普通の数式モードではやっかいで，
+一例を挙げると
+
+\begin{itembox}{普通の数式モード}
+\begin{verbatim}
+$\mathrm{P_1,~P_2,\cdots\cdots},~\text{P}_n,\cdots\cdots$
+とか
+P$_1$, P$_2$, $\cdots\cdots$, P$_n$, $\cdots\cdots$
+\end{verbatim}
+\end{itembox}
+
+\noindent
+などと面倒になります。
+
+\begin{caprm}
+なお，\textsf{caprm} 環境内で英大文字を斜体にしたい
+ときは \verb/\mathnormal/ を用います。
+例えば
+
+\begin{itembox}{\textsf{caprm}で大文字を斜体}
+\begin{verbatim}
+$BC=2\mathnormal{R}\sin \mathnormal{A}$
+\end{verbatim}
+\end{itembox}
+
+\noindent
+をタイプセットすると
+
+\begin{shadebox}
+$BC=2\mathnormal{R}\sin \mathnormal{A}$
+\end{shadebox}
+
+\noindent
+となります。
+\begin{itemize}
+\item[（注）] \textsf{caprm}環境の中が数式モードになるわけではありません。
+\textsf{caprm}環境の中で，数式モードに入ると，そこでは大文字は立体で，小文字は数式イタリックになるというだけです。
+\end{itemize}
+
+\subsubsection{\protect\texttt{[o]}オプション}
+\textsf{caprm}環境内で，あるブロックは大文字をデフォルトの数式イタリック体に
+戻すには，その部分を\verb+[o]+オプション付の\textsf{caprm}環境で囲みます。
+
+\begin{showEx}{\texttt{[o]}オプション}
+\begin{caprm}
+三角形ABCにおいて
+\[ BC=a,~CA=b,~AB=c \]
+とすると，
+\begin{caprm}[o]
+三角形ABCの面積$S$は
+\[ S=\sqrt{s(s-a)(s-b)(s-c)} \]
+\end{caprm}
+となる。ここで
+\[ s=\bunsuu{BC+CA+AB}{2} \]
+\end{caprm}
+\end{showEx}
+
+
+\subsubsection{コマンド型}
+環境にせず，コマンドでローマン体，数式イタリック体を切り替える方法もあります。
+\begin{jquote}
+\begin{verbatim}
+\caprm ローマン体に
+\caprm[o] 数式イタリック体に
+\end{verbatim}
+\end{jquote}
+
+\begin{showEx}{\cmd{caprm}コマンド}
+\caprm%
+三角形ABCにおいて
+\[ BC=a,~CA=b,~AB=c \]
+とすると，%
+\caprm[o]\relax%
+三角形ABCの面積$S$は
+\[ S=\sqrt{s(s-a)(s-b)(s-c)} \]
+となる。ここで
+\caprm
+\[ s=\bunsuu{BC+CA+AB}{2} \]
+\end{showEx}
+
+\subsubsection{\protect\texttt{[l]}オプション}
+数式環境内で，小文字もローマン体にしたいときは，caprm 環境に \texttt{[l]}
+オプションをつけます。化学式などは小文字もローマン体です。
+
+\begin{itemshadebox}{\textsf{caprm}環境の \texttt{[l]} オプション}
+\begin{caprm}[l]
+\begin{tabular}{l@{\ $\longrightarrow$\ }l}
+\begin{minipage}{12em}
+\begin{verbatim}
+\begin{caprm}[l]
+$Nd_2Fe_{14}B$
+\end{caprm}
+\end{verbatim}
+\end{minipage}
+& $Nd_2Fe_{14}B$
+\end{tabular}
+\end{caprm}
+\end{itemshadebox}\vspace{\baselineskip}
+
+\subsubsection{\cmd{mathRM}}\cindex{mathRM}
+数式環境内で大文字だけをローマン体にするとき，
+それが1個所だけであるなどというときは，
+環境よりはコマンドの方が使いやすいでしょう。
+そのためのコマンド \cmd{mathRM} です。例えば\medskip
+
+\begin{itemshadebox}{\cmd{mathRM}}
+\begin{tabular}{l@{\ $\longrightarrow$\ }l}
+\verb/$\mathRM{A_nB_n}$/    & $\mathRM{A_nB_n}$
+\end{tabular}
+\end{itemshadebox}\vspace{\baselineskip}
+
+\noindent
+において，大文字はローマン体，小文字は数式イタリックでタイプセットされます。
+
+\subsubsection{\protect\cmd{bekutoru*}}\label{bekutoruAST}
+\cindex{bekutoru*}
+始点，終点に添え字がついた場合のベクトルは面倒です。
+これを処理するため，\textsf{caprm}環境内での使用を前提とする
+\cmd{bekutoru*}コマンドを作りました。\cmd{bekutoru}との違いは，
+\begin{quote}
+  \cmd{bekutoru} の引数はテキストモードであるのに対し，\\
+  \cmd{bekutoru*}の引数は数式モードである，
+  ということです。
+\end{quote}
+例えば，ベクトル$\caprm A_nA_{n+1}$を両方のコマンドで表現してみます。
+
+\begin{itemshadebox}{\cmd{bekutoru}と\cmd{bekutoru*}の違い}
+\begin{tabular}{l@{\ $\longrightarrow$\ }l}
+\verb/\bekutoru{A$_n$A$_{n+1}$}/    & \bekutoru{A$_n$A$_{n+1}$}\\
+\verb/\bekutoru*{A_nA_{n+1}}/  & \bekutoru*{A_nA_{n+1}}
+\end{tabular}
+\end{itemshadebox}\vspace{\baselineskip}
+
+同様の趣旨のコマンドに \cmd{kaku*}, \cmd{sankaku*} があります。
+\cindex{kaku*}\cindex{sankaku*}
+\end{caprm}
+
+\subsubsection{\cmd{mitS}など}
+\textsf{caprm}環境のもとでは，英大文字はローマン体となります。
+しかし，面積を表す$S$は数式イタリックとするのが慣わしです。
+そのためには\verb+$\mathnormal S$+と記述すればよいのですが，
+タイピングを楽にするために\verb+\mitS+と，略記することも可能としました。
+\cindex{mitS}
+
+\begin{showEx}(.54,.4){\cmd{mitS}など}
+\begin{caprm}
+  \sankaku{ABC}において
+  \[ AB=4,~BC=5,~CA=6 \]
+  のとき，次の問いに答えよ。
+  \begin{enumerate}[(1)]
+    \item $\cos\mitA$を求めよ。
+    \item \sankaku{ABC}の面積\mitS を求めよ。
+  \end{enumerate}
+\end{caprm}
+\end{showEx}
+
+\cmd{mitS}などは，\cmd{ensuremath}をかぶせてありますから，
+\begin{jquote}
+\begin{verbatim}
+  $\cos\mitA$
+\end{verbatim}
+\end{jquote}
+と，数式モードの中で使用してもよし，
+\begin{jquote}
+\begin{verbatim}
+  面積\mitS を求めよ。
+\end{verbatim}
+\end{jquote}
+などと，地の文中で使用することもできます。
+（ただし，\verb+\mitS+の後ろに半角空白を置いて，
+コマンドが``\verb+\mitS+\!を求めよ。''ではない
+ことを明示する必要があります。）
+
+\subsection{インデント\label{L-jquote}}
+条件部分の記述などで，字下げをしたいときがあります。\par
+\centerline{\textsf{quote(quotation)}環境}
+を用いることもできますが，
+\begin{jquote}
+    左インデント量を変えたい，\\
+    右インデントは要らない，
+\end{jquote}
+といった場面で使うために，\textsf{jquote(jquotation)}環境を用意しました。
+
+\showexample[jquote](1)(.95){example/jquote}
+%\begin{shadebox}
+%\input{example/jquote}
+%\end{shadebox}
+
+\textsf{jquote}環境の書式です。
+
+\begin{itemsquarebox}{\textsf{jquote}環境の書式}
+\begin{verbatim}
+\begin{jquote}<key=val>(左インデント量)(右インデント量)[上下の行間隔]
+  key は
+    tsep=.. : 直前の段落との間隔調整 (ex. -\topsep)
+    bsep=.. : 直後の段落との間隔調整
+    vsep=.. : tsep, bsep を同時指定
+  デフォルト値は
+    左インデント量  2zw
+    右インデント量  0pt
+    上下の行間隔    0pt
+となっています。
+\end{verbatim}
+\end{itemsquarebox}
+\index{jquote@jquote 環境}
+
+\textsf{jquotation}環境も同様です。
+\index{jquotation@jquotion 環境}
+
+なお，これらの環境は \textsf{jquote.sty} で定義されていますから、
+使用する際は
+\begin{jquote}
+\begin{verbatim}
+\usepackage{jquote}
+\end{verbatim}
+\end{jquote}
+としておく必要があります。
+
+\subsection{\cmd{EMparbox}}
+この節では，ボックスのサイズを論じますので，
+\cmd{fbox}でボックスを枠線で囲んで表示します。
+その際，\verb+\fboxsep=0pt+としてあります。
+
+\bgroup
+\fboxsep=0pt\relax
+
+\subsubsection{\cmd{parbox}}
+複数行からなるブロックをまとめて一つのボックスとするのに\cmd{parbox}を
+用いることがあります。
+ただし，このコマンドはボックスの横幅を指定する必要があります。
+
+\begin{showEx}{\cmd{parbox}}
+\bigskip
+\fbox{%
+  \parbox{8zw}{%
+    あいうえお\\
+    かきくけこ\\
+    やゆよ}%
+}
+\bigskip
+\end{showEx}
+
+\subsubsection{\cmd{EMparbox}}
+この横幅指定が煩わしいからさぼろう，というのが新設したコマンド\cmd{EMparbox}
+です。\cindex{EMparbox}
+
+\begin{showEx}{\cmd{EMparbox}}
+\bigskip
+\fbox{%
+  \EMparbox{%
+    あいうえお\\
+    かきくけこ\\
+    やゆよ}%
+}
+\bigskip
+\end{showEx}
+
+もっとも，この例の場合は\textsf{tabular}環境を使う方が普通でしょう。
+
+\begin{showEx}{\textsf{tabular}環境}
+\bigskip
+\fbox{%
+  \begin{tabular}{l}
+    あいうえお\\
+    かきくけこ\\
+    やゆよ
+  \end{tabular}%
+}
+\bigskip
+\end{showEx}
+
+\subsubsection{\cmd{EMparbox}のベースライン}
+そのベースラインは，\cmd{parbox}と同じです。
+
+\begin{showEx}{ベースライン}
+\bigskip
+さ
+\fbox{%
+  \parbox{8zw}{%
+    あいうえお\\
+    かきくけこ\\
+    やゆよ}%
+}
+し
+\fbox{%
+  \EMparbox{%
+    あいうえお\\
+    かきくけこ\\
+    やゆよ}%
+}
+す
+\bigskip
+\end{showEx}
+
+ベースラインを変更する方法も\cmd{parbox}と同様です。
+
+\begin{showEx}{ベースラインの変更}
+\bigskip
+さ
+\fbox{%
+  \parbox[b]{8zw}{%
+    あいうえお\\
+    かきくけこ\\
+    やゆよ}%
+}
+し
+\fbox{%
+  \EMparbox[b]{%
+    あいうえお\\
+    かきくけこ\\
+    やゆよ}%
+}
+す
+\bigskip
+\end{showEx}
+\egroup
+
+\newpage
+
+\subsection{\cmd{emovalbox}}
+\textsf{fancybox.sty}で定義されている\cmd{ovalbox}は，
+\textsf{eepic.sty}を用いた場合，上下の罫線と右四分円とが
+つながらない現象が発生します。
+
+そこで，\textsf{emath.sty}に\cmd{emovalbox}を新設しました。
+\cindex{emovalbox}
+
+\begin{showEx}{\cmd{emovalbox}}
+  あ\ovalbox{$t=1$}い
+
+  あ\emovalbox{$t=1$}い
+\end{showEx}
+
+コーナーの四分円の半径はデフォルトでは\cmd{fboxsep}としてありますが，
+変更するには\verb+[..]+オプションを用います。
+
+\begin{showEx}{コーナー半径の変更}
+  あ\emovalbox[6pt]{$t=1$}い
+\end{showEx}
+
+罫線の太さを変えたいなどに対しては，
+\textsf{emathPs.sty}で定義されている\cmd{EMpsovalbox}をご使用ください。
+
+\subsection{数式の配置 左（右）寄せと中央揃えの切り替え}
+  別行立て数式の配置は，
+  \cmd{documentclass} のオプションで \texttt{fleqn} を
+  指定したときは左寄せ，そうでないときは中央揃えとなりますが，
+  \textsf{fleqnon}, \textsf{fleqnoff}環境を用いると，
+  \texttt{fleqn}を指定していてもいなくても，
+  2つの状態を切り替えることができます。
+  \index{fleqnon@fleqnon 環境}
+  \index{fleqnoff@fleqnoff 環境}
+
+  サンプルをごらんいただきましょう。
+  この文書は \texttt{fleqn} オプションをつけていますから，
+  数式は左寄せとなります。
+
+\begin{showEx}(.4,1){デフォルトは左寄せ}
+  \begin{align*}
+    y &= ax^2+bx+c\\
+    y'&= 2ax+b
+  \end{align*}
+\end{showEx}
+
+  \textsf{fleqnoff}環境内では，数式は中央揃えとなります。
+
+\begin{showEx}(.4,1){\cmd{fleqnoff}で中央揃え}
+\begin{fleqnoff}
+  \begin{align*}
+    y &= ax^2+bx+c\\
+    y'&= 2ax+b
+  \end{align*}
+\end{fleqnoff}
+\end{showEx}
+\clearpage
+
+なお，左寄せにしたときの左インデント量は \cmd{mathindent} で
+指定することができますが，\\
+\cmd{fleqnon}のオプション引数で
+指定することもできます。
+
+\begin{showEx}(.8,1){左インデント量の指定}
+\begin{fleqnon}[4zw]\relax
+  あいうえお
+  \begin{align*}
+    y &= ax^2+bx+c\\
+    y'&= 2ax+b
+  \end{align*}
+\end{fleqnon}
+\end{showEx}
+
+  このオプション引数のデフォルト値は \cmd{leftmargini} です。
+
+  数式を右寄せすることはあまり行われませんが，
+\cmd{tag*}を用いれば実現できます。
+
+\begin{showEx}{数式の右寄せ}
+\begin{gather}
+\tag*{$x=-1$}\\
+\tag*{$y=1$}
+\end{gather}
+\end{showEx}
+
+\if0
+数式番号も必要なら amsmath.sty ver.2 では，次のようにすることも可能です。
+
+\begin{showEx}(.8,.8){数式の右寄せ（数式番号付）}
+\begin{gather}
+\tag*{$x=-1$ \amshouteisiki{\label{R1}}}\\
+\tag*{$y=1$ \amshouteisiki{\label{R2}}}
+\end{gather}
+\end{showEx}
+\fi
+
+\subsection{数式番号を左に出力}
+\textsf{emath}では，数式番号は右端に出力します。
+  \begin{align}
+    y&=ax+b\\
+    y&=px^2+qx+r
+  \end{align}
+文書全体で数式番号を左に出力するには，
+\begin{jquote}
+\begin{verbatim}
+\usepackage[leqno]{amsmath}
+\end{verbatim}
+\end{jquote}
+とでもすればよいのですが，\textsf{emath}を使用する文書では，
+その必要が生ずることはないでしょう。
+
+下の公式集は，次の要求にこたえたものです。
+\begin{jquote}
+\begin{enumerate}[(1)]
+  \item 公式にナンバリングをする。
+  \item 公式は等号の位置で桁揃えをする
+\end{enumerate}
+\end{jquote}
+
+(2)の桁揃えの要求がなければ，
+(1)のナンバリングは\textsf{enumerate}環境で実現できるのですが，
+桁揃えをするとなると，数式部分は\textsf{align, alignat}などを使いたくなります。
+ということで，ナンバリングを数式番号を左に出すことで対応しようとしたのが
+下の結果です。
+\cindex{EMleqno}\cindex{EMsaveeqno}\cindex{EMrestoreeqno}
+
+\begin{showEx}(1,.9){\cmd{EMleqno}など}
+\begin{itemsquarebox}{公式（その1）}
+\EMleqno%                    この環境内のみ数式番号左配置
+\EMsaveeqno%                 数式番号退避
+\resetcounter{equation}%     数式番号リセット
+\preEqlabel{}%               数式番号に3点リーダをつけない
+\def\tagform#1{#1.}%         数式番号の形式を変更
+\vspace{-\baselineskip}
+\begin{alignat}{3}
+&(fg)' &&=f'g &&+fg' \\
+&(fgh)'&&=f'gh &&+fg'h+fgh'
+\end{alignat}
+\EMrestoreeqno%              数式番号復元
+\end{itemsquarebox}
+\end{showEx}
+上の環境の外では，数式番号，形式などに影響がないことを確認します。
+\begin{gather}
+ax+by+c=0 \\
+x^2+y^2=r^2
+\end{gather}
+
+\subsection{行末にマーク}
+証明終わりを表すマークを行末に置くためのコマンドが\cmd{owari}です。
+\cindex{owari}
+
+\showexample[\cmd{owari}](1)(.95){example/owari01}
+
+このコマンドは別行立て数式行でも有効です。
+また，終わり記号を変更するには\cmd{owari}の\texttt{[...]}オプション
+を用います。
+
+{\showexample[別行立て数式内の \cmd{owari}](1)(.95){example/owari02}}
+\bigskip
+
+行末に 「\Cdots （答）」 とすることは多いので，省略コマンド
+\cmd{kotae} もあります。これはオプションで3点リーダーの個数を
+指定することができます。一例です。\cindex{kotae}
+
+\showexample[\cmd{kotae}](.5)(.45){example/owari03}
+
+位置を行末から少し内側に寄せたいときは\verb+<..>+オプションを用います。
+
+\showexample[\cmd{kotae}](.5)(.45){example/owari04}
+
+
+\subsection{リーダー罫}
+文字列と文字列の間を $\cdots$ でつなげるのに，
+\cmd{dotfill}コマンドがあります。
+
+\showexample[\cmd{dotfill}](1)(.9){example/leaders0}
+
+点々の位置を\cmd{baseline}ではなく，少し上にあげたい，
+というのでコマンド \cmd{cdotfill} を作りました。
+\cindex{cdotfill}
+
+\showexample[\cmd{cdotfill}](1)(.9){example/leaders1}
+
+このコマンドは\verb/[#1]/オプションでリーダー罫の長さを
+指定することができます。
+
+\showexample[\cmd{cdotfill}の長さ指定オプション](1)(.9){example/leaders2}
+
+左右の文字列とリーダー罫あわせた長さを指定する例です。
+
+\showexample[\cmd{cdotfill}の長さ指定オプション](1)(.9){example/leaders3}
+
+点と点の間隔を調整したいときは，\cmd{cdotskip}を再定義します。\\
+デフォルトは \verb/\def\cdotskip{1.5mu}/となっています。
+
+\showexample[\cmd{cdotskip}の変更](1)(.9){example/leaders5}
+
+左右の文字列がともに全角文字のときは，リーダー罫の位置を少し上に上げたい，
+というのが \cmd{Cdotfill} です。
+\cindex{Cdotfill}
+
+\showexample[\cmd{Cdotfill}](1)(.9){example/leaders4}
+
+\cmd{Cdotfill}にも，長さ指定オプションがあります。
+その使い方などは\cmd{cdotfill}と同様です。
+
+\subsection{支柱}
+高さを揃えるには，支柱を使います。
+
+まずは，高さ・深さが不揃いな例をご覧ください。
+
+\begin{showEx}{高さが不揃いな例}
+$\sqrt{a}\sqrt{b}$
+\end{showEx}
+
+$a$, $b$の高さ・深さが異なるため，根号が不揃いとなっています。
+このような場面では，\cmd{mathstrut}という支柱が使われます。
+
+\begin{showEx}(.78,.16){\cmd{mathstrut}}
+$\sqrt{a\mathstrut}\sqrt{b\mathstrut}$
+\end{showEx}
+
+\cmd{mathstrut}は，`('の高さと深さをもつ幅が0の支柱です。\textsf{plain.tex}で
+\begin{jquote}
+\begin{verbatim}
+\def\mathstrut{\vphantom(}
+\end{verbatim}
+\end{jquote}
+と定義されており，\LaTeX もその定義を採用しています。
+
+\begin{jquote}
+\begin{verbatim}
+\vphantom#1
+\end{verbatim}
+\end{jquote}
+は，\verb+#1+と同じ高さ・深さをもつ支柱ですが，
+次の場合は分数$\bunsuu12$よりも少し高さ・深さを増やした支柱がほしくなります。
+
+\begin{showEx}(.78,.16){天地寸詰まりの表}
+$\begin{array}{|c|c|}\hline
+  x & y \\ \hline
+  2 & \bunsuu12 \\ \hline
+\end{array}$
+\end{showEx}
+
+\textsf{emath.sty}では，\cmd{EMvphantom}なるコマンドでそれを実現しています。
+\cindex{EMvphantom}
+
+\begin{showEx}(.78,.16){\cmd{EMvphantom}}
+$\begin{array}{|c|c|}\hline
+  x & y \\ \hline
+  2 & \EMvphantom[4pt][3pt]{\bunsuu12}\bunsuu12 \\ \hline
+\end{array}$
+\end{showEx}
+
+\verb+\EMvphantom[4pt][3pt]{\bunsuu12}+で，分数$\bunsuu12$よりも，
+\begin{jquote}
+\begin{verbatim}
+高さを 4pt,
+深さを 3pt
+\end{verbatim}
+\end{jquote}
+増やした支柱を作っています。この支柱は利用頻度が高そうですから，別名を
+\verb+\bsityuu+としてあります。\cindex{bsityuu}
+
+\begin{showEx}(.78,.16){\cmd{bsityuu}}
+$\begin{array}{|c|c|}\hline
+  x & y \\ \hline
+  2 & \bsityuu\bunsuu12 \\ \hline
+\end{array}$
+\end{showEx}
+\bigskip
+
+\cmd{EMvphantom}, \cmd{bsityuu}の書式です。
+\begin{boxnote}
+\begin{verbatim}
+\EMvphantom[#1][#2]#3
+   #3 の高さに #1 を附加し，
+   #3 の深さに #2 を附加した支柱を表す。
+   #1 のデフォルト値は 0pt
+   #2 のデフォルト値は #1
+
+\EMvphantom*[#1][#2]#3
+  支柱を立てるだけではなく，#3をタイプセットする。
+
+\bsityuu[#1][#2]
+   分数2分の1の高さに #1 を附加し，
+   分数2分の1の深さに #2 を附加した支柱を表す。
+   #1 のデフォルト値は 4pt
+   #2 のデフォルト値は 3pt
+\end{verbatim}
+\end{boxnote}
+
+\subsection{下線}
+\subsubsection{\cmd{underline}}
+下線を引くコマンドは\cmd{underline}です。
+
+\begin{showEx}(.5,.44){\cmd{underline}}
+下線を引きます。\underline{あいうえお}
+
+\underline{ただし，このコマンドは，行をまたぐことができません。}
+\end{showEx}
+
+複数行に渡る下線を引くスタイルファイルに\textsf{jumoline.sty}があります。
+
+%\begin{showEx}(.5,.44){\textsf{jumoline.sty}}
+%\Underline{{\textsf{jumoline.sty}}で定義された{\cmd{Underline}}は，
+%行をまたぐことができます。}
+%\end{showEx}
+
+\textsf{jumoline.sty}については，その作者である 中島　浩さんのホームページ
+
+\begin{jquote}
+\begin{verbatim}
+http://www.para.tutics.tut.ac.jp/~nakasima/latex/
+\end{verbatim}
+\end{jquote}
+をご覧ください。
+
+\subsubsection{波下線}
+\paragraph{\textsf{ulem.sty}}
+波下線を引くには，\textsf{ulem.sty}で定義されている\cmd{uwave}を用いるのが
+一般的な方法です。
+
+\begin{showEx}(.54,.4){\cmd{uwave}}
+あいうえお
+\uwave{かきくけこ}
+さしすせそ
+\end{showEx}
+
+数式に適用するときは，
+
+\begin{showEx}(.54,.4){数式に対する\cmd{uwave}}
+\cmd{uwave}の引数内で数式モードにしてもだめで，\\
+\uwave{$\dlim{x\to\infty}\bunsuu1x=0$}
+\\
+数式モード内に\cmd{uwave}を配置しなければなりません。\\
+$\uwave{\dlim{x\to\infty}\bunsuu1x=0}$
+\end{showEx}
+
+\paragraph{\cmd{namikasen}}
+ところで，dviout.exe でみている限り綺麗なのですが，
+pdf にしてみると，波のつながり具合が乱れてきます。
+ということもあって，\textsf{emath.sty}に\cmd{namikasen}を新設しました。
+こちらは，コマンドの引数を数式モードにする方式です。
+\cindex{namikasen}
+
+\begin{showEx}(.54,.4){\cmd{namikasen}}
+あいうえお
+\namikasen{%
+  $\dlim{x\to\infty}\bunsuu1x=0$}
+さしすせそさしすせそさしすせそさしすせそ
+さしすせそさしすせそさしすせそさしすせそ
+\end{showEx}
+
+ただし，行をまたがることはできません。
+
+なお，\cmd{namikasen}を用いるには，\textsf{ulem.sty}は不要です。
+
+\paragraph{波二重下線}
+\cmd{uwave}による波下線を二重にするコマンド\cmd{uuwave}を\textsf{emath.sty}
+に新設しました。ただし，この下請けは\textsf{ulem.sty}にありますから，
+このスタイルファイルを読み込んでおく必要があります。
+
+\begin{showEx}(.54,.4){\cmd{uuwave}}
+$\uuwave{\dlim{x\to\infty}\bunsuu1x=0}$
+ああああああああああああああああああ
+ああああああああああああああああああ
+\end{showEx}
+
+\cmd{namikasen}の方で，波下線を二重とするには，
+\cmd{namikasen}に\verb+[1.5]+などと，オプションを与えます。
+\verb+[...]+内の数値は，二重線の間隔（単位は pt）です。
+
+\begin{showEx}(.54,.4){\cmd{namikasen[..]}}
+\namikasen[1.5]{%
+  $\dlim{x\to\infty}\bunsuu1x=0$}
+ああああああああああああああああああ
+ああああああああああああああああああ
+\end{showEx}
+
+
+\paragraph{太波下線}
+太い波下線を引くには，コマンド\cmd{hutonamikasen}を用います。
+\cindex{hutonamikasen}
+
+\begin{showEx}(.54,.4){\cmd{namikasenUehosei}}
+\namikasen{かきくけこ}
+
+\hutonamikasen{かきくけこ}
+
+\hutonamikasen[2]{かきくけこ}
+\end{showEx}
+
+ただし，\cmd{hutonamikasen}は，内部で\cmd{scalebox}を用いていますから，
+\textsf{graphicx.sty}を必要とします。
+\textsf{emath}では，\textsf{emathP*.sty}を用いれば，\textsf{graphicx.sty}
+は自動的に読み込まれます。
+
+\paragraph{\cmd{namikasen}と上下のアキ}
+\subparagraph{\cmd{namikasenUehosei}}
+\cmd{namikasen}とその下線を引く対象との間隔を調整するコマンドが\\
+\cmd{namikasenUehosei}です。
+
+\begin{showEx}(.54,.4){\cmd{namikasenUehosei}}
+\namikasen{かきくけこ}
+
+下線の位置を対象に近づけたければ
+
+\namikasenUehosei{-2pt}
+\namikasen{かきくけこ}
+\end{showEx}
+
+\cmd{namikasenUehosei}の引数に，波線縦位置を補正する数値（単位付）を与えます。
+正の値を与えれば下に，負の値を与えれば上に動きます。
+
+\subparagraph{\cmd{namikasenSitahosei}}
+逆に下線の下，すなわち下線と下の行との間隔を調整するのが\\
+\cmd{namikasenSitahosei}です。
+
+\begin{showEx}(.54,.4){\cmd{namikasenSitahosei}}
+標準は\namikasen{かきくけこ}
+おおおおおおおおおおおおおおおおおお
+おおおおおおおおおおおおおおおおおお
+おおおおおおおおおおおおおおおおおお
+
+下線と次の行を離したければ
+
+\namikasenSitahosei{10pt}
+標準は\namikasen{かきくけこ}
+おおおおおおおおおおおおおおおおおお
+おおおおおおおおおおおおおおおおおお
+おおおおおおおおおおおおおおおおおお
+\end{showEx}
+
+上の例，後半では\verb+\namikasenSitahosei{10pt}+として，
+波下線と次の行との間隔をデフォルトより\verb+10pt+増やしています。
+
+\section{メモリ不足への対応}
+\subsection{pool size}
+図の描画には多くのメモリを必要とするようで，1ページの図が多いときなど
+\begin{jquote}
+\begin{verbatim}
+! TeX capacity exceeded, sorry [pool size=67010].
+\end{verbatim}
+\end{jquote}
+といったエラーメッセージに遭遇することがあります。
+
+この場合は，\textsf{texmf.cnf}というファイルを編集します。
+編集する前に，フロッピなどにオリジナルを保存した上でお願いします。
+
+このファイルは \TeX をインストールしたフォルダの
+\begin{jquote}
+\begin{verbatim}
+...\texmf\web2c
+\end{verbatim}
+\end{jquote}
+に存在します。このファイルはテキストファイルですから，エディタで開いて
+\begin{jquote}
+\begin{verbatim}
+pool_size = 125000
+\end{verbatim}
+\end{jquote}
+という行を探します。（右辺値は異なるかもしれません。）
+
+この式の右辺値を \texttt{300000}などと修正し，上書き保存します。
+\begin{jquote}
+\begin{verbatim}
+pool_size = 300000
+\end{verbatim}
+\end{jquote}
+
+なお，機種によってはこのファイルの拡張子が表示されないかもしれません
+（単に texmf と表示されます）。
+
+\subsection{main memory size}
+\begin{jquote}%\vspace{-\baselineskip}%
+\begin{verbatim}
+! TeX capacity exceeded, sorry [main memory size=263001].
+\end{verbatim}
+\end{jquote}
+といったエラーメッセージの処理は，かなり厄介です。
+
+以下の記述では，TeX が \verb/c:\ptex/ にインストールしてあるものとします。
+インストールドライブ，フォルダが異なる場合は読み替えてください。
+
+\begin{enumerate}[(1)]
+\item 修正するファイルのバックアップの作成
+
+    修正するファイルは
+    \begin{jquote}
+        \verb/texmf.cnf, platex.fmt/
+    \end{jquote}
+    の２つです。
+    現在，\verb/c:\ptex\texmf\web2c/ にあるものを
+    フロッピ，MO, などにコピーします。
+
+\item \verb/texmf.cnf/ の修正
+
+    エディタで \verb/texmf.cnf/ を開きます。
+    検索機能を利用して
+    \begin{jquote}
+        \verb/main_memory/
+    \end{jquote}
+    を探してください。%\vspace{-\baselineskip}%
+\begin{verbatim}
+main_memory = 263000 % words of inimemory available; also applies to inimf&mp
+\end{verbatim}
+    という行が見つかるはずです。ここを修正します。私は%\vspace{-\baselineskip}%
+\begin{verbatim}
+main_memory = 526000 % words of inimemory available; also applies to inimf&mp
+\end{verbatim}
+と修正しました。ついでに，その少し下の%\vspace{-\baselineskip}%
+\begin{verbatim}
+pool_size = 125000
+\end{verbatim}
+も%\vspace{-\baselineskip}%
+\begin{verbatim}
+pool_size = 250000
+\end{verbatim}
+と増やしました。
+
+\item \verb/platex.fmt/ の作成
+
+    DOS 窓で，キーボードから
+    \begin{jquote}%\vspace{-\baselineskip}%
+\begin{verbatim}
+c:
+cd \ptex\texmf\tex\platex\base
+\end{verbatim}
+    \end{jquote}
+    と打ち込み，
+    \begin{jquote}%\vspace{-\baselineskip}%
+\begin{verbatim}
+c:\ptex\texmf\tex\platex\base
+\end{verbatim}
+    \end{jquote}
+    をカレントフォルダにします。
+
+    その上で，キーボードから
+    \begin{jquote}%\vspace{-\baselineskip}%
+\begin{verbatim}
+ptex --ini platex.ltx
+\end{verbatim}
+    \end{jquote}
+    と打ち込み，リターンキーを押します。
+    いろいろなメッセージが流れますが，作業が終了すると，
+    DOS Prompt が出ます。
+
+    （注）ここで \LaTeX のバージョンが古いと
+    \begin{jquote}%\vspace{-\baselineskip}%
+\begin{verbatim}
+!Latex source files more than 1 year old!.
+1.573 ...LaTeX source files more than 1 year old!}
+\end{verbatim}
+    \end{jquote}
+    などのメッセージが表れることがあります。
+    このときは委細構わず，リターンキーを押せば作業は続行されます。
+    もちろん，この機会に \LaTeX のバージョンアップをされることを
+    お勧めしますが.....
+
+
+\item \verb/platex.fmt/ を所定の場所に移す。
+    (3) の作業の結果，
+    \begin{jquote}%\vspace{-\baselineskip}%
+\begin{verbatim}
+c:\ptex\texmf\tex\platex\base
+\end{verbatim}
+    \end{jquote}
+    に二つのファイル
+    \begin{jquote}%\vspace{-\baselineskip}%
+\begin{verbatim}
+platex.fmt, platex.log
+\end{verbatim}
+    \end{jquote}
+    が作成されます。前者を
+    \begin{jquote}%\vspace{-\baselineskip}%
+\begin{verbatim}
+c:\ptex\texmf\web2c
+\end{verbatim}
+    \end{jquote}
+    にコピーします。
+\item \verb/c:\ptex\texmf\tex\platex\base/
+    に作成された \texttt{platex.fmt, platex.log} を削除します。
+\end{enumerate}
+
+\subsection{hash size}
+メモリ不足もいろいろあります。
+\begin{jquote}
+\begin{verbatim}
+! TeX capacity exceeded, sorry [hash size=10000].
+\end{verbatim}
+\end{jquote}
+への対処法です。
+
+こちらは簡単で，
+        \verb/texmf.cnf/
+を書き換えるだけです。
+
+エディタで \texttt{texmf.cnf} を開き `hash' で検索をかけると
+\begin{jquote}
+\begin{verbatim}
+hash_extra = 0
+\end{verbatim}
+\end{jquote}
+という行が見つかります。この右辺値を，たとえば 2000 などとしてやればOKです。
+フォーマットファイルを作り変える必要はありません。
+
+\subsection{save size}
+\begin{jquote}
+\begin{verbatim}
+! TeX capacity exceeded, sorry [save size=4000].
+\end{verbatim}
+\end{jquote}
+への対処法です。
+
+これも
+        \verb/texmf.cnf/
+を書き換えるだけです。
+
+\texttt{texmf.cnf} 中の一行
+\begin{jquote}
+\begin{verbatim}
+save_size = 4000    % for saving values outside current group
+\end{verbatim}
+\end{jquote}
+の数値を例えば，8000 に増やします。
+
+フォーマットファイルの作り直しは不要です。
+
+\subsection{number of strings}
+\begin{jquote}
+\begin{verbatim}
+! TeX capacity exceeded, sorry [number of strings=10603].
+\end{verbatim}
+\end{jquote}
+への対処法です。
+
+これも
+        \verb/texmf.cnf/
+を書き換えるだけです。
+
+\texttt{texmf.cnf} 中の一行
+\begin{jquote}
+\begin{verbatim}
+max_strings = 15000   % max number of strings
+\end{verbatim}
+\end{jquote}
+の数値を例えば，20000 に増やします。
+
+フォーマットファイルの作り直しは不要です。
+
+\pagebreak
+\section{謝辞}
+このマクロ集の作成については，Waver さんからいろいろと有用なご助言をいただきました。また，\ref{byWaver}節のマクロはすべて Waver さんから使用を認めていただいたものです。
+
+また，平行四辺形の記号については，トニイさんからここでの使用を認めていただきました。あわせて感謝の意を表します。
+
+%\section{索引}
+\printindex
+\end{document}

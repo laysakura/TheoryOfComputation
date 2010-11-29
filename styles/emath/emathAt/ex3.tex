@@ -1,0 +1,92 @@
+\documentclass[a4j,fleqn]{jarticle}
+\usepackage{calc}
+\usepackage{itembbox}
+\usepackage{emathMw}
+\usepackage{emathPh}
+\usepackage{emathAt}
+
+\begin{document}
+\tyuuhaba=0.31\textwidth
+\begin{itembox}{三角方程式・不等式}
+$0\Deg\leqq \theta<360\Deg$のとき，次の方程式，不等式を解け。
+\vspace{2ex}
+\begin{enumerate}[(1)]
+  \item $\cos2\theta-3\cos\theta+2=0$
+  \item $\sin2\theta>\cos\theta$
+\end{enumerate}
+\end{itembox}
+
+\begin{tyuukai}
+\abovedisplayskip=2pt\relax
+\belowdisplayskip=2pt\relax
+【解答】
+\begin{enumerate}[(1)]
+  \item 
+    $\cos2\theta=2\cos^2\theta-1$
+      \tyuu<-10pt>{$\cos\theta$だけの式に変形する。}
+    を等式に代入して整理すると
+      \tyuu{\def\tasukikata{2}$\tasuki12{-1}{-1}$}
+    {\mathindent=0pt\relax
+      \begin{alignat*}{2}
+        &&& 2\cos^2\theta-3\cos\theta+1=0\\
+        &ゆえに\qquad && (\cos\theta-1)(2\cos\theta-1)=0\\
+        &よって && \cos\theta=1~または~\cos\theta=\bunsuu{1}{2}
+      \end{alignat*}
+    }\vspace{-\baselineskip}
+
+    \begin{mawarikomi}(0,20pt){}{\small%
+      \begin{zahyou}[ul=11mm](-1.5,1.5)(-1.5,1.5)
+        \rtenretu*{A(1,60);B(1,-60)}
+        \Kakukigou[a]\XMAX\O\A<hankei=.4>{60\Deg}
+        \Kakukigou[a]\XMAX\O\B<hankei=.3>[nw]{300\Deg}
+        \Put{(0,1)}[nw]{1}
+          \Put{(1,0)}[se]{1}
+        \Put{(.5,0)}[se]{$\frac12$}
+        \En\O{1}
+        \Drawline{\A\O\B}
+        \Tyokusen\A\B{}{}
+      \end{zahyou}}
+      $0\Deg\leqq \theta<360\Deg$であるから\\
+      $\cos\theta=1$のとき\quad $\theta=0\Deg$%
+      \tyuu{\parbox[t]{\tyuuhaba-\leftmargin}{\vspace{-2\baselineskip}%
+        $\cos\theta=\bunsuu{1}{2}$についての参考図}}\\
+      $\cos\theta=\bunsuu{1}{2}$のとき \quad
+        $\theta=60\Deg$, $300\Deg$\\[1ex]
+      ゆえに $\bm{\theta=0\Deg}$, $\bm{60\Deg}$, $\bm{300\Deg}$
+    \end{mawarikomi}
+  \item 
+    \begin{mawarikomi}[-3]{}{\small%
+      \begin{zahyou}[ul=11mm,Ueyohaku=5mm]%
+            (-1.5,1.5)(-1.5,1.5)
+        \rtenretu*{A(1,30);B(1,150)}
+        \Put{(0,1)}[nw]{1}
+        \Put{(0,.5)}[nw]{$\frac12$}
+        \Put\O{\ougigata*{1}{30}{90}}
+        \Put\O{\ougigata*{1}{150}{270}}
+        \En\O{1}
+        \Drawline{\A\O\B}
+        \Tyokusen\A\B{}{}
+      \end{zahyou}}
+    $\sin2\theta>\cos\theta$から
+    \tyuu<5zh>{\parbox[t]{\tyuuhaba-\leftmargin}{%
+          \vspace{-1.5\baselineskip}$AB>0$\\
+          \hspace*{2zw}$\iff A>0,~B>0$\\
+          または $A<0,~B<0$}}
+    {\mathindent=0pt\relax
+      \begin{alignat*}{2}
+        &&& 2\sin\theta\cos\theta>\cos\theta \\
+        &ゆえに \qquad && \cos\theta(2\sin\theta-1)>0 \\
+        &よって && \cos\theta>0,~\sin\theta>\bunsuu{1}{2} \\
+        &または && \cos\theta<0,~\sin\theta<\bunsuu{1}{2}
+      \end{alignat*}
+    }%
+    $0\Deg\leqq \theta < 360\Deg$であるから
+    
+    $\bm{30\Deg<\theta<90\Deg},~\bm{150\Deg<\theta<270\Deg}$
+    \end{mawarikomi}
+\end{enumerate}
+\end{tyuukai}
+次の文章次の文章次の文章次の文章次の文章次の文章次の文章次の文章
+次の文章次の文章次の文章次の文章次の文章次の文章次の文章次の文章
+次の文章次の文章次の文章次の文章次の文章次の文章次の文章次の文章
+\end{document}

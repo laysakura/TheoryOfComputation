@@ -1,0 +1,556 @@
+% emathFx.sty by tDB(emath@nifty.com)
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{emathFx}[2008/09/04 v0.45]%
+\DeclareOption{eu}{\def\emFx@eu{}}%
+\DeclareOption{tx}{\edef\emFx@tx{T}}%
+\DeclareOption{txA}{\@ifundefined{emFx@tx}{\edef\emFx@tx{A}}{\edefappend\emFx@tx{A}}}%
+\DeclareOption{txB}{\@ifundefined{emFx@tx}{\edef\emFx@tx{B}}{\edefappend\emFx@tx{B}}}%
+\DeclareOption{txC}{\@ifundefined{emFx@tx}{\edef\emFx@tx{C}}{\edefappend\emFx@tx{C}}}%
+\DeclareOption{txexA}{\def\emFx@txexA{}}%
+\DeclareOption{px}{\def\emFx@px{}}%
+\DeclareOption{xy}{\def\emFx@xy{}}%
+\DeclareOption{cm}{\def\emFx@cm{}}%
+\DeclareOption{ams}{\def\emFx@ams{}}%
+\DeclareOption{abxa}{\edef\emFx@abx{a}}%
+\DeclareOption{abxb}{\@ifundefined{emFx@abx}{\edef\emFx@abx{b}}{\edefappend\emFx@abx{b}}}%
+\DeclareOption{abxx}{\@ifundefined{emFx@abx}{\edef\emFx@abx{x}}{\edefappend\emFx@abx{x}}}%
+\DeclareOption{abx}{\def\emFx@abx{abx}}%
+\DeclareOption{mbb}{\def\emFx@mbb{}}%
+\DeclareOption{pzd}{\def\emFx@pzd{}}%
+\DeclareOption{go}{\def\emFx@go{}}%
+\DeclareOption{wasy}{\def\emFx@wasy{}}%
+\DeclareOption{ceo}{\def\emFx@ceo{}}%
+\DeclareOption{Relbar}{\def\emFx@Relbar{}}%
+\DeclareOption{all}{\def\emFx@eu{}\def\emFx@tx{}\def\emFx@px{}\def\emFx@xy{}%
+  \def\emFx@abx{abx}}%
+\ProcessOptions\relax
+
+\RequirePackage{emath}
+
+\def\ArrowHeadPit{0}%
+\@ifundefined{emFx@abx}{}{%
+  \IfFileExists{mathabx.sty}{%
+    \RequirePackage{emFxabx}%
+  }{%
+    \errmessage{mathabx パッケージが見当たりません。%
+      emathFx に対する abx オプションは無効です。}}%
+}%
+
+\@ifundefined{emFx@eu}{}{%
+  \DeclareSymbolFont{EulerExtension}{U}{euex}{m}{n}
+  \DeclareMathSymbol\eurightarrow\mathrel{EulerExtension}{"21}
+  \DeclareMathSymbol\euintop  \mathop {EulerExtension}{"52}
+  \newcommand{\euint}{\DOTSI\euintop\ilimits@}
+%  \def\inttype#1{\ifthenelse{\equal{#1}{euler}}{%
+%       \let\intop\eu@intop
+%       \def\intkern@{\mkern -6mu }%
+%       \def\ints@#1{\mkern -3mu
+%           \mathop{\mkern 3mu
+%              \intop
+%              \ifnum #1=\z@ \intdots@ \else
+%                 \intkern@
+%                 \ifnum #1>\tw@ \intop\intkern@
+%                    \ifnum #1>\thr@@ \intop\intkern@ \fi
+%                 \fi
+%              \fi
+%              \intop
+%           }\ilimits@
+%        }%
+%      }{}%
+%    }
+}
+\@ifundefined{emFx@cm}{}{%
+  \DeclareSymbolFont{cmsymbols}{OMS}{cmsy}{m}{n}
+  \DeclareSymbolFont{cmlargesymbols}{OMX}{cmex}{m}{n}
+  \DeclareMathSymbol{\cmsum}{\mathop}{cmlargesymbols}{"50}
+  \DeclareMathSymbol{\cmrightarrow}{\mathrel}{cmsymbols}{"21}
+    \let\cmto=\cmrightarrow
+  \DeclareMathSymbol{\cmtriangle}{\mathord}{cmsymbols}{"34}
+  \DeclareMathSymbol{\cmintop}{\mathop}{cmlargesymbols}{"52}
+    \def\cmint{\cmintop\nolimits}
+%
+%\if0
+\DeclareSymbolFont{cmletters}     {OML}{cmm} {m}{it}
+\DeclareSymbolFont{cmlargesymbols}{OMX}{cmex}{m}{n}
+
+\DeclareMathSymbol{\cmg}{\mathalpha}{cmletters}{`g}
+
+\DeclareMathDelimiter{(}{\mathopen} {operators}{"28}{cmlargesymbols}{"00}
+\DeclareMathDelimiter{)}{\mathclose}{operators}{"29}{cmlargesymbols}{"01}
+\DeclareMathDelimiter{[}{\mathopen} {operators}{"5B}{cmlargesymbols}{"02}
+\DeclareMathDelimiter{]}{\mathclose}{operators}{"5D}{cmlargesymbols}{"03}
+\DeclareMathDelimiter{<}{\mathopen}{symbols}{"68}{cmlargesymbols}{"0A}
+\DeclareMathDelimiter{>}{\mathclose}{symbols}{"69}{cmlargesymbols}{"0B}
+\DeclareMathSymbol{<}{\mathrel}{cmletters}{"3C}
+\DeclareMathSymbol{>}{\mathrel}{cmletters}{"3E}
+\DeclareMathDelimiter{/}{\mathord}{operators}{"2F}{cmlargesymbols}{"0E}
+\DeclareMathSymbol{/}{\mathord}{cmletters}{"3D}
+\DeclareMathDelimiter{|}{\mathord}{symbols}{"6A}{cmlargesymbols}{"0C}
+
+%%\DeclareMathDelimiter{\rbrace}
+%%   {\mathclose}{symbols}{"67}{cmlargesymbols}{"09}
+%%\DeclareMathDelimiter{\lbrace}
+%%   {\mathopen}{symbols}{"66}{cmlargesymbols}{"08}
+%\fi
+}
+\@ifundefined{emFx@ams}{}{%
+  \DeclareSymbolFont{orgAMSa}{U}{msa}{m}{n}
+  \DeclareSymbolFont{orgAMSb}{U}{msb}{m}{n}
+  \DeclareMathSymbol\AMSangle{\mathord}{orgAMSa}{"5C}
+}
+%
+\@ifundefined{emFx@tx}{}{%
+  \IfFileExists{txfonts.sty}{%
+    \RequirePackage{emFxtx}%
+  }{%
+    \errmessage{txfonts パッケージが見当たりません。%
+      emathFx に対する tx オプションは無効です。}}%
+}%
+%
+\@ifundefined{emFx@px}{}{%
+  \IfFileExists{pxfonts.sty}{}{%
+    \errmessage{pxfonts パッケージが見当たりません。%
+      emathFx に対する pxオプションは無効です。}}%
+  \DeclareSymbolFont{pxsymbols}{OMS}{pxsy}{m}{n}
+  \DeclareSymbolFont{pxoperators}{U}{pxr}{m}{n}
+  \SetSymbolFont{pxoperators}{bold}{U}{pxr}{bx}{n}
+  \DeclareSymbolFont{pxletters}{OML}{pxmi}{m}{it}
+  \SetSymbolFont{pxletters}{bold}{OML}{pxmi}{bx}{it}
+  \DeclareMathSymbol{\px@percent}{\mathalpha}{pxoperators}{"25}
+  \def\pxpercent{\ensuremath{\px@percent}}
+  \DeclareMathSymbol{\pxrightarrow}{\mathrel}{pxsymbols}{"21}
+  \DeclareMathSymbol{\pxrelbar}{\mathbin}{pxsymbols}{"00}
+  \DeclareMathSymbol{\pxvarDelta}{\mathord}{pxletters}{"01}
+  \DeclareSymbolFont{pxlargesymbols}{OMX}{pxex}{m}{n}
+  \SetSymbolFont{pxlargesymbols}{bold}{OMX}{pxex}{bx}{n}
+  \DeclareMathDelimiter{\pxlbrack}{\mathopen} {pxoperators}{"5B}{pxlargesymbols}{"02}
+  \DeclareMathDelimiter{\pxrbrack}{\mathclose}{pxoperators}{"5D}{pxlargesymbols}{"03}
+  \newcommand{\pxgauss}[1]{\ensuremath{%
+    \left\pxlbrack\mkern1mu #1\mkern1mu\right\pxrbrack}}%
+}
+\def\preparexy{%
+  \DeclareSymbolFont{Xyatip}{OMS}{atip}{m}{n}
+  \DeclareSymbolFont{Xybtip}{OMS}{btip}{m}{n}
+  \DeclareMathSymbol\Xyrightarrowi\mathrel{Xyatip}{"2F}% 上
+  \DeclareMathSymbol\Xyrightarrow\mathrel{Xybtip}{"2F}% 下
+%  \DeclareMathSymbol\Xyrightarrowi\mathrel{Xyatip}{"2E}% 上
+%  \DeclareMathSymbol\Xyrightarrow\mathrel{Xybtip}{"30}%  下
+  \DeclareFontFamily{OMS}{atip}{}
+  \DeclareFontShape{OMS}{atip}{m}{n}{%
+     <-> [.8409] xyatip10%
+  }{}%
+  \DeclareFontFamily{OMS}{btip}{}%
+  \DeclareFontShape{OMS}{btip}{m}{n}{%
+     <-> [.8409] xybtip10%
+  }{}%
+  \def\xybekutoru{\@ifstar{\xybekutoru@m}{\xybekutoru@t}}%
+  \def\xybekutoru@t##1{{%
+    \setbox0=\hbox{\ensuremath{\m@th\displaystyle\text{##1}\bekutoru@sityuu}}%
+    \ifdim\wd0<1em\relax
+      \beku{\ensuremath{\m@th\displaystyle\text{##1}\bekutoru@sityuu}}%
+    \else
+%%     \@tempdima=\ht0\advance\@tempdima .3ex\advance\@tempdima.17pt\relax
+%%     \ensuremath{\overline{\box0}\raisebox\@tempdima{%
+%%        $\Xyrightarrow\Xyrightarrowi$}}%
+      \setbox1=\hbox{$\overline{\copy0}$}\relax
+      \unitlength\p@
+      \edef\xybekutoru@x{\strip@pt\wd1}%
+      \edef\xybekutoru@y{\strip@pt\ht1}%
+      \begin{picture}(0,0)\relax
+        \allinethickness{0.12ex}%
+        \put(0,\xybekutoru@y){\drawline(0,0)(\xybekutoru@x,0)}%
+        \Add\xybekutoru@y{-.1}\xybekutoru@yy
+        \put(\xybekutoru@x,\xybekutoru@yy){$\Xyrightarrow$}%
+        \Add\xybekutoru@y{.1}\xybekutoru@yy
+        \put(\xybekutoru@x,\xybekutoru@yy){$\Xyrightarrowi$}%
+      \end{picture}%
+      \box0\relax
+    \fi
+  }}
+  \def\xybekutoru@m##1{{%
+    \setbox0=\hbox{\ensuremath{\m@th\displaystyle##1\bekutoru@sityuu}}%
+    \ifdim\wd0<1em\relax
+      \beku{\ensuremath{\m@th\displaystyle##1\bekutoru@sityuu}}%
+    \else
+%      \@tempdima=\ht0\advance\@tempdima .333ex\relax
+%      \ensuremath{\overline{\box0}\raisebox\@tempdima{%
+%        $\Xyrightarrow\Xyrightarrowi$}}%
+      \setbox1=\hbox{$\overline{\copy0}$}\relax
+      \unitlength\p@
+      \edef\xybekutoru@x{\strip@pt\wd1}%
+      \edef\xybekutoru@y{\strip@pt\ht1}%
+      \begin{picture}(0,0)\relax
+        \allinethickness{0.12ex}%
+        \put(0,\xybekutoru@y){\drawline(0,0)(\xybekutoru@x,0)}%
+        \Add\xybekutoru@y{-.1}\xybekutoru@yy
+        \put(\xybekutoru@x,\xybekutoru@yy){$\Xyrightarrow$}%
+        \Add\xybekutoru@y{.1}\xybekutoru@yy
+        \put(\xybekutoru@x,\xybekutoru@yy){$\Xyrightarrowi$}%
+      \end{picture}%
+      \box0\relax
+    \fi
+  }}%
+}
+
+\@ifundefined{emFx@pzd}{}{%
+  \IfFileExists{pifont.sty}{}{%
+    \errmessage{pifont.sty が見当たりません。%
+      emathFx に対する pzd オプションは無効です。}}%
+  \RequirePackage{pifont}%
+  \def\pzdmaru{\@ifnextchar[{\@pzdmaru}{\@pzdmaru[191]}}
+  \def\@pzdmaru[#1]#2{%
+    \IAdd{#1}{#2}\pzdmaru@num
+    \text{\ding{\pzdmaru@num}}}
+  \def\pzdkmaru{\@ifnextchar[{\@pzdkmaru}{\@pzdkmaru[201]}}
+  \def\@pzdkmaru[#1]#2{%
+    \IAdd{#1}{#2}\pzdkmaru@num
+    \text{\ding{\pzdkmaru@num}}}
+}
+
+\@ifundefined{emFx@wasy}{}{%
+  \let\iint\undefined
+  \let\iiint\undefined
+  \RequirePackage{wasysym}
+}
+
+\@ifundefined{emFx@go}{}{%
+  \newbox\@gobox \newdimen\@godimen
+  \def\gofontsize#1{%
+      \font\gofont=go#1 at #1truept
+      \font\blackfontOne=go1bla#1 at #1truept
+      \font\blackfontTwo=go2bla#1 at #1truept
+      \font\whitefontOne=go1whi#1 at #1truept
+      \font\whitefontTwo=go2whi#1 at #1truept
+      \ifnum #1=10 \font\letterfont=cmr10 at 10truept\else        %%% <--- ???
+          \ifnum #1=15 \font\letterfont=cmr10 at 14.4truept\else  %%% <--- ???
+          \ifnum #1=20 \font\letterfont=cmr10 at 17.28truept\fi\fi\fi
+      \setbox\@gobox=\hbox{\gofont\char0}
+      \@godimen=\wd\@gobox
+      }
+  \gofontsize{10} % initialization <---
+  \def\gowhite#1{\relax
+      \ifx \triangle#1{\rlap{\triangle}\@borders}\else
+      \ifx \square#1{\rlap{\square}\@borders}\else
+  \makebox[\@godimen][l]{\whitefontOne\rlap{\char#1}\@borders}%
+%    \ifnum #1<0 \errmessage{Negative White's move?}\else
+%    \ifnum #1>253 \errmessage{White's move too big!}\else
+%    \ifnum #1<128 {\whitefontOne\rlap{\char#1}\@borders}\else
+%       \nr=#1
+%       \advance \nr by -128
+%       {\whitefontTwo\rlap{\char\nr}\@borders}\ignorespaces
+%    \fi\fi\fi
+  \fi\fi}
+  \def\goblack#1{\relax
+    \ifx \triangle#1{\let\whitefontTwo=\blackfontTwo
+                     \rlap{\triangle}\@borders}\else
+    \ifx \square#1{\let\whitefontTwo=\blackfontTwo
+                     \rlap{\square}\@borders}\else
+  \makebox[\@godimen][l]{\blackfontOne\rlap{\char#1}\@borders}%
+%    \ifnum #1<0 \errmessage{Negative Black's move?}\else
+%    \ifnum #1>253 \errmessage{Black's move too big!}\else
+%    \ifnum #1<128 {\blackfontOne\rlap{\char#1}\@borders}\else
+%        \nr=#1
+%        \advance \nr by -128
+%        {\blackfontTwo\rlap{\char\nr}\@borders}\ignorespaces
+%    \fi\fi\fi
+  \fi\fi}
+  \def\textgowhite#1{\def\@borders{\hskip\wd\@gobox}\relax
+      \leavevmode
+      \ifx .#1\lower.2\wd\@gobox\hbox{\gowhite{0}}\else
+        \lower.2\wd\@gobox\hbox{\gowhite{#1}}\fi}
+  \def\textgoblack#1{\def\@borders{\hskip\wd\@gobox}\relax
+      \leavevmode
+      \ifx .#1\lower.2\wd\@gobox\hbox{\goblack{0}}\else
+        \lower.2\wd\@gobox\hbox{\goblack{#1}}\fi}
+}
+%
+\@ifundefined{emFx@ceo}{}{%
+  \IfFileExists{ceo.sty}{%
+    \RequirePackage{emFxceo}%
+  }{%
+    \errmessage{ceo ???}%
+}}%
+%
+\@ifundefined{emFx@Relbar}{}{%
+% -- \Relbar は cmr17 を用いず，cmr10 とする。--------- begin
+\let\Relbar\undefined
+\DeclareFontFamily{OT1}{cmrx}{\hyphenchar\font45 }
+\DeclareSymbolFont{operatorsx}{OT1}{cmrx} {m}{n}
+\DeclareFontShape{OT1}{cmrx}{m}{n}{%
+      <5><6><7><8><9><10>gen*cmr%
+      <->cmr10}{}
+%%%%%%%% bold extended series
+\DeclareFontShape{OT1}{cmrx}{bx}{n}
+   {%
+      <5><6><7><8><9><10>gen*cmbx%
+      <->cmbx10%
+      }{}
+\SetSymbolFont{operatorsx}{bold}{OT1}{cmrx} {bx}{n}
+\DeclareMathSymbol{\Relbar}{\mathrel}{operatorsx}{"3D}
+% ------------------------------------------------------- end
+}
+
+\@ifundefined{emFx@xy}{}{%
+\IfFileExists{xy.sty}{%
+  \preparexy
+}{%
+  \@warning{Xy-pic パッケージが見当たりません。%
+    emathFx に対する xy オプションは無効です。}}%
+}
+%
+%\RequirePackage{bekutorukata}%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\iffalse
+\newcommand{\bekutoru@overrightarrow}{%
+  \mathpalette{\overarrow@\bekutoru@rightarrowfill@}}
+\def\bekutoru@rightarrowfill@{%
+  \arrowfill@\bekutoru@relbar\bekutoru@relbar\bekutoru@rightarrow}
+\def\bekutoru@t#1{\ensuremath{\displaystyle
+  \bekutoru@overrightarrow{\text{#1}\bekutoru@sityuu}}}%
+\def\bekutoru@m#1{\ensuremath{\displaystyle%
+  \bekutoru@overrightarrow{#1\bekutoru@sityuu}}}%
+\let\cmbekutoru\bekutoru
+%
+\let\mybekutoru\relax
+\def\bekutorukata{\@ifnextchar<{\@bekutorukata}{\@bekutorukata<\ArrowHeadPit>}}%
+\def\@bekutorukata<#1>{\edef\bekutoru@kubomi{#1}\@@bekutorukata}%
+\def\@@bekutorukata#1{%
+  \ifthenelse{\equal{#1}{cm}}%
+  {\bekutorusityuu{\vrule height .9zh width \z@}%
+    \let\bekutoru@relbar\relbar\let\bekutoru@rightarrow\rightarrow
+    \let\bekutoru\cmbekutoru}%
+  {%
+    \ifthenelse{\equal{#1}{eu}}%
+    {\bekutorusityuu{\vrule height .85zh width \z@}%
+      \let\bekutoru@relbar\relbar\let\bekutoru@rightarrow\eurightarrow
+      \let\bekutoru\cmbekutoru}%
+    {%
+      \ifthenelse{\equal{#1}{tx}}%
+      {\bekutorusityuu{\vrule height .75zh width \z@}%
+        \let\bekutoru@relbar\txrelbar\let\bekutoru@rightarrow\txrightarrow
+        \let\bekutoru\cmbekutoru}%
+      {%
+        \ifthenelse{\equal{#1}{xy}}%
+        {%
+          \@ifundefined{xybekutoru}{}{%
+%           \let\bekutoru@relbar\relbar\let\bekutoru@rightarrow\xyrightarrow
+            \bekutorusityuu{\vrule height .9zh width \z@}%
+            \let\bekutoru\xybekutoru
+          }%
+        }%
+        {%
+          \ifthenelse{\equal{#1}{px}}%
+          {%
+            \bekutorusityuu{\vrule height .75zh width \z@}%
+            \let\bekutoru@relbar\pxrelbar\let\bekutoru@rightarrow\pxrightarrow
+            \let\bekutoru\cmbekutoru
+          }%
+          {%
+            \ifthenelse{\equal{#1}{abx}}%
+            {%
+              \bekutorusityuu{\vrule height .75zh width \z@}%
+              \let\bekutoru@relbar\abxrelbar
+              \let\bekutoru@rightarrow\abxrightarrow
+              \let\bekutoru\cmbekutoru
+            }%
+            {%
+              \ifthenelse{\equal{#1}{fill}}%
+              {%
+                \bekutorusityuu{\vrule height .9zh width \z@}%
+                \def\bekutoru@t##1{{%
+                  \@tempdima=1zh\relax
+                  \edef\BK@hi{\strip@pt\@tempdima}%
+                  \Div\BK@hi{9.16443}\BK@hi
+                  \Mul{0.5}\BK@hi\BK@thickness
+                  \changeArrowHeadSize\BK@hi
+                  \setbox0=\hbox{\bekutoru@sityuu}%
+                  \ukansan{\the\ht0}\bekutoru@h
+                  \setbox0=\hbox{{##1}}%
+                  \ukansan{\the\wd0}\bekutoru@w
+                  \begin{picture}(0,0)\relax
+  \@ifundefined{xunitlength}{}{\xunitlength=\unitlength\def\@xscale{1}}%
+  \@ifundefined{yunitlength}{}{\yunitlength=\unitlength\def\@yscale{1}}%
+                    \edef\O@@{(0,0)}%
+                    \edef\ArrowHeadPit{\bekutoru@kubomi}%
+                    \DegSin\ArrowHeadAngle\bekutoru@s
+                    \Mul\Arr@wHeadSize\bekutoru@s\bekutoru@s
+                    \Addself\bekutoru@h\bekutoru@s
+                    \allinethickness{\BK@thickness pt}%
+\mybekutoru
+                    \put(0,\bekutoru@h){\ArrowLine{(0,0)}{(\bekutoru@w,0)}}%
+                    \Addself\bekutoru@h\bekutoru@s
+                    \xdef\bekutoru@H{\bekutoru@h}%
+                  \end{picture}%
+                  \vrule width \z@ height \bekutoru@H \p@\box0
+                }}%
+                \def\bekutoru@m##1{{%
+                  \@tempdima=1zh\relax
+                  \edef\BK@hi{\strip@pt\@tempdima}%
+                  \Div\BK@hi{9.16443}\BK@hi
+                  \Mul{0.5}\BK@hi\BK@thickness
+                  \changeArrowHeadSize\BK@hi
+                  \setbox0=\hbox{\bekutoru@sityuu}%
+                  \ukansan{\the\ht0}\bekutoru@h
+                  \setbox0=\hbox{\ensuremath{\displaystyle ##1}}%
+                  \ukansan{\the\wd0}\bekutoru@w
+                  \begin{picture}(0,0)\relax
+  \@ifundefined{xunitlength}{}{\xunitlength=\unitlength\def\@xscale{1}}%
+  \@ifundefined{yunitlength}{}{\yunitlength=\unitlength\def\@yscale{1}}%
+                    \edef\ArrowHeadPit{\bekutoru@kubomi}%
+                    \DegSin\ArrowHeadAngle\bekutoru@s
+                    \Mul\Arr@wHeadSize\bekutoru@s\bekutoru@s
+                    \Addself\bekutoru@h\bekutoru@s
+                    \allinethickness{\BK@thickness pt}%
+\mybekutoru
+                    \put(0,\bekutoru@h){\ArrowLine{(0,0)}{(\bekutoru@w,0)}}%
+                    \Addself\bekutoru@h\bekutoru@s
+                    \xdef\bekutoru@H{\bekutoru@h}%
+                  \end{picture}%
+                  \vrule width \z@ height \bekutoru@H \p@\box0
+                }}%
+              }%
+              {%
+                \ifthenelse{\equal{#1}{ceo}}{%
+                  \bekutorusityuu{\vphantom{h}}%
+                  \let\bekutoru\ceobekutoru
+                  \let\vec\ceovec
+                }{%
+                  \relax
+                }%
+              }%
+            }%
+          }%
+        }%
+      }%
+    }%
+  }%
+}
+\bekutorukata{cm}%
+\fi
+%
+\def\sqrtkata#1{%
+  \ifthenelse{\equal{#1}{ceo}}{%
+%   \def\xsqrt{\@ifnextchar[\@sqrta\@@sqrta}
+%   \def\@@sqrta#1#2#3{{%
+%   \setbox\z@\hbox{$#1$}%
+%   \ht\z@#2pt\dp\z@#3pt\sqrt{\box\z@}}}
+    \DeclareMathRadical{\sqrtsign}{symbols}{"70}{ruto}{"42}
+  }{%
+    \ifthenelse{\equal{#1}{yhmath}}{%
+      \DeclareSymbolFont{yhlargesymbols}{OMX}{yhex}{m}{n}
+      \DeclareMathRadical{\sqrtsign}{symbols}{"70}{yhlargesymbols}{"70}
+    }{}%
+  }%
+}%
+%
+\@ifundefined{emFx@mbb}{}{%
+\input ot1mbb.fd
+%
+% no proofmode
+%
+\def\symbol@message#1{\relax}
+\input mbboard.dcl
+}%
+\endinput
+
+v 0.01 2002/01/27
+  001 xy オプションをつけた際，xy.sty の存在を確認する。
+v 0.02 2002/02/17
+  002 ams オプションで TXフォント使用時に，amsfont を使用することを可能とする。
+    とりあえず，\AMSangle
+  003 px オプションを単独で用いるとエラーとなるバグを修正
+v 0.03 2002/03/02
+  004 \bekutoru の再定義を emath.sty からこちらに移す。
+v 0.04 2002/03/21
+  005 \txfonts の g を \txg とする。
+v 0.05 2002/04/18
+  006  xy オプションに対する\bekutoru の微調整
+v 0.06 2002/04/24-29
+  007 直立した積分記号：\euint で積分記号を euler.sty のものとする。
+      （\usepackage[eu]{emathFx}が前提）
+  008 \bekutorukata 引数に`px'を追加
+v 0.07 2002/05/02
+  009 abx オプションで mathabx フォントから \bekutoru の矢印をつまみ食い
+v 0.08 2002/05/03-04
+  010 mathabx フォントの 積分記号 : \abxint
+  011 等号付き不等号 ：\abxgeqq, \abxleqq
+v 0.09 2002/06/02
+  012 cmsy から \cmtriangle
+v 0.10 2002/06/06
+  013 丸付き数字に ZapfDingbats フォントを使用するためのロードオプション pzd
+v 0.11 2002/06/10
+  014 丸付き数字に go フォントを使用するためのロードオプション go
+v 0.12 2002/09/22-10/14
+  015 \cmint cmフォントの積分記号
+  016 \txLongrightarrow
+  017 Relbar オプション：\Relbar の cmrフォントサイズを cmsy に合わせる。
+v 0.13 2002/11/05
+  018 丸付き文字の白黒反転を
+            pifont, gofont から
+      流用する。
+v 0.14 2002/12/09
+  019 \cmsum cmフォントのシグマ記号
+v 0.15 2003/01/16
+  020 \txlbrac, \txrbrace; \txgauss
+v 0.16 2003/04/05
+  021 \abxlesseqqgtr, \abxgtreqqless
+v 0.17 2003/08/26
+  022 txfonts から \vardiamondsuite, \varheartsuit
+v 0.18 2003/08/31
+  023 txfonts から (, ) を流用した \txGyouretu など
+v 0.19 2003/10/15
+  024 txfonts から \txvarDelta
+v 0.20 2003/12/13
+  025 mathabx の改訂に対応
+v 0.21 2004/01/07
+  026 \bekutorukata に fill を新設（矢印を \ArrowLine で描画）
+v 0.22 2004/01/13
+  027 mathabx の \lesssim を \abxlesssim
+v 0.23 2004/01/21
+  028 wasysym.sty を使用するためのオプション wasy
+v 0.24 2004/01/29
+  029 \bekutorukata{fill}の場合において，\bekutoru* にバグ
+v 0.25 2004/05/15
+  030 \txmuup
+v 0.26 2004/07/23
+  031 母体の存在確認
+v 0.27 2004/08/13
+  032 \llbracket (txfonts, mathabx)
+v 0.28 2004/11/02
+  033 txfonts の symbolsC をつまみ食いするときは，[txC]オプションとする。
+v 0.29 2004/11/22
+  034 \cmto : cm-fonts の \to をつまみ食い
+v 0.30 2005/03/14
+  035 txfonts から \pm, \mp ---> \txpm, \txmp
+  036 mathabx から \pm, \mp ---> \abxpm, \abxmp
+v 0.31 2005/04/02
+  037 mathabx から \abxnotin, \abxnotni
+v 0.32 2005/08/05
+  038 \bekutorukata に <...> オプション
+v 0.33 2005/08/30
+  039 [mbb] ロードオプション：\mathmbb で mbboard パッケージを用いる
+v 0.34 2005/10/06
+  040 [ceo]
+v 0.35 2005/10/09
+  041 \bekutorukata : emathPh.sty との整合
+v 0.36 2005/10/19
+  042 \bekutorukata : ceo を追加
+v 0.37 2005/11/30
+  043 \sqrtkata : ceo, yhmath
+v 0.38 2006/03/18
+  044 \txsharp
+v 0.39 2006/04/22
+  045 \mybekutoru : ベクトルの矢印の形状を変更するためのコマンド
+v 0.40 2006/04/23
+  046 \Longleftrightarrow
+v 0.41 2006/06/08
+  047 \bekutorukata{fill} : xscale, yscale に対応
+v 0.42 2006/06/09
+  048 \bekutorukata --> bekutorukata.sty に独立
+v 0.43 2006/12/20
+  049 \txpercent
+v 0.44 2007/05/17
+  050 \txsubset
+v 0.45 2008/09/04
+  051 空白の混入対策

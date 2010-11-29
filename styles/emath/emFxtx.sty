@@ -1,0 +1,175 @@
+% emFxtx.sty by tDB (cqb00260@nifty.ne.jp)
+%
+  \NeedsTeXFormat{pLaTeX2e}
+  \ProvidesPackage{emFxtx}[2010/03/24 v0.02]%
+%
+\Strchr{\emFx@tx}{A}\emFx@tx@A
+\Strchr{\emFx@tx}{B}\emFx@tx@B
+\Strchr{\emFx@tx}{C}\emFx@tx@C
+\Strchr{\emFx@tx}{T}\emFx@tx@T
+\Strchr{\emFx@tx}{X}\emFx@tx@X
+%
+\ifnum\emFx@tx@T>\z@
+  \DeclareSymbolFont{txoperators}{OT1}{txr}{m}{n}%
+  \SetSymbolFont{txoperators}{bold}{OT1}{txr}{bx}{n}%
+  \DeclareSymbolFont{txsymbols}{OMS}{txsy}{m}{n}%
+  \DeclareSymbolFont{txletters}{OML}{txmi}{m}{it}%
+  \SetSymbolFont{txletters}{bold}{OML}{txmi}{bx}{it}%
+%%%%%%%%%%%%%%%%%
+% Math Italic A %
+%%%%%%%%%%%%%%%%%
+%
+  \DeclareSymbolFont{txlettersA}{U}{txmia}{m}{it}%
+  \SetSymbolFont{txlettersA}{bold}{U}{txmia}{bx}{it}%
+  \DeclareFontSubstitution{U}{txmia}{m}{it}%
+%
+  \DeclareSymbolFont{txlargesymbols}{OMX}{txex}{m}{n}%
+  \SetSymbolFont{txlargesymbols}{bold}{OMX}{txex}{bx}{n}%
+  \DeclareMathSymbol{\txintop}{\mathop}{txlargesymbols}{"52}%
+    \def\txint{\txintop\nolimits}%
+  \DeclareMathSymbol{\txpm}{\mathbin}{txsymbols}{6}
+  \DeclareMathSymbol{\txmp}{\mathbin}{txsymbols}{7}
+  \DeclareMathSymbol{\txrightarrow}{\mathrel}{txsymbols}{"21}%
+  \DeclareMathSymbol{\tx@percent}{\mathalpha}{txoperators}{"25}
+  \def\txpercent{\ensuremath{\tx@percent}}
+  \DeclareMathSymbol{\txrelbar}{\mathbin}{txsymbols}{"00}%
+\DeclareMathSymbol{\txLeftarrow}{\mathrel}{txsymbols}{40}%
+\DeclareMathSymbol{\txRightarrow}{\mathrel}{txsymbols}{41}%
+  \DeclareMathSymbol{\txmu}{\mathord}{txletters}{"16}%
+  \DeclareMathSymbol{\txphi}{\mathord}{txletters}{30}
+  \DeclareMathSymbol{\txomega}{\mathord}{txletters}{"21}%
+  \DeclareMathSymbol{\txgamma}{\mathord}{txletters}{"0D}%
+  \DeclareMathSymbol{\txpi}{\mathord}{txletters}{"19}%
+  \DeclareMathSymbol{\txvarDelta}{\mathord}{txletters}{"01}%
+  \DeclareMathSymbol{\txg}{\mathord}{txletters}{"67}%
+  \DeclareMathSymbol{\txmuup}{\mathord}{txlettersA}{"16}%
+  \DeclareMathSymbol{\txRelbar}{\mathrel}{txoperators}{"3D}%
+  \DeclareMathSymbol{\txRightarrow}{\mathrel}{txsymbols}{"29}%
+  \DeclareMathSymbol{\txsharp}{\mathord}{txoperators}{"23}%
+\DeclareMathSymbol{\txdiamondsuit}{\mathord}{txsymbols}{"7D}
+\DeclareMathSymbol{\txheartsuit}{\mathord}{txsymbols}{"7E}
+\DeclareMathSymbol{\txclubsuit}{\mathord}{txsymbols}{"7C}
+\DeclareMathSymbol{\txspadesuit}{\mathord}{txsymbols}{"7F}
+  \DeclareMathSymbol{\txsubset}{\mathrel}{txsymbols}{26}
+  \DeclareMathSymbol{\txsupset}{\mathrel}{txsymbols}{27}
+  \DeclareMathSymbol{\txsubseteq}{\mathrel}{txsymbols}{18}
+  \DeclareMathSymbol{\txsupseteq}{\mathrel}{txsymbols}{19}
+  \DeclareMathSymbol{\txemptyset}{\mathord}{txsymbols}{59}
+  \DeclareMathSymbol{\txin}{\mathrel}{txsymbols}{50}
+  \DeclareMathSymbol{\txni}{\mathrel}{txsymbols}{51}
+  \newcommand{\txLongrightarrow}{%
+    \DOTSB\protect\txRelbar\protect\joinrel\txRightarrow}%
+% \DeclareMathDelimiter{[}{\mathopen} {operators}{"5B}{txlargesymbols}{"02}%
+% \DeclareMathDelimiter{]}{\mathclose}{operators}{"5D}{txlargesymbols}{"03}%
+% \DeclareMathDelimiter{(}{\mathopen}{operators}{"28}{txlargesymbols}{"00}%
+% \DeclareMathDelimiter{)}{\mathclose}{operators}{"29}{txlargesymbols}{"01}%
+  \DeclareMathDelimiter{\txLP}{\mathopen}{operators}{"28}{txlargesymbols}{"00}%
+  \DeclareMathDelimiter{\txRP}{\mathclose}{operators}{"29}{txlargesymbols}{"01}%%
+  \DeclareMathDelimiter{\txlbrack}{\mathopen} {txoperators}{"5B}{txlargesymbols}{"02}%
+  \DeclareMathDelimiter{\txrbrack}{\mathclose}{txoperators}{"5D}{txlargesymbols}{"03}%
+\fi
+%
+\ifnum\emFx@tx@A>\z@
+%%%%%%%%%%%%%%%%%%
+% Math Symbols A %
+%%%%%%%%%%%%%%%%%%
+\DeclareSymbolFont{txAMSa}{U}{txsya}{m}{n}
+\SetSymbolFont{txAMSa}{bold}{U}{txsya}{bx}{n}
+\DeclareFontSubstitution{U}{txsya}{m}{n}
+%
+\DeclareMathSymbol{\txsubseteqq}{\mathrel}{txAMSa}{106}
+\DeclareMathSymbol{\txsupseteqq}{\mathrel}{txAMSa}{107}
+\fi
+
+
+\ifnum\emFx@tx@B>\z@
+%%%%%%%%%%%%%%%%%%%%%%%%%
+% Math Symbols B (MSBM) %
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\DeclareSymbolFont{txAMSb}{U}{txsyb}{m}{n}
+\SetSymbolFont{txAMSb}{bold}{U}{txsyb}{bx}{n}
+\DeclareFontSubstitution{U}{txsyb}{m}{n}
+
+%\DeclareSymbolFontAlphabet{\mathbb}{AMSb}
+%
+\DeclareMathSymbol{\txvarsubsetneq}{\mathrel}{txAMSb}{32}
+\DeclareMathSymbol{\txvarsupsetneq}{\mathrel}{txAMSb}{33}
+\DeclareMathSymbol{\txnsubseteqq}{\mathrel}{txAMSb}{34}
+\DeclareMathSymbol{\txnsupseteqq}{\mathrel}{txAMSb}{35}
+\DeclareMathSymbol{\txsubsetneqq}{\mathrel}{txAMSb}{36}
+\DeclareMathSymbol{\txsupsetneqq}{\mathrel}{txAMSb}{37}
+\DeclareMathSymbol{\txvarsubsetneqq}{\mathrel}{txAMSb}{38}
+\DeclareMathSymbol{\txvarsupsetneqq}{\mathrel}{txAMSb}{39}
+\DeclareMathSymbol{\txsubsetneq}{\mathrel}{txAMSb}{40}
+\DeclareMathSymbol{\txsupsetneq}{\mathrel}{txAMSb}{41}
+\DeclareMathSymbol{\txnsubseteq}{\mathrel}{txAMSb}{42}
+\DeclareMathSymbol{\txnsupseteq}{\mathrel}{txAMSb}{43}
+\DeclareMathSymbol{\txvarnothing}{\mathord}{txAMSb}{63}
+\fi
+%
+\ifnum\emFx@tx@C>\z@
+%%%%%%%%%%%%%%%%%%
+% Math Symbols C %
+%%%%%%%%%%%%%%%%%%
+
+\DeclareSymbolFont{symbolsC}{U}{txsyc}{m}{n}
+\SetSymbolFont{symbolsC}{bold}{U}{txsyc}{bx}{n}
+\DeclareFontSubstitution{U}{txsyc}{m}{n}
+%
+\def\re@DeclareMathSymbol#1#2#3#4{%
+    \let#1=\undefined
+    \DeclareMathSymbol{#1}{#2}{#3}{#4}}
+\re@DeclareMathSymbol{\vardiamondsuit}{\mathord}{symbolsC}{"71}
+\re@DeclareMathSymbol{\varheartsuit}{\mathord}{symbolsC}{"72}
+\re@DeclareMathSymbol{\varclubsuit}{\mathord}{symbolsC}{"70}
+\re@DeclareMathSymbol{\varspadesuit}{\mathord}{symbolsC}{"73}
+\re@DeclareMathSymbol{\Diamondblack}{\mathord}{symbolsC}{"5F}
+\DeclareMathSymbol{\txnsubset}{\mathrel}{symbolsC}{49}
+\DeclareMathSymbol{\txnsupset}{\mathrel}{symbolsC}{50}
+\DeclareMathSymbol{\txnotin}{\mathrel}{symbolsC}{60}
+\DeclareMathSymbol{\txnotni}{\mathrel}{symbolsC}{61}
+%
+  \newcommand{\txgauss}[1]{\ensuremath{%
+    \left\txlbrack\mkern1mu #1\mkern1mu\right\txrbrack}}%
+  \newenvironment{txpmatrix}{%
+    \left\txLP%
+    \matrix@check\txpmatrix\env@matrix
+  }{
+    \endmatrix\right\txRP%
+  }
+  \def\txgyouretu{\@ifnextchar[{\@txgyouretu}{\@txgyouretu[\gyouretu@haiti]}}
+  \def\@txgyouretu[#1]#2#3#4#5{\def\gyouretu@haiti@{#1}{\ensuremath{%
+    \begin{txpmatrix} #2 & #3 \\ #4 & #5 \end{txpmatrix}}}}%
+  \def\txGyouretu{\@ifnextchar[{\txGyouretu@}{\txGyouretu@[\gyouretu@haiti]}}
+  \def\txGyouretu@[#1]{\def\gyouretu@haiti@{#1}\@txGyouretu}
+  \newcommand{\@txGyouretu}[9]{\ensuremath{%
+    \begin{txpmatrix} #1&#2&#3\\#4&#5&#6\\#7&#8&#9\end{txpmatrix}}}%
+  \newcommand{\txretube}[2]{\def\gyouretu@haiti@{\gyouretu@haiti}\ensuremath{%
+    \begin{txpmatrix} #1 \\ #2 \end{txpmatrix}}}%
+  \newcommand{\txRetube}[3]{\def\gyouretu@haiti@{\gyouretu@haiti}\ensuremath{%
+    \begin{txpmatrix} #1 \\ #2 \\#3 \end{txpmatrix}}}%
+%
+%%%%%%%%%%%%%%%%%%%%
+% Math Extension A %
+%%%%%%%%%%%%%%%%%%%%
+%
+%\@ifundefined{emFx@tx}{%
+%  \DeclareSymbolFont{symbolsC}{U}{txsyc}{m}{n}
+%  \SetSymbolFont{symbolsC}{bold}{U}{txsyc}{bx}{n}
+%  \DeclareFontSubstitution{U}{txsyc}{m}{n}
+%}{}%
+\DeclareSymbolFont{largesymbolsA}{U}{txexa}{m}{n}
+\SetSymbolFont{largesymbolsA}{bold}{U}{txexa}{bx}{n}
+\DeclareFontSubstitution{U}{txexa}{m}{n}
+%
+\DeclareMathDelimiter{\txllbracket}{\mathopen}{symbolsC}{"7E}{largesymbolsA}{"12}
+\DeclareMathDelimiter{\txrrbracket}{\mathclose}{symbolsC}{"7F}{largesymbolsA}{"13}
+\fi
+\endinput
+
+2007/05/17 v0.00
+2010/02/13 v0.01
+    tx オプション細分化
+2010/03/24 v0.02
+    揺り戻し(BBS #8724)

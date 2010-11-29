@@ -1,0 +1,2628 @@
+\documentclass[a4j]{jarticle}
+% 栞つきPDF作成のときは%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%\usepackage[dvipdfm,bookmarks=true,bookmarksnumbered=true]{hyperref}
+%\AtBeginDvi{\special{pdf:tounicode 90ms-RKSJ-UCS2}} %SJISの場合
+%
+%\usepackage[dvips]{hyperref}
+%dvipsk -Ppdf -z -o -f samplepp |bkmk2uni -e >samplepp.ps
+%
+%\usepackage[dvips]{hyperref}
+%%dvipsk -Ppdf -z -f sampleps |bkmk2uni -e >sampleps.ps
+%
+%\usepackage[dvipdfm]{color}
+%\usepackage[dvipdfm,bookmarks=true,bookmarksnumbered=true,%
+%bookmarkstype=toc]{hyperref}
+%platex foo
+%platex foo
+%out2uni foo
+%platex foo
+%dvipdfm foo
+%\usepackage[dvipdfm]{emathPs}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[hiresbb]{graphicx}
+\usepackage{color}
+\usepackage{emath}
+\usepackage{epic,eepic}
+\usepackage{fancybox}
+\usepackage{ulem}
+%\usepackage[remake]{emathPs}
+\usepackage{emathPs}
+\usepackage{emathPb}
+\usepackage{emathMw}
+\usepackage{showexample}
+%\usepackage{makeidx}
+\usepackage{type1cm}% PS, PDF 作成には必要
+%
+%\makeatletter
+%\@ifundefined{texorpdfstring}{\def\texorpdfstring#1#2{#1}}{}%%%%%%%%%%%%%%%%%%
+%\makeatother
+%
+%\makeindex%
+\newcommand{\cindex}[1]{\index{#1@\texttt{\protect\cmd{#1}}}}
+\unitlength1cm
+
+\def\screen{\EMpsrectbox}
+\def\endscreen{\endEMpsrectbox}
+\def\itembox#1{\EMpsrectbox[item={\,#1\,},rectboxoval]\relax}
+\def\enditembox{\endEMpsrectbox}
+
+\begin{document}
+\title{eps 形式による図形描画マクロ\\
+emathPs.sty {\normalsize ver.0.93β}\\使用例}
+\author{tDB}
+\date{2005/10/15}
+
+\maketitle\thispagestyle{empty}
+\begin{abstract}%
+\parindent1zw%
+従来，emath では，図形描画に \texttt{tpic specials} を用いてきました。
+それを \texttt{EPS}形式のファイルを作成してそれを利用するやり方を
+模索して行きます。
+
+
+現時点ではプロトタイプで，仕様の変更などが頻繁に行われますので，
+そのおつもりでお付き合い願います。
+
+このマクロ集のマクロについてのご質問，バグ報告，修正・追加の提案等は
+\begin{center}
+http://emath.s40.xrea.com/
+\end{center}
+の掲示板へどうぞ。
+\end{abstract}
+\pagebreak
+\pagenumbering{roman}%
+
+
+\tableofcontents
+
+\pagebreak
+
+\pagenumbering{arabic}
+
+
+\section{新設コマンド・環境}
+\subsection{\textsf{pszahyou}環境}
+いままでの\textsf{zahyou}環境に相当するものを\textsf{pszahyou}環境と称します。
+この環境内では，図形描画部分は PostScript 言語に翻訳され eps ファイルに
+書き出されます。一方，文字を配置する部分は，\LaTeX の\textsf{picture}環境で
+実行されます。
+
+作成されたepsファイルを読み込むタイミングは，
+そのepsファイルが存在していれば，\textsf{pszahyou}環境の冒頭で読み込まれ，
+\textsf{pszahyou}環境内で図形描画部分はスキップされ，文字配置のみが行われます。
+
+一方，epsファイルが存在しないときは，epsファイルを作成し，\textsf{pszahyou}
+環境の終りで読み込まれます。
+文字配置も同時進行となりますから，その上に図形ファイル(eps)が読み込まれます。
+従って，描画部分に塗りつぶしがあると，文字が消えてしまう事態が発生します。
+そのときは，もう一度タイプセットする必要があります。
+
+
+ただし，\texttt{debug}オプション付で
+\begin{jquote}
+\begin{verbatim}
+\usepackage[debug]{emathPs}
+\end{verbatim}
+\end{jquote}
+としたときは，eps ファイルが存在しても作り直します。従って \textsf{pszahyou}
+環境の最後に eps ファイルが読み込まれることになります。
+
+\begin{showEx}(.5,.44){\textsf{pszahyou}環境}
+\begin{pszahyou}[ul=8mm]%
+    (-2.5,2.5)(-2.5,2.5)
+  \zahyouMemori[g]
+\end{pszahyou}
+\end{showEx}
+
+この図において，座標軸の矢印付線分およびグリッド線（破線）は，
+eps ファイル \texttt{samplePs1.eps}に 
+\texttt{PostScript}言語で書き出された描画命令により描かれています。
+
+\texttt{eps}ファイルは\textsf{pszahyou}環境が現れるたびに，
+\begin{jquote}
+\begin{verbatim}
+\jobname1.eps
+\jobname2.eps
+\jobname3.eps
+.....
+\end{verbatim}
+\end{jquote}
+と作られて行きます。
+
+現時点では，
+\textsf{pszahyou}環境内に記述できるコマンドは少なく，
+上の例で用いられている\cmd{zahyouMemori}のほか，
+どのようなものが使用可能であるかを，次節で見ていただくことにします。
+
+\subsection{\textsf{pszahyou*}環境}
+座標軸を描画しない環境です。
+
+\begin{showEx}(.64,.3){\textsf{pszahyou*}環境}
+\begin{pszahyou*}[ul=10mm]%
+    (-1.1,1.1)(-1.1,1.1)
+  \rtenretu*{A(1,0);B(1,60);C(1,120);%
+    D(1,180);E(1,240);F(1,300)}%
+  \Takakkei{\A\B\C\D\E\F}
+\end{pszahyou*}
+\end{showEx}
+
+%新設コマンド\cmd{Takakkei}については，後述します。
+
+%\subsection{\textsf{EMpspicture}環境}
+%\textsf{picture}環境の \textsf{emathPs} 版ですが，
+%\textsf{pszahyou*}環境の使用をお勧めします。
+
+%\subsection{\texorpdfstring{\cmd{setlinewidth}}{setlinewidth}}
+
+\subsection{\cmd{setlinewidth}}
+描画するすべてのコマンドに対し，線の太さを指定します。
+
+\begin{showEx}(.64,.3){\cmd{setlinewidth}}
+\begin{pszahyou*}[ul=4mm]%
+    (-2,5.5)(-.5,21)
+  \Ifor\w{0}{21}\Do{%
+    \put(-1.8,\w){\w}
+    \setlinewidth{\w}
+    \drawline(0,\w)(5,\w)}
+\end{pszahyou*}
+\end{showEx}
+
+\cmd{setlinewidth}の引数の値とその太さの変化をご覧ください。
+このあたり，TeX, GS, printer (driver) などの環境によって
+結果は異なることでしょう。
+
+\textsf{pszahyou}環境のデフォルトは\verb+\setlinewidth{10}+となっています。
+（ tpic specials に比して太目です。tpic specials は \verb+\setlinewidth{3}+
+に相当するようです。）
+
+\subsection{\cmd{setdash}}
+描画する線種は実線がデフォルトですが，これを破線にするコマンドです。
+
+\begin{showEx}(.64,.3){\cmd{setdash}}
+\begin{pszahyou*}[ul=10mm]%
+    (-1.5,2.1)(0,2.5)
+  \put(-1.5,2){.1,.1}
+    \setdash{.1,.1}\drawline(0,2)(2,2)
+  \put(-1.5,1.5){.2,.2}
+    \setdash{.2,.2}\drawline(0,1.5)(2,1.5)
+  \put(-1.5,1){.3,.3}
+    \setdash{.3,.3}\drawline(0,1)(2,1)
+  \put(-1.5,.5){.3,.1,.1,.1}
+    \setdash{.3,.1,.1,.1}\drawline(0,.5)(2,.5)
+  \setdash{}
+  \setlinewidth{1}
+  \drawline(0,0)(0,2.5)
+  \drawline(2,0)(2,2.5)
+\end{pszahyou*}
+\end{showEx}
+
+すなわち，\cmd{setdash}の引数に偶数個の数値を与えます。
+描画部分の長さ，描画しない部分の長さの繰り返しです。
+
+描画を実線に戻すには，\verb+\setdash{}+と，
+空の引数を与えます。
+
+\cmd{setdash}には，\verb+[..]+オプションで，開始位置のオフセットを
+指定する機能があります。
+上の図で，下から2番目の\verb+\setdash{.3,.3}+の場合，
+\verb/2=0.3*6+0.2/ですから，右端の実線はクリップ機能で0.3ではなく，
+0.2しかありません。そこで左端の開始オフセットを0.05と指定すれば，
+\begin{jquote}
+0.25(-) 0.3 0.3(-) 0.3 0.3(-) 0.3 0.25(-)
+\end{jquote}
+と，両端の実線部分の長さが揃います。
+
+\begin{showEx}(.64,.3){\cmd{setdash}のオフセット}
+\begin{pszahyou*}[ul=10mm]%
+    (-1.5,2.1)(0,1.5)
+  \put(-1.5,1){.3,.3}
+    \setdash{.3,.3}\drawline(0,1)(2,1)
+  \put(-1.5,.5){[0.05]}
+    \setdash[0.05]{.3,.3}\drawline(0,.5)(2,.5)
+  \setdash{}
+  \setlinewidth{1}
+  \drawline(0,0)(0,1.5)
+  \drawline(2,0)(2,1.5)
+\end{pszahyou*}
+\end{showEx}
+
+%\subsection{\texorpdfstring{\cmd{setarrowsize}}{setarrowsize}}
+\subsection{\cmd{setarrowsize}}
+矢線の形状を変更するには，\cmd{setarrowsize}を用います。
+まずは，デフォルトの確認です。
+以下，これを基準に各種のサイズを変更して見ます。
+
+\begin{showEx}(.64,.3){矢線，デフォルトの形状}
+\begin{pszahyou*}[ul=10mm](-.5,1.5)(-.5,1.5)
+  \def\A{(1,1)}
+  \ArrowLine\O\A
+\end{pszahyou*}
+\end{showEx}
+
+直線部分を太くしてみましょう。
+
+\begin{showEx}(.64,.3){直線部分の太さ}
+\begin{pszahyou*}[ul=10mm](-.5,1.5)(-.5,1.5)
+  \def\A{(1,1)}
+  \setarrowsize{10}{}{}
+  \ArrowLine\O\A
+\end{pszahyou*}
+\end{showEx}
+
+次は，鏃を長くしてみます。
+
+\begin{showEx}(.64,.3){鏃の長さ}
+\begin{pszahyou*}[ul=10mm](-.5,1.5)(-.5,1.5)
+  \def\A{(1,1)}
+  \setarrowsize{}{}{100}
+  \ArrowLine\O\A
+\end{pszahyou*}
+\end{showEx}
+
+鏃の太さ変更です。
+
+\begin{showEx}(.64,.3){鏃の太さ}
+\begin{pszahyou*}[ul=10mm](-.5,1.5)(-.5,1.5)
+  \def\A{(1,1)}
+  \setarrowsize{}{50}{}
+  \ArrowLine\O\A
+\end{pszahyou*}
+\end{showEx}
+
+
+やじりの部分に窪みをつけるには，\verb+<数値>+オプションをつけます。
+数値の部分は，やじりの二等辺三角形の高さを1としたときの，窪みの深さを表します。
+
+\cmd{setarrowsize}の書式です。
+
+\begin{showEx}(.64,.3){鏃の窪み}
+\begin{pszahyou*}[ul=10mm](-.5,1.5)(-.5,1.5)
+  \def\A{(1,1)}
+  \setarrowsize<.25>{}{50}{}
+  \ArrowLine\O\A
+\end{pszahyou*}
+\end{showEx}
+
+\begin{boxnote}
+\begin{verbatim}
+\setarrowsize<#1>#2#3#4
+  #1 : 窪みの比率
+  #2 : 直線部分の太さ
+  #3 : 鏃の太さ
+  #4 : 鏃の長さ
+デフォルトは\setarrowsize{3}{25}{50}です。
+また，引数を空にした場合はデフォルト値が採用されます。
+\end{verbatim}
+\end{boxnote}
+
+
+\subsection{クリッピング}
+\subsubsection{クリッピング}
+\textsf{emathPs.sty}で作られたEPSファイルは
+\begin{jquote}
+\begin{verbatim}
+\includegraphics[clip=true]{....}
+\end{verbatim}
+\end{jquote}
+で読み込まれます。例えば
+
+\begin{showEx}(.64,.3){clip}
+\begin{pszahyou*}[ul=20pt](0,4)(0,4)
+\En{(2,2)}{2}
+\YGurafu{X*X}{0}{3}
+\end{pszahyou*}
+\end{showEx}
+
+放物線$y=x^2$を$0\leqq x\leqq 3$と範囲指定をしてありますが，
+描画領域$0\leqq x\leqq 4$, $0\leqq y\leqq 4$の外側はクリップ機能で
+切り取られ，区間$0\leqq x\leqq 2$だけが描画されています。
+
+さらに，よく見ると，円の上下左右も削られています。
+これは，線幅1ptが円周の周囲にはみだすことになりますが，
+描画領域外は容赦なく（？）切り取られているということなのです。
+
+対応策は，描画領域を少し広めに取ることになります。
+
+\begin{showEx}(.64,.3){描画領域を広めに}
+\begin{pszahyou*}[ul=20pt](0,4.1)(0,4.1)
+\En{(2.05,2.05)}{2}
+\YGurafu{(X-0.05)*(X-0.05)+0.05}{0.05}{3}
+\end{pszahyou*}
+\end{showEx}
+
+でも，面倒ですね。
+\bigskip
+
+ということで，今回の改定ではクリップを無効にする方法を用意しました。
+
+\begin{showEx}(.64,.3){\texttt{EPSclip=false}}
+\begin{pszahyou*}[ul=20pt,EPSclip=false](0,4)(0,4)
+\En{(2,2)}{2}
+\YGurafu{X*X}{0}{3}
+\end{pszahyou*}
+\end{showEx}
+
+\bigskip
+\begin{enumerate}[注1.~]
+  \item Windows で dviout.exe をご利用の方へ。
+  
+    dviout には，graphics の表示について多様な方法が用意されています。
+    最後の図がクリップされてしまう，という方は
+    \begin{jquote}
+    \begin{verbatim}
+Option(O)
+    Setup Parameters
+        Graphic
+            Ghostscript
+                gclip: clip
+    \end{verbatim}
+    \end{jquote}
+    がチェックされているものと思います。
+    ここがチェックされていると，dviout によりクリップが実行されてしまいます。
+    この文書を dviout で見るには，このチェックを外してください。
+    
+    そのほかにも dviout の設定によって，こちらの意図したことと異なる状況が
+    生じることがいくつかあります。\textsf{emathPs.sty}を用いた文書については，
+\begin{jquote}
+\begin{verbatim}
+1a. dvips(k) で変換した PS ファイル
+1b. さらに Distiller で作成した PDF ファイル
+
+または
+
+2.  dvipdfm(x) で作成した PDF ファイル
+\end{verbatim}
+\end{jquote}
+    でご確認ください。
+
+細かいことを言いますと，上記2.のPDFには問題があります。
+dvipdfm(x) は$x<0$, $y<0$の部分は無視するようで，円の左端と下端は切り取られています。
+これは dvipdfm(x) の問題と考えています。
+
+  \item 最後の図では，当然のことながら放物線も描画領域を逸脱しています。
+    クリップ無効といっても，ほどほどにしてほしい，とお考えの方もあるでしょう。
+    その方向での処理は，少々時間が必要ですから，
+    今後の課題とさせていただきます。
+\end{enumerate}
+
+\subsubsection{\texttt{[borderwidth=..]}オプション}
+\textsf{emathPs.sty}を用いて図を描いた場合，PDF に変換すると
+図の左端などが欠ける現象が発生することがあります。
+
+\begin{showEx}(.6,.34){円の左端が欠ける}
+\smallskip
+\fbox{%
+\begin{pszahyou}[ul=20mm](-1,1)(-1,1)
+  \setlinewidth{20}
+  \En\O{1}
+\end{pszahyou}}
+\smallskip
+\end{showEx}
+
+皆さんの環境ではいかがでしょうか。私の環境では，円の上下左右4箇所の
+円と正方形の接するところに円周の欠落が見られます。
+円周は少し太めにしてありますから，本来なら正方形の外にはみ出すはずなのですが，
+はみ出していませんね。
+
+これは，描画領域外はクリップされるという EPS の仕様です。
+
+（この文書では，\textsf{pszahyou}環境の領域を
+\cmd{fbox}で囲んで表示しています。余白をなくすため
+\begin{jquote}
+\begin{verbatim}
+\fboxsep=0ptに設定しています。）
+\end{verbatim}
+\end{jquote}
+
+EPS には，このクリッピングを止めさせる方法が用意されています。
+当てはめてみましょう。
+
+\begin{showEx}(.6,.34){\texttt{EPSclip=false}オプション}
+\smallskip
+\fbox{%
+\begin{pszahyou}[ul=20mm,EPSclip=false]%
+      (-1,1)(-1,1)
+  \setlinewidth{20}
+  \En\O{1}
+\end{pszahyou}}
+\smallskip
+\end{showEx}
+
+\textsf{pszahyou}環境の\verb+[EPSclip=false]+がそれです。
+私の環境では，上下左右4箇所ともクリップされず，
+円周は正方形の外にはみ出しています。
+皆さんの環境ではいかがでしょうか。
+
+左と下はクリップされてしまう，という状況の方がおられると思います。
+これは pdf への変換法に左右される現象です。
+現在，確認されているのは
+\begin{enumerate}[(1)]
+  \item \verb/dvipsk+Distiller/ では，4箇所ともクリップされない。
+  \item \verb/dvipdfm(x)/では，左・下の2箇所がクリップされる。
+\end{enumerate}
+グラフィックは dvi-ware 依存ですから，異なる状況が発生することは
+ありうるわけではありますが．．．．．
+
+この問題点に対応するため，\textsf{emathPs.sty} では，
+\texttt{borderwidth=..}オプションを少し修正してみました。
+
+\begin{showEx}(.6,.34){\texttt{borderwidth=5pt}オプション}
+\smallskip
+\fbox{%
+\begin{pszahyou}[ul=20mm,borderwidth=5pt]%
+      (-1,1)(-1,1)
+  \setlinewidth{20}
+  \En\O{1}
+  \setlinewidth{2}
+  \Takakkei{(-1,-1)(1,-1)(1,1)(-1,1)}
+\end{pszahyou}}
+\smallskip
+\end{showEx}
+
+さていかがでしょうか。
+今度の図には，正方形が2つあります。小さい方の正方形が今までの図における
+正方形で，外側は \texttt{bordewidth=5pt}オプションで周囲に\texttt{5pt}ずつの
+外枠をつけたものです。
+（こちらが\textsf{psazhyhou}環境が認識する描画領域です。）
+
+描画領域を拡げたわけですから，クリップする／しないは，
+関係なく，円周は全て欠損なく描画されているはずです。
+\pagebreak
+
+%\subsubsection{\texorpdfstring{\cmd{truexmax}}{truexmax}など}
+\subsubsection{\cmd{truexmax}など}
+\texttt{borderwidth=..}オプションは今までもあったのですが，
+座標軸が拡がった領域全体に描画されていたものを，
+今回の改定で\verb+(-1,1)(-1,1)+と指定した領域内（先の図の小さい正方形内）に
+とどめることにいたしました。そのために
+\verb+\truexmax+などの変数を新設しました。
+
+\begin{showEx}(.6,.34){\cmd{xmax}など}
+\smallskip
+\begin{pszahyou*}[ul=5mm,borderwidth=5pt]%
+      (-1,4)(-2,3)
+  \tenretu*{A(\xmin,\trueymax)}\Kuromaru\A
+  \Put\A{\EMparbox[t]{%
+    $\mbox{\cmd{xmax}}=\xmax$ \\
+    $\mbox{\cmd{xmin}}=\xmin$ \\
+    $\mbox{\cmd{ymax}}=\ymax$ \\
+    $\mbox{\cmd{ymin}}=\ymin$
+  }}
+\end{pszahyou*}
+\end{showEx}
+
+\cmd{xmax}などは，\textsf{pszahyou}環境で指定した値に\texttt{borderwidth}
+を増減した値となっています。
+もともとの値は\cmd{truexmax}などに保存することにしました。
+
+\begin{showEx}(.6,.34){\cmd{xmax}など}
+\smallskip
+\begin{pszahyou*}[ul=5mm,borderwidth=5pt]%
+      (-1,4)(-2,3)
+  \tenretu*{A(\xmin,\trueymax)}\Kuromaru\A
+  \Put\A{\EMparbox[t]{%
+    $\mbox{\cmd{truexmax}}=\truexmax$ \\
+    $\mbox{\cmd{truexmin}}=\truexmin$ \\
+    $\mbox{\cmd{trueymax}}=\trueymax$\\
+    $\mbox{\cmd{trueymin}}=\trueymin$
+  }}
+\end{pszahyou*}
+\end{showEx}
+\pagebreak
+
+\subsubsection{掲示板から}
+今回の改定の発端となった，掲示板の投稿を見ておきます。
+
+\begin{showEx}(.6,.34){掲示板 No.235}
+  \bigskip
+  \begin{pszahyou}
+  [ul=4mm,
+  zikusensyu=\drawline,
+  yokozikukigou=$x$,
+  tatezikukigou=$y$,
+  gentenkigou=O,
+  yokozikuhaiti={(3pt,0)[l]},
+  tatezikuhaiti={(0,3pt)[b]},
+  xscale=1,yscale=1,EPSclip=false]
+  (0,8.5)(0,8.5)
+  \zahyouMemori[g][n]<dx=1,dy=1,dash={}>
+  \def\P{(2,0)}\Put\P(0,-4pt)[t]{P}
+  \Kuromaru\P
+  \Put{(5,0)}(0,-4pt)[t]{5}
+  \Put{(0,5)}(-4pt,0)[r]{5}
+  \setlinewidth{3}
+  \end{pszahyou}
+  \bigskip
+\end{showEx}
+
+点P(2, 0)に打った黒丸の下が欠ける，という投稿でした。
+
+これに\verb+[borderwidth=2pt]+を附加してみます。
+
+\begin{showEx}(.6,.34){掲示板 No.235 修正}
+  \bigskip
+  \begin{pszahyou}
+  [ul=4mm,borderwidth=2pt,
+  zikusensyu=\drawline,
+  yokozikukigou=$x$,
+  tatezikukigou=$y$,
+  gentenkigou=O,
+  yokozikuhaiti={(3pt,0)[l]},
+  tatezikuhaiti={(0,3pt)[b]},
+  xscale=1,yscale=1,EPSclip=false]
+  (0,8.5)(0,8.5)
+  \zahyouMemori[g][n]<dx=1,dy=1,dash={}>
+  \def\P{(2,0)}\Put\P(0,-4pt)[t]{P}
+  \Kuromaru\P
+  \Put{(5,0)}(0,-4pt)[t]{5}
+  \Put{(0,5)}(-4pt,0)[r]{5}
+  \setlinewidth{3}
+  \end{pszahyou}
+  \bigskip
+\end{showEx}
+
+%\subsection{図と文字のずれ}
+%\textsf{emathPs.sty}における \textsf{pszahyou}環境では，
+%\begin{jquote}
+%　　図形\\
+%と\\
+%　　文字
+%\end{jquote}
+%の配置について，
+%\begin{jquote}
+%　　図形については，\textsf{PostScript} で\\
+%　　文字については，\TeX における\textsf{zahyou(picture)}環境
+%\end{jquote}
+%という，分列行進となっています。
+%
+%図が小さいときは目立たないのですが，大きな図ですと
+%
+%\begin{showEx}(.9,1){図と文字のズレ}
+%\begin{pszahyou*}[ul=19mm](0,7)(-.1,.25)
+%  \Drawline{\XMIN\XMAX}%
+%  \Ifor\x{0}{8}\Do{%
+%    \Drawline{(\x,-.05)(\x,.05)}%
+%    \Put{(\x,0)}(0,5pt)[b]{\x}%
+%  }%
+%\end{pszahyou*}
+%\end{showEx}
+%
+%\noindent
+%右の方で，目盛り線と目盛りの文字の位置ずれが目立つようになります。
+%
+%これは，\textsf{Postscript}と\TeX で，\texttt{1pt}の長さが異なるためです。
+%すなわち
+%\begin{jquote}
+%  \textsf{Postscript}では，$\mathtt{1pt}=1/72\,\mathtt{inch}$\\
+%  \TeX では，$\mathtt{1pt}=1/72.27\,\mathtt{inch}$
+%\end{jquote}
+%ということで，\TeX のほうが少し短くなっていますから，
+%右に行くほど，文字が目盛り線よりも左に寄っていく状態がしゅったいします。
+%
+%そこで，文字配置について，このズレを修正するため
+%\begin{jquote}
+%  \verb+cPut+ （cはcharの頭文字のつもり）
+%\end{jquote}
+%を新設しました。
+%
+%\begin{showpEx}(.9,1){\cmd{cPut}}
+%!\begin{pszahyou*}[ul=19mm](0,7)(-.1,.25)
+%! \Drawline{\XMIN\XMAX}%
+%! \Ifor\x{0}{8}\Do{%
+%!   \Drawline{(\x,-.05)(\x,.05)}%
+%    \cPut{(\x,0)}(0,5pt)[b]{\x}%
+%! }%
+%!\end{pszahyou*}
+%\end{showpEx}
+%
+%目盛り線と文字のズレは解消しています。
+%
+%ただし，
+%\begin{jquote}
+%  文字の配置は \verb+cPut+ で，\\
+%  図形の配置は \verb+Put+ で
+%\end{jquote}
+%という二重構造となります。
+%
+%望ましいのは，図形・文字双方を \textsf{PostScript} の管理下に置くことですが，
+%\textsf{PostScript}の文字出力は面倒なので，実現は遠い将来となりそうです。
+
+\subsection{図形の回転}
+この節の話は，新機能ではありませんが，\texttt{BBS}で話題となったので，
+とりあげておきます。
+
+例えば，楕円を回転させるには，\cmd{rotatebox}を利用するのが簡単です。
+
+\begin{showEx}(.64,.3){\textsf{zahyou}環境における\cmd{rotatebox}}
+\begin{zahyou}[ul=6mm](-1,4)(-3,1)
+  \tenretu*{A(1,-1)}
+  \Put\A{\rotatebox{45}{\Daen\O{2}{1}}}
+\end{zahyou}
+\end{showEx}
+
+\textsf{pszahyou}環境ではどうなるでしょうか。
+
+\begin{showEx}(.64,.3){\textsf{pszahyou}環境における\cmd{rotatebox}}
+\begin{pszahyou}[ul=6mm](-1,4)(-3,1)
+  \tenretu*{A(1,-1)}
+  \Put\A{\rotatebox{45}{\Daen\O{2}{1}}}
+\end{pszahyou}
+\end{showEx}
+
+回転しません。すなわち\cmd{rotatebox}は無視されています。
+\textsf{emathPs.sty}では，\cmd{rotatebox}はサポートされていませんし，
+今後サポートされる予定はありません。これには，理由があるのですが，
+ここでは述べません。
+
+それに換えて\cmd{EPSkaiten}コマンドを用意しています。
+
+楕円を回転させてみます。
+
+\begin{showEx}(.6,.34){\cmd{EPSkaiten}}
+\begin{pszahyou}[ul=5mm](-4,4)(-4,4)
+  \EPSkaiten\O{45}{\Daen\O{3}{2}}
+  \setdash{.1,.1}
+  \Daen\O{3}{2}
+  \setlinewidth{3}
+  \kTyokusen\O{45}{}{}
+  \kTyokusen\O{-45}{}{}
+\end{pszahyou}
+\end{showEx}
+
+回転させるコマンド名が\cmd{EPSkaiten}で，その書式は：
+
+\begin{boxnote}
+\begin{verbatim}
+\EPSkaiten#1#2#3
+   #1 : 回転の中心
+   #2 : 回転角（六十分法）
+   #3 : 回転する対象
+\end{verbatim}
+\end{boxnote}
+
+回転の中心と楕円の中心を別にとってみましょう。
+点(3, 0)を中心とする楕円を原点のまわりに回転します。
+
+\begin{showEx}(.6,.34){\cmd{EPSkaiten}}
+\begin{pszahyou}[ul=5mm](-1,7)(-3,6)
+  \tenretu*{A(3,0)}
+  \EPSkaiten\O{45}{\Daen\A{3}{2}}
+  \setdash{.1,.1}
+  \Daen\A{3}{2}
+  \setlinewidth{3}
+  \kTyokusen\O{45}{}{}
+  \kTyokusen\O{-45}{}{}
+\end{pszahyou}
+\end{showEx}
+
+次は，回転の中心を楕円の右端(6, 0)にとります。
+
+\begin{showEx}(.6,.34){\cmd{EPSkaiten}}
+\begin{pszahyou}[ul=5mm](-1,7)(-6,3)
+  \tenretu*{A(3,0);C(6,0)}
+  \EPSkaiten\C{45}{\Daen\A{3}{2}}
+  \setdash{.1,.1}
+  \Daen\A{3}{2}
+  \setlinewidth{3}
+  \kTyokusen\C{45}{}{}
+  \kTyokusen\C{-45}{}{}
+\end{pszahyou}
+\end{showEx}
+
+\subsection{カラー化}
+\subsubsection{\textsf{EMpscolor}環境}
+\LaTeX の\cmd{color}コマンドは，\textsf{pszahyou}環境の図形描画部分には
+無効です。図形をカラー描画するために\textsf{EMpscolor}環境を用意しました。
+
+\begin{showEx}(.64,.3){\textsf{EMpscolor}環境}
+  \begin{pszahyou}[ul=10mm](-1.2,2.5)(-1.2,1.5)
+    \begin{EMpscolor}{green}
+      \En\O{1}
+    \end{EMpscolor}
+    \En{(1,0)}{1}
+  \end{pszahyou}
+\end{showEx}
+
+（注）dviout でご覧の方は，Graphic の設定いかんでは，カラーになりません。
+
+%\subsubsection{\texorpdfstring{\cmd{defineEMpscolor}}{defineEMpscolor}コマンド}
+\subsubsection{\cmd{defineEMpscolor}}
+現時点で，\textsf{emathPs}で定義されているカラーは
+\begin{jquote}
+\begin{verbatim}
+red, green, blue
+white, black
+\end{verbatim}
+\end{jquote}
+の5種類です。その他のカラーを使用したいときは\cmd{defineEMpscolor}コマンドで
+定義してください。
+
+\begin{showEx}(.64,.3){\cmd{defineEMpscolor}}
+  \begin{pszahyou}[ul=10mm](-1.2,1.5)(-1.2,1.5)
+    \defineEMpscolor{yellow}{1}{1}{0}
+    \begin{EMpscolor}{yellow}
+      \En\O{1}
+    \end{EMpscolor}
+  \end{pszahyou}
+\end{showEx}
+
+\cmd{defineEMpscolor}コマンドは
+\begin{jquote}
+\begin{verbatim}
+色の名前に続き，R, G, B の数値(0〜1)
+\end{verbatim}
+\end{jquote}
+を引数に与えます。
+
+\subsubsection{\cmd{color}との併用}
+文字に色をつけたいときは，\LaTeX の\cmd{color}コマンドを用いますが，
+現時点では，空白の混入がおきやすくなっています。
+次の例では，\LaTeX の認識している\textsf{picture}環境を\cmd{fbox}で
+囲んでいますが，図がはみ出していることがお分かりでしょう
+
+\begin{showEx}(.64,.3){\cmd{color}との併用}
+  \fboxsep=0pt\relax\fbox{%
+  \begin{pszahyou}[ul=8mm](-1.5,2)(-1.5,2)%
+    \def\A{(1,1)}%
+    \begin{EMpscolor}{blue}%
+      \En\O{1.414}%
+    \end{EMpscolor}%
+    {\color{red}\Put\A[ne]{A}}%
+  \end{pszahyou}}%
+\end{showEx}
+
+ただし，2回タイプセットをすれば，空白の混入はなくなります。
+
+また，1回目のタイプセットでもこの混入を回避するには，
+\cmd{color}文を\cmd{Put}の引数に入れてしまうのが有効です。
+
+\begin{showEx}(.64,.3){空白の混入回避}
+  \fboxsep=0pt\relax\fbox{%
+  \begin{pszahyou}[ul=8mm](-1.5,2)(-1.5,2)%
+    \def\A{(1,1)}%
+    \begin{EMpscolor}{blue}%
+      \En\O{1.414}%
+    \end{EMpscolor}%
+    \Put\A[ne]{\color{red}A}%
+  \end{pszahyou}}%
+\end{showEx}
+
+さて，最後に少し大きな例です。
+
+\begin{showEx}(.64,.3){例}
+\begin{pszahyou*}[ul=5mm](-3,3)(-1,6)%
+  \def\Fx{X*X}%
+  \def\Gx{2-X}%
+  \gsave
+  \setlinewidth{3}%
+  \YNurii*<syasentanmatu=1mm>\Fx\Gx{-2}{1}%
+  \grestore
+  \YGurafu*\Fx%
+  \begin{EMpscolor}{red}
+    \YGurafu*\Gx%
+  \end{EMpscolor}
+  \begin{EMpscolor}{green}
+    \Put\O{\color{blue}\drawXYaxis}%
+  \end{EMpscolor}%
+\end{pszahyou*}%
+\end{showEx}
+
+\subsection{\textsf{EMpsrectbox}環境}
+\subsubsection{\textsf{EMpsrectbox}とは}
+\textsf{emathPh.sty}で定義されている\textsf{rectbox}環境の
+\textsf{emathPs}版という位置付けです。
+ページをまたぐことができない，傍注もつけられないというのは，
+\textsf{rectbox}と同様です。
+
+\begin{showEx}(.9,1){\textsf{EMpsrectbox}環境}
+\begin{EMpsrectbox}
+あああああああああああああああああああああああああ
+あああああああああああああああああああああああああ
+
+いいいいいいいいいいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいいいいいいいいいい
+\end{EMpsrectbox}
+\end{showEx}
+
+\textsf{rectbox}環境に比して，罫線が太いことでしょうか。
+コーナーがきちんとつながっていることが特徴です。
+\pagebreak
+
+\subsubsection{罫線と本文との間隔}
+\paragraph{\texttt{fboxsep}}
+罫線と中のテキストとの間隔は，\cmd{fboxsep}で決まります。
+これを変更したいときは，\verb+[fbox=..]+オプションを与えます。
+
+\begin{showEx}(.9,1){\texttt{fboxsep}オプション}
+\begin{EMpsrectbox}[fboxsep=1zw]
+あああああああああああああああああああ
+あああああああああああああああああああ
+あああああああああああああああああああ
+\end{EMpsrectbox}
+\end{showEx}
+
+\paragraph{\texttt{hsep vsep}}
+\verb+[fboxsep=..]+オプションは，左右・上下すべてを一律に変更しますし，
+当該環境内のみではありますが，\cmd{fboxsep}の値が変更されています。
+
+\begin{showEx}(.9,1){\texttt{fboxsep}オプションの副作用}
+\begin{EMpsrectbox}[fboxsep=1zw]
+あああああああああああああああああああ
+
+\fbox{いいい}
+\end{EMpsrectbox}
+
+\fbox{ううう}
+\end{showEx}
+
+そこで，左右の空きを指定するオプション\verb+hsep=..+と，
+上下の空きを指定するオプション\verb+vsep=..+を新設しました。
+
+\begin{showEx}(.9,1){\texttt{hsep, vsep}オプション}
+\begin{EMpsrectbox}[hsep=3zw,vsep=1zw]
+あああああああああああああああああああ
+あああああああああああああああああああ
+
+\fbox{いいい}
+\end{EMpsrectbox}
+
+\fbox{ううう}
+\end{showEx}
+
+\subsubsection{横幅}
+\paragraph{\texttt{rectboxwidth}}
+\textsf{EMpsrectbox}環境の横幅は\cmd{linewidth}で，横いっぱいに広がります。
+これを制限するオプションが\verb+rectboxwidth=..+です。
+
+\begin{showEx}(.9,1){\texttt{rectboxwidth}オプション}
+あああ
+\begin{EMpsrectbox}[rectboxwidth=8zw]
+いいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいい
+\end{EMpsrectbox}
+ううう\par
+\end{showEx}
+
+横幅を8zwと指定していますが，実際のボックス幅は，
+これに，左右の空きが加わります。
+
+\subsubsection{見出しをつける}
+上部枠線に見出しをつけることができます。
+
+\begin{showEx}(.9,1){\texttt{item}オプション}
+\begin{EMpsrectbox}[item={~見出し~}]
+あああああああああああああああああああ
+あああああああああああああああああああ
+あああああああああああああああああああ
+\end{EMpsrectbox}
+\end{showEx}
+
+その位置はデフォルトでは左ですが，中央（右）にするには，
+\verb+itempos=..+オプションを用います。
+
+\begin{showEx}(.9,1){\texttt{itempos=c}オプション}
+\begin{EMpsrectbox}[item={~中央見出し~},itempos=c]
+あああああああああああああああああああ
+あああああああああああああああああああ
+あああああああああああああああああああ
+\end{EMpsrectbox}
+\end{showEx}
+
+\begin{showEx}(.9,1){\texttt{itempos=r}オプション}
+\begin{EMpsrectbox}[item={~右見出し~},itempos=r]
+あああああああああああああああああああ
+あああああああああああああああああああ
+あああああああああああああああああああ
+\end{EMpsrectbox}
+\end{showEx}
+
+\subsubsection{罫線の種類変更}
+罫線の種類を変更する方法は，\textsf{rectbox}環境とは異なります。
+\textsf{rectbox}に\verb+<...>+オプションをつけます。
+
+\begin{showEx}(.9,1){線種変更}
+\begin{EMpsrectbox}<\setdash{3,2}>
+あああああああああああああああああああ
+あああああああああああああああああああ
+あああああああああああああああああああ
+\end{EMpsrectbox}
+\end{showEx}
+
+\verb+[..]+オプションとの併用は
+\begin{jquote}
+\begin{verbatim}
+\begin{EMpsrectbox}[...]<...>
+\end{verbatim}
+\end{jquote}
+の順となります。
+
+\subsubsection{罫線の太さ変更}
+
+こちらも\textsf{rectbox}環境とは異なります。
+
+\begin{showEx}(.9,1){罫線の太さ変更}
+\begin{EMpsrectbox}<\setlinewidth{4}>%
+あああああああああああああああああああ
+あああああああああああああああああああ
+あああああああああああああああああああ
+\end{EMpsrectbox}
+\end{showEx}
+
+\subsubsection{\texttt{rectboxoval}オプション}
+\textsf{EMpsrectbox}環境は，コーナーが直角です。
+これを丸く---四分円にする試みです。
+
+\begin{showEx}(.8,.8){\texttt{rectboxoval}オプション}
+\begin{EMpsrectbox}[rectboxoval]
+\texttt{[rectboxoval]}オプションをつけると，
+角の丸い枠で囲むことができます。
+\end{EMpsrectbox}
+\end{showEx}
+
+四隅の四分円は，デフォルトでは10ptの半径で描画されます。\\
+これを変更するには，\verb+[rectboxoval=..]+オプションの右辺値を指定します。
+
+\begin{showEx}(.8,.8){\texttt{rectboxoval=5pt}オプション}
+\begin{EMpsrectbox}[rectboxoval=5pt]
+\texttt{[rectboxoval=5pt]}オプションをつけると，
+角の丸は半径5ptの円となります。
+\end{EMpsrectbox}
+\end{showEx}
+
+\textsf{EMpsrectbox}環境では，枠線と中のテキストとの間隔は，
+\cmd{fboxsep}でしたが，\verb+[rectboxoval]+オプションを指定したときは
+四分円の半径をデフォルトとします。変更するときは
+\begin{jquote}
+\begin{verbatim}
+hsep=..,vsep=..
+\end{verbatim}
+\end{jquote}
+オプションを用います。
+
+\begin{showEx}(.8,.8){\texttt{hsep,vsep}オプション}
+\begin{EMpsrectbox}[rectboxoval,hsep=2zw,vsep=.5zh]
+\verb+[hsep=..,vsep=..]+オプションを付加した場合は，
+そちらが優先されます。
+\end{EMpsrectbox}
+\end{showEx}
+
+\begin{description}
+\item[注　]グラフィックスは機種依存，dvi-ware依存です。
+
+  \textsf{EMpsrectbox}環境は，dvipdfm(x)には対応していません。
+  再三述べていますが，$x<0$, $y<0$を無視する仕様のようで，
+  枠の下辺と左辺が削られます。
+  
+  確認の意味で，dvipsk+Distiller で作成した PDF を同梱します。
+\end{description}
+
+
+\subsubsection{\textsf{mawarikomi}環境内の囲み}
+\textsf{mawarikomi}環境内で，\textsf{ascmac.sty}で定義されている
+\textsf{itembox}環境などを用いると
+
+\begin{showEx}(.84,.9){mawarikomi \& itembox}
+\begin{mawarikomi}{}{%
+  \unitlength=1pt\relax
+  \begin{picture}(200,100)
+    \framebox(200,100){\Huge 図}
+  \end{picture}
+}
+あああ
+
+\begin{itembox}{みだし}
+アアアアアアアアアアアアアアアアアアアアアアアアアアアアアアアアアア
+\end{itembox}
+いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+\end{mawarikomi}
+\end{showEx}
+このけんかを収めるのは面倒ですから，
+\textsf{rectbox}環境で対応することにします。
+
+\begin{showEx}(.84,.9){itemboxに代えてEMpsrectbox}
+\begin{mawarikomi}{}{%
+  \unitlength=1pt\relax
+  \begin{picture}(200,100)
+    \framebox(200,100){\Huge 図}
+  \end{picture}
+}
+あああ
+
+\begin{EMpsrectbox}[item=みだし,rectboxoval]
+アアアアアアアアアアアアアアアアアアアアアアアアアアアアアアアアアア
+\end{EMpsrectbox}
+いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+\end{mawarikomi}
+\end{showEx}
+
+囲みが図を侵食することはなくなりましたが，
+\textsf{mawarikomi}終了のタイミングがずれています。
+これは\textsf{mawarikomi}環境の\verb+[..]+オプションで調整します。
+
+\begin{showEx}(.84,.9){mawarikomi 行数の調整}
+\begin{mawarikomi}[-3]{}{%
+  \unitlength=1pt\relax
+  \begin{picture}(200,100)
+    \framebox(200,100){\Huge 図}
+  \end{picture}
+}
+あああ
+
+\begin{EMpsrectbox}[item=みだし,rectboxoval]
+アアアアアアアアアアアアアアアアアアアアアアアアアアアアアアアアアア
+\end{EMpsrectbox}
+いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+\end{mawarikomi}
+\end{showEx}
+
+この例では上手くいきましたが，所詮間に合わせでして，
+\textsf{mawarikomi}環境下で囲みを使う，
+などというセコイことはいかがなものでしょうか。
+\bigskip
+
+最後に別法です。
+
+\textsf{mawarikomi}環境を終了させ，
+\textsf{minipage}環境で横幅を制限してから，
+\textsf{itembox}を用いる方法もあります。
+
+\textsf{mawarikomi}環境では，テキスト部の横幅が\cmd{EMWRlinewidth}に
+保存されています。この変数は大域変数で，\textsf{mawarikomi}環境が終了した後でも
+値が保存されています。
+
+\begin{showEx}(.84,.9){別法}
+\begin{mawarikomi}[-5]{}{%
+  \unitlength=1pt\relax
+  \begin{picture}(200,100)
+    \framebox(200,100){\Huge 図}
+  \end{picture}
+}
+あああ
+\end{mawarikomi}
+
+\begin{minipage}{\EMWRlinewidth}
+\begin{itembox}{みだし}
+アアアアアアアアアアアアアアアアアアアアアアアアアアアアアアアアアア
+\end{itembox}
+\end{minipage}
+\begin{mawarikomi*}
+いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+\end{mawarikomi*}
+\end{showEx}
+
+\subsubsection{\textsf{rectbox}環境の併用}
+\textsf{emathPs.sty}をロードしていても，
+\textsf{rectbox}を用いることは可能です。
+
+ただし，\textsf{rectbox}環境の罫線は，
+\cmd{drawline}を用いる --- すなわち \texttt{tpic-specials}に
+依存します。したがって
+\begin{jquote}
+\begin{verbatim}
+\usepackage{epic,eepic}
+\end{verbatim}
+\end{jquote}
+をプリアンブルに宣言しておく必要があります。
+
+\begin{showEx}(.9,1){\textsf{rectbox}環境}
+\begin{rectbox}
+あああああああああああああああああああ
+あああああああああああああああああああ
+あああああああああああああああああああ
+
+いいいいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいいいい
+いいいいいいいいいいいいいいいいいいい
+\end{rectbox}
+\end{showEx}
+
+\subsection{\texttt{EPSfilename=..}オプション}
+\textsf{pszahyou}環境でEPSファイルが作成されますが，
+作成するEPSファイルの名前を指定できるようにしました。
+
+さらに，作成したEPSファイルは\textsf{pszahyou}環境で
+読み込まれるのが原則ですが，ここでは読み込まず，
+別のところで読み込むことも可能としました。
+
+下の例では，数字を三角形で囲んだもので番号付けをしていますが，
+枠の三角形を\textsf{pszahyou}環境を用いてEPSファイル化したものを
+用いています。
+
+2桁の数字は枠にかかっています。2桁も使用したいのなら，
+プリアンブルの
+\begin{jquote}
+\begin{verbatim}
+\def\ippen{1.6em}% 1桁数字
+\end{verbatim}
+\end{jquote}
+右辺値を大きくするなり，文字サイズを小さくするなりの修正が必要です。
+
+% --- EPS ファイルの作成 -------------
+\def\ippen{1.6em}% 1桁数字
+\def\Sankaku#1{{%
+  \unitlength\ippen\relax
+  \begin{picture}(1,.766)%
+    \put(0,-.15){\includegraphics{sankaku.eps}}%
+    \put(.5,0){\makebox(0,0)[b]{#1}}%
+  \end{picture}}}
+\smash{\makebox[0pt]{%
+\begin{pszahyou*}[ul=\ippen,EPSfilename=sankaku.eps,includeEPS=false]%
+                  (0,1)(0,.866)
+  \setlinewidth{4}%
+  \Takakkei{(.1,.1)(.9,.1)(.5,.856)}%
+\end{pszahyou*}}}%
+% ------------------------------------
+\begin{enumerate}[\protect\expandafter\Sankaku 1]
+\item あああああ
+\item いいいいい
+\item ううううう
+\item ううううう
+\item ううううう
+\item ううううう
+\item ううううう
+\item ううううう
+\item ううううう
+\item ううううう
+\end{enumerate}
+
+\subsection{下線}
+%\subsubsection{\texorpdfstring{\cmd{pskasen}}{pskasen}}
+\subsubsection{\cmd{pskasen}}
+下線を eps画像にして処理しようという試みです。
+
+ただし，行をまたぐことはしません。
+また，この文書で述べていることは暫定的なもので，
+仕様が変化することがありますから，ご承知おき願います。
+
+%\subsubsection{\texorpdfstring{\cmd{underline}}{underline}との比較}
+\subsubsection{\cmd{underline}との比較}
+\LaTeX 標準の\cmd{underline}と同じことをする\cmd{pskasen}から見て行きます。
+
+\begin{showEx}(.6,.34){比較}
+\underline{あいうえお}\quad
+\pskasen{あいうえお}
+\end{showEx}
+
+
+\subsubsection{数式モードでは}
+数式モードでの使用を見ておきましょう。
+
+\begin{showEx}(.6,.34){数式モード}
+\pskasen{$\bunsuu12$}
+$\pskasen{\bunsuu12}$
+\end{showEx}
+
+\begin{showEx}(.6,.34){別行立て数式モード}
+\[ x=\pskasen{\bunsuu12} \]
+\end{showEx}
+
+\subsubsection{下線の太さ}
+\cmd{pskasen}は，画像ですから，いろいろな細工が可能です。
+
+下線の太さを変更するには\verb+<linewidth=..>+オプションです。
+デフォルトの右辺値は\texttt{4}としてあります。
+
+\begin{showEx}(.6,.34){下線の太さ}
+\pskasen<linewidth=20>{あいうえお}
+\end{showEx}
+
+\subsubsection{下線を破線で}
+下線を破線とするには，\verb+<dash=..>+オプションを用います。
+
+
+\begin{showEx}(.6,.34){下線を破線で}
+\pskasen<dash={2,2}>{あいうえお}
+\end{showEx}
+
+\subsubsection{二重下線}
+下線を二重とするには，\cmd{pskasen}に\verb+[..]+オプションを与えます。
+\verb+[ ]+内の数値は二本線の間隔で，単位は\verb+pt+です。
+
+\begin{showEx}(.6,.34){二重下線}
+\pskasen[1.5]{あいうえお}
+\end{showEx}
+
+\subsubsection{下線に色}
+下線に色をつけるには，\cmd{pskasen}に\verb+<iro=..>+オプションを与えます。
+
+\begin{showEx}(.6,.34){色付き下線}
+\pskasen<iro=red>{あいうえお}
+\end{showEx}
+
+\subsubsection{下線上下の間隔}
+下線と下線をつけた文字列との間隔を調整するには，
+コマンド\cmd{kasenUehosei}の引数に増減する数値（単位付）を与えます。
+下線は，正の値で下方に，負の値で上方に移動します。
+
+\begin{showEx}(.6,.34){\cmd{kasenUehosei}}
+\kasenUehosei{-6pt}%
+\pskasen<iro=red>[2]{あいうえお}
+\end{showEx}
+
+下線とその下の行との間隔を調整するコマンドが\cmd{kasenSitahosei}です。
+
+\begin{showEx}(.6,.34){\cmd{kasenSiahosei}}
+\pskasen{あいうえお}
+おおおおおおおおおおおおおおおおお
+おおおおおおおおおおおおおおおおお
+おおおおおおおおおおおおおおおおお
+
+\kasenSitahosei{10pt}%
+\pskasen{あいうえお}
+おおおおおおおおおおおおおおおおお
+おおおおおおおおおおおおおおおおお
+おおおおおおおおおおおおおおおおお
+\end{showEx}
+
+第1段落が標準の間隔です。
+第2段落は下線の下を\texttt{10pt}増やすように指示されています。
+
+\subsubsection{左右のアキ}\label{zengo}
+下線をつけた部分と，その前後の文章とのアキについては，
+\cmd{underline}のそれと同様に少しあけることとしました。
+
+\begin{showEx}(.6,.34){前後のアキ}
+\cmd{unerline}の場合から見ましょう。
+
+あいうえお\underline{かきくけこ}さしすせそ
+
+次に\cmd{pskasen}の場合です。
+
+あいうえお\pskasen{かきくけこ}さしすせそ
+\end{showEx}
+
+
+
+\subsubsection{下線近辺に文字配置}\label{sayuu}
+下線の左端など，下線の近辺に文字列を配置したいことがあります。
+そのために，\cmd{pskasen}（あるいは\cmd{psnamikasen}）に
+\verb+'....'+オプションを用意しました。
+\verb+'.....'+内に，下線を引く\textsf{pszahyou*}環境内に記述する
+コマンドを書くことができます。
+
+\begin{showEx}(.6,.34){\texttt{'.....'オプション}}
+\verb+'.....'+内に記述したものは，
+下線を描画する\textsf{pszahyou}環境に
+置かれます。この環境の原点は，下線の左端です。
+\pskasen%
+  '\Put\O(0,0)[c]{$\bullet$}'%
+  {あいうえお}
+
+下線の右端は\cmd{XMAX}で，
+その座標は\verb+(\xmax,0)+となっています。
+\pskasen%
+  '\Put\XMAX(0,0)[c]{$\bullet$}'%
+  {あいうえお}
+\end{showEx}
+
+下線に番号を振って区別する例です。
+
+\begin{showEx}(.6,.34){下線に番号}
+あいう
+\pskasen<kasenSitahosei=5pt>%
+  '\Put\O(0,-2pt)[r]{\scriptsize (1)}'%
+  {かきくけこ}
+さしすせそ
+\pskasen%
+  '\Put\O(0,-2pt)[r]{\scriptsize (2)}'%
+  {なにぬねの}
+\begin{enumerate}[(1)]
+  \item 下線部(1)について...
+  \item 下線部(2)について...
+\end{enumerate}
+\end{showEx}
+\newpage
+
+%\subsubsection{\texorpdfstring{\cmd{pskasen}}{pskasen}の書式}
+\subsubsection{\cmd{pskasen}の書式}
+\cmd{pskasen}の書式です。\cmd{psnamikasen}も同様です。
+
+\begin{boxnote}
+\begin{verbatim}
+\pskasen<#1>[#2]'#3'#4
+  #1 : key=val の形式
+       有効なkeyは
+          linewidth
+          dash
+          iro
+          kasenUehosei（\kasenUehosei コマンドは有効範囲内すべてに効きます）
+          kasenSitahosei
+          kasenFunc (\psnamikasen に対してのみ)
+       で，いずれも効果は局所的です。
+  #2 : 下線を二重にするとき，二重線の間隔（無名数で単位はptがつきます。）
+  #3 : 下線を引くpszahyou環境内にそのまま配置されます。
+       そのpszahyou環境について
+           \unitlength は 1pt
+           原点（\O）は，下線の左端
+           右端が \XMAX, 座標は (\xmax,0)
+  #4 : 下線を引く対象
+\end{verbatim}
+\end{boxnote}
+
+\subsection{波下線}
+波下線を引くコマンドが\cmd{psnamikasen}です。
+
+\subsubsection{比較}
+新設した\cmd{psnamikasen}と\cmd{uwave}, \cmd{namikasen}とを比較してみます。
+
+\begin{showEx}(.6,.34){比較}
+\uwave{あいうえお}
+
+\namikasen{あいうえお}
+
+\psnamikasen{あいうえお}
+\end{showEx}
+
+\subsubsection{各種 option}
+\cmd{pskasen}に対する各種オプションなどは，
+\cmd{psnamikasen}に対しても有効です。
+
+\begin{showEx}(.6,.34){オプション}
+\psnamikasen{あいうえお}
+
+\psnamikasen[3]{あいうえお}
+
+\psnamikasen<iro=red>{あいうえお}
+
+\psnamikasen<linewidth=10>{あいうえお}
+\end{showEx}
+
+また，\cmd{kasenUehosei}, \cmd{kasenSitahosei}も使用できます。
+
+なお，これらはそれぞれ \cmd{namikasenUehosei}, \cmd{namikasenSitahosei}
+と同値なコマンドです。
+
+\subsubsection{波線の形状}
+波線は\textsf{pszahyou}環境で
+\begin{jquote}
+\begin{verbatim}
+\YGurafu*{sin(X)}
+\end{verbatim}
+\end{jquote}
+で描画されています。この部分を変更するオプションが
+\begin{jquote}
+\begin{verbatim}
+<kasenFunc=...>
+\end{verbatim}
+\end{jquote}
+オプションです。使用例をいくつかご覧ください。
+
+\begin{showEx}(.6,.34){波の高さ}
+\psnamikasen{あいうえお}
+
+\psnamikasen<%
+  kasenFunc={\YGurafu*{.5*sin(X)}}%
+>{あいうえお}
+\end{showEx}
+
+\begin{showEx}(.6,.34){波の周期}
+\psnamikasen{あいうえお}
+
+\psnamikasen<%
+  kasenFunc={\YGurafu*{sin(X/2)}}%
+>{あいうえお}
+\end{showEx}
+
+\begin{showEx}(.6,.34){ギザギザ波}
+\psnamikasen<%
+kasenFunc={\YGurafu*{%
+  4*min(.2*X-int(.2*X),1-.2*X+int(.2*X))}}
+>{あいうえお}
+\end{showEx}
+
+\begin{showEx}(.9,.9){雑}
+\namikasenUehosei{2pt}%
+\psnamikasen<%
+  kasenFunc={\YGurafu*{abs(2*sin(X/2))}}
+>{あいうえお}
+
+\psnamikasen<kasenFunc={%
+  \YNurii[1]{abs(2*sin(X/2))}{0}\xmin\xmax}
+>{あいうえお}
+
+\psnamikasen<kasenFunc={%
+  \YNurii[nuriiro=red]{4*min(.2*X-int(.2*X),1-.2*X+int(.2*X))}{0}\xmin\xmax}
+>{あいうえお}
+\end{showEx}
+
+%\subsection{\texorpdfstring{\cmd{ovalbox}}{ovalbox}}
+\subsection{\cmd{ovalbox}}
+\texttt{ovalbox}の枠線を eps画像にして処理しようという試みです。
+
+\subsubsection{\textsf{fancybox.sty} \& \textsf{eepic.sty}}
+\textsf{fancybox.sty}で定義されている\cmd{ovalbox}を\textsf{eepic.sty}を
+読み込んでいるソースファイルでタイプセットすると枠線が乱れます。
+
+\begin{showEx}{\cmd{ovalbox} \& \textsf{eepic.sty}}
+\ovalbox{$t=1$}
+\end{showEx}
+
+右上の四分円と上罫線がつながらなくなります（右下も同様）。
+
+%\subsubsection{\texorpdfstring{\cmd{emovalbox}}{emovalbox}}
+\subsubsection{\cmd{emovalbox}}
+\textsf{emath.sty}では，\cmd{emovalbox}を定義して対応することにしています。
+
+\begin{showEx}{\cmd{emovalbox}}
+\ovalbox{$t=1$}
+\emovalbox{$t=1$}
+\end{showEx}
+
+
+
+%\subsubsection{\texorpdfstring{\cmd{psovalbox}}{psovalbox}}
+\subsubsection{\cmd{psovalbox}}
+いずれ，罫線の太さを変えたいとか，四分円の半径を変えたい，
+といった要求が出てくる予感がしますので，枠線を eps 画像にして，
+細かい変更が可能なようにしたのが \cmd{psovalbox} です。
+
+\begin{showEx}{\cmd{psovalbox}}
+\ovalbox{$t=1$}
+\emovalbox{$t=1$}
+\psovalbox{$t=1$}
+\end{showEx}
+
+なお，このコマンド\cmd{psovalbox}は「perl との連携機能」を必要としません。
+
+\paragraph{罫線の太さ}
+枠は eps 画像ですから，印刷環境によって太さは異なる可能性があります。
+太くしてみましょう。\textsf{emathPs.sty} においては，線の太さの変更は
+\verb+linewidth=..+によって行われるのが原則です。
+
+\begin{showEx}{\texttt{linewidth=..}オプション}
+\psovalbox{$t=1$}~
+\psovalbox<linewidth=10>{$t=1$}
+\end{showEx}
+
+\verb+dash=..+オプションも有効ではあります。
+
+\begin{showEx}{\texttt{dash=..}オプション}
+\psovalbox{$t=1$}~
+\psovalbox<dash={1,2}>{$t=1$}
+\end{showEx}
+
+枠線を描画する\textsf{pszahyou*}環境の\cmd{unitlength}は\texttt{1pt}と
+なっています。それを前提に\verb+dash=...+の右辺値を与えなければなりません。
+
+\paragraph{\texttt{ovalsep=..}オプション}
+中のテキストと枠線との間は \cmd{fboxsep} だけ空くことになっていますが，
+これを変更するオプションです。
+
+\begin{showEx}{\texttt{ovalsep=..}オプション}
+\psovalbox{$t=1$}~
+\psovalbox<ovalsep=6pt>{$t=1$}
+\end{showEx}
+
+\paragraph{\texttt{ovalradius=..}オプション}
+コーナーの四分円の半径は，デフォルトでは\verb+2pt+となっていますが，
+これを変更するオプションです。
+
+\begin{showEx}{\texttt{ovalradius=..}オプション}
+\psovalbox{$t=1$}~
+\psovalbox<ovalradius=5pt>{$t=1$}
+\end{showEx}
+
+\paragraph{枠線をカラーで}
+枠罫線に色をつけるオプションが\verb+<iro=..>+です。
+
+\begin{showEx}{\texttt{iro=..}オプション}
+\psovalbox<iro=red>{$t=1$}
+\end{showEx}
+
+\paragraph{塗りつぶし}
+\cmd{psovalbox}内の背景を塗りつぶすコマンドが\cmd{psovalbox*}です。
+
+\begin{showEx}{\cmd{psovalbox*}}
+\psovalbox*{$t=1$}
+\end{showEx}
+
+塗りつぶしの濃度は\verb+[..]+オプションで指定するのは\cmd{Nuritubusi}と
+同様です。
+
+\begin{showEx}{濃度調整}
+\psovalbox*[0.2]{$t=1$}
+\end{showEx}
+
+背景をグレーではなく，色を指定するオプションが\verb+[nuriiro=..]+です。
+
+\begin{showEx}(.7,.24){背景色}
+\psovalbox*[nuriiro=yellow]{$t=1$}
+\end{showEx}
+
+枠線にも色を指定したりするには\verb+<...>+オプションを併用します。
+
+\begin{showEx}(.7,.24){枠線にも色}
+\psovalbox*[nuriiro=yellow]%
+  <iro=red,ovalsep=6pt,ovalradius=5pt>%
+  {$t=1$}
+\end{showEx}
+
+中のテキストにも色をつけるのは，\cmd{color}または\cmd{textcolor}を用います。
+
+\begin{showEx}(.7,.24){テキストにも色}
+\psovalbox*[nuriiro=yellow]%
+  <iro=red,ovalsep=6pt,ovalradius=5pt>%
+  {\textcolor{green}{$t=1$}}%
+\end{showEx}
+
+%\subsubsection{\texorpdfstring{\cmd{psovalbox}}{psovalbox}の書式}
+\subsubsection{\cmd{psovalbox}の書式}
+\cmd{psovalbox}の書式です。
+
+実は，\cmd{psovalbox}の正式コマンド名は\cmd{EMpsovalbox}です。
+\textsf{pstrick.sty}に\cmd{psovalbox}が既に定義されていますから，
+このスタイルを使用する際は，コマンド名の衝突が起きます。
+その場合は，\cmd{psovalbox}は\textsf{pstrick.sty}のものとし，
+\textsf{emathPs.sty}のコマンドは\cmd{EMpsovalbox}としてください。
+
+\begin{boxnote}
+\begin{verbatim}
+\EMpsovalbox<#1>#2
+    #1 : key=val の形式
+         有効なキー
+             linewidth
+             dash
+             ovalsep
+             ovalradius
+             iro
+    #2 : 枠で囲む文字列
+
+\EMpsovalbox*[#1]<#2>#3
+    #1 : 0〜1 の間の数値でグレーの濃度を指定（0 で白，1で黒）
+            または
+         nuriiro=.. で背景色を指定
+    #2 : \psovalbox の<#1>と同じ
+    #3 : 枠で囲む文字列
+\end{verbatim}
+\end{boxnote}
+
+\section{対応コマンド}
+従来のコマンドのうち，\textsf{pszahyou}環境でも使用可能なものです。
+ただし，オプション引数については少し異なるものもあります。
+
+%\subsection{\texorpdfstring{\cmd{Drawline}}{Drawline}}
+\subsection{\cmd{Drawline}}
+\begin{showEx}(.64,.3){\cmd{Drawline}}
+\begin{pszahyou}[ul=10mm](-1.2,1.5)(-1.2,1.5)
+  \tenretu{A(-1,-1)w;B(1,-1)e;C(1,1)e;D(-1,1)w}
+  \Drawline{\A\C}
+  \setlinewidth{3}
+  \Drawline{\B\D}
+\end{pszahyou}
+\end{showEx}
+
+デフォルトの線幅は \texttt{tpic specials}のそれと比べると太くなっています
+（上図の線分AC）。これを変更するコマンドが新設の
+\begin{jquote}
+\begin{verbatim}
+\setlinewidth
+\end{verbatim}
+\end{jquote}
+で，\texttt{tpic}のデフォルトは\verb+\setlinewidth{3}+としたものと
+大体同じです。（線分BD）
+
+\subsubsection{\texttt{<linewidth=..>}オプション}
+\cmd{setlinewidth}コマンドによって，線の太さを変えられますが，
+この変更は以降すべてに効いてきます。グルーピングは無効です。
+
+\begin{showEx}(.64,.3){\cmd{setlinewidth}による変更}
+\begin{pszahyou}[ul=10mm](-1.2,1.5)(-1.2,1.5)
+  \tenretu{A(-1,-1)w;B(1,-1)e;C(1,1)e;D(-1,1)w}
+  \Drawline{\A\B}
+{%
+  \setlinewidth{3}
+  \Drawline{\B\C}
+}%
+  \Drawline{\C\D}
+\end{pszahyou}
+\end{showEx}
+
+この図で，線分ABはデフォルトの太さで引かれます。線分BCは\verb+setlinewidth{3}+
+により，細めになりますが，そのグルーピングが終わっても線分の太さはデフォルトに
+は戻りません。
+
+そこで，\cmd{Drawline}のオプション引数で，局所的な線分の太さを変更する機能を
+附加しました。
+
+\begin{showEx}(.64,.3){\texttt{linewidth=..}オプションによる変更}
+\begin{pszahyou}[ul=10mm](-1.2,1.5)(-1.2,1.5)
+  \tenretu{A(-1,-1)w;B(1,-1)e;C(1,1)e;D(-1,1)w}
+  \Drawline{\A\B}
+  \Drawline<linewidth=3>{\B\C}
+  \Drawline{\C\D}
+\end{pszahyou}
+\end{showEx}
+
+今度は，線分BCのみが線幅を変更され，次の\verb+\Drawline{\C\D}+によって
+引かれる線分CDの線幅はデフォルトに戻っています。
+
+\subsubsection{\texttt{<dash=..>}オプション}
+破線にするコマンド\cmd{setdash}も，以降すべてに効いてきます。
+局所的な変更は\cmd{Drawline}に\texttt{dash=}オプションをつけてください。
+
+\begin{showEx}(.64,.3){\texttt{dash=..}オプションによる変更}
+\begin{pszahyou}[ul=10mm](-1.2,1.5)(-1.2,1.5)
+  \tenretu{A(-1,-1)w;B(1,-1)e;C(1,1)e;D(-1,1)w}
+  \Drawline{\A\B}
+  \Drawline<dash={0.2,0.2}>{\B\C}
+  \Drawline{\C\D}
+\end{pszahyou}
+\end{showEx}
+
+オフセットを附加したいときは
+
+\begin{showEx}(.64,.3){\texttt{dash=..}オプション（オフセット付）}
+\begin{pszahyou}[ul=10mm](-1.2,1.5)(-1.2,1.5)
+  \tenretu{A(-1,-1)w;B(1,-1)e;C(1,1)e;D(-1,1)w}
+  \Drawline{\A\B}
+  \Drawline<dash=[.1]{0.2,0.2}>{\B\C}
+  \Drawline{\C\D}
+\end{pszahyou}
+\end{showEx}
+
+線幅指定オプションとの併用も可能です。
+
+\begin{showEx}(.64,.3){\texttt{dash, linewidth}オプション併用}
+\begin{pszahyou}[ul=10mm](-1.2,1.5)(-1.2,1.5)
+  \tenretu{A(-1,-1)w;B(1,-1)e;C(1,1)e;D(-1,1)w}
+  \Drawline{\A\B}
+  \Drawline<linewidth=3,dash=[.1]{0.2,0.2}>{\B\C}
+  \Drawline{\C\D}
+\end{pszahyou}
+\end{showEx}
+
+\subsubsection{\texttt{<iro=..>}オプション}
+\bgroup
+\def\byouga{%
+  \def\Fx{X*X/2}
+  \def\ASTx{2*cos(T)**3}
+  \def\ASTy{2*sin(T)**3}
+  \tenretu{A(-2,-2)s;B(2,2)n;C(-2,2)n}
+  \YGurafu*[iro=cyan]\Fx
+  \BGurafu[iro=magenta]\ASTx\ASTy{0}{2*$pi}
+  \Put\O{\Daenko<iro=yellow>{2.5}{1.5}{-90}{90}}
+  \En<iro=skyblue>\O{2}
+  \Drawline<iro=red>{\A\B}
+  \Drawline<iro=blue>{\B\C}
+  \Drawline<iro=green>{\C\A}
+}
+\cmd{color}コマンドを発行すると，いわゆる「空白の混入」が起きやすくなります。
+一例です。
+
+\begin{showEx}{空白の混入}
+\begin{zahyou}[ul=8mm]%
+    (-3,3)(-3,3)
+\tenretu{%
+    A(-2,-2)s;B(2,2)n;C(-2,2)n}
+\kuromaru{\A;\B;\C}
+\En\O{2.828}
+{\color{red}\Drawline{\A\B}}
+{\color{green}\Drawline{\B\C}}
+\end{zahyou}
+\end{showEx}
+
+3点A, B, C, 円および線分AB（赤）は正しい位置に描画されていますが，
+線分BC（緑）は，半角空白分右にずれています。
+（座標軸，また然り。）
+
+これは，\verb+\color+の責任というよりは，
+\verb+\color+による色変更を局所的にするためのグルーピング終了記号`\}'の
+後ろに`\%'を補うことを怠っているために発生しているのです。
+
+行末に`\%'を補ってみましょう。
+
+\begin{showEx}{行末に`\%'}
+\begin{zahyou}[ul=8mm]%
+    (-3,3)(-3,3)
+\tenretu{%
+    A(-2,-2)s;B(2,2)n;C(-2,2)n}
+\kuromaru{\A;\B;\C}
+\En\O{2.828}
+{\color{red}\Drawline{\A\B}}%
+{\color{green}\Drawline{\B\C}}%
+\end{zahyou}
+\end{showEx}
+
+ずれは解消しましたが，うっかり忘れそうですから，別の回避法を紹介しておきます。
+
+\begin{showEx}{\texttt{iro=red}オプション}
+\begin{zahyou}[ul=8mm]
+    (-3,3)(-3,3)
+\tenretu{
+    A(-2,-2)s;B(2,2)n;C(-2,2)n}
+\kuromaru{\A;\B;\C}
+\En\O{2.828}
+\Drawline<iro=red>{\A\B}
+\Drawline<iro=green>{\B\C}
+\end{zahyou}
+\end{showEx}
+
+\verb+<iro=red>+オプションによる色変更は，
+当該コマンドのみに働きます。その使用例を追加しておきます。
+
+\begin{jquote}
+\begin{verbatim}
+\def\byouga{%
+  \def\Fx{X*X/2}
+  \def\ASTx{2*cos(T)**3}
+  \def\ASTy{2*sin(T)**3}
+  \tenretu{A(-2,-2)s;B(2,2)n;C(-2,2)n}
+  \YGurafu*[iro=cyan]\Fx
+  \BGurafu[iro=magenta]\ASTx\ASTy{0}{2*$pi}
+  \Put\O{\Daenko<iro=yellow>{2.5}{1.5}{-90}{90}}
+  \En<iro=skyblue>\O{2}
+  \Drawline<iro=red>{\A\B}
+  \Drawline<iro=blue>{\B\C}
+  \Drawline<iro=green>{\C\A}
+}
+\end{verbatim}
+\end{jquote}
+
+を\textsf{zahyou}環境内で実行すると，
+
+\begin{center}
+\begin{zahyou}[ul=10mm](-3,3)(-3,3)%
+\byouga
+\end{zahyou}
+\end{center}
+
+次いで，\textsf{pszahyou}環境内では
+
+\begin{center}
+\begin{pszahyou}[ul=10mm](-3,3)(-3,3)
+  \def\Fx{X*X/2}
+  \def\ASTx{2*cos(T)**3}
+  \def\ASTy{2*sin(T)**3}
+  \tenretu{A(-2,-2)s;B(2,2)n;C(-2,2)n}
+  \YGurafu*[iro=cyan]\Fx
+  \BGurafu[iro=magenta]\ASTx\ASTy{0}{2*$pi}
+  \Put\O{\Daenko<iro=yellow>{2.5}{1.5}{-90}{90}}
+  \En<iro=skyblue>\O{2}
+  \Drawline<iro=red>{\A\B}
+  \Drawline<iro=blue>{\B\C}
+  \Drawline<iro=green>{\C\A}
+\end{pszahyou}
+\end{center}
+\egroup
+
+%\subsection{\texorpdfstring{\cmd{Takakkei}}{Takakkei}}
+\subsection{\cmd{Takakkei}}
+これは新設のコマンドです。いままで多角形を描画するには\cmd{Drawline}を
+用いてきました。
+これは，\textsf{pszahyou}環境でももちろん使用可能です。
+
+以下の図では，問題点を強調するため，線幅を太くしています。
+
+\begin{showEx}(.64,.3){従来の多角形描画}
+\begin{zahyou}[ul=10mm](-1.2,1.5)(-1.2,1.5)
+  \tenretu{A(-1,-1)w;B(1,-1)e;C(1,1)e;D(-1,1)w}
+  {\allinethickness{4pt}\Drawline{\A\B\C\D\A}}%
+\end{zahyou}
+\end{showEx}
+
+\begin{showEx}(.64,.3){\textsf{pszahyou}環境での多角形描画}
+\begin{pszahyou}[ul=10mm](-1.2,1.5)(-1.2,1.5)
+  \tenretu{A(-1,-1)w;B(1,-1)e;C(1,1)e;D(-1,1)w}
+  \setlinewidth{40}%
+  \Drawline{\A\B\C\D\A}%
+\end{pszahyou}
+\end{showEx}
+
+上の2つの図を比較してください。特に頂点B, C, Dのところです。
+
+\textsf{pszahyou}環境を使用したほうが，
+縦横の線のつながり具合が良くなっていることにお気付きでしょうか。
+ただし，Aのところはいけませんね。これを改良したのが，
+今回新設した多角形コマンドです。
+
+
+\begin{showEx}(.64,.3){\cmd{Takakkei}}
+\begin{pszahyou}[ul=10mm](-1.2,1.5)(-1.2,1.5)
+  \tenretu{A(-1,-1)w;B(1,-1)e;C(1,1)e;D(-1,1)w}
+  \setlinewidth{40}%
+  \Takakkei{\A\B\C\D}%
+\end{pszahyou}
+\end{showEx}
+
+さらに，四角形ABCDを描画するのに，
+\begin{jquote}
+\cmd{Drawline}では \verb+\Drawline{\A\B\C\D\A}+\\
+としなければならなかったのですが，\\
+\cmd{Takakkei}では \verb+\Takakkei{\A\B\C\D}+\\
+で済むのも嬉しいことです。
+\end{jquote}
+
+三角形ではどうでしょう。
+
+\begin{showEx}(.64,.3){\cmd{三角形}}
+\begin{pszahyou*}[ul=10mm](-1.2,1.5)(-1.2,1.5)
+  \tenretu{A(-1,-1)w;B(1,-1)e;C(0,1)n}
+  \setlinewidth{40}%
+  \Takakkei{\A\B\C}%
+\end{pszahyou*}
+\end{showEx}
+
+最後に正六角形でのコーナリングを見てみましょう。
+
+\begin{showEx}(.64,.3){\cmd{Takakkei}}
+\begin{pszahyou*}[ul=10mm](-1.2,1.5)(-1.5,1.5)
+  \rtenretu{A(1,90)n;B(1,150)nw;C(1,-150)sw;%
+    D(1,-90)s;E(1,-30)se;F(1,30)ne}
+  \setlinewidth{40}%
+  \Takakkei{\A\B\C\D\E\F}%
+\end{pszahyou*}
+\end{showEx}
+
+%\subsection{\texorpdfstring{\cmd{zahyouMemori}}{zahyouMemori}}
+\subsection{\cmd{zahyouMemori}}
+\cmd{zahyouMemori}の線種・線幅の変更はいままでと異なる方法をとります。
+
+まず，デフォルトの確認です。
+
+\begin{showEx}(.5,.44){\cmd{zahyouMemori}}
+\begin{pszahyou}[ul=8mm]%
+    (-2.5,2.5)(-2.5,2.5)
+  \zahyouMemori[g]
+\end{pszahyou}
+\end{showEx}
+
+従来，線種を変更するには\verb+<sensyu=..>+, 
+線幅を変更するには\verb+<allinethickness=..>+オプションを用いてきましたが，
+\textsf{pszahyou}環境では，\cmd{Drawline}と同形式のオプションを用います。
+
+線種を実線にしてみましょう。
+
+\begin{showEx}(.5,.44){線種変更}
+\begin{pszahyou}[ul=8mm]%
+    (-2.5,2.5)(-2.5,2.5)
+  \zahyouMemori[g]<dash={}>
+\end{pszahyou}
+\end{showEx}
+
+線幅を座標軸と同じにします。
+
+\begin{showEx}(.5,.44){線幅変更}
+\begin{pszahyou}[ul=8mm]%
+    (-2.5,2.5)(-2.5,2.5)
+  \zahyouMemori[g]<linewidth=3>
+\end{pszahyou}
+\end{showEx}
+
+%\subsection{\texorpdfstring{\cmd{Put}}{Put}の\texttt{syaei=..}オプション}
+\subsection{\cmd{Put}の\texttt{syaei=..}オプション}
+\cmd{Put}に\verb+[syaei=..]+オプションをつける場合の，
+線種，線幅の変更も前節と同様です。
+
+まず，デフォルトです：
+
+\begin{showEx}(.5,.44){\texttt{syaei=..}オプション}
+\begin{pszahyou}[ul=8mm]%
+    (-2.5,2.5)(-.5,2.5)
+  \tenretu{A(2,1)ne}
+  \Put\A[syaei=xy]{}
+\end{pszahyou}
+\end{showEx}
+
+実線にしましょう。
+
+\begin{showEx}(.5,.44){\texttt{syaei=..}オプション}
+\begin{pszahyou}[ul=8mm]%
+    (-2.5,2.5)(-.5,2.5)
+  \tenretu{A(2,1)ne}
+  \Put\A[syaei=xy,dash={}]{}
+\end{pszahyou}
+\end{showEx}
+
+線幅変更です。
+
+\begin{showEx}(.5,.44){\texttt{syaei=..}オプション}
+\begin{pszahyou}[ul=8mm]%
+    (-2.5,2.5)(-.5,2.5)
+  \tenretu{A(2,1)ne}
+  \Put\A[syaei=xy,linewidth=3]{}
+\end{pszahyou}
+\end{showEx}
+
+%\subsection{\texorpdfstring{\cmd{ArrowLine}}{ArrowLine}}
+\subsection{\cmd{ArrowLine}}
+\begin{showEx}(.64,.3){\cmd{ArrowLine}}
+\begin{pszahyou}[ul=10mm](-1.2,1.5)(-1.2,1.5)
+  \tenretu{A(-1,-1)w;B(1,-1)e;C(1,1)e;D(-1,1)w}
+  \ArrowLine\B\D
+\end{pszahyou}
+\end{showEx}
+
+\cmd{ArrowLine}において，鏃の形状を変更するコマンドは，従来の
+\begin{jquote}
+\begin{verbatim}
+\ArrowHeadSize
+\end{verbatim}
+\end{jquote}
+とは別のコマンド\cmd{setarrowsize}を使用します。
+その際，\verb+<..>+オプションをつけると，窪みをつけることができます。
+
+\begin{showEx}(.64,.3){\cmd{setarrowsize}}
+\begin{pszahyou}[ul=10mm](-1.2,1.5)(-1.2,1.5)
+  \tenretu{A(-1,-1)w;B(1,-1)e;C(1,1)e;D(-1,1)w}
+  \setarrowsize<.33>{6}{40}{80}
+  \ArrowLine\B\D
+\end{pszahyou}
+\end{showEx}
+
+矢線に色をつけるには，\verb+<iro=..>+オプションを用います。
+
+\begin{showEx}(.64,.3){\cmd{ArrowLine}に色付け}
+\begin{pszahyou}[ul=10mm](-1.2,1.5)(-1.2,1.5)
+  \tenretu{A(-1,-1)w;B(1,-1)e;C(1,1)e;D(-1,1)w}
+  \ArrowLine<iro=red>\B\D
+\end{pszahyou}
+\end{showEx}
+
+%\subsection{\texorpdfstring{\cmd{Kuromaru}, \cmd{Siromaru}}{Kuromaru, Siromaru}}
+\subsection{\cmd{Kuromaru}, \cmd{Siromaru}}
+\begin{showEx}(.64,.3){\cmd{kuromaru}}
+\begin{pszahyou}[ul=10mm](-1.2,1.5)(-1.2,1.5)
+  \tenretu{A(-1,-1)w;B(1,-1)e;C(1,1)e;D(-1,1)w}
+  \kuromaru{\A;\B;\C;\D}
+\end{pszahyou}
+\end{showEx}
+
+上では，\cmd{kuromaru}を使っていますが，\cmd{Kuromaru}も使用可能です。
+次は\cmd{Siromaru}の使用例です。座標軸上に白丸を打つには，
+座標軸の描画タイミングも問題であることは\texttt{sampleP.tex}でも触れました。
+
+\begin{showEx}(.64,.3){\cmd{Siromaru}}
+\begin{pszahyou*}[ul=10mm](-1,2)(-1,1)
+  \def\A{(1,0)}
+  \drawXYaxis
+  \setlinewidth{3}
+  \Siromaru[2pt]\A
+\end{pszahyou*}
+\end{showEx}
+
+%\subsection{\texorpdfstring{\cmd{Nuritubusi}}{Nuritubusi}}
+\subsection{\cmd{Nuritubusi}}
+\begin{showEx}(.64,.3){\cmd{Nuritubusi}}
+\begin{pszahyou}[ul=10mm](-1.2,1.5)(-1.2,1.5)
+  \tenretu{A(-1,-1)w;B(1,-1)e;C(1,1)e;D(-1,1)w}
+  \Nuritubusi{\A\B\C\D}
+  \setlinewidth{3}
+  \Takakkei{\A\B\C\D}
+\end{pszahyou}
+\end{showEx}
+
+斜線塗りも可能です。
+
+\begin{showEx}(.64,.3){\cmd{Nuritubusi*}}
+\begin{pszahyou}[ul=10mm](-1.2,1.5)(-1.2,1.5)
+  \tenretu{A(-1,-1)w;B(1,-1)e;C(1,1)e;D(-1,1)w}
+  \setlinewidth{3}
+  \Nuritubusi*{\A\B\C\D}
+  \Takakkei{\A\B\C\D}
+\end{pszahyou}
+\end{showEx}
+
+%\subsection{\texorpdfstring{\cmd{En}}{En}}
+\subsection{\cmd{En}}
+\begin{showEx}(.64,.3){\cmd{En}}
+\begin{pszahyou}[ul=10mm](-.5,2.5)(-.5,2.5)
+  \tenretu{C(1,1)n}
+  \Kuromaru\C
+  \setlinewidth{3}
+  \En{\C}{1}
+\end{pszahyou}
+\end{showEx}
+
+塗りつぶしも可能です。
+
+\begin{showEx}(.64,.3){\cmd{En*}}
+\begin{pszahyou}[ul=10mm](-.5,2.5)(-.5,2.5)
+  \tenretu{C(1,1)n}
+  \setlinewidth{3}
+  \En{\C}{1}
+  \En*{\C}{1}
+  \Kuromaru\C
+\end{pszahyou}
+\end{showEx}
+
+斜線塗りです。
+
+\begin{showEx}(.64,.3){\cmd{En**}}
+\begin{pszahyou}[ul=10mm](-.5,2.5)(-.5,2.5)
+  \tenretu{C(1,1)n}
+  \setlinewidth{3}
+  \En{\C}{1}
+  \En**{\C}{1}
+  \Kuromaru\C
+\end{pszahyou}
+\end{showEx}
+
+%\subsection{\texorpdfstring{\cmd{Enko}}{Enko}}
+\subsection{\cmd{Enko}}
+\begin{showEx}(.64,.3){\cmd{Enko}}
+\begin{pszahyou}[ul=10mm](-.5,2.5)(-.5,2.5)
+  \tenretu{A(0,1)nw;C(1,1)n;B(2,1)ne}
+  \Kuromaru\C
+  \setlinewidth{3}
+  \Enko{\C}{1}{-180}{0}
+  \Hasen{\A\B}
+\end{pszahyou}
+\end{showEx}
+
+端点に矢印をつけてみましょう。
+
+\begin{showEx}(.64,.3){\cmd{Enko}の\texttt{yazirusi=.}オプション}
+\begin{pszahyou}[ul=10mm](-.5,2.5)(-.5,2.5)
+  \tenretu{A(0,1)nw;C(1,1)n;B(2,1)ne}
+  \Kuromaru\C
+  \setlinewidth{3}
+  \Enko<yazirusi=a>{\C}{1}{-180}{0}
+  \Hasen{\A\B}
+\end{pszahyou}
+\end{showEx}
+
+%\subsection{\texorpdfstring{\cmd{ougigata}}{ougigata}}
+\subsection{\cmd{ougigata}}
+\begin{showEx}(.64,.3){\cmd{ougigata}}
+\begin{pszahyou}[ul=10mm](-.5,2.5)(-.5,1.5)
+  \tenretu{C(1,0)s}
+  \Put\C{\ougigata{1}{30}{150}}
+\end{pszahyou}
+\end{showEx}
+
+塗りつぶし，斜線塗りも可能です。
+
+\begin{showEx}(.64,.3){\cmd{ougigata*}}
+\begin{pszahyou}[ul=10mm](-.5,2.5)(-.5,1.5)
+  \tenretu{C(1,0)s}
+  \Put\C{\ougigata*{1}{30}{150}}
+\end{pszahyou}
+\end{showEx}
+
+\begin{showEx}(.64,.3){\cmd{ougigata**}}
+\begin{pszahyou}[ul=10mm](-.5,2.5)(-.5,1.5)
+  \tenretu{C(1,0)s}
+  \Put\C{\ougigata{1}{30}{150}}
+  \setlinewidth{1}
+  \Put\C{\ougigata**{1}{30}{150}}
+\end{pszahyou}
+\end{showEx}
+
+%\subsection{\texorpdfstring{\cmd{yumigata}}{yumigata}}
+\subsection{\cmd{yumigata}}
+\begin{showEx}(.64,.3){\cmd{yumigata}}
+\begin{pszahyou}[ul=10mm](-.5,2.5)(-.5,1.5)
+  \tenretu{C(1,0)s}
+  \Put\C{\yumigata{1}{30}{150}}
+\end{pszahyou}
+\end{showEx}
+
+塗りつぶし，斜線塗りも可能です。
+
+\begin{showEx}(.64,.3){\cmd{yumigata*}}
+\begin{pszahyou}[ul=10mm](-.5,2.5)(-.5,1.5)
+  \tenretu{C(1,0)s}
+  \Put\C{\yumigata*{1}{30}{150}}
+\end{pszahyou}
+\end{showEx}
+
+\begin{showEx}(.64,.3){\cmd{yumigata**}}
+\begin{pszahyou}[ul=10mm](-.5,2.5)(-.5,1.5)
+  \tenretu{C(1,0)s}
+  \Put\C{\yumigata{1}{30}{150}}
+  \setlinewidth{1}
+  \Put\C{\yumigata**{1}{30}{150}}
+\end{pszahyou}
+\end{showEx}
+
+%\subsection{\texorpdfstring{\cmd{Daen}}{Daen}}
+\subsection{\cmd{Daen}}
+
+\begin{showEx}(.64,.3){\cmd{Daen}}
+\begin{pszahyou}[ul=5mm](-1.5,3.5)(-1.5,1.5)
+  \def\A{(1,0)}
+  \Daen\A{2}{1}
+\end{pszahyou}
+\end{showEx}
+
+塗りです。
+
+\begin{showEx}(.64,.3){\cmd{Daen*}}
+\begin{pszahyou}[ul=5mm](-1.5,3.5)(-1.5,1.5)
+  \def\A{(1,0)}
+  \Daen*\A{2}{1}
+\end{pszahyou}
+\end{showEx}
+
+\begin{showEx}(.64,.3){\cmd{Daen**}}
+\begin{pszahyou}[ul=5mm](-1.5,3.5)(-1.5,1.5)
+  \def\A{(1,0)}
+  \Daen\A{2}{1}
+  \setlinewidth{3}
+  \Daen**\A{2}{1}
+\end{pszahyou}
+\end{showEx}
+
+点線描画は，\cmd{setdash}を利用します。
+
+\begin{showEx}(.64,.3){点線描画}
+\begin{pszahyou}[ul=5mm](-1.5,3.5)(-1.5,1.5)
+  \def\A{(1,0)}
+  \setdash{0.2,0.2}
+  \Daen\A{2}{1}
+  \setdash{}
+\end{pszahyou}
+\end{showEx}
+
+%\subsection{\texorpdfstring{\cmd{Daenko}}{Daenko}}
+\subsection{\cmd{Daenko}}
+
+\begin{showEx}(.64,.3){\cmd{Daenko}}
+\begin{pszahyou}[ul=5mm](-1.5,3.5)(-1.5,1.5)
+  \def\A{(1,0)}
+  \Put\A{\Daenko{2}{1}{0}{180}}
+  \setdash{0.2,0.2}
+  \Put\A{\Daenko{2}{1}{-180}{0}}
+  \setdash{}
+\end{pszahyou}
+\end{showEx}
+
+%\subsection{\texorpdfstring{\cmd{YGurafu}}{YGurafu}}
+\subsection{\cmd{YGurafu}}
+$y=f(x)$のグラフを描画するコマンド\cmd{YGurafu}も
+\textsf{pszahyou}環境で使用することが出来ます。
+一例として，$y=x^3-3x$のグラフをかいてみましょう。
+
+\begin{showEx}(.6,.34){\cmd{YGurafu}}
+\begin{pszahyou}[ul=8mm](-2.5,2.5)(-2.5,2.5)
+  \tenretu*{A(-1,2);B(1,-2)}
+  \def\Fx{X*(X*X-3)}
+  \YGurafu*\Fx
+  \setlinewidth{1}
+  \Put\A[syaei=xy]{}
+  \Put\B[syaei=xy]{}
+\end{pszahyou}
+\end{showEx}
+
+グラフの破線描画オプションも使用可能です。
+
+\begin{showEx}(.6,.34){\cmd{YGurafu}の破線描画}
+\begin{pszahyou}[ul=8mm](-2.5,2.5)(-2.5,2.5)
+  \tenretu*{A(-1,2);B(1,-2)}
+  \def\Fx{X*(X*X-3)}
+  \YGurafu*(.1)(.05)\Fx
+  \setlinewidth{1}
+  \Put\A[syaei=xy]{}
+  \Put\B[syaei=xy]{}
+\end{pszahyou}
+\end{showEx}
+
+しかし，\textsf{pszahyou}環境では，\cmd{setdash}を利用した方が良いでしょう。
+
+\begin{showEx}(.6,.34){\cmd{setdash}による破線描画}
+\begin{pszahyou}[ul=8mm](-2.5,2.5)(-2.5,2.5)
+  \tenretu*{A(-1,2);B(1,-2)}
+  \def\Fx{X*(X*X-3)}
+  \setdash{0.1,0.1}
+  \YGurafu*\Fx
+  \setlinewidth{1}
+  \Put\A[syaei=xy]{}
+  \Put\B[syaei=xy]{}
+\end{pszahyou}
+\end{showEx}
+
+\begin{showEx}(.6,.34){\cmd{setdash}による鎖線描画}
+\begin{pszahyou}[ul=8mm](-2.5,2.5)(-2.5,2.5)
+  \tenretu*{A(-1,2);B(1,-2)}
+  \def\Fx{X*(X*X-3)}
+  \setdash{0.3,0.1,0.1,0.1}
+  \YGurafu*\Fx
+  \setlinewidth{1}
+  \Put\A[syaei=xy]{}
+  \Put\B[syaei=xy]{}
+\end{pszahyou}
+\end{showEx}
+
+
+%\subsection{\texorpdfstring{\cmd{YNuri}}{YNuri}}
+\subsection{\cmd{YNuri}}
+\begin{showEx}(.6,.34){\cmd{YNuri}}
+\begin{pszahyou}[ul=8mm](-2,2)(-1.5,3)
+  \def\Fx{X*X-1}
+  \YNuri\Fx{-1}{1}
+  \YGurafu*\Fx
+\end{pszahyou}
+\end{showEx}
+
+斜線塗りです。
+
+\begin{showEx}(.6,.34){\cmd{YNuri*}}
+\begin{pszahyou}[ul=8mm](-2,2)(-1.5,3)
+  \def\Fx{X*X-1}
+  \YGurafu*\Fx
+  \setlinewidth{3}
+  \YNuri*\Fx{-1}{1}
+\end{pszahyou}
+\end{showEx}
+
+%\subsection{\texorpdfstring{\cmd{YNurii}}{YNurii}}
+\subsection{\cmd{YNurii}}
+\begin{showEx}(.6,.34){\cmd{YNurii}}
+\begin{pszahyou}[ul=8mm,xscale=1.5](-1,2)(-.5,4)
+  \tenretu*{T(1,\Napier)}
+  \def\Fx{exp(X)}
+  \def\Gx{\Napier*X}
+  \YNurii\Fx\Gx{0}{1}
+  \YGurafu*\Fx
+  \YGurafu*\Gx
+  \setlinewidth{3}
+  \Put\T[syaei=xy,ylabel=$e$]{}
+\end{pszahyou}
+\end{showEx}
+
+\textsf{pszahyou}環境のもとになっている\textsf{zahyou}環境は，
+\texttt{emathPxy.sty}のそれですから，\texttt{xscale, yscale}が有効
+（のはず）です。
+
+斜線塗りです。
+
+\begin{showEx}(.6,.34){\cmd{YNurii*}}
+\begin{pszahyou}[ul=8mm,xscale=1.5](-1,2)(-.5,4)
+  \tenretu*{T(1,\Napier)}
+  \def\Fx{exp(X)}
+  \def\Gx{\Napier*X}
+  \YGurafu*\Fx
+  \YGurafu*\Gx
+  \setlinewidth{3}
+  \YNurii*[-45]\Fx\Gx{0}{1}
+  \Put\T[syaei=xy,ylabel=$e$]{}
+\end{pszahyou}
+\end{showEx}
+
+%\subsection{\texorpdfstring{\cmd{XGurafu}}{XGurafu}}
+\subsection{\cmd{XGurafu}}
+\begin{showEx}(.6,.34){\cmd{XGurafu}}
+\begin{pszahyou}[ul=8mm](-.5,4.5)(-.5,2.5)
+  \tenretu*{A(1,1)}
+  \def\Fy{Y*Y}
+  \XGurafu*[sitay=0]\Fy
+  \setlinewidth{1}
+  \Put\A[syaei=xy]{}
+\end{pszahyou}
+\end{showEx}
+
+%\subsection{\texorpdfstring{\cmd{Xnuri}}{Xnuri}}
+\subsection{\cmd{Xnuri}}
+\begin{showEx}(.6,.34){\cmd{XNuri}}
+\begin{pszahyou}[ul=8mm](-.5,4.5)(-.5,2.5)
+  \tenretu*{A(4,2)}
+  \def\Fy{Y*Y}
+  \XNuri\Fy{0}{2}
+  \XGurafu*[sitay=0]\Fy
+  \setlinewidth{3}
+  \Drawline{\O\A}
+  \Put\A[syaei=xy]{}
+\end{pszahyou}
+\end{showEx}
+
+\begin{showEx}(.6,.34){\cmd{XNuri*}}
+\begin{pszahyou}[ul=8mm](-.5,4.5)(-.5,2.5)
+  \tenretu*{A(4,2)}
+  \def\Fy{Y*Y}
+  \XGurafu*[sitay=0]\Fy
+  \Drawline{\O\A}
+  \setlinewidth{3}
+  \XNuri*[-45]\Fy{0}{2}
+  \Put\A[syaei=xy]{}
+\end{pszahyou}
+\end{showEx}
+
+%\subsection{\texorpdfstring{\cmd{Xnurii}}{Xnurii}}
+\subsection{\cmd{Xnurii}}
+\begin{showEx}(.6,.34){\cmd{XNuri}}
+\begin{pszahyou}[ul=8mm](-.5,4.5)(-.5,2.5)
+  \tenretu*{A(1,1)}
+  \def\Fy{Y*Y}
+  \def\Gy{2-Y}
+  \XNurii\Fy\Gy{0}{1}
+  \XGurafu*[sitay=0]\Fy
+  \XGurafu*\Gy
+  \setlinewidth{3}
+  \Put\A[syaei=xy]{}
+\end{pszahyou}
+\end{showEx}
+
+\begin{showEx}(.6,.34){\cmd{XNuri*}}
+\begin{pszahyou}[ul=8mm](-.5,4.5)(-.5,2.5)
+  \tenretu*{A(1,1)}
+  \def\Fy{Y*Y}
+  \def\Gy{2-Y}
+  \XGurafu*[sitay=0]\Fy
+  \XGurafu*\Gy
+  \setlinewidth{3}
+  \XNurii*[60]\Fy\Gy{0}{1}
+  \Put\A[syaei=xy]{}
+\end{pszahyou}
+\end{showEx}
+
+%\subsection{\texorpdfstring{\cmd{BGurafu}}{BGurafu}}
+\subsection{\cmd{BGurafu}}
+\begin{showEx}(.6,.34){\cmd{BGurafu}}
+\begin{pszahyou}[ul=5mm](-1,7)(-.5,2.5)
+  \def\Ft{T-sin(T)}
+  \def\Gt{1-cos(T)}
+  \BGurafu\Ft\Gt{-$pi}{3*$pi}
+\end{pszahyou}
+\end{showEx}
+
+%\subsection{\texorpdfstring{\cmd{RGurafu}}{RGurafu}}
+\subsection{\cmd{RGurafu}}
+\begin{showEx}(.6,.34){\cmd{RGurafu}}
+\begin{pszahyou}[ul=8mm](-1,3.5)(-2,2)
+  \def\Ft{1+2*cos(T)}
+  \RGurafu\Ft{0}{2*$pi}
+\end{pszahyou}
+\end{showEx}
+
+%\subsection{\texorpdfstring{\cmd{HenKo}}{HenKo}}
+\subsection{\cmd{HenKo}}
+\begin{showEx}(.6,.34){\cmd{Hen\_ko}}
+\begin{pszahyou}[ul=6mm](-1.5,3)(-2,3.5)%
+  \tenretu{A(-1,-1)sw;B(2,0)se;
+    C(2,3)ne;D(-1,2)nw}
+  \Takakkei{\A\B\C\D}
+  \setlinewidth{2}
+  \HenKo\A\B{$x$}
+  \HenKo[20]<.5>\B\C{$y$}
+\end{pszahyou}
+\end{showEx}
+
+弧の端に矢印をつけるオプションも使用可能です。
+
+\begin{showEx}(.6,.34){矢印付きの\cmd{HenKo}}
+\begin{pszahyou}[ul=6mm](-1.5,3)(-2,3.5)%
+  \tenretu{A(-1,-1)sw;B(2,0)se;
+    C(2,3)ne;D(-1,2)nw}
+  \Takakkei{\A\B\C\D}
+  \setlinewidth{2}
+  \HenKo<yazirusi=a>\A\B{$x$}
+  \HenKo[20]\B\C{$y$}
+  \HenKo[20]\C\D{$x$}
+\end{pszahyou}
+\end{showEx}
+
+%\subsection{\texorpdfstring{\cmd{Kakukigou}}{Kakukigou}}
+\subsection{\cmd{Kakukigou}}
+\begin{showEx}(.6,.34){\cmd{Kakukigou}}
+\begin{pszahyou*}[ul=6mm](-1.5,3)(-2,3.5)%
+  \tenretu{A(-1,-1)sw;B(2,0)se;C(1,3)ne}
+  \setlinewidth{3}
+  \Kakukigou\B\A\C{$\theta$}
+  \setlinewidth{10}
+  \Drawline{\B\A\C}
+\end{pszahyou*}
+\end{showEx}
+
+%\subsection{\texorpdfstring{\cmd{Tyokkakukigou}}{Tyokkakukigou}}
+\subsection{\cmd{Tyokkakukigou}}
+\begin{showEx}(.6,.34){\cmd{Tyokkakukigou}}
+\begin{pszahyou*}[ul=6mm](-2.5,3)(-2,3)%
+  \tenretu{A(-1,-1)sw;B(2,0)se;C(-2,2)ne}
+  \setlinewidth{3}
+  \Tyokkakukigou\B\A\C
+  \setlinewidth{10}
+  \Drawline{\B\A\C}
+\end{pszahyou*}
+\end{showEx}
+
+\subsection{\textsf{emathPs}における線幅，線種の変更}
+\textsf{emathPs.sty}における線幅の変更をする \cmd{setlinewidth}, 
+あるいは描画線を破線にする\cmd{setdash}はグローバルに影響し，
+グルーピングは無効です。
+そのあたりを確認しておきます。
+
+\begin{showEx}(.64,.3){\cmd{setlinewidth}}
+\begin{pszahyou*}[ul=4mm](-3.2,3.2)(-3.2,3.2)
+  \En\O{3}
+  {\setlinewidth{1}\En\O{2}}%
+  \En\O{1}
+\end{pszahyou*}
+\end{showEx}
+
+同心円が3個描かれています。一番外側の円（半径3）がデフォルトの線幅です。
+真中の円（半径2）を\verb+\setlinewidth{1}+として，細線で描画し，
+その部分をグルーピングして，一番中の円（半径1）はデフォルトの線幅に戻るか，
+と思いきや，細線のままでグルーピングの効はありませんでした。
+
+これは，\textsf{emathPs.sty}においては，描画コマンドは\TeX ではなく，
+\texttt{PostScript}に翻訳される関係で，\TeX の管理外となり，
+グルーピングは無効となってしまう，とご理解願います。
+
+では，どうするかというと，\cmd{gsave}コマンドで描画条件をセーブし，
+\cmd{grestore}でそれを復元する，という手順を踏むことになります。
+
+\begin{showEx}(.64,.3){\cmd{gsave}と\cmd{grestore}}
+\begin{pszahyou*}[ul=4mm](-3.2,3.2)(-3.2,3.2)
+  \En\O{3}
+  \gsave
+    \setlinewidth{1}\En\O{2}
+  \grestore
+  \En\O{1}
+\end{pszahyou*}
+\end{showEx}
+
+今度は，真中の円だけが細線で描画されました。
+
+しかし，局所的な変更の場合には，
+描画コマンド（ここでは，\cmd{En}）に対するオプション引数を与えることで
+処理できないだろうか，というのが今回のバージョンアップの目論見です。
+
+%\subsubsection{\texorpdfstring{\cmd{En}}{En}などの場合}
+\subsubsection{\cmd{En}などの場合}
+\paragraph{\texttt{<linewidth=..>}オプション}
+\cmd{En}に対して，オプション引数\verb+<linewidth=1>+を与えることで，
+局所的な変更を実現しました。
+
+\begin{showEx}(.64,.3){\cmd{En}への\texttt{<linewidth=..>}オプション}
+\begin{pszahyou*}[ul=4mm](-3.2,3.2)(-3.2,3.2)
+  \En\O{3}
+  \En<linewidth=1>\O{2}
+  \En\O{1}
+\end{pszahyou*}
+\end{showEx}
+
+\paragraph{\texttt{<dash=..>}オプション}
+線種を変更するオプション\verb+<dash={.1,.1}>+も局所的に効きます。
+
+\begin{showEx}(.64,.3){\cmd{En}への\texttt{<dash=..>}オプション}
+\begin{pszahyou*}[ul=4mm](-3.2,3.2)(-3.2,3.2)
+  \En\O{3}
+  \En<dash={.1,.1}>\O{2}
+  \En\O{1}
+\end{pszahyou*}
+\end{showEx}
+
+両者の併用も可能です。
+
+\begin{showEx}(.64,.3){併用}
+\begin{pszahyou*}[ul=4mm](-3.2,3.2)(-3.2,3.2)
+  \En\O{3}
+  \En<linewidth=1,dash={.1,.1}>\O{2}
+  \En\O{1}
+\end{pszahyou*}
+\end{showEx}
+
+このオプションは，\cmd{En}だけではなく，\cmd{Enko}, \cmd{Daen}, \cmd{Daenko}
+に対しても有効です。\cmd{Daenko}に適用した例です。
+
+\begin{showEx}(.64,.3){\cmd{Daneko}}
+\begin{pszahyou*}[ul=4mm](-3.2,3.2)(-3.2,3.2)
+  \Put\O{\Daenko{3}{2}{0}{180}}
+  \Put\O{\Daenko<linewidth=1,dash={.1,.1}>%
+    {2}{1}{0}{180}}
+  \Put\O{\Daenko{1}{.5}{0}{180}}
+\end{pszahyou*}
+\end{showEx}
+
+%\subsubsection{\texorpdfstring{\cmd{YGurafu}}{YGurafu}などの場合}
+\subsubsection{\cmd{YGurafu}などの場合}
+グラフ描画コマンド\cmd{YGurafu}などの局所的な変更をする
+\texttt{[linewidth=..]}オプションも有効としました。
+
+\begin{showEx}(.64,.3){\cmd{YGurafu}の線幅変更}
+\begin{pszahyou}[ul=4mm](-3.2,3.5)(-.5,6)
+  \def\Fx{X*X}
+  \def\Gx{3-X}
+  \YGurafu*[linewidth=1]\Gx
+  \YGurafu*\Fx
+\end{pszahyou}
+\end{showEx}
+
+\texttt{[dash=..]}オプションも有効です。
+
+\begin{showEx}(.64,.3){\cmd{YGurafu}の線種変更}
+\begin{pszahyou}[ul=4mm](-3.2,3.5)(-.5,6)
+  \def\Fx{X*X}
+  \YGurafu[dash={.1,.1}]\Fx\xmin{-2}
+  \YGurafu\Fx{-2}{1}
+  \YGurafu[dash={.1,.1}]\Fx{1}\xmax
+\end{pszahyou}
+\end{showEx}
+
+併用も可能です。
+
+\begin{showEx}(.64,.3){併用}
+\begin{pszahyou}[ul=4mm](-3.2,3.5)(-.5,6)
+  \def\Fx{X*X}
+  \def\Gx{3-X}
+  \YGurafu*[linewidth=1,dash={.1,.1}]\Gx
+  \YGurafu*\Fx
+\end{pszahyou}
+\end{showEx}
+
+\cmd{XGurafu}, \cmd{BGurafu}, \cmd{RGurafu}にも適用されます。
+
+\begin{showEx}(.64,.3){\cmd{BGurafu}の線種変更}
+\begin{pszahyou}[ul=4mm](-3.2,3.5)(-3.2,4)
+  \def\Ft{3*cos(T)}
+  \def\Gt{2*sin(T)}
+  \BGurafu[linewidth=1,dash={.1,.1}]%
+      \Ft\Gt{-$pi}{0}
+  \BGurafu\Ft\Gt{0}{$pi}
+\end{pszahyou}
+\end{showEx}
+
+\subsubsection{斜線塗りの場合}
+\cmd{YNurii*}など，斜線塗りにおける斜線の太さ，線種の局所的な変更を
+\verb+<linewidth=..,dash=..>+オプションで可能としました。
+
+\begin{showEx}(.64,.3){斜線塗りの線種変更}
+\begin{pszahyou}[ul=4mm](-3.2,3.5)(-.5,9)
+  \def\Fx{X*X}
+  \def\Gx{8-X*X}
+  \YNurii*<linewidth=1>\Fx\Gx{-2}{2}
+  \YGurafu*\Fx
+  \YGurafu*\Gx
+\end{pszahyou}
+\end{showEx}
+
+斜線塗りに対する\verb+<..>+オプションは，本来，斜線の間隔を調整するためのもの
+でした。その機能を併用するときは，\verb+<syanurikankaku=..>+オプションを
+用います。デフォルト値は\verb+0.125+で，\cmd{unitlength}に依存します。
+
+\begin{showEx}(.64,.3){斜線間隔の変更}
+\begin{pszahyou}[ul=4mm](-3.2,3.5)(-.5,9)
+  \def\Fx{X*X}
+  \def\Gx{8-X*X}
+  \YNurii*<linewidth=1,syanurikankaku=.4>%
+        \Fx\Gx{-2}{2}
+  \YGurafu*\Fx
+  \YGurafu*\Gx
+\end{pszahyou}
+\end{showEx}
+
+%\subsubsection{\texorpdfstring{\cmd{HenKo}}{HenKo}の場合}
+\subsubsection{\cmd{HenKo}の場合}
+\verb+\HenKo+の線幅・線種を変更するオプションも用意しました。
+
+\begin{showEx}(.64,.3){\cmd{Hen\textunderscore ko}の線種変更}
+\begin{pszahyou*}[ul=10mm](0,4)(0,4)
+  \tenretu{A(1,1)s;B(3,3)n}
+  \HenKo<linewidth=1,dash={.05,.05}>\A\B{$a$}
+  \Drawline{\A\B}
+\end{pszahyou*}
+\end{showEx}
+
+元来，このオプション\verb+<#2>+は，線分と弧の離れ具合を指定するものでした。
+それも使用したければ \verb+<henkohi=..>+オプションを用います。
+右辺値が1より大きければ，弧は線分より遠ざかります。
+
+あるいは\verb+<henkoH=..>+オプションを用いるのもあります。
+
+\begin{showEx}(.64,.3){\cmd{HenKo}の線種変更}
+\begin{pszahyou*}[ul=10mm](0,4)(0,4)
+  \tenretu{A(1,1)s;B(3,3)n}
+  \HenKo<linewidth=1,dash={.05,.05},henkohi=2>%
+      \A\B{$a$}
+  \Drawline{\A\B}
+\end{pszahyou*}
+\end{showEx}
+\end{document}

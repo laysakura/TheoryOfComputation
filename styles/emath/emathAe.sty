@@ -1,0 +1,1409 @@
+%%% emathAe.sty by tDB(emath@nifty.com)
+
+\def\tmpname{LaTeX2e}%
+\newif\ifappendanswer\appendanswerfalse
+
+%   解答を置く位置の指定
+\@ifundefined{c@kaitou@syorihou}{\newcounter{kaitou@syorihou}}{}%
+%                               0: デフォルトは巻末にまとめる．
+% continue                      1: 問題に続けて
+% ignore                        2: まったく無視する(コメント扱い)
+% debug                         3: デバッグ用 (\kaitou は無効コマンド)
+%                                 (edaitemm 環境，\edaitemm コマンドとは
+%                                  併用できません．この場合は
+%                                  continue オプションをご利用ください．)
+% readonly                      4: .kai ファイルを作成はせず，読み込むだけ．
+% nidan                         5: nidan で解答部分を二段組
+% maskAnstrue
+%   continue オプションで，\color{white}として答えを白で印刷
+% maskAnsfalse
+%   continue オプションと同じ。
+% appendanswer                '\jobname a' ファイルを読み込む。
+% noappendanswer              '\jobname a' ファイルを読み込まない(デフォルト）
+% chapter                      解答部でも，chapter構造を維持する
+% section                      解答部でも，section構造を維持する
+%
+\ifx\fmtname\tmpname%
+  \NeedsTeXFormat{LaTeX2e}
+  \ProvidesPackage{emathAe}[2010/08/10 v0.73α]%
+%
+\newif\ifmaskAns\maskAnsfalse
+\newif\ifpr@kaitou\pr@kaitoufalse
+%
+%
+% continue オプションを指定したときは，問題の下．
+  \DeclareOption{continue}{\setcounter{kaitou@syorihou}{1}\relax
+    \def\KaitouTTL{\par\small\noindent\inhibitglue 【解答】\par}%
+    \def\HintTTL{\par\small\noindent\inhibitglue 【ヒント】\par}%
+  }%
+% ignore オプションを指定したときは，解答は出力しない
+  \DeclareOption{ignore}{\setcounter{kaitou@syorihou}{2}\relax}%
+% debug オプションを指定したときは，デバッグ用
+  \DeclareOption{debug}{\setcounter{kaitou@syorihou}{3}\relax}%
+% readonly オプションを指定したときは，.kai ファイルを再構築せずに読み込む
+  \DeclareOption{readonly}{\setcounter{kaitou@syorihou}{4}\relax}%
+% nidan オプションを指定したときは，解答部分を2段組
+  \DeclareOption{nidan}{\setcounter{kaitou@syorihou}{5}\relax}%
+% maskAnstrue
+  \DeclareOption{maskAnstrue}{%
+    \maskAnstrue
+    \@ifundefined{ifmaskhako}{}{\maskhakotrue}%
+    \def\KaitouTTL{\small\medskip\par\noindent\inhibitglue  【解答】}%
+    \def\HintTTL{\small\medskip\par\noindent\inhibitglue  【ヒント】}%
+    \setcounter{kaitou@syorihou}{1}\relax}%
+% maskAnsfalse
+  \DeclareOption{maskAnsfalse}{%
+    \maskAnsfalse
+    \@ifundefined{ifmaskhako}{}{\maskhakofalse}%
+    \def\KaitouTTL{\small\medskip\par\noindent\inhibitglue  【解答】}%
+    \def\HintTTL{\small\medskip\par\noindent\inhibitglue  【ヒント】}%
+    \setcounter{kaitou@syorihou}{1}\relax}%
+  \DeclareOption{appendanswer}{\appendanswertrue}
+  \DeclareOption{noappendanswer}{\appendanswerfalse}
+  \DeclareOption{noappend}{\appendanswerfalse}
+% \DeclareOption{noappend}{\def\no@append{}}
+  \DeclareOption{chapter}{%
+    \@ifundefined{chapter}{\errmessage{emathAe: chapter は未定義です。}}{}%
+    \def\use@chapter{}}
+  \DeclareOption{section}{\def\use@section{}}
+  \ProcessOptions\relax
+  \RequirePackage{emath}%
+  \RequirePackage{emathR}%
+% \RequirePackage{verbatim}%
+\fi%
+
+\ifnum\thekaitou@syorihou=5\relax
+    \RequirePackage{multicol}\raggedcolumns
+    \columnseprule=0.4pt%
+\fi
+
+\newtoks\enum@fmti
+\newtoks\enum@fmtii
+\newtoks\enum@fmtiii
+\newtoks\enum@fmtiv
+\newtoks\Ae@tokena
+\newtoks\Kai@Midasi
+%
+\define@key{emAe}{itemoption}{\def\item@option{#1}}%
+\define@key{emAe}{pre}{\EMedef\pre@Kaitou{#1}}
+\define@key{emAe}{hooksection}{\def\@hooksection{#1}}
+\define@key{emAe}{hookchapter}{\def\@hookchapter{#1}}
+\define@key{emAe}{KaiMidasi}{\def\KaiMidasi{#1}}
+%
+\def\item@option{}%
+\def\kaitou@yohaku{0pt}%
+\edef\edaenumopt{\empty}%
+\edef\betaenumopt{\empty}%
+\let\ltxenumerate\enumerate
+\let\endltxenumerate\endenumerate
+%\def\owariitem{\relax}%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ??????
+\def\Kaienumerate{enumerate}
+\def\Kaienumopt{}
+\def\Hintenumerate{enumerate}
+\def\Hintenumopt{}
+\def\KaiFilenum{0}
+\def\HintFilenum{0}
+%\def\stringedaenumerate{edaenumerate}
+\def\preKaitou#1{\def\pre@Kaitou{#1}}%
+\def\postKaitou#1{\def\post@Kaitou{#1}}%
+%
+\let\emAe@item@opt\@undefined
+\let\emAe@item\item
+\def\item{\@ifnextchar[{\emAe@item@}{\let\emAe@item@opt\@undefined\emAe@item}}
+%\let\ltxitem\item
+\let\Aeitem\item
+%\typeout{Aeitem=\meaning\Aeitem}
+\def\emAe@item@[#1]{\Ae@tokena={#1}\def\emAe@item@opt{#1}\orgltxitem[#1]}
+%\def\emAe@item@[#1]{%
+%    \ifthenelse{\equal{#1}\empty}{\let\emAe@item@opt\@undefined\emAe@item}{%
+%    \def\emAe@item@opt{#1}\emAe@item[#1]}}% \edef or \def ?
+%
+\newcommand{\Aesetcurrentenum}[1]{%
+  \@ifundefined{yokoenum@c}{%
+    \@ifundefined{owariitem}{}{\owariitem}%
+    \edef\@currentenum{enum\romannumeral \@enumdepth}%
+    \setcounter{\@currentenum}{#1}%
+  }{}%
+}
+%
+\def\enumerate{\@ifnextchar<{\my@enum}{\my@enum<\empty>}}%
+\def\my@enum<#1>{\@ifnextchar[{\@my@enum@<#1>}{\@my@enum<#1>}}%
+\def\@my@enum<#1>{%
+    \@tempcnta\@enumdepth\advance\@tempcnta\@ne
+    \csname enum@fmt\romannumeral\@tempcnta\endcsname{}\ltxenumerate<#1>}%
+\def\@my@enum@<#1>[#2]{%
+    \@tempcnta\@enumdepth\advance\@tempcnta\@ne
+    \csname enum@fmt\romannumeral\@tempcnta\endcsname{#2}%
+    \ltxenumerate<#1>[#2]}%
+\def\endenumerate{%
+%   \csname enum@fmt\romannumeral\@enumdepth\endcsname{}% 2002/09/20
+    \xdef\betaenupopt{\empty}\endltxenumerate}%
+%
+\def\Enumerate@<#1>[#2]{%
+  \@tempcnta\@enumdepth\advance\@tempcnta\@ne
+  \csname enum@fmt\romannumeral\@tempcnta\endcsname{#2}%
+  \EMenumerate<#1>[#2]\relax
+  \edef\tmpcnt{Enum\romannumeral\@enumdepth}%
+  \setcounter{\tmpcnt}{0}%
+  \global\tkn@Enum@ang={#1}%
+  \global\tkn@Enum@opt={#2}%
+}%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 2010/06/24 ?????????????????????????
+\def\cEnumerate@<#1>[#2]{%\par\vskip\topsep\noindent%
+  \@tempcnta\@enumdepth\advance\@tempcnta\@ne
+  \csname enum@fmt\romannumeral\@tempcnta\endcsname{#2}%
+  \EMenumerate<#1>[#2]\cont@enum
+}%
+\def\@@cEnumerate[#1]{%\par\vskip\topsep\noindent%
+  \@tempcnta\@enumdepth\advance\@tempcnta\@ne
+  \csname enum@fmt\romannumeral\@tempcnta\endcsname{#1}%
+  \EMenumerate[#1]\cont@enum
+}%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\let\ltx@@edaenumerate\@@edaenumerate
+\def\@@edaenumerate{\@ifnextchar[{\my@edaenum@}{\my@edaenum}}%
+\def\my@edaenum{%
+    \@tempcnta\@enumdepth%\advance\@tempcnta\@ne
+    \csname enum@fmt\romannumeral\@tempcnta\endcsname{}\ltx@@edaenumerate}%
+\def\my@edaenum@[#1]{%
+    \@tempcnta\@enumdepth%\advance\@tempcnta\@ne
+    \csname enum@fmt\romannumeral\@tempcnta\endcsname{#1}%
+    \ltx@@edaenumerate[#1]}%
+
+\def\mark@item{\@ifnextchar[{\emAe@item@}{%
+  \let\emAe@item@opt\@undefined\orgltxitem}}% v 0.23
+
+\long\def\verbatimR@addtoline#1{%
+  \verbatim@line\expandafter{\the\verbatim@line#1}}
+%
+\newwrite\kaitou@out
+\def\writekaitou{\immediate\write\kaitou@out}%
+%
+\def\OpenKaiFile{\xdef\KaiFilenum{0}\openKaiFile}
+\def\openKaiFile{\@ifnextchar[{\@openKaiFile}{%
+  \xIncr\KaiFilenum\@openKaiFile[\jobname.k\KaiFilenum]}}
+\def\@openKaiFile[#1]{\immediate\openout \kaitou@out\EM@workfiledir #1\relax
+    \edef\K@currentenumdepth{0}}%
+\def\closeKaiFile{%
+    \@tempcnta\K@currentenumdepth\relax%
+    \@whilenum \@tempcnta>\z@\do{%
+    \advance \@tempcnta \m@ne\relax%
+  \ifx\empty\edaenumopt
+    \ifx\empty\betaenumopt
+      \immediate\write\kaitou@out{\string\end\string\Kaienumerate\protect\def\string\Kaienumerate{enumerate}\string\def\string\Kaienumopt{}}%
+    \else
+      \immediate\write\kaitou@out{\string\end{betaenumerate}\string\par}%
+      \xdef\betaenumopt{\empty}%
+    \fi
+  \else
+      \immediate\write\kaitou@out{\string\end{edaenumerate}\string\par}%
+      \xdef\edaenumopt{\empty}%
+  \fi
+    }%
+    \immediate\closeout\kaitou@out}%
+\def\inputKaiFile{\@ifnextchar[{\inputKaiFile@}{\@inputKaiFile}}
+\def\inputKaiFile@[#1]{%
+%%  \useitemfalse%            2004/01/07 暫定
+  \@ifundefined{use@chapter}{}{\resetcounter{chapter}}%
+  \@ifundefined{use@section}{}{\resetcounter{section}}%
+  {%\EMedef\tmp@a{\EM@workfiledir\protect\\ #1}%
+  \input{\EM@workfiledir #1}}%
+  \xdef\HakoKaiFilenum{0}\relax
+  \xdef\KaiFilenum{0}\relax
+%%  \useitemtrue%             2004/01/07
+}
+\def\@inputKaiFile{%
+%%  \useitemfalse%            2004/01/07 暫定
+  \@ifundefined{use@chapter}{}{\resetcounter{chapter}}%
+  \@ifundefined{use@section}{}{\resetcounter{section}}%
+  \Cfor{\edef\inpKF@i{0}}{\inpKF@i<\KaiFilenum}{}\do{%
+    \xIncr\inpKF@i
+    {\input{\EM@workfiledir\jobname.k\inpKF@i}}}%
+%%  \useitemtrue              2004/01/07
+  \xdef\HakoKaiFilenum{0}%      2002/09/22  \do ループの外に出す。
+  \xdef\KaiFilenum{0}}
+%
+%%% Kaitou の定義 -------------------------------------------------
+\ifcase\value{kaitou@syorihou}%   % kaitou@syorihou=0
+  \@ifundefined{use@chapter}{}{%
+    \let\Aechapter\chapter
+    \def\hookchapter{\immediate\write\kaitou@out{\string\Aechapter{\the\Kai@Midasi}}}%
+    \def\chapter{\@ifnextchar<{\EM@chapter}{\EM@chapter<\empty>}}%
+    \def\EM@chapter<#1>#2{%
+      \Kai@Midasi={#2}%
+      \def\@hookchapter{\hookchapter}%
+      \ifx\empty #1\else\setkeys{emAe}{#1}\fi
+      \@ifundefined{K@currentenumdepth}{}{%
+        \@tempcnta\K@currentenumdepth\relax%
+        \@whilenum \@tempcnta>\z@\do{%
+          \advance \@tempcnta \m@ne\relax%
+          \ifx\empty\edaenumopt
+            \ifx\empty\betaenumopt
+              \immediate\write\kaitou@out{%
+                \string\end\string\Kaienumerate\protect\def\string\Kaienumerate{enumerate}%
+                \string\def\string\Kaienumopt{}}%
+            \else
+              \immediate\write\kaitou@out{\string\end{betaenumerate}\string\par}%
+              \xdef\betaenumopt{\empty}%
+            \fi
+          \else
+            \immediate\write\kaitou@out{\string\end{edaenumerate}\string\par}%
+            \xdef\edaenumopt{\empty}%
+          \fi
+        }%
+        \edef\K@currentenumdepth{0}%
+      }%
+      \@hookchapter
+      \Aechapter{#2}%
+    }%
+  }%
+  \@ifundefined{use@section}{}{%
+    \let\Aesection\section
+    \def\hooksection{%
+      \immediate\write\kaitou@out{\string\Aesection{\the\Kai@Midasi}}%
+      \ifnum\HintFilenum>\z@
+        \immediate\write\hint@out{\string\Aesection{\the\Kai@Midasi}}%
+      \fi}%
+    \def\hooksection@{%
+      \immediate\write\kaitou@out{\string\Aesection*{\the\Kai@Midasi}}%
+      \ifnum\HintFilenum>\z@
+        \immediate\write\hint@out{\string\Aesection*{\the\Kai@Midasi}}\fi}%
+    \def\section{\@ifstar{\EMsection@}{\@EMsection}}%
+    \def\@EMsection{\@ifnextchar<{\EM@section}{\EM@section<\empty>}}%
+    \def\EM@section<#1>#2{%
+      \Kai@Midasi={#2}%
+      \def\@hooksection{\hooksection}%
+      \ifx\empty #1\else\setkeys{emAe}{#1}\fi
+      \@ifundefined{K@currentenumdepth}{}{%
+        \@tempcnta\K@currentenumdepth\relax%
+        \@whilenum \@tempcnta>\z@\do{%
+          \advance \@tempcnta \m@ne\relax%
+          \ifx\empty\edaenumopt
+            \ifx\empty\betaenumopt
+              \immediate\write\kaitou@out{%
+                \string\end\string\Kaienumerate\protect\def\string\Kaienumerate{enumerate}%
+                \string\def\string\Kaienumopt{}}%
+              \ifnum\HintFilenum>\z@
+                \immediate\write\hint@out{%
+                  \string\end\string\Hintenumerate\protect\def\string\Hintenumerate{enumerate}%
+                  \string\def\string\Hintenumopt{}}%
+              \fi
+            \else
+              \immediate\write\kaitou@out{\string\end{betaenumerate}\string\par}%
+              \ifnum\HintFilenum>\z@
+                \immediate\write\hint@out{\string\end{betaenumerate}\string\par}%
+              \fi
+              \xdef\betaenumopt{\empty}%
+            \fi
+          \else
+            \immediate\write\kaitou@out{\string\end{edaenumerate}\string\par}%
+            \ifnum\HintFIlenum>\z@
+              \immediate\write\hint@out{\string\end{edaenumerate}\string\par}%
+            \fi
+            \xdef\edaenumopt{\empty}%
+          \fi
+        }%
+        \edef\K@currentenumdepth{0}%
+        \edef\H@currentenumdepth{0}%
+      }%
+      \@hooksection
+      \Aesection{#2}%
+    }%
+    \def\EMsection@{\@ifnextchar<{\EM@section@}{\EM@section@<\empty>}}%
+    \def\EM@section@<#1>#2{%
+      \Kai@Midasi={#2}%
+      \def\@hooksection{\hooksection@}%
+      \ifx\empty #1\else\setkeys{emAe}{#1}\fi
+      \@ifundefined{K@currentenumdepth}{}{%
+        \@tempcnta\K@currentenumdepth\relax%
+        \@whilenum \@tempcnta>\z@\do{%
+          \advance \@tempcnta \m@ne\relax%
+          \ifx\empty\edaenumopt
+            \ifx\empty\betaenumopt
+              \immediate\write\kaitou@out{%
+                \string\end\string\Kaienumerate\protect\def\string\Kaienumerate{enumerate}%
+                \string\def\string\Kaienumopt{}}%
+                \ifnum\HintFilenum>\z@
+                  \immediate\write\hint@out{%
+                    \string\end\string\Hintenumerate\protect\def\string\Hintenumerate{enumerate}%
+                    \string\def\string\Hintenumopt{}}%
+                \fi
+            \else
+              \immediate\write\kaitou@out{\string\end{betaenumerate}\string\par}%
+              \ifnum\HintFilenum>\z@
+                \immediate\write\hint@out{\string\end{betaenumerate}\string\par}%
+              \fi
+              \xdef\betaenumopt{\empty}%
+            \fi
+          \else
+            \immediate\write\kaitou@out{\string\end{edaenumerate}\string\par}%
+            \ifnum\HintFilenum>\z@
+              \immediate\write\hint@out{\string\end{edaenumerate}\string\par}%
+            \fi
+            \xdef\edaenumopt{\empty}%
+          \fi
+        }%
+        \edef\K@currentenumdepth{0}%
+        \edef\H@currentenumdepth{0}%
+      }%
+      \@hooksection
+      \Aesection*{#2}%
+    }%
+  }%
+  \def\eKaitou#1{%
+    \EMedef\pre@Kaitou{#1}%
+    \Kaitou
+  }%
+  \def\Kaitou{%
+    \ifnum\K@currentenumdepth<\@enumdepth
+      \xdef\K@currentenumdepth{\the\@enumdepth}%
+      \ifthenelse{%
+        \equal{\the\csname enum@fmt\romannumeral\@enumdepth\endcsname}{}}{%
+          \ifx\edaenumopt\empty
+            \ifx\betaenumopt\empty
+              \immediate\write\kaitou@out{\string\expandafter\string\begin\string\expandafter\string\Kaienumerate\string\Kaienumopt}%
+              \immediate\write\kaitou@out{%
+                \string\ifthenelse{\string\equal{\string\Kaienumerate}{edaenumerate}}{\string\def\string\Aeitem{\string\edaitem}}{}
+                \string\ifthenelse{\string\equal{\string\Kaienumerate}{betaenumerate}}{\string\def\string\Aeitem{\string\edaitem}}{}
+                \string\ifthenelse{\string\equal{\string\Kaienumerate}{yokoenumerate}}{\string\def\string\Aeitem{\string\item}}{}
+              }%
+            \else
+              \immediate\write\kaitou@out{\string\begin{betaenumerate}}%
+            \fi
+          \else
+            \immediate\write\kaitou@out{\string\begin{edaenumerate}\edaenumopt}%
+            \immediate\write\kaitou@out{\string\def\string\Aeitem{\string\edaitem}}%
+          \fi
+      }{%
+        \ifx\edaenumopt\empty
+          \ifx\betaenumopt\empty
+            \immediate\write\kaitou@out{%
+            \string\expandafter\string\begin\string\expandafter\string\Kaienumerate\string\Kaienumopt[%
+            \the\csname enum@fmt\romannumeral\@enumdepth\endcsname]}%
+            \immediate\write\kaitou@out{%
+              \string\ifthenelse{\string\equal{\string\Kaienumerate}{edaenumerate}}{\string\def\string\Aeitem{\string\edaitem}}{}}%
+            \immediate\write\kaitou@out{%
+              \string\ifthenelse{\string\equal{\string\Kaienumerate}{betaenumerate}}{\string\def\string\Aeitem{\string\edaitem}}{}}%
+            \immediate\write\kaitou@out{%
+              \string\ifthenelse{\string\equal{\string\Kaienumerate}{yokoenumerate}}{\string\def\string\Aeitem{\string\item}}{}}%
+          \else
+            \immediate\write\kaitou@out{%
+            \string\begin{betaenumerate}[%
+            \the\csname enum@fmt\romannumeral\@enumdepth\endcsname]}%
+          \fi
+        \else
+          \immediate\write\kaitou@out{%
+          \string\begin{edaenumerate}\edaenumopt[%
+          \the\csname enum@fmt\romannumeral\@enumdepth\endcsname]}%
+          \immediate\write\kaitou@out{\string\def\string\Aeitem{\string\edaitem}}%
+        \fi%
+      }%
+    \else
+      \@whilenum\K@currentenumdepth>\@enumdepth\do{%
+        \xDecr\K@currentenumdepth
+        \ifx\empty\edaenumopt
+          \ifx\empty\betaenumopt
+            \immediate\write\kaitou@out{\string\end\string\Kaienumerate\string\def\string\Kaienumerate{enumerate}\string\def\string\Kaienumopt{}}%
+          \else
+            \immediate\write\kaitou@out{\string\end{betaenumerate}\string\par}%
+            \xdef\betaenumopt{\empty}%
+          \fi
+        \else
+          \immediate\write\kaitou@out{\string\end{edaenumerate}\string\par}%
+          \xdef\edaenumopt{\empty}%
+        \fi
+      }%
+    \fi
+    \immediate\write\kaitou@out{\string\def\string\jobname{\jobname}}%
+    \immediate\write\kaitou@out{\string\def\string\prelabel{\Jobname-}}%
+    \@ifundefined{autoHako@label@name}{}{%
+      \immediate\write\kaitou@out{\string\autoHakolabel{\autoHako@label@name}}}%
+    \@ifundefined{perlflnum}{}{%
+      \immediate\write\kaitou@out{\string\xdef\string\perlflnum{\perlflnum}}}%
+    \ifnum\K@currentenumdepth=\z@%%%%%%%% 2005/08/03
+      \edef\@tmp{\the\csname c@\Aeprob\endcsname}
+      \immediate\write\kaitou@out{\string\setcounter{\Aeprobname}{\@tmp-1}\string\begin{\Aeprobname}}%
+      \global\pr@kaitoutrue
+    \else
+      \ifx\emAe@item@opt\@undefined%
+        \def\@tmp{\getcurrentenum}%
+        \@ifundefined{ed@beta}{\ISub\@tmp{1}\@tmp}{\ifnum\ed@beta=\z@\ISub\@tmp{1}\@tmp\fi}%
+        \immediate\write\kaitou@out{\string\Aesetcurrentenum{\@tmp}\string\Aeitem\item@option}%
+      \else
+        \immediate\write\kaitou@out{\string\Aeitem[\the\Ae@tokena]}%
+      \fi
+    \fi
+    \@ifundefined{pre@Kaitou}{}{\immediate\write\kaitou@out{\pre@Kaitou}}%
+    \@bsphack
+    \let\do\@makeother\dospecials
+    \catcode`\^^M\active
+    \def\verbatim@processline{\immediate\write\kaitou@out{\the\verbatim@line}}%
+    \verbatim@start
+  }%
+  \def\endKaitou{\@esphack
+    \ifnum\K@currentenumdepth=\z@\fi
+  }%
+  \let\endeKaitou\endKaitou
+% 旧定義 \kaitou の Kaitou環境への翻訳
+\long\def\kaitou#1{{%
+    \ifnum\K@currentenumdepth<\@enumdepth
+      \xdef\K@currentenumdepth{\the\@enumdepth}%
+      \ifthenelse{%
+        \equal{\the\csname enum@fmt\romannumeral\@enumdepth\endcsname}{}}{%
+          \ifx\edaenumopt\empty
+            \ifx\betaenumopt\empty
+              \immediate\write\kaitou@out{\string\expandafter\string\begin\string\expandafter\string\Kaienumerate\string\Kaienumopt}%
+              \immediate\write\kaitou@out{%
+                \string\ifthenelse{\string\equal{\string\Kaienumerate}{edaenumerate}}{\string\def\string\Aeitem{\string\edaitem}}{}
+                \string\ifthenelse{\string\equal{\string\Kaienumerate}{betaenumerate}}{\string\def\string\Aeitem{\string\edaitem}}{}
+                \string\ifthenelse{\string\equal{\string\Kaienumerate}{yokoenumerate}}{\string\def\string\Aeitem{\string\item}}{}
+              }%
+            \else
+              \immediate\write\kaitou@out{\string\begin{betaenumerate}}%
+            \fi
+          \else
+            \immediate\write\kaitou@out{\string\begin{edaenumerate}\edaenumopt}%
+            \immediate\write\kaitou@out{\string\def\string\Aeitem{\string\edaitem}}%
+          \fi
+      }{%
+        \ifx\edaenumopt\empty
+          \ifx\betaenumopt\empty
+            \immediate\write\kaitou@out{%
+            \string\expandafter\string\begin\string\expandafter\string\Kaienumerate\string\Kaienumopt[%
+            \the\csname enum@fmt\romannumeral\@enumdepth\endcsname]}%
+            \immediate\write\kaitou@out{%
+              \string\ifthenelse{\string\equal{\string\Kaienumerate}{edaenumerate}}{\string\def\string\Aeitem{\string\edaitem}}{}}%
+            \immediate\write\kaitou@out{%
+              \string\ifthenelse{\string\equal{\string\Kaienumerate}{betaenumerate}}{\string\def\string\Aeitem{\string\edaitem}}{}}%
+            \immediate\write\kaitou@out{%
+              \string\ifthenelse{\string\equal{\string\Kaienumerate}{yokoenumerate}}{\string\def\string\Aeitem{\string\item}}{}}%
+          \else
+            \immediate\write\kaitou@out{%
+            \string\begin{betaenumerate}[%
+            \the\csname enum@fmt\romannumeral\@enumdepth\endcsname]}%
+          \fi
+        \else
+          \immediate\write\kaitou@out{%
+          \string\begin{edaenumerate}\edaenumopt[%
+          \the\csname enum@fmt\romannumeral\@enumdepth\endcsname]}%
+          \immediate\write\kaitou@out{\string\def\string\Aeitem{\string\edaitem}}%
+        \fi%
+      }%
+    \else
+      \@whilenum\K@currentenumdepth>\@enumdepth\do{%
+        \xDecr\K@currentenumdepth
+        \ifx\empty\edaenumopt
+          \ifx\empty\betaenumopt
+            \immediate\write\kaitou@out{\string\end\string\Kaienumerate\string\def\string\Kaienumerate{enumerate}\string\def\string\Kaienumopt{}}%
+          \else
+            \immediate\write\kaitou@out{\string\end{betaenumerate}\string\par}%
+            \xdef\betaenumopt{\empty}%
+          \fi
+        \else
+          \immediate\write\kaitou@out{\string\end{edaenumerate}\string\par}%
+          \xdef\edaenumopt{\empty}%
+        \fi
+      }%
+    \fi
+    \immediate\write\kaitou@out{\string\def\string\jobname{\jobname}}%
+    \immediate\write\kaitou@out{\string\def\string\prelabel{\Jobname-}}%
+    \@ifundefined{autoHako@label@name}{}{%
+      \immediate\write\kaitou@out{\string\autoHakolabel{\autoHako@label@name}}}%
+    \@ifundefined{perlflnum}{}{%
+      \immediate\write\kaitou@out{\string\xdef\string\perlflnum{\perlflnum}}}%
+    \ifnum\K@currentenumdepth=\z@%%%%%%%% 2005/08/03
+      \edef\@tmp{\the\csname c@\Aeprob\endcsname}
+      \immediate\write\kaitou@out{\string\setcounter{\Aeprobname}{\@tmp-1}\string\begin{\Aeprobname}}%
+      \global\pr@kaitoutrue
+    \else
+      \ifx\emAe@item@opt\@undefined%
+        \def\@tmp{\getcurrentenum}%
+        \@ifundefined{ed@beta}{\ISub\@tmp{1}\@tmp}{\ifnum\ed@beta=\z@\ISub\@tmp{1}\@tmp\fi}%
+        \immediate\write\kaitou@out{\string\Aesetcurrentenum{\@tmp}\string\Aeitem\item@option}%
+      \else
+        \immediate\write\kaitou@out{\string\Aeitem[\the\Ae@tokena]}%
+      \fi
+    \fi
+    \@ifundefined{pre@Kaitou}{}{\immediate\write\kaitou@out{\pre@Kaitou}}%
+%    \@bsphack
+%    \let\do\@makeother\dospecials
+%    \catcode`\^^M\active
+%    \def\verbatim@processline{\immediate\write\kaitou@out{\the\verbatim@line}}%
+    \expandafter\verbatimR@addtoline\expandafter{\protect #1}%
+    \immediate\write\kaitou@out{\the\verbatim@line}%
+%   \verbatim@start
+%  }%
+%  \def\endKaitou{\@esphack
+%  \ifnum\K@currentenumdepth=\z@\fi
+  }%
+}%
+%  \long\def\kaitou#1{{%
+%    \ifnum\K@currentenumdepth<\@enumdepth
+%      \xdef\K@currentenumdepth{\the\@enumdepth}%
+%      \ifthenelse{\equal{\the\csname enum@fmt\romannumeral\@enumdepth\endcsname}{}}{%
+%        \ifx\empty\edaenumopt
+%          \ifx\empty\betaenumopt
+%            \immediate\write\kaitou@out{\string\expandafter\string\begin\string\expandafter\string\Kaienumerate\string\Kaienumopt}%
+%            \immediate\write\kaitou@out{%
+%              \string\ifthenelse{\string\equal{\string\Kaienumerate}{edaenumerate}}{\string\def\string\Aeitem{\string\edaitem}}{}}%
+%            \immediate\write\kaitou@out{%
+%              \string\ifthenelse{\string\equal{\string\Kaienumerate}{betaenumerate}}{\string\def\string\Aeitem{\string\edaitem}}{}}%
+%          \else
+%            \immediate\write\kaitou@out{\string\begin{betaenumerate}}%
+%          \fi
+%        \else
+%          \immediate\write\kaitou@out{\string\begin{edaenumerate}\edaenumopt}%
+%          \immediate\write\kaitou@out{\string\def\string\Aeitem{\string\edaitem}}%
+%        \fi
+%      }{%
+%        \ifx\empty\edaenumopt
+%          \ifx\empty\betaenumopt
+%            \immediate\write\kaitou@out{%
+%            \string\expandafter\string\begin\string\expandafter\string\Kaienumerate\string\Kaienumopt[%
+%            \the\csname enum@fmt\romannumeral\@enumdepth\endcsname]}%
+%            \immediate\write\kaitou@out{%
+%              \string\ifthenelse{\string\equal{\string\Kaienumerate}{edaenumerate}}{\string\def\string\Aeitem{\string\edaitem}}{}}%
+%            \immediate\write\kaitou@out{%
+%              \string\ifthenelse{\string\equal{\string\Kaienumerate}{betaenumerate}}{\string\def\string\Aeitem{\string\edaitem}}{}}%
+%          \else
+%            \immediate\write\kaitou@out{%
+%            \string\begin{betaenumerate}[%
+%            \the\csname enum@fmt\romannumeral\@enumdepth\endcsname]}%
+%          \fi
+%        \else
+%          \immediate\write\kaitou@out{%
+%          \string\begin{edaenumerate}\edaenumopt[%
+%          \the\csname enum@fmt\romannumeral\@enumdepth\endcsname]}%
+%          \immediate\write\kaitou@out{\string\def\string\Aeitem{\string\edaitem}}%
+%        \fi
+%      }%
+%    \else
+%      \@whilenum\K@currentenumdepth>\@enumdepth\do{%
+%      \xDecr\K@currentenumdepth
+%      \ifx\empty\edaenumopt
+%        \ifx\empty\betaenumopt
+%          \immediate\write\kaitou@out{\string\end\string\Kaienumerate\string\def\string\Kaienumerate{enumerate}\string\def\string\Kaienumopt{}}%
+%        \else
+%          \immediate\write\kaitou@out{\string\end{betaenumerate}\string\par}%
+%          \xdef\betaenumopt{\empty}%
+%        \fi
+%      \else
+%        \immediate\write\kaitou@out{\string\end{edaenumerate}\string\par}%
+%        \xdef\edaenumopt{\empty}%
+%      \fi
+%%     \ifnum\K@currentenumdepth=\z@
+%%       \immediate\write\kaitou@out{\string\end{\Aeprobname}}%
+%%     \fi
+%      }%
+%   \fi
+%    \ifnum\K@currentenumdepth=\z@
+%      \edef\@tmp{\the\csname c@\Aeprob\endcsname}
+%      \immediate\write\kaitou@out{\string\setcounter{\Aeprobname}{\@tmp-1}\string\begin{\Aeprobname}}%
+%    \else
+%      \ifx\emAe@item@opt\@undefined%
+%        \def\@tmp{\getcurrentenum}%
+%        \@ifundefined{ed@beta}{\ISub\@tmp{1}\@tmp}{\ifnum\ed@beta=\z@\ISub\@tmp{1}\@tmp\fi}%
+%        \immediate\write\kaitou@out{\string\Aesetcurrentenum{\@tmp}\string\Aeitem\item@option}%
+%      \else
+%        \immediate\write\kaitou@out{\string\Aeitem[\the\Ae@tokena]}%
+%      \fi
+%    \fi
+%    \expandafter\verbatimR@addtoline\expandafter{\protect #1}%
+%    \immediate\write\kaitou@out{\the\verbatim@line}%
+%    \verbatim@startline
+%    \ifnum\K@currentenumdepth=\z@
+%      \immediate\write\kaitou@out{\string\end{\Aeprobname}}%
+%    \fi
+%  }}%
+  \long\def\ekaitou#1{{%
+    \let\protect\string
+    \ifnum\K@currentenumdepth<\@enumdepth
+      \xdef\K@currentenumdepth{\the\@enumdepth}%
+      \ifthenelse{\equal{\the\csname enum@fmt\romannumeral\@enumdepth\endcsname}{}}{%
+        \ifx\empty\edaenumopt
+          \ifx\empty\betaenumopt
+            \immediate\write\kaitou@out{\string\expandafter\string\begin\string\expandafter\string\Kaienumerate\string\Kaienumopt}%
+            \immediate\write\kaitou@out{%
+              \string\ifthenelse{\string\equal{\string\Kaienumerate}{edaenumerate}}{\string\def\string\Aeitem{\string\edaitem}}{}}%
+            \immediate\write\kaitou@out{%
+              \string\ifthenelse{\string\equal{\string\Kaienumerate}{betaenumerate}}{\string\def\string\Aeitem{\string\edaitem}}{}}%
+          \else
+            \immediate\write\kaitou@out{\string\begin{betaenumerate}}%
+          \fi
+        \else
+          \immediate\write\kaitou@out{\string\begin{edaenumerate}\edaenumopt}%
+          \immediate\write\kaitou@out{\string\def\string\Aeitem{\string\edaitem}}%
+        \fi
+      }{%
+        \ifx\empty\edaenumopt
+          \ifx\empty\betaenumopt
+            \immediate\write\kaitou@out{%
+            \string\expandafter\string\begin\string\expandafter\string\Kaienumerate\string\Kaienumopt[%
+            \the\csname enum@fmt\romannumeral\@enumdepth\endcsname]}%
+            \immediate\write\kaitou@out{%
+              \string\ifthenelse{\string\equal{\string\Kaienumerate}{edaenumerate}}{\string\def\string\Aeitem{\string\edaitem}}{}}%
+            \immediate\write\kaitou@out{%
+              \string\ifthenelse{\string\equal{\string\Kaienumerate}{betaenumerate}}{\string\def\string\Aeitem{\string\edaitem}}{}}%
+          \else
+            \immediate\write\kaitou@out{%
+            \string\begin{betaenumerate}[%
+            \the\csname enum@fmt\romannumeral\@enumdepth\endcsname]}%
+          \fi
+        \else
+          \immediate\write\kaitou@out{%
+          \string\begin{edaenumerate}\edaenumopt[%
+          \the\csname enum@fmt\romannumeral\@enumdepth\endcsname]}%
+          \immediate\write\kaitou@out{\string\def\string\Aeitem{\string\edaitem}}%
+        \fi
+      }%
+    \else\@whilenum\K@currentenumdepth>\@enumdepth\do{%
+      \xDecr\K@currentenumdepth
+      \ifx\empty\edaenumopt
+        \ifx\empty\betaenumopt
+          \immediate\write\kaitou@out{\string\end\string\Kaienumerate\string\def\string\Kaienumerate{enumerate}\string\def\string\Kaienumopt{}}%
+        \else
+          \immediate\write\kaitou@out{\string\end{betaenumerate}\string\par}%
+          \xdef\betaenumopt{\empty}%
+        \fi
+      \else
+        \immediate\write\kaitou@out{\string\end{edaenumerate}\string\par}%
+        \xdef\edaenumopt{\empty}%
+      \fi
+      }%
+    \fi
+    \ifnum\K@currentenumdepth=\z@
+      \edef\@tmp{\the\csname c@\Aeprob\endcsname}
+      \immediate\write\kaitou@out{\string\setcounter{\Aeprobname}{\@tmp-1}\string\begin{\Aeprobname}}%
+    \else
+      \ifx\emAe@item@opt\@undefined%
+        \def\@tmp{\getcurrentenum}%
+        \@ifundefined{ed@beta}{\ISub\@tmp{1}\@tmp}{\ifnum\ed@beta=\z@\ISub\@tmp{1}\@tmp\fi}%
+        \immediate\write\kaitou@out{\string\Aesetcurrentenum{\@tmp}\string\Aeitem\item@option}%
+      \else
+        \immediate\write\kaitou@out{\string\Aeitem[\the\Ae@tokena]}%
+      \fi
+    \fi
+    \immediate\write\kaitou@out{#1}%
+    \ifnum\K@currentenumdepth=\z@
+      \immediate\write\kaitou@out{\string\end{\Aeprobname}}%
+    \fi
+  }}%
+\or%   % kaitou@syorihou=1
+  \def\openKaiFile{}%
+  \def\closeKaiFile{}%
+  \def\inputKaiFile{}%
+  \def\Kaitou{%
+    \ifmaskAns
+%     \par%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 2007/12/12 保留 (saloon #515)
+      \definecolor{red}{rgb}{1,1,1}%
+      \definecolor{magenta}{rgb}{1,1,1}%
+      \definecolor{black}{rgb}{1,1,1}%
+      \@ifundefined{EMps@black}{}{%
+        \def\EMps@black{1 1 1}%
+        \def\EMps@magenta{1 1 1}%
+        \def\EMps@red{1 1 1}%
+      }%
+      \Gin@drafttrue
+      \def\nuri@iro@{white}%
+      \color{white}%
+      \let\normalcolor\relax
+    \fi
+    \@ifundefined{autoHako@label@name}{}{\autoHakolabel{\autoHako@label@name}}%
+    \@ifundefined{pre@Kaitou}{}{\pre@Kaitou}%
+    \KaitouTTL
+  }%
+  \def\endKaitou{%
+    \@ifundefined{post@Kaitou}{}{\post@Kaitou}%
+    \ifdim\kaitou@yohaku>\z@\vspace{\kaitou@yohaku}\fi
+  }%
+  \long\def\kaitou#1{%
+    \begingroup
+    \ifmaskAns
+%      \par%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 2007/12/12 保留 (saloon #515)
+      \definecolor{red}{rgb}{1,1,1}%
+      \definecolor{magenta}{rgb}{1,1,1}%
+      \definecolor{black}{rgb}{1,1,1}%
+      \@ifundefined{EMps@black}{}{%
+        \def\EMps@black{1 1 1}%
+        \def\EMps@magenta{1 1 1}%
+        \def\EMps@red{1 1 1}%
+      }%
+      \def\nuri@iro@{white}%
+      \color{white}%
+      \let\normalcolor\relax
+    \fi
+    \KaitouTTL #1\relax
+    \ifdim\kaitou@yohaku>\z@\vspace{\kaitou@yohaku}\fi
+    \endgroup
+  }%
+  \long\def\ekaitou#1{%
+    \ifmaskAns
+%      \par%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 2007/12/12 保留 (saloon #515)
+      \definecolor{red}{rgb}{1,1,1}%
+      \definecolor{magenta}{rgb}{1,1,1}%
+      \definecolor{black}{rgb}{1,1,1}%
+      \@ifundefined{EMps@black}{}{%
+        \def\EMps@black{1 1 1}%
+        \def\EMps@magenta{1 1 1}%
+        \def\EMps@red{1 1 1}%
+      }%
+      \def\nuri@iro@{white}%
+      \color{white}%
+      \let\normalcolor\relax
+    \fi
+    \KaitouTTL 
+{%\let\string\relax
+    #1\relax}%
+    \ifdim\kaitou@yohaku>\z@\vspace{\kaitou@yohaku}\fi
+  }%
+\or%   % kaitou@syorihou=2
+  \def\openKaiFile{}%
+  \def\closeKaiFile{}%
+  \def\inputKaiFile{}%
+  \let\Kaitou\comment
+  \let\endKaitou\endcomment
+  \long\def\kaitou#1{}%
+  \long\def\ekaitou#1{}%
+\or%   % kaitou@syorihou=3
+  \def\openKaiFile{}%
+  \def\closeKaiFile{}%
+  \def\inputKaiFile{}%
+  \def\Kaitou{%
+    \@ifundefined{autoHako@label@name}{}{\autoHakolabel{\autoHako@label@name}}%
+    \medskip\hrule\medskip\small\noindent\inhibitglue【解答】\par}%
+  \def\endKaitou{}%
+  \def\kaitou{\vspace{.5\baselineskip}\hrule\vspace{.5\baselineskip}}
+  \def\ekaitou{\vspace{.5\baselineskip}\hrule\vspace{.5\baselineskip}}
+%  \def\ekaitou{\let\string\relax\vspace{.5\baselineskip}\hrule\vspace{.5\baselineskip}}
+\or%   % kaitou@syorihou=4
+  \let\Kaitou\comment
+  \let\endKaitou\endcomment
+  \def\openKaiFile{}%
+  \def\closeKaiFile{}%
+  \long\def\kaitou#1{}%
+  \long\def\ekaitou#1{}%
+\or%   % kaitou@syorihou=5
+  \def\openKaiFile{}%
+  \def\closeKaiFile{}%
+  \def\inputKaiFile{}%
+  \def\Kaitou{%
+    \@ifundefined{autoHako@label@name}{}{\autoHakolabel{\autoHako@label@name}}%
+    \begin{multicols}{2}\small\noindent\inhibitglue【解答】\par}%
+  \def\endKaitou{\end{multicols}}%
+  \long\def\kaitou#1{%
+      \columnseprule.4pt%
+      \begin{multicols}{2}%
+      \small\inhibitglue 【解】\par
+      #1
+      \end{multicols}
+      }%
+  \long\def\ekaitou#1{%
+      \columnseprule.4pt%
+      \begin{multicols}{2}%
+      \small\inhibitglue 【解】\par
+      #1
+      \end{multicols}
+      }%
+\else
+  \def\openKaiFile{}%
+  \def\closeKaiFile{}%
+  \def\inputKaiFile{}%
+  \let\Kaitou\comment
+  \let\endKaitou\endcomment
+  \long\def\kaitou#1{}%
+  \long\def\ekaitou#1{}%
+\fi
+%-----------------------------------------------------------------
+%
+% 環境型 Hint
+%
+\newwrite\hint@out
+%
+\def\OpenHintFile{\xdef\HintFilenum{0}\openHintFile}
+\def\openHintFile{\@ifnextchar[{\@openHintFile}{%
+  \xIncr\HintFilenum\@openHintFile[\jobname.h\HintFilenum]}}
+\def\@openHintFile[#1]{\immediate\openout \hint@out \EM@workfiledir #1\relax
+    \edef\H@currentenumdepth{0}}%
+\def\closeHintFile{%
+    \@tempcnta\H@currentenumdepth\relax%
+    \@whilenum \@tempcnta>\z@\do{%
+    \advance \@tempcnta \m@ne\relax%
+  \ifx\empty\edaenumopt
+    \ifx\empty\betaenumopt
+      \immediate\write\hint@out{\string\end\string\Hintenumerate\string\def\string\Hintenumerate{enumerate}\string\def\string\Hintenumopt{}}%
+    \else
+      \immediate\write\hint@out{\string\end{betaenumerate}\string\par}%
+      \xdef\betaenumopt{\empty}%
+    \fi
+  \else
+      \immediate\write\hint@out{\string\end{edaenumerate}\string\par}%
+      \xdef\edaenumopt{\empty}%
+  \fi
+    }%
+    \immediate\closeout\hint@out}%
+\def\inputHintFile{\@ifnextchar[{\inputHintFile@}{\@inputHintFile}}
+\def\inputHintFile@[#1]{%
+  \@ifundefined{use@chapter}{}{\resetcounter{chapter}}%
+  \@ifundefined{use@section}{}{\resetcounter{section}}%
+  {\input{#1}}%
+  \xdef\HakoHintFilenum{0}\relax
+  \xdef\HintFilenum{0}\relax
+}
+\def\@inputHintFile{%
+  \@ifundefined{use@chapter}{}{\resetcounter{chapter}}%
+  \@ifundefined{use@section}{}{\resetcounter{section}}%
+  \Cfor{\edef\inpKF@i{0}}{\inpKF@i<\HintFilenum}{}\do{%
+    \xIncr\inpKF@i
+    {\input{\EM@workfiledir\jobname.h\inpKF@i}}}%
+  \xdef\HakoHintFilenum{0}%      2002/09/22  \do ループの外に出す。
+  \xdef\HintFilenum{0}}
+%
+%\def\openHintFile{\immediate\openout \hint@out \jobname.hin
+%    \edef\H@currentenumdepth{0}}%
+%\def\closeHintFile{%
+%    \@tempcnta\H@currentenumdepth\relax%
+%    \@whilenum \@tempcnta>\z@\do{%
+%    \advance \@tempcnta \m@ne\relax%
+%    \immediate\write\hint@out{\string\end\string\Kaienumerate\string\def\string\Kaienumerate{enumerate}\string\def\string\Kaienumopt{}}%
+%    }%
+%    \immediate\closeout\hint@out}%
+%\def\inputHintFile{%
+%    \input{\jobname.hin}}%
+%
+%%% Hint の定義 -------------------------------------------------
+\ifcase\value{kaitou@syorihou}%   % kaitou@syorihou=0
+  \def\Hint{%
+    \ifnum\H@currentenumdepth<\@enumdepth
+      \xdef\H@currentenumdepth{\the\@enumdepth}%
+      \ifthenelse{%
+        \equal{\the\csname enum@fmt\romannumeral\@enumdepth\endcsname}{}}{%
+          \ifx\edaenumopt\empty
+            \ifx\betaenumopt\empty
+              \immediate\write\hint@out{\string\expandafter\string\begin\string\expandafter\string\Hintenumerate\string\Hintenumopt}%
+              \immediate\write\hint@out{%
+                \string\ifthenelse{\string\equal{\string\Hintenumerate}{edaenumerate}}{\string\def\string\Aeitem{\string\edaitem}}{}
+                \string\ifthenelse{\string\equal{\string\Hintenumerate}{betaenumerate}}{\string\def\string\Aeitem{\string\edaitem}}{}}%
+            \else
+              \immediate\write\hint@out{\string\begin{betaenumerate}}%
+            \fi
+          \else
+            \immediate\write\hint@out{\string\begin{edaenumerate}\edaenumopt}%
+            \immediate\write\hint@out{\string\def\string\Aeitem{\string\edaitem}}%
+          \fi
+      }{%
+        \ifx\edaenumopt\empty
+          \ifx\betaenumopt\empty
+            \immediate\write\hint@out{%
+            \string\expandafter\string\begin\string\expandafter\string\Hintenumerate\string\Hintenumopt[%
+            \the\csname enum@fmt\romannumeral\@enumdepth\endcsname]}%
+            \immediate\write\hint@out{%
+              \string\ifthenelse{\string\equal{\string\Hintenumerate}{edaenumerate}}{\string\def\string\Aeitem{\string\edaitem}}{}}%
+            \immediate\write\hint@out{%
+              \string\ifthenelse{\string\equal{\string\Hintenumerate}{betaenumerate}}{\string\def\string\Aeitem{\string\edaitem}}{}}%
+          \else
+            \immediate\write\hint@out{%
+            \string\begin{betaenumerate}[%
+            \the\csname enum@fmt\romannumeral\@enumdepth\endcsname]}%
+          \fi
+        \else
+          \immediate\write\hint@out{%
+          \string\begin{edaenumerate}\edaenumopt[%
+          \the\csname enum@fmt\romannumeral\@enumdepth\endcsname]}%
+          \immediate\write\hint@out{\string\def\string\Aeitem{\string\edaitem}}%
+        \fi%
+      }%
+    \else
+      \@whilenum\H@currentenumdepth>\@enumdepth\do{%
+        \xDecr\H@currentenumdepth
+        \ifx\empty\edaenumopt
+          \ifx\empty\betaenumopt
+            \immediate\write\hint@out{\string\end\string\Hintenumerate\string\def\string\Hintenumerate{enumerate}\string\def\string\Hintenumopt{}}%
+          \else
+            \immediate\write\hint@out{\string\end{betaenumerate}\string\par}%
+            \xdef\betaenumopt{\empty}%
+          \fi
+        \else
+          \immediate\write\hint@out{\string\end{edaenumerate}\string\par}%
+          \xdef\edaenumopt{\empty}%
+        \fi
+      }%
+    \fi
+    \@ifundefined{autoHako@label@name}{}{%
+      \immediate\write\hint@out{\string\autoHakolabel{\autoHako@label@name}}}%
+    \immediate\write\hint@out{\string\def\string\jobname{\jobname}}%
+    \immediate\write\hint@out{\string\def\string\prelabel{\Jobname-}}%
+    \@ifundefined{perlflnum}{}{%
+      \immediate\write\hint@out{\string\xdef\string\perlflnum{\perlflnum}}}%
+    \ifnum\H@currentenumdepth=\z@%%%%%%%% 2005/08/03
+      \edef\@tmp{\the\csname c@\Aeprob\endcsname}
+      \immediate\write\hint@out{\string\setcounter{\Aeprobname}{\@tmp-1}\string\begin{\Aeprobname}}%
+      \global\pr@hinttrue
+    \else
+      \ifx\emAe@item@opt\@undefined%
+        \def\@tmp{\getcurrentenum}%
+        \@ifundefined{ed@beta}{\ISub\@tmp{1}\@tmp}{\ifnum\ed@beta=\z@\ISub\@tmp{1}\@tmp\fi}%
+        \immediate\write\hint@out{\string\Aesetcurrentenum{\@tmp}\string\Aeitem\item@option}%
+      \else
+        \immediate\write\hint@out{\string\Aeitem[\the\Ae@tokena]}%
+      \fi
+    \fi
+    \@ifundefined{pre@Hint}{}{\immediate\write\hint@out{\pre@Hint}}%
+    \@bsphack
+    \let\do\@makeother\dospecials
+    \catcode`\^^M\active
+    \def\verbatim@processline{\immediate\write\hint@out{\the\verbatim@line}}%
+    \verbatim@start
+  }%
+  \def\endHint{\@esphack
+    \ifnum\H@currentenumdepth=\z@\fi
+  }%
+  \let\endeHint\endHint
+% 旧定義 \hint の Hint環境への翻訳
+\long\def\hint#1{{%
+    \ifnum\H@currentenumdepth<\@enumdepth
+      \xdef\H@currentenumdepth{\the\@enumdepth}%
+      \ifthenelse{%
+        \equal{\the\csname enum@fmt\romannumeral\@enumdepth\endcsname}{}}{%
+          \ifx\edaenumopt\empty
+            \ifx\betaenumopt\empty
+              \immediate\write\hint@out{\string\expandafter\string\begin\string\expandafter\string\Hintenumerate\string\Hintenumopt}%
+              \immediate\write\hint@out{%
+                \string\ifthenelse{\string\equal{\string\Hintenumerate}{edaenumerate}}{\string\def\string\Aeitem{\string\edaitem}}{}
+                \string\ifthenelse{\string\equal{\string\Hintenumerate}{betaenumerate}}{\string\def\string\Aeitem{\string\edaitem}}{}}%
+            \else
+              \immediate\write\hint@out{\string\begin{betaenumerate}}%
+            \fi
+          \else
+            \immediate\write\hint@out{\string\begin{edaenumerate}\edaenumopt}%
+            \immediate\write\hint@out{\string\def\string\Aeitem{\string\edaitem}}%
+          \fi
+      }{%
+        \ifx\edaenumopt\empty
+          \ifx\betaenumopt\empty
+            \immediate\write\hint@out{%
+            \string\expandafter\string\begin\string\expandafter\string\Hintenumerate\string\Hintenumopt[%
+            \the\csname enum@fmt\romannumeral\@enumdepth\endcsname]}%
+            \immediate\write\hint@out{%
+              \string\ifthenelse{\string\equal{\string\Hintenumerate}{edaenumerate}}{\string\def\string\Aeitem{\string\edaitem}}{}}%
+            \immediate\write\hint@out{%
+              \string\ifthenelse{\string\equal{\string\Hintenumerate}{betaenumerate}}{\string\def\string\Aeitem{\string\edaitem}}{}}%
+          \else
+            \immediate\write\hint@out{%
+            \string\begin{betaenumerate}[%
+            \the\csname enum@fmt\romannumeral\@enumdepth\endcsname]}%
+          \fi
+        \else
+          \immediate\write\hint@out{%
+          \string\begin{edaenumerate}\edaenumopt[%
+          \the\csname enum@fmt\romannumeral\@enumdepth\endcsname]}%
+          \immediate\write\hint@out{\string\def\string\Aeitem{\string\edaitem}}%
+        \fi%
+      }%
+    \else
+      \@whilenum\H@currentenumdepth>\@enumdepth\do{%
+        \xDecr\H@currentenumdepth
+        \ifx\empty\edaenumopt
+          \ifx\empty\betaenumopt
+            \immediate\write\hint@out{\string\end\string\Hintenumerate\string\def\string\Hintenumerate{enumerate}\string\def\string\Hintenumopt{}}%
+          \else
+            \immediate\write\hint@out{\string\end{betaenumerate}\string\par}%
+            \xdef\betaenumopt{\empty}%
+          \fi
+        \else
+          \immediate\write\hint@out{\string\end{edaenumerate}\string\par}%
+          \xdef\edaenumopt{\empty}%
+        \fi
+      }%
+    \fi
+    \@ifundefined{autoHako@label@name}{}{%
+      \immediate\write\hint@out{\string\autoHakolabel{\autoHako@label@name}}}%
+    \immediate\write\hint@out{\string\def\string\jobname{\jobname}}%
+    \immediate\write\hint@out{\string\def\string\prelabel{\Jobname-}}%
+    \@ifundefined{perlflnum}{}{%
+      \immediate\write\hint@out{\string\xdef\string\perlflnum{\perlflnum}}}%
+    \ifnum\H@currentenumdepth=\z@%%%%%%%% 2005/08/03
+      \edef\@tmp{\the\csname c@\Aeprob\endcsname}
+      \immediate\write\hint@out{\string\setcounter{\Aeprobname}{\@tmp-1}\string\begin{\Aeprobname}}%
+      \global\pr@hinttrue
+    \else
+      \ifx\emAe@item@opt\@undefined%
+        \def\@tmp{\getcurrentenum}%
+        \@ifundefined{ed@beta}{\ISub\@tmp{1}\@tmp}{\ifnum\ed@beta=\z@\ISub\@tmp{1}\@tmp\fi}%
+        \immediate\write\hint@out{\string\Aesetcurrentenum{\@tmp}\string\Aeitem\item@option}%
+      \else
+        \immediate\write\hint@out{\string\Aeitem[\the\Ae@tokena]}%
+      \fi
+    \fi
+    \@ifundefined{pre@Hint}{}{\immediate\write\hint@out{\pre@Hint}}%
+%    \@bsphack
+%    \let\do\@makeother\dospecials
+%    \catcode`\^^M\active
+%    \def\verbatim@processline{\immediate\write\hint@out{\the\verbatim@line}}%
+    \expandafter\verbatimR@addtoline\expandafter{\protect #1}%
+    \immediate\write\hint@out{\the\verbatim@line}%
+%    \verbatim@start
+%  }%
+%  \def\endHint{\@esphack
+%    \ifnum\H@currentenumdepth=\z@\fi
+  }%
+}%
+%
+\or%   % kaitou@syorihou=1
+  \def\openHintFile{}%
+  \def\closeHintFile{}%
+  \def\inputHintFile{}%
+  \def\Hint{%
+    \ifmaskAns
+%      \par%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 2007/12/12 保留 (saloon #515)
+      \definecolor{red}{rgb}{1,1,1}%
+      \definecolor{magenta}{rgb}{1,1,1}%
+      \definecolor{black}{rgb}{1,1,1}%
+      \@ifundefined{EMps@black}{}{%
+        \def\EMps@black{1 1 1}%
+        \def\EMps@magenta{1 1 1}%
+        \def\EMps@red{1 1 1}%
+      }%
+      \def\nuri@iro@{white}%
+      \color{white}%
+      \let\normalcolor\relax
+    \fi
+    \HintTTL
+  }%
+  \def\endHint{%
+    \ifdim\kaitou@yohaku>\z@\vspace{\kaitou@yohaku}\fi
+  }%
+  \long\def\hint#1{%
+    \ifmaskAns
+%      \par%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 2007/12/12 保留 (saloon #515)
+      \definecolor{red}{rgb}{1,1,1}%
+      \definecolor{magenta}{rgb}{1,1,1}%
+      \definecolor{black}{rgb}{1,1,1}%
+      \@ifundefined{EMps@black}{}{%
+        \def\EMps@black{1 1 1}%
+        \def\EMps@magenta{1 1 1}%
+        \def\EMps@red{1 1 1}%
+      }%
+      \def\nuri@iro@{white}%
+      \color{white}%
+      \let\normalcolor\relax
+    \fi
+    \HintTTL #1\relax
+    \ifdim\kaitou@yohaku>\z@\vspace{\kaitou@yohaku}\fi
+  }%
+\or%   % kaitou@syorihou=2
+  \def\openHintFile{}%
+  \def\closeHintFile{}%
+  \def\inputHintFile{}%
+  \let\Hint\comment
+  \let\endHint\endcomment
+  \long\def\hint#1{}%
+\or%   % kaitou@syorihou=3
+  \def\openHintFile{}%
+  \def\closeHintFile{}%
+  \def\inputHintFile{}%
+  \def\Hint{\medskip\hrule\medskip\small\noindent\inhibitglue【ヒント】\par}%
+  \def\endHint{}%
+  \def\hint{\vspace{.5\baselineskip}\hrule\vspace{.5\baselineskip}}
+\or%   % kaitou@syorihou=4
+  \let\Hint\comment
+  \let\endHint\endcomment
+  \def\openHintFile{}%
+  \def\closeHintFile{}%
+  \long\def\hint#1{}%
+\or%   % kaitou@syorihou=5
+  \def\openHintFile{}%
+  \def\closeHintFile{}%
+  \def\inputHintFile{}%
+  \def\Hint{\begin{multicols}{2}\small\noindent\inhibitglue【ヒント】\par}%
+  \def\endHint{\end{multicols}}%
+  \long\def\hint#1{%
+      \columnseprule.4pt%
+      \begin{multicols}{2}%
+      \small\inhibitglue 【ヒント】\par
+      #1
+      \end{multicols}
+      }%
+\else
+  \def\openHintFile{}%
+  \def\closeHintFile{}%
+  \def\inputHintFile{}%
+  \let\Hint\comment
+  \let\endHint\endcomment
+  \long\def\hint#1{}%
+\fi
+%-----------------------------------------------------------------
+\def\setKaienum#1{\strsep{#1}{(}\setKaienum@a\setKaienum@b
+  \ifthenelse{\equal\setKaienum@b\empty}{%
+    \strsep{#1}<\setKaienum@a\setKaienum@b
+    \ifthenelse{\equal\setKaienum@b\empty}{%
+      \def\Kaienumerate{#1}}{%
+      \def\Kaienumerate{\setKaienum@a}%
+      \edef\Kaienumopt{<\setKaienum@b}}%
+  }{\def\Kaienumerate{\setKaienum@a}%
+    \edef\Kaienumopt{(\setKaienum@b}}}%
+%
+\def\setHintenum#1{\strsep{#1}{(}\setHintenum@a\setHintenum@b
+  \ifthenelse{\equal\setHintenum@b\empty}{%
+    \strsep{#1}<\setHintenum@a\setHintenum@b
+    \ifthenelse{\equal\setHintenum@b\empty}{%
+      \def\Hintenumerate{#1}}{%
+      \def\Hintenumerate{\setHintenum@a}%
+      \edef\Hintenumopt{<\setHintenum@b}}%
+  }{\def\Hintenumerate{\setHintenum@a}%
+    \edef\Hintenumopt{(\setHintenum@b}}}%
+%
+\long\def\WriteKaiFile#1{\immediate\write\kaitou@out{#1}}%
+\long\def\WriteHintFile#1{\immediate\write\hint@out{#1}}%
+\def\writeKaiFile{%
+% \owariitem
+  \@bsphack
+  \let\do\@makeother\dospecials
+  \catcode`\^^M\active
+  \def\verbatim@processline{%
+    \immediate\write\kaitou@out{\the\verbatim@line}}%
+  \verbatim@start}
+
+\def\endwriteKaiFile{\@esphack}
+
+\newcommand{\closeFile}{\closeKaiFile\closeHintFile}%
+
+%%% 解答をマスクする機能
+%
+\def\everyzahyou{%
+  \ifmaskAns%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 2006/02/26
+    \let\Kaitou\comment
+    \let\endKaitou\endcomment
+  \fi
+}%
+%
+%
+\ifappendanswer
+  \let\orgReadTeXFile\ReadTeXFile
+  \def\ReadTeXFile#1{%
+    \orgReadTeXFile{#1}%
+    \edef\flnm{#1}%
+    \getflnode{#1}\flnm@
+    \edefappend\flnm@{a}%
+    \IfFileExists{\flnm@}{\orgReadTeXFile\flnm@}{}%
+  }
+  \AtEndDocument{\edef\flnm@@{\jobname a}%
+    \IfFileExists{\flnm@@}{\par\orgReadTeXFile{\flnm@@}}{}}%
+\fi
+%
+  \def\KaitouTTL{\par\small\noindent\inhibitglue 【解答】\par}%
+  \def\maskKaitou{%
+%
+      \def\ryakkai##1{##1\kaitou{##1}}%
+%
+    \ifmaskAns
+      \definecolor{red}{rgb}{1,1,1}%
+      \definecolor{magenta}{rgb}{1,1,1}%
+      \definecolor{black}{rgb}{1,1,1}%
+      \@ifundefined{EMps@black}{}{%
+        \def\EMps@black{1 1 1}%
+        \def\EMps@magenta{1 1 1}%
+        \def\EMps@red{1 1 1}%
+      }%
+      \Gin@drafttrue
+      \def\nuri@iro@{white}%
+      \color{white}%
+      \let\normalcolor\relax
+    \fi
+    \@ifundefined{autoHako@label@name}{}{\autoHakolabel{\autoHako@label@name}}%
+    \@ifundefined{pre@Kaitou}{}{\pre@Kaitou}%
+    \KaitouTTL
+  }%
+  \def\endmaskKaitou{%
+    \@ifundefined{post@Kaitou}{}{\post@Kaitou}%
+    \ifdim\kaitou@yohaku>\z@\vspace{\kaitou@yohaku}\fi
+    \ignorespaces
+  }%
+%
+\endinput
+%%% end of emathAe.sty
+% ver.0.00β  19990819
+%     emathA.sty では，\kaitou, \hint などコマンド型であったものを
+%     Kaitou, Hint と環境型に変更した．
+% ver.0.01    19991105
+%     \kaitou も環境型に翻訳して併用可能とする．
+% ver.0.02    19991107
+%     解答部分を edaenumerate環境で記述するため
+%       \edaenumopt を新設する．
+% ver.0.03    20000229
+%     \xdef\edaenumopt{...} で解答部・小問を edaenumerate 環境にしたとき，
+%     終了を \end{edaenumerate} としてあったが，不十分で \par を附加し
+%         \end{edaenumerate}\par
+%     とする．
+% ver.0.04    20000304
+%     \end{enumerate} を発行する回数の調整．
+% v.0.05      20000325
+%     \openKaiFile ファイル名を [...] オプションで指定可能とする。
+% v0.06       2000/04/02
+%     nidan オプションを指定したときは multicol を読み込む。
+% v0.07       2000/04/10
+%     nidan オプションを指定したときは \columnseprule=0.4pt も附加
+% v0.08       2000/06/22
+%     enum@fmti,ii,iii,iv トークンとする。
+% v0.09       2000/07/10
+%     \enum@fmt に \the をつけるべきところがあった。
+% v0.11       2000/09/01
+% v0.12 2001/02/11
+%         hako.sty との連携で，\HakoKaiFilenum の初期化を付加。
+% v0.13 2001/06/22
+%         \item に[...]オプションがある場合に対応
+% v0.14 2001/06/28
+%         上記修正の Hint 環境の不備修正
+% v0.15 2001/06/30
+%         edaenumerate 環境への対応
+% v0.16 2001/07/22
+%         mawarikomi 環境との調整
+%         debug, continue オプション時 【解答】の後ろに \par を附加
+% v0.17 2001/07/23
+%         解答部を betaenumerate 環境で記述するために
+%             \xdef\betaenumopt{1}
+% v0.18 2001/07/29
+%         解答部の enumerate形式を
+%           \def\Kaienuerate{edaenumerate}
+%           \def\Kaienumopt{<3>}
+%         などで切り替える。
+% v0.19 2001/07/30
+%         \setKaienum{edaenumerate<3>}により
+%           \def\Kaienumerate{edaenumerate}
+%           \def\Kaienumopt{<3>}
+%           をまとめて指定できるようにする。
+%         \WriteKaiFile : writeKaiFile環境のコマンド版
+%                         ただし，\string\vspace{...} など，\string が必要
+% v 0.20 2001/08/17
+%         \def\emAe@item@ において，\edef ---> \def ???
+% v 0.21 2001/09/07
+%         perl との連携対応
+% v 0.22 2001/09/18-10/20
+%         その修正
+%         \KaiFilenum を新設し，解答ファイル拡張子を
+%           .k1, .k2, ......
+%         と，複数のファイルを作れるようにした。
+%         \OpenKaiFile \KaiFilenum を 0 にリセットして，\openKaiFile へ。
+% v 0.23 2001/11/28
+%       \item[] のとき，番号が出力されていたバグを修正
+% v 0.24 2001/12/09
+%     \def\KaitouTTL#1 で continue モードのときの解答部分の先頭を指定
+% v 0.25 2002/05/31
+%     \owariitem の書き出しを止める。（2箇所）
+% v 0.26 2002/09/22
+%    \xdef\HakoKaiFilenum{0}%  \inputKaiFile において \do ループの外に出す。
+% v 0.27
+%    maskAnstrue, maskAnsfalse オプション
+% v 0.28
+%    maskAns... と \Nuritubusi との調整
+% v 0.29
+%   \maskAnstrue の場合も \KaitouTTL を定義しておく。
+% v 0.30
+%   Hint 環境において，enumdepth の戻り処理に不備あり。
+% v 0.31
+%   edaenumerate環境内にリスト形環境を置くことを可能とする。
+%   edaenumerate環境内は，\item に替えて
+%       \Aeitem
+%   を新設。
+%   その初期状態は \item で，edaenumerate環境のときは \edaitem となる。
+%   \inputKaiFile は \useitemfalse の前提で，実行する。
+% v 0.32
+%    0.31改訂のバグ修正
+% v 0.33
+%    0.31改訂のバグ修正(2) ??????
+% v 0.34
+%     \inputKaiFile で \useitemfalse を中止
+% v 0.35 2004/06/17
+%     \maskAnstrue 時，pszahyou 環境にも対応
+% v 0.36 2004/07/22
+%     \end{document}, \ReadTeXFile の最後に
+%       \jobname の末尾に`a'を付したファイルを読み込む
+% v 0.37 2004/08/04
+%     上記を修正：
+%       \ifappendanswer の真偽によることとする。
+%       デフォルトは \appendanswerfalse
+%       ロードオプション[appendanswer/noappendanswer]
+% v 0.38 2005/03/04
+%       \maskAnstrue 時，冒頭で \par を発行
+% v 0.39 2005/06/10
+%       Kaitou環境に <itemoption=..>オプションを新設 -- 保留
+% v 0.40 2005/06/11
+%       yokoenumerate : emathAe.sty との併用で修正
+% v 0.41 2005/06/15
+%       kaitou@yohaku
+% v 0.42 2005/07/16
+%       betaenumerate環境における\kaitou のナンバリング修正
+% v 0.43 2005/07/19
+%       maskanstrue オプションを指定したときは \let\normalcolor\relax
+% v 0.44 2005/08/03
+%       第1層を newtheorem で定義する場合は，
+%              問題のカウンタを Aeprob
+%              解答のカウンタを Aeans
+%       とする。
+% v 0.45 2005/09/05
+%       emathEy.sty 独立による修正
+% v 0.46 2006/02/26
+%       (ps)zahyou環境内で \maskAns を利用する場合への対応
+% v 0.47 2006/04/09
+%       \item[option] で，option に \textbf などを許容
+% v 0.48 2006/06/09
+%       \ltxitem の定義を emath.sty に移管
+% v 0.49 2006/09/23
+%       空白の混入対策
+% v 0.50 2006/10/08
+%       emathThm.sty との連携
+% v 0.51 2007/02/20
+%       enumerate : <...> オプションを有効に
+% v 0.52 2007/02/21
+%       \hint, Hint環境 : 整備
+% v 0.53 2007/04/07
+%       \ekaitou : 制御綴を展開して書き出す。
+% v 0.54 2007/05/03
+%       eKaiotu#1 環境 : #1は展開して書き出す。
+%       ロードオプション：[section]
+%           \hooksection
+%       \kaitou : \begingroup, \endgroup で囲む
+% v 0.55 2007/05/05
+%       ロードオプション：[chapter]
+%           \hookchapter
+%       \section<hooksection=..>
+%       \chapter<hookchapter=..>
+%       \define@key の置き場所を下げる
+% v 0.56 2007/05/14
+%       [chapter] : chapter が未定義の場合，エラー終了
+%       \newtheorem#1[#2]#3 に対応
+%       \newtoks \Kai@Midasi (BBS #6019)
+% v 0.57 2007/05/16
+%       [chapter] : \Kai@Midasi を適用
+%       v 0.54 における \kaitou の修正が副作用 (BBS #6024)
+% v 0.58 2007/09/19
+%       \inpurKaiFile[....] : 終りに，\KaiFilenum を初期化する。
+%       \maskAnstrue 時は，\Gin@drafttrue とする。(BBS #6447)
+% v 0.59 2007/10/13
+%       [section]指定時に \section* も使用できるようにする。(BBS #6560)
+% v 0.60 2007/12/12
+        \kaitou \maskAnstrue 時の \par 保留 (saloon #515)
+  v 0.61 2008/01/27
+        \inputKaiFile : グルーピング
+  v 0.62 2008/01/28
+        \autoHakolabel に対応
+  v 0.63 2008/02/24
+        \preKaitou, \postKaitou (saloon #580)
+  v 0.64 2008/03/27
+        [section]: Hint環境に対しても有効 (BBS #7156)
+  v 0.65 2008/03/28
+        [section]: \hint コマンドも
+        \WriteHintFile
+        \SetHintenum
+  v 0.66 2008/05/28
+        作業ファイルのディレクトリ指定を可能
+  v 0.67 2008/06/05
+        \openHintFile にバグ (BBS #7322)
+  v 0.68 2009/02/01
+        Enumerate環境の [..] オプションを Kaitou環境に対応 (BBS #7898)
+  v 0.69 2010/03/21
+        prelabel
+  v 0.70 2010/06/24
+        Enumerate*環境への対応 (BBS #8929)
+  v 0.71 2010/06/28 maskKaitou環境 (BBS #8943)
+  v 0.72 2010/08/09 yokoenumerate環境の場合 (BBS #9061)
+  v 0.73 2010/08/10 maskKaitou環境：空白の混入 (BBS #9076)

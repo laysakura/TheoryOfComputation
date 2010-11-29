@@ -1,0 +1,838 @@
+\section{\textsf{zahyou}環境}
+\subsection{なぜ\textsf{zahyou}環境か}
+\LaTeX で座標平面を描画するには，\textsf{picture}環境があります。
+ただし，負の数を扱うには，\textsf{picture}環境の引数を
+計算しなければなりません。
+例えば，$-3<x<3$, $-2<y<2$の範囲を描画するには
+
+\begin{showEx}(.5,.44){\textsf{picture}環境}
+\unitlength=8mm
+\begin{picture}(6,4)(-3,-2)%
+\put(-3,0){\vector(1,0){6}}%
+\put(0,-2){\vector(0,1){4}}%
+\end{picture}%
+\end{showEx}
+
+引数の与え方が面倒であることと，
+座標軸の描画もまとめて面倒を見てしまおう，
+ということで\textsf{zahyou}環境です。
+
+\subsection{\textsf{zahyou}環境}
+
+\begin{showEx}(.5,.44){\textsf{zahyou}環境}
+\unitlength=8mm
+\begin{zahyou}(-3,3)(-2,2)%
+\end{zahyou}%
+\end{showEx}
+
+\textsf{picture}環境とは，引数の与え方が異なり，
+\begin{jquote}
+\begin{verbatim}
+(xmin, xmax)(ymin, ymax)
+\end{verbatim}
+\end{jquote}
+と，$x$, $y$の区間を与えます。
+
+なお，この環境内では，次の変数が定義されています。
+\begin{jquote}
+\begin{verbatim}
+\xmin xの区間の最小値
+\xmax xの区間の最大値
+\ymin yの区間の最小値
+\ymax yの区間の最大値
+
+\O    原点
+\XMAX x軸の右端の点
+\XMIN x軸の左端の点
+\YMAX y軸の上端の点
+\YMIN y軸の下端の点
+\RT   描画領域右上のコーナー
+\RB   描画領域右下のコーナー
+\LT   描画領域左上のコーナー
+\LB   描画領域左下のコーナー
+\end{verbatim}
+\end{jquote}
+\bigskip
+
+座標軸を描画する必要がない場合に対しては
+\textsf{zahyou*}環境を用意してあります。
+
+\begin{showEx}(.5,.44){\textsf{zahyou*}環境}
+\unitlength=8mm
+\begin{zahyou*}(-3,3)(-2,2)%
+  \Drawline{\LB\RT\RB\LT\LB}
+  \En\O{2}%
+\end{zahyou*}%
+\end{showEx}
+
+上記リスト中，\cmd{Drawline}は，指定点を折れ線で結びます。
+\verb+\En\O{2}+は点\cmd{O}（原点）を中心とする半径2の円を描画しています。
+詳細は後述します。
+
+\textsf{zahyou}環境には，細かい微調整をするためのオプションがありますが，
+これについては後述します。
+
+\section{直線図形}
+\subsection{折れ線}
+折れ線を描画するのに，\textsf{epic.sty} で
+定義されている \cmd{drawline} を用いることができます．
+
+\showexample[\cmd{drawline}](0.55)(0.35){example/oresen01}
+
+このスタイルファイルでは，点を \cmd{def}\cmd{A\{(3,0)\}}などと
+変数で表すことにしています．その場合は，\cmd{drawline} は使えません．
+代わりに \cmd{Drawline} を用意しました．このコマンドは内部で
+\cmd{drawline} を呼び出していますから，\textsf{epic.sty} を必要とします．
+
+\showexample[\cmd{Drawline}](0.55)(0.35){example/oresen02}
+\cindex{Drawline}\bigskip
+
+\cmd{Drawline} の書式は
+
+\begin{boxnote}
+\begin{verbatim}
+\Drawline#1
+    #1 : 点列
+\end{verbatim}
+\end{boxnote}
+
+\subsection{点線}
+点線を描画するには\cmd{emdottedline}を用います。
+
+\begin{showEx}(.64,.3){\cmd{emdottedline}}
+\begin{zahyou}[ul=5mm](-3,3)(-3,3)
+  \emdottedline(-2,2)(2,-1)
+\end{zahyou}
+\end{showEx}
+
+\subsubsection{\cmd{emDottedline}}
+\textsf{emath}では，点列を一つにまとめて扱いますので，
+\cmd{emDottedline}を定義しました。
+
+ただし，このコマンドは\textsf{multido.sty}で定義されている\cmd{multido}
+を用います。
+\cmd{emDottedline}コマンドを使用するには，
+プリアンブルで
+\begin{jquote}
+\begin{verbatim}
+\usepackage{multido}
+\end{verbatim}
+\end{jquote}
+を宣言しておく必要があります。
+
+\begin{showEx}(.64,.3){\cmd{emDottedline}}
+\begin{zahyou}[ul=5mm](-3,3)(-3,3)
+  \tenretu{A(-2,2)w;B(2,-1)e}
+  \emDottedline{\A\B}
+\end{zahyou}
+\end{showEx}
+
+点と点の間隔は，
+デフォルトは\verb+3pt+としてありますが，これを変更するには\verb+<G=..>+オプションを用います。
+
+\subsubsection{\texttt{<G=..>}オプション}
+さて，その\verb+<G=..>+オプションを用いて，もう少し点を稠密にして見ましょう。
+
+\begin{showEx}(.64,.3){\texttt{<G=..>}オプション}
+\begin{zahyou}[ul=5mm](-3,3)(-3,3)
+  \tenretu{A(-2,2)w;B(2,-1)e}
+  \emDottedline<G=2pt>{\A\B}
+\end{zahyou}
+\end{showEx}
+\newpage
+
+\subsubsection{\texttt{<C=..>}オプション}
+配置する点の形状を変更するには，
+\verb+<C=..>+オプションを用います。
+
+\begin{showEx}(.64,.3){\texttt{<C=..>}オプション}
+\begin{zahyou}[ul=5mm](-3,3)(-3,3)
+  \tenretu{A(-2,2)w;B(2,-1)e}
+  \emDottedline<C=$*$,G=5pt>{\A\B}
+\end{zahyou}
+\end{showEx}
+
+小さい円（黒塗りの）にしますか。
+
+\begin{showEx}(.64,.3){小さい円を配置}
+\begin{zahyou}[ul=5mm](-3,3)(-3,3)
+  \ukansan{1pt}\tyokkei
+  \tenretu{A(-2,2)w;B(2,-1)e}
+  \emDottedline<C=\circle*\tyokkei>{\A\B}
+\end{zahyou}
+\end{showEx}
+
+ここで登場しているコマンド\verb+\ukansan#1#2+は，
+\verb+#1+に与えられた，単位付の長さを，\cmd{unitlength}を単位とする無名数に換算した結果を
+\verb+#2+の制御綴に与えるものです。
+
+\subsubsection{応用例}
+奥村先生の掲示板 \verb+Q&A+ に「行列の点々」という投稿がありました。
+\textsf{emath}を用いる一案です。
+
+\setbox0=\hbox{$b_{n-1}+d_{n-1}$}\setlength{\templa}{\wd0}\edef\wdtbl{\the\templa}%
+\setlength{\templa}{2\wd0}\edef\xlen{\mumeisuu\templa}
+\setlength{\templa}{\ht\strutbox+\dp\strutbox+20pt}
+\edef\ylen{\mumeisuu\templa}
+\def\PQ{(0,-3)(\xlen,-\ylen)}%
+\[
+\setlength{\arraycolsep}{0pt}%
+  \left[
+    \begin{array}{*8{C{\wdtbl}}}
+    a_1 &b_1+d_1  &c_1    &   &   &   &   \\
+      &a_2    &b_2+d_2  &c_2    &   &   &   \\
+      &   &\EMcell<\emDottedline\PQ>{c}{a_3}
+          &\EMcell<\emDottedline\PQ>{c}{b_3+d_3}
+          &\EMcell<\emDottedline\PQ>{c}{c_3}    &   &   \\[20pt]
+      &   &   &   &   &   & \\
+      &   &   &   &a_{n-1}  &b_{n-1}+d_{n-1}&c_{n-1}  \\
+      &   &   &   &   &a_n    &b_n+d_n  & c_n
+    \end{array}
+  \right]
+\]
+
+
+\subsection{破線}
+%\subsubsection{\texorpdfstring{\cmd{Dashline}}{Dashline}}
+\subsubsection{\cmd{Dashline}}
+破線を引くコマンドは \cmd{Dashline} です．\cindex{Dashline}
+
+\showexample[\cmd{Dashline}](0.55)(0.35){example/hasen01}
+
+このコマンドは内部で \textsf{eepic.sty} の \cmd{dashline} を
+呼び出しています．書式もほぼ同様で
+
+\begin{boxnote}
+\begin{verbatim}
+\Dashline[#1]#2#3
+    #1 : stretch
+    #2 : dashlength
+    #3 : 点列
+\end{verbatim}
+\end{boxnote}
+です．\texttt{[dashdotgap]} はサポートしていません．
+\texttt{[stretch]} で代用してください．
+
+\showexample[\cmd{Dashline}\texttt{[stretch]}](0.55)(0.35){example/hasen02}
+
+%\subsubsection{\texorpdfstring{\cmd{hasen}}{hasen}}
+\subsubsection{\cmd{hasen}}
+\cmd{dashline}の第1引数は \cmd{unitlength}の値によって変えなければなりません。
+
+\begin{showEx}{\cmd{Dashline}と\cmd{unitlength}}
+\unitlength=10mm
+\begin{picture}(3,3)
+\dashline{.2}(0,0)(3,3)
+\end{picture}\\
+\unitlength=1mm
+\def\B{(30,30)}
+\begin{picture}(30,30)
+\dashline{2}(0,0)(30,30)
+\end{picture}
+\end{showEx}
+
+これは面倒ですから，\cmd{hasen}を作りました。
+
+\begin{showEx}{\cmd{hasen}}
+\unitlength=10mm
+\begin{picture}(3,3)
+\hasen(0,0)(3,3)
+\end{picture}\\
+\unitlength=1mm
+\begin{picture}(30,30)
+\hasen(0,0)(30,30)
+\end{picture}
+\end{showEx}
+
+また，\cmd{dashline}における第1引数は不要とし，
+\cmd{hasen}の形状はオプション引数で指定する方式を取りました。
+\cmd{hasen}の書式です。
+
+\begin{boxnote}
+\begin{verbatim}
+\hasen[#1](x1,y1)(x2,y2).....(xN,yN)
+    #1 : L=（破線の実線部分の長さ） デフォルト値=1mm
+       : G=（破線のギャップの長さ） デフォルト値=0.9mm
+    (x1,y1)...(xN,yN) : 折れ線の頂点列
+\end{verbatim}
+\end{boxnote}\cindex{hasen}
+
+オプション引数を与えて破線の形状を変更する例です。
+
+\begin{showEx}{\cmd{hasen}の形状変更}
+\unitlength=10mm
+\begin{picture}(3,3)
+\hasen[L=2mm,G=2mm](0,0)(3,3)
+\end{picture}
+\end{showEx}
+
+ただし，ギャップの長さは必ずしも指定した長さにはなりません。
+というのは，破線の両端における実線部分が指定した長さとなるように
+ギャップを調整しているからです。
+
+細かいことですが，\cmd{drawline}で描画した直線と
+\cmd{dashline}で描画した破線の位置がずれることがあります。
+これを修正するのも\cmd{hasen}を開発した目的の一つです。
+
+%\subsubsection{\texorpdfstring{\cmd{Hasen}}{Hasen}}
+\subsubsection{\cmd{Hasen}}
+\cmd{drawline}, \cmd{dashline} に対して，\cmd{Drawline}, \cmd{Dashline}
+があるように，\cmd{hasen} に対しても \cmd{Hasen} を定義しています。
+その書式は
+
+\begin{boxnote}
+\begin{verbatim}
+\Hasen[#1]#2
+    #1 : L=（破線の実線部分の長さ） デフォルト値=1mm
+       : G=（破線のギャップの長さ） デフォルト値=0.9mm
+    #2 : 破線で結ぶ点列
+\end{verbatim}
+\end{boxnote}\cindex{Hasen}
+
+\begin{showEx}(.58,.36){\cmd{Hasen}}
+\begin{zahyou}[ul=10mm](-.5,2.5)(-.5,1.5)
+\tenretu{A(0,1)w;B(2,1)e;C(2,0)s}
+\Hasen{\A\B\C}
+\end{zahyou}
+\end{showEx}
+複数の点列を定義する\cmd{tenretu}など，
+まだ説明していないコマンドが登場してしまいましたが，
+ここでは折れ線を破線で引く例としてご覧ください。
+
+%\subsubsection{\texorpdfstring{\cmd{Hasen*}}{Hasen*}}
+\subsubsection{\cmd{Hasen*}}
+2点を破線で結ぶコマンド\cmd{hasen}, \cmd{Hasen}は，
+両端から実線部分が始まりますが，これを両端からは空白部分が
+始まるようにしたものが\verb+*+つきコマンドです。
+
+下の例では，実線ABと破線BCの境界がBではなくなってしまいます。
+
+\begin{showEx}(.6,.345){\cmd{Hasen}}
+\begin{zahyou}[ul=10mm](-.5,1.5)(-2.5,2.5)
+\tenretu{A(1,2)e;B(1,1)e;C(1,-1)e;D(1,-2)e}
+\kuromaru{\A;\B;\C;\D}
+\Drawlines{\A\B;\C\D}
+\Hasen{\B\C}
+\end{zahyou}
+\end{showEx}
+
+\cmd{Hasen*}と比較してみてください。
+\begin{showEx}(.6,.345){\cmd{Hasen*}}
+\begin{zahyou}[ul=10mm](-.5,1.5)(-2.5,2.5)
+\tenretu{A(1,2)e;B(1,1)e;C(1,-1)e;D(1,-2)e}
+\kuromaru{\A;\B;\C;\D}
+\Drawlines{\A\B;\C\D}
+\Hasen*{\B\C}
+\end{zahyou}
+\end{showEx}
+\cindex{Hasen*}
+
+
+\subsection{鎖線}
+鎖線をひくコマンドは \cmd{Chainline}です。\cindex{Chainline}
+
+{\unitlength8mm
+\showexample[\cmd{Chainline}](0.64)(0.3){example/sasen01}}
+
+その書式は
+\begin{boxnote}
+\begin{verbatim}
+\Chainline[#1][#2]#3
+    #1 : 一つの線分の長さ
+    #2 : 線分と線分の間の長さ
+    #3 : 点列
+\end{verbatim}
+\end{boxnote}
+
+\subsection{複数の折れ線}
+複数の折れ線を描画するコマンド \cmd{Drawlines} もあります。
+\cindex{Drawlines}
+複数の折れ線を`;'で区切ります。
+
+\showexample[\cmd{Drawlines}](0.55)(0.35){example/oresen03}
+
+折れ線の線種を変更するには，\verb/<...>/ オプションを用います。
+
+\showexample[線種の変更](0.55)(0.35){example/oresen04}
+
+\cmd{Drawlines}の書式です。
+
+\begin{boxnote}
+\begin{verbatim}
+\Drawlines<#1>#2
+  <#1>  : <sensyu=\dashlines[40]{.1}>などによる
+          線種のローカルな変更
+   #2   : 複数の点列を`;'で区切る
+\end{verbatim}
+\end{boxnote}
+
+\subsection{矢線}
+矢線を引くコマンドは2種類用意してあります。
+
+\cmd{yasen}は，成分を指定します。
+
+もうひとつの\cmd{ArrowLine}は，始点と終点を指定します。
+
+%\subsubsection{\texorpdfstring{\cmd{yasen}}{yasen}}
+\subsubsection{\cmd{yasen}}
+まずは成分を与えて矢線を描画するコマンド \cmd{yasen} を使用する一例です：
+
+\begin{showEx}(.54,.4){\cmd{yasen}}
+  \begin{zahyou*}[ul=10mm](0,4)(0,3)
+    \put(0,0){\kousi43}%
+    \put(1,0){\yasen(-1,3)}%
+    \put(3,0){\yasen(1,3)}%
+  \end{zahyou*}
+\end{showEx}
+
+このコマンドは，矢線の傍に文字列を配置するオプションをもっています。
+
+\begin{showEx}(.54,.4){\texttt{<..>}オプション}
+  \begin{zahyou*}[ul=10mm](0,4)(0,3)
+    \put(0,0){\kousi43}%
+    \put(1,0){%
+      \yasen<[ne]{\beku a}>(-1,3)}%
+    \put(3,0){%
+      \yasen<[nw]{\beku b}>(1,3)}%
+  \end{zahyou*}
+\end{showEx}
+
+すなわち\verb+<...>+オプションに，文字列を与えます。その際，\cmd{Put}の
+配置オプションを附加することができます。
+なお，文字列を配置する基準点は，矢線の中点です。
+これを動かすのが\verb+[..]+オプションです。
+
+\begin{showEx}(.54,.4){\texttt{[..]}オプション}
+  \begin{zahyou*}[ul=10mm](0,4)(0,4)
+    \put(0,0){\kousi43}%
+    \put(1,0){%
+      \yasen[1]<[n]{\beku a}>(-1,3)}%
+    \put(3,0){%
+      \yasen[.8]<[nw]{\beku b}>(1,3)}%
+  \end{zahyou*}
+\end{showEx}
+
+\verb+[..]+オプションのデフォルト値は\verb+0.5+，すなわち中点です。
+これを\verb+[1]+とすれば，終点，\verb+[0]+とすれば，始点がそれぞれ
+文字列配置の基準点となります。
+
+\cmd{yasen}の書式です。
+
+\begin{boxnote}
+\begin{verbatim}
+\yasen[#1]<#2>(#3,#4)
+\Yasen[#1]<#2>#3
+  #1 : ラベルを置く位置（デフォルト=0.5, 中点）
+  #2 : ラベル（位置指定を含めて）
+  (#3,#4) : 成分（始点は \put (\Put) で指定）
+\end{verbatim}
+\end{boxnote}
+\cindex{yasen}
+
+成分を，まとめてひとつにして扱うものが \cmd{Yasen} です。
+\cindex{Yasen}
+
+\begin{showEx}(.54,.4){\cmd{Yasen}}
+  \begin{zahyou*}[ul=10mm](0,4)(0,3)
+    \def\avec{(1,3)}
+    \put(0,0){\kousi43}%
+    \put(0,0){\Yasen\avec}%
+    \put(3,0){\Yasen\avec}%
+  \end{zahyou*}
+\end{showEx}
+
+\cmd{Yasen}に対しても，\verb+[...]+, \verb+<...>+ オプションが
+\cmd{yasen}と同様に使用できます。
+
+
+%\subsubsection{\texorpdfstring{\cmd{ArrowLine}}{ArrowLine}}
+\subsubsection{\cmd{ArrowLine}}
+矢線を引くコマンドが \cmd{ArrowLine} です．
+
+\showexample[\cmd{ArrowLine}](0.55)(0.35){example/yasen01}
+
+矢線の傍に文字列を配置することも可能です。
+
+\begin{showEx}(.54,.4){\cmd{ArrowLine}の文字列配置オプション}
+  \begin{zahyou*}[ul=10mm](0,4)(-1,4)
+    \tenretu{A(0,0)s;B(3,0)s;
+      C(4,3)n;D(1,3)n}
+    \Drawline{\B\C\D}
+    {\thicklines
+    \ArrowLine<putstr=[s]{\protect\beku b}>
+      \A\B
+    \ArrowLine<putstr=[nw]{\protect\beku d}>
+      \A\D}%
+  \end{zahyou*}
+\end{showEx}
+
+すなわち，\verb+<...>+オプションとして，\verb+putstr+の右辺値に，
+文字列を配置オプションとともに記述します。配置基準点（デフォルトは中点）
+を変更するには，キーワード\verb+putpos+を用います。
+
+\begin{showEx}(.54,.4){\cmd{ArrowLine}の文字列配置基準点の変更}
+  \begin{zahyou*}[ul=10mm](0,4)(-1,4)
+    \tenretu{A(0,0)s;B(3,0)s;
+      C(4,3)n;D(1,3)n}
+    \Drawline{\B\C\D\A}
+    {\thicklines
+    \ArrowLine<putpos=0.9,
+      putstr=[n]{\beku b}>
+        \A\B}
+  \end{zahyou*}
+\end{showEx}
+
+\cmd{ArrowLine}の書式です。
+
+\begin{boxnote}
+\begin{verbatim}
+\ArrowLine<#1>[#2]#3#4
+  #1 : key=val
+         sensyu=
+         putstr=      （矢線の傍に置く配置オプション+文字列）
+         putpos=      （文字列の配置基準位置：デフォルトは0.5, 中点）
+  #2 : 矢印を置く位置（デフォルト = 1 すなわち終点）
+       ただし #2=b のときは，両端に矢印
+  #3 : 始点
+  #4 : 終点
+\end{verbatim}
+\end{boxnote}
+\cindex{ArrowLine}
+
+\subsubsection{始点・終点位置の微調整}
+\cmd{ArrowLine}で引かれる矢線の始点・終点を少しずらしたいときがあります。
+例えば
+
+\begin{showEx}(.64,.3){\cmd{ArrowLine}}
+\begin{zahyou*}[ul=10mm](-.5,2.5)(-.5,1.5)
+  \tenretu{A(0,0)w;B(2,1)e}
+  \Kuromaru\B
+  \ArrowLine\A\B
+\end{zahyou*}
+\end{showEx}
+
+\noindent
+のような場合，矢印が終点の黒丸にめり込んでいます。
+矢印の終点を左下に少しずらしたいときなどのために
+\begin{jquote}
+\begin{verbatim}
+<Henvi=..>    始点に対する修正ベクトル
+<Henvii=...>  終点に対する修正ベクトル
+\end{verbatim}
+\end{jquote}
+オプションを新設しました。
+右辺値はベクトルで，成分は単位を伴った長さです。
+右辺値には`,'が入りますから，右辺値全体を\verb+{...}+でくくる必要があります。
+
+\begin{showEx}(.64,.3){\texttt{<Henvii=..>}オプション}
+\begin{zahyou*}[ul=10mm](-.5,2.5)(-.5,1.5)
+  \tenretu{A(0,0)w;B(2,1)e}
+  \Kuromaru\B
+  \ArrowLine<Henvii={(-.8pt,-.4pt)}>\A\B
+\end{zahyou*}
+\end{showEx}
+
+なお
+\begin{jquote}
+\begin{verbatim}
+<henvi=..>    始点に対する修正ベクトル
+<henvii=...>  終点に対する修正ベクトル
+\end{verbatim}
+\end{jquote}
+も同機能ですが，右辺値の成分は\cmd{unitlength}を単位とする無名数で与えます。
+
+\subsubsection{鏃の形状}
+鏃のサイズを変更することもできます．例えば
+\begin{jquote}
+\begin{verbatim}
+\changeArrowHeadSize{1.5}
+\end{verbatim}
+\end{jquote}
+とすれば，鏃の大きさは1.5倍になります。\cindex{changeArrowHeadSize}
+
+{\showexample[\cmd{changeArrowHeadSize}](0.65)(0.3){example/yasen02}}
+
+鏃の開き具合も調整できます．デフォルトは\cindex{ArrowHeadAngle}
+\begin{jquote}
+\begin{verbatim}
+\def\ArrowHeadAngle{18}%
+\end{verbatim}
+\end{jquote}
+となっています．これを 30 とすると，鏃は正三角形になります．
+
+{\showexample[\cmd{ArrowHeadAngle}](0.65)(0.3){example/yasen03}}
+
+サイズ・開き具合の両方を同時に変更するときは
+\begin{jquote}
+\begin{verbatim}
+\changeArrowHeadSize[30]{3}
+\end{verbatim}
+\end{jquote}
+
+と\cmd{changeArrowHeadSize}のオプションで開き角を指定することもできます。
+
+\showexample[\cmd{ArrowHeadAngle}](0.65)(0.3){example/yasen07}
+
+\cmd{ArrowLine}で引かれる矢線において，鏃は二等辺三角形を塗りつぶしていますが，
+その底辺に窪みをつけることも可能です。
+窪みの深さの「二等辺三角形の高さを1としての比率」
+を\cmd{ArrowHeadPit}で指定します。
+
+次の図では，座標軸が2個描画されますが，上が従来の形状，下が窪みをつけた形状です。
+
+\begin{showEx}(.5,.44){\cmd{ArrowHeadPit}}
+\begin{zahyou}[ul=8mm](-3,3)(-3,3)
+  \ArrowLine\LB\RT
+\end{zahyou}
+
+\def\ArrowHeadPit{0.25}
+\begin{zahyou}[ul=8mm](-3,3)(-3,3)
+  \ArrowLine\LB\RT
+\end{zahyou}
+\end{showEx}
+
+\cmd{changeArrowHeadSize}に\verb+<...>+オプションを用いて，
+窪みを指定することもできます。
+\begin{jquote}
+\begin{verbatim}
+  \def\ArrowHeadPit{.25}
+と
+  \changeArrowHeadSize<.25>{1}
+\end{verbatim}
+は同値です。前者の方が簡潔ですが，矢印の長さ・開き角を変更する際には後者の方が
+便利でしょうか。
+
+そんな馬鹿な，という極端な例です：
+
+\begin{showEx}(.5,.44){\cmd{changeArrowSize}による指定}
+\changeArrowHeadSize[30]<0.3333>{4}
+\bekutorukata{fill}
+
+\bekutoru{AB}
+
+\begin{zahyou}[ul=8mm](-3,3)(-3,3)
+  \ArrowLine\LB\RT
+\end{zahyou}
+\end{showEx}
+
+\end{jquote}
+
+なお，これら矢線では鏃が塗りつぶされますが，これを枠線のみ描画させるには
+\begin{jquote}
+\begin{verbatim}
+\renewcommand\ArrowHeadType{l}
+\end{verbatim}
+\end{jquote}
+とします。
+デフォルトは \verb/\newcommand\ArrowHeadType{f}/ としてあります．
+\cindex{ArrowHeadType}
+
+\showexample[塗りつぶさない鏃](0.55)(0.35){example/yasen06}
+
+\subsubsection{矢印の位置}
+矢印を途中に付けるためには，\texttt{[...]} オプションで，
+矢印を置く位置を指定します．
+
+{\showexample[\cmd{ArrowLine[0.5]}](0.65)(0.4){example/yasen05}}
+
+また，矢印を両向きにつけたいときは\verb+[b]+オプションをつけます。
+
+\begin{showEx}{両向き矢印}
+\unitlength10mm\relax
+\begin{picture}(2,1)
+\def\A{(0,.5)}
+\def\B{(2,.5)}
+\ArrowLine[b]\A\B
+\end{picture}
+\end{showEx}
+
+\subsubsection{矢線を点線・破線}
+
+矢線の線種を変更するには \cmd{ArrowLine} に\verb+<sensyu=...>+ オプションを
+付与します。
+
+\begin{showEx}(.54,.4){矢線を点線で}
+\unitlength10mm\relax
+\begin{picture}(2,1)
+\def\A{(0,.5)}
+\def\B{(2,.5)}
+\ArrowLine%
+  <sensyu=\protect\emdottedline>%
+  \A\B
+\end{picture}
+\end{showEx}
+
+\begin{showEx}(.54,.4){矢線を破線で}
+\unitlength10mm\relax
+\begin{picture}(2,1)
+\def\A{(0,.5)}
+\def\B{(2,.5)}
+\ArrowLine%
+  <sensyu=\protect\hasen>%
+  \A\B
+\end{picture}
+\end{showEx}
+
+\subsubsection{複数の矢線}
+複数の矢線を引くコマンドが \cmd{ArrowLines} です。
+始点・終点を`;'で区切って並べます。
+
+\begin{showEx}{\cmd{ArrowLines}}
+\unitlength=10mm
+\begin{picture}(4,2)
+\def\A{(0,0)}
+\def\B{(3,0)}
+\def\C{(4,2)}
+\def\D{(1,2)}
+\ArrowLines[.5]{%
+  \A\B;\B\C;\C\D;\D\A}
+\end{picture}
+\end{showEx}
+
+\subsection{多角形}
+多角形を描画するコマンドが\cmd{Takakkei}です。\cindex{Takakkei}
+\bigskip
+
+\showexample[\cmd{多角形}](0.55)(0.35){example/polygon2}
+
+\cmd{Takakkei}の始点Oと終点Bを結ぶ線分が強制的に付加されます。
+\bigskip
+
+\subsection{正多角形，極座標→直交座標}
+円周上に点をとるときは，極座標形式の方が便利です．
+これを直交座標に変換するコマンド \cmd{kyokuTyoku} です．
+使用例として，正六角形を描画してみました．\cindex{kyokuTyoku}
+
+\showexample[\cmd{kyokuTyoku}](0.6)(0.35){example/polygon0}
+
+\begin{jquote}
+\cmd{kyokuTyoku(1,90)}\cmd{A}
+\end{jquote}
+で，極座標 (1,90) を直交座標に変換した (0,1) が \cmd{A} に
+セットされます．\cmd{kyokuTyoku} の書式です．
+
+\begin{boxnote}
+\begin{verbatim}
+\kyokuTyoku(#1,#2)#3
+    (#1,#2) : 極座標
+    #3      : 変換した直交座標を代入するコントロールシーケンス
+\end{verbatim}
+\end{boxnote}
+
+\begin{enumerate}[(1)]
+  \item このスタイルファイルでは，原則として，角の単位は六十分法で表します．
+  \item \cmd{kyokuTyoku}は点を一つずつ定義しますが，
+    複数の点列を定義するコマンド
+\begin{jquote}
+\begin{verbatim}
+\rtenretu, \rtenretu*
+\end{verbatim}
+\end{jquote}
+    もあります。
+  \item 正多角形を描画するための\textsf{emPoly.sty}もあります。
+\end{enumerate}
+
+\subsection{角の丸い多角形}
+多角形を描画するコマンド\cmd{Takakkei}の
+バリエーション\cmd{ovalTakakkei}コマンドは
+多角形のコーナーを丸くするコマンドです。
+まずは，\cmd{Takakkei}の使用例からご覧ください。
+
+\begin{showEx}(.54,.4){\cmd{Takakkei}}
+  \begin{zahyou*}%
+      [ul=10mm,Ueyohaku=1em,
+        Hidariyohaku=1em,%
+        Sitayohaku=1em]%
+      (0,4)(0,4)
+    \tenretu{A(1,0)s;B(4,1)e;%
+      C(2,4)n;D(0,3)w}
+    \Takakkei{\A\B\C\D}
+  \end{zahyou*}
+\end{showEx}
+
+コーナーを切り取って，円弧で結びます。
+切り取る線分の長さを\cmd{ovalTakakkei}の第1引数に与えます。
+単位を伴った数値を指定します。
+
+\begin{showEx}(.54,.4){\cmd{ovalTakakkei}}
+  \begin{zahyou*}%
+      [ul=10mm,Ueyohaku=1em,
+        Hidariyohaku=1em,%
+        Sitayohaku=1em]%
+      (0,4)(0,4)
+    \tenretu*{A(1,0)s;B(4,1)e;%
+      C(2,4)n;D(0,3)w}
+    \ovalTakakkei{5mm}{\A\B\C\D}
+  \end{zahyou*}
+\end{showEx}
+
+
+\subsection{分点}
+線分を内分（外分）する点を求めるコマンド \cmd{Bunten} です．
+\sankaku{ABC} の辺BCの中点MとAを結ぶ線分を描画する例です．
+
+\showexample[\cmd{Bunten}](0.55)(0.35){example/bunten01}
+
+\cmd{Bunten} の書式は
+\begin{boxnote}
+\begin{verbatim}
+\Bunten#1#2#3#4#5
+    #1 : 端点1
+    #2 : 端点2
+    #3#4 : 内（外）分比
+    #5 : 分点
+\end{verbatim}
+\end{boxnote}
+すなわち \verb+#1+ と \verb+#2+ を結ぶ線分を \verb+#3:#4+ に
+分ける点の座標を \verb+#5+ にセットします．
+
+特に$1:1$の内分点，すなわち中点を求めるコマンド\cmd{Tyuuten}も便利です。
+
+\showexample[\cmd{Bunten}](0.55)(0.35){example/bunten02}
+
+\subsection{格子}
+碁盤の目状の街路図などは良く登場します．
+格子を描画するコマンド \cmd{kousi} です．\cindex{kousi}
+
+\showexample[\cmd{kousi}](0.4)(0.4){example/kousi01}
+
+縦横のサイズを変更したいときは，
+\texttt{(横サイズ,縦サイズ)} オプションを指定します．
+サイズの単位は \cmd{unitlength} です．
+
+\showexample[\cmd{kousi(..,..)オプション}](0.45)(0.5){example/kousi02}
+
+\cmd{kousi} の書式です．
+
+\begin{boxnote}
+\begin{verbatim}
+\kousi(#1,#2)#3#4
+    #1 : 横方向1区画の長さ（デフォルト=1）
+    #2 : 縦方向1区画の長さ（デフォルト=1）
+    #3 : 横方向のブロック数
+    #4 : 縦方向のブロック数
+置く位置は \put で指定する．
+\end{verbatim}
+\end{boxnote}
+
+格子を点線・破線で引いてみます。
+
+\showexample[格子線を破線で引く](0.6)(0.34){example/kousi03}
+
+%外枠だけは実線でとなると，
+
+%\showexample[外枠は実線で](0.6)(0.34){example/kousi04}
+
+\subsection{さいころ}
+さいころの目を表すコマンド \cmd{saikoro} を用意しました．
+\cindex{saikoro}\index{さいころ}
+
+\showexample[さいころ](0.45)(0.45){example/saikoro}
+
+ただし，このコマンドは\textsf{ascmac.sty}で定義されている
+\cmd{keytop}コマンドを使用していますから，このスタイルファイルを
+使用することが前提です．
+さらに，このスタイルファイルは \textsf{emathP} から読み込まれる
+\textsf{eepic.sty}と相性が悪いことがあります．その対策を
+\textsf{itembbox.sty}で施していますので，\textsf{ascmac.sty}に
+引き続き \textsf{itembbox.sty}も読み込んでおく必要があります．

@@ -1,0 +1,158 @@
+% emathAmida.sty by tDB(emath@nifty.com)
+%
+  \NeedsTeXFormat{LaTeX2e}
+  \ProvidesPackage{emathAmida}[2007/10/09 v 0.02α]%
+%
+  \RequirePackage{emathPxy}%
+  \RequirePackage{multido}%
+%
+\define@key{emAmida}{yscale}{\def\amida@yscale{#1}}%
+\define@key{emAmida}{ul}{\def\amida@ul{#1}}%
+\define@key{emAmida}{haiti}{\def\amida@haiti{#1}}%
+\define@key{emAmida}{Ueyohaku}{\def\amida@Ueyohaku{#1}}%
+\define@key{emAmida}{Sitayohaku}{\def\amida@Sitayohaku{#1}}%
+\define@key{emAmida}{Hidariyohaku}{\def\amida@Hidariyohaku{#1}}%
+\define@key{emAmida}{Migiyohaku}{\def\amida@Migiyohaku{#1}}%
+\define@key{emAmida}{ymax}{\def\amida@ymax{#1}}%
+\define@key{emAmida}{startlabel}{\def\amida@startlabel{#1}}%
+\define@key{emAmida}{goallabel}{\def\amida@goallabel{#1}}%
+%
+\def\amidakuzi{%
+  \def\amida@yscale{.5}\relax
+  \def\amida@ul{10mm}\relax
+  \def\amida@haiti{t}\relax
+  \def\amida@Ueyohaku{1zh}\relax
+  \def\amida@Sitayohaku{1zh}\relax
+  \def\amida@Hidariyohaku{0pt}\relax
+  \def\amida@Migiyohaku{0pt}\relax
+  \edef\amida@ymax{\empty}\relax
+  \edef\amida@startlabel{\empty}\relax
+  \edef\amida@goallabel{\empty}\relax
+%
+  \edef\amida@auto{auto}%
+  \edef\amida@number{number}%
+%
+\@ifnextchar[{\amidakuzi@}{\@amidakuzi}}%
+\def\amidakuzi@[#1]{\setkeys{emAmida}{#1}\@amidakuzi}%
+%
+\def\@amidakuzi#1#2{%
+\edef\kuzi@honsuu{#1}%
+%
+  \def\showpathfrom##1{{\Thicklines
+    \Cfor{\edef\cur@x{##1}\edef\cur@y{0}}{\cur@y<\amida@d}{}\do{%
+      \IAdd\cur@y{1}\cur@@y\Drawline{(\cur@x,-\cur@y)(\cur@x,-\cur@@y)}%
+      \edef\cur@y{\cur@@y}%
+      \ifnum\csname xl\romannumeral\cur@y\endcsname=\cur@x
+        \Drawline{(\cur@x,-\cur@y)(\csname xr\romannumeral\cur@y\endcsname,-\cur@y)}%
+        \edef\cur@x{\csname xr\romannumeral\cur@y\endcsname}%
+      \else\ifnum\csname xr\romannumeral\cur@y\endcsname=\cur@x
+        \Drawline{(\cur@x,-\cur@y)(\csname xl\romannumeral\cur@y\endcsname,-\cur@y)}%
+        \edef\cur@x{\csname xl\romannumeral\cur@y\endcsname}%
+      \fi\fi
+    }%
+    \Drawline{(\cur@x,-\cur@y)(\cur@x,\ymin)}%
+  }}%
+  \def\showpathto##1{\showpathfrom{\csname amidagyakutikan\romannumeral##1\endcsname}}%
+  \def\amida@tikan{%
+    \Cfor{\edef\cur@x{0}}{\cur@x<\kuzi@honsuu}{}\do{%
+      \Incr\cur@x
+      \edef\cur@@x{\cur@x}%
+      \Cfor{\edef\cur@y{0}}{\cur@y<\amida@d}{}\do{%
+        \Incr\cur@y
+        \ifnum\csname xl\romannumeral\cur@y\endcsname=\cur@@x
+          \edef\cur@@x{\csname xr\romannumeral\cur@y\endcsname}%
+        \else\ifnum\csname xr\romannumeral\cur@y\endcsname=\cur@@x
+          \edef\cur@@x{\csname xl\romannumeral\cur@y\endcsname}%
+        \fi\fi
+      }%
+      \expandafter\edef\csname amidatikan\romannumeral\cur@x\endcsname{\cur@@x}%
+      \expandafter\edef\csname amidagyakutikan\romannumeral\cur@@x\endcsname{\cur@x}%
+    }%
+  }%
+  \def\amidagyouretu{%
+    \edef\amida@tmpa{1}%
+    \edef\amida@tmpb{\amidatikani}%
+    \Cfor{\edef\i@tmp{1}}{\i@tmp<\kuzi@honsuu}{}\do{%
+      \Incr\i@tmp
+      \edefappend\amida@tmpa{,\i@tmp}%
+      \edefappend\amida@tmpb{,\csname amidatikan\romannumeral\i@tmp\endcsname}%
+    }%
+    \pgyouretu{\amida@tmpa;\amida@tmpb}%
+  }%
+  \def\amidagyakugyouretu{%
+    \edef\amida@tmpa{1}%
+    \edef\amida@tmpb{\amidagyakutikani}%
+    \Cfor{\edef\i@tmp{1}}{\i@tmp<\kuzi@honsuu}{}\do{%
+      \Incr\i@tmp
+      \edefappend\amida@tmpa{,\i@tmp}%
+      \edefappend\amida@tmpb{,\csname amidagyakutikan\romannumeral\i@tmp\endcsname}%
+    }%
+    \pgyouretu{\amida@tmpa;\amida@tmpb}%
+  }%
+  \def\Ysikirisen##1{\edef\kuzisikiri@y{##1}%
+    \edef\kuzisikirisen@xi{.5}%
+    \Add\kuzi@honsuu{.5}\kuzisikirisen@xii
+    \Hasen{(\kuzisikirisen@xi,-\kuzisikiri@y)(\kuzisikirisen@xii,-\kuzisikiri@y)}%
+    \Put{(\kuzisikirisen@xii,-\kuzisikiri@y)}%
+  }%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \edef\amida@d{1}%
+  \ifx\empty #2\else
+    \expandafter\@for\expandafter\@@c\expandafter:\expandafter=#2\do{\Incr\amida@d}%
+  \fi
+  \ifx\empty\amida@ymax\edef\ymin{-\amida@d}\else\edef\ymin{-\amida@ymax}\fi
+  \begin{zahyou*}[ul=\amida@ul,yscale=\amida@yscale,haiti=\amida@haiti,%
+                  Ueyohaku=\amida@Ueyohaku,Sitayohaku=\amida@Sitayohaku,%
+                  Hidariyohaku=\amida@Hidariyohaku,Migiyohaku=\amida@Migiyohaku]%
+                   (1,\kuzi@honsuu)(\ymin,0)
+    \multido{\ix=1+1}{\kuzi@honsuu}{\Drawline{(\ix,0)(\ix,\ymin)}}%
+    \edef\amida@d{0}%
+    \ifx\empty #2\else
+      \expandafter\@for\expandafter\@@c\expandafter:\expandafter=#2\do{%
+        \Incr\amida@d
+        \expandafter\edef\csname xl\romannumeral\amida@d\endcsname{\@@c}%
+        \IAdd\@@c{1}\@@@c
+        \expandafter\edef\csname xr\romannumeral\amida@d\endcsname{\@@@c}%
+        \Drawline{(\@@c,-\amida@d)(\@@@c,-\amida@d)}%
+      }%
+    \fi
+    \amida@tikan
+    \ifx\empty\amida@startlabel\else
+      \ifx\amida@startlabel\amida@number
+        \Cfor{\edef\amida@x{0}}{\amida@x<\kuzi@honsuu}{}\do{%
+          \Incr\amida@x
+          \expandafter\edef\csname startlabel\romannumeral\amida@x\endcsname{\amida@x}%
+          \Put{(\amida@x,0)}[n]{\amida@x}%
+        }%
+      \else
+        \edef\amida@x{0}%
+        \expandafter\@for\expandafter\amida@@c\expandafter:\expandafter=\amida@startlabel\do{%
+          \Incr\amida@x
+          \expandafter\edef\csname startlabel\romannumeral\amida@x\endcsname{\amida@@c}%
+          \Put{(\amida@x,0)}[n]{\amida@@c}%
+        }%
+      \fi
+    \fi
+    \ifx\empty\amida@goallabel\else
+      \ifx\amida@goallabel\amida@auto
+        \Cfor{\edef\amida@x{0}}{\amida@x<\kuzi@honsuu}{}\do{%
+          \Incr\amida@x
+%          \Put{(\amida@x,\ymin)}[s]{\csname amidagyakutikan\romannumeral\amida@x\endcsname}%
+          \Put{(\amida@x,\ymin)}[s]{\csname startlabel\romannumeral\csname amidagyakutikan\romannumeral\amida@x\endcsname\endcsname}%
+        }%
+      \else
+        \edef\amida@x{0}%
+        \expandafter\@for\expandafter\amida@@c\expandafter:\expandafter=\amida@goallabel\do{%
+          \Incr\amida@x
+          \Put{(\amida@x,\ymin)}[s]{\amida@@c}%
+        }%
+      \fi
+    \fi
+}
+\def\endamidakuzi{\end{zahyou*}}
+\endinput
+
+0.00α 2006/03/31
+0.01α 2006/03/31 [Hidariyohaku=..,Migiyohaku=..,startlabel=number,goallabel=auto]付加
+                  \Ysikirisen : 破線による横仕切り線
+0.02α 2007/10/09 横仕切り線なしも許容

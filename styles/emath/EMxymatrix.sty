@@ -1,0 +1,220 @@
+% EMxymatrix.sty by tDB(CQB00260@nifty.ne.jp)
+%
+  \ProvidesPackage{EMxymatrix}[2010/07/04 v0.02]%
+%
+  \DeclareOption{tpic}{\def\EMxy@tpic{1}}%
+  \DeclareOption{pict2e}{\def\EMxy@tpic{0}\def\EMxy@pIIe{}}%
+  \ExecuteOptions{tpic}
+  \ProcessOptions\relax
+%
+  \RequirePackage{emathPxy}
+  \RequirePackage{emathT}
+%
+%%%
+%%% EMxymatrix
+%%%
+%
+\@ifundefined{EMxy@pIIe}{}{%
+  \@ifpackageloaded{EMpict2e}{}{%
+    \errmessage{EMpict2e.sty がロードされていません。}%
+  }%
+}%
+%
+\define@key{EMxymatrix}{pre}{#1}%
+%\define@key{EMxymatrix}{pos}{\edef\EMxy@pos{#1}}%
+\define@key{EMxymatrix}{Ws}{\settowidth\@tempdima{#1}\edef\EMxy@ws{\the\@tempdima}}%
+\define@key{EMxymatrix}{ws}{\edef\EMxy@ws{#1}}%
+\define@key{EMxymatrix}{wa}{\edef\EMxy@wa{#1}}%
+\define@key{EMxymatrix}{yb}{\edef\EMxy@yb{#1}}%
+\define@key{EMxymatrix}{drawlineoption}{\EMedef\EMxy@dl@opt{#1}}%
+\define@key{EMxymatrix}{yul}{\setlength{\yunitlength}{#1}}%
+\define@key{EMxymatrix}{idou}{\vecXY{#1}\EMxy@tmpx\EMxy@tmpy
+  \uxkansan\EMxy@tmpx\ar@S@dx\uykansan\EMxy@tmpy\ar@S@dy
+  \edef\ar@E@dx{\ar@S@dx}\edef\ar@E@dy{\ar@S@dy}%
+}%
+\define@key{EMxymatrix}{idouS}{\vecXY{#1}\EMxy@tmpx\EMxy@tmpy
+  \uxkansan\EMxy@tmpx\ar@S@dx\uykansan\EMxy@tmpy\ar@S@dy
+}%
+\define@key{EMxymatrix}{idouE}{\vecXY{#1}\EMxy@tmpx\EMxy@tmpy
+  \uxkansan\EMxy@tmpx\ar@E@dx\uykansan\EMxy@tmpy\ar@E@dy
+}%
+%
+\define@key{EMxymatrix}{linethickness}{\linethickness{#1}}%
+\define@key{EMxymatrix}{iro}{\edef\iro@{#1}}%
+%
+\newdimen\mydimena
+\DeclareRobustCommand\EMxymatrix{\@ifnextchar<{\@EMxymatrix}{\@EMxymatrix<\empty>}}%
+\def\@EMxymatrix<#1>#2{{%
+%  \@ifundefined{OriginalPictureCmds}{}{%
+%    \@ifundefined{EMxy@pIIe}{%
+%\typeout{aaaa}%
+%      \OriginalPictureCmds
+%      \let\sensyu\drawline
+%      \let\undefined\pIIe@mode
+%    }{%
+%\typeout{bbbb}%
+%      \let\drawline\polyline
+%      \let\sensyu\polyline
+%    }%
+%  }%
+%
+  \edef\EMxy@pos{t}%
+  \yunitlength=2\baselineskip
+  \setlength\@tempdima{1em+\arraycolsep}\edef\EMxy@ws{\the\@tempdima}%
+  \def\EMxy@wa{3em}%
+  \def\EMxy@yb{.75ex}%
+  \def\ar@by{1pt}%
+  \def\zahyouOwari{\relax}%
+  \ifx\empty #1\else\setkeys{EMxymatrix}{#1}\fi
+  \xunitlength\EMxy@ws\advance\xunitlength\EMxy@wa%%%%\advance\xunitlength2\arraycolsep
+%
+\def\ar{\relax}%
+\def\\{\relax}%
+%
+  \def\@ar{\@ifnextchar<{\@@ar}{\@@ar<\empty>}}%
+  \def\@@ar<##1>{\@ifnextchar[{\@@@ar<##1>}{\@@@ar<##1>[\empty]}}%
+  \def\@@@ar<##1>[##2]##3{{%
+%\typeout{now! @@@ar:arg1=##1,arg2=##2,arg3=##3.}%
+    \edef\ar@S@dx{0}%
+    \edef\ar@E@dx{0}%
+    \edef\ar@S@dy{0}%
+    \edef\ar@E@dy{0}%
+    \edef\ar@xo{\empty}%
+    \edef\EMxy@dl@opt{\empty}%
+    \ifx\empty ##1\else\setkeys{EMxymatrix}{##1}\fi
+    \expandafter\@tfor\expandafter\@c\expandafter:\expandafter=##2\do{%
+      \ifx\empty\ar@xo
+        \if r\@c
+          \edef\ar@xo{\EMxy@@ws}\edef\ar@x{0}%
+          \edef\ar@yo{\EMxy@@yb}\edef\ar@y{\EMxy@@yb}%
+        \else\if l\@c
+          \edef\ar@xo{0}\Sub{1}{\EMxy@@wa}\ar@x
+          \edef\ar@yo{\EMxy@@yb}\edef\ar@y{\EMxy@@yb}%
+        \else\if d\@c
+          \edef\ar@xo{\EMxy@@wsh}\edef\ar@x{\ar@xo}%
+          \edef\ar@yo{-\EMxy@@d}\edef\ar@y{\EMxy@@h}%
+        \else\if u\@c
+          \edef\ar@xo{\EMxy@@wsh}\edef\ar@x{\ar@xo}%
+          \edef\ar@yo{\EMxy@@h}\edef\ar@y{-\EMxy@@d}%
+        \fi\fi\fi\fi
+      \fi
+      \if r\@c\Addself\ar@x{1}%
+      \else\if l\@c\Subself\ar@x{1}%
+      \else\if d\@c\Subself\ar@y{1}%
+      \else\if u\@c\Addself\ar@y{1}%
+      \fi\fi\fi\fi
+      \Addself\ar@xo\ar@S@dx
+      \Addself\ar@x\ar@E@dx
+      \Addself\ar@yo\ar@S@dy
+      \Addself\ar@y\ar@E@dy
+    }%
+    \tenretu*{ar@P(\ar@xo,\ar@yo);ar@Q(\ar@x,\ar@y)}%
+\@ifundefined{EMxy@pIIe}{%
+    \ifx\empty\EMxy@dl@opt
+      \Put{(\EMmx@x,\EMmx@y)}{\Drawline<yazirusi=a>{\ar@P\ar@Q}}%
+    \else
+      \EMedef\EMxy@dl@opt@{<yazirusi=a,\EMxy@dl@opt>}%
+      \Put{(\EMmx@x,\EMmx@y)}{\expandafter\Drawline\EMxy@dl@opt@{\ar@P\ar@Q}}%
+    \fi
+}{%
+    \ifx\empty\EMxy@dl@opt
+       \Put{(\EMmx@x,\EMmx@y)}{\pIIeArrowLine\ar@P\ar@Q}%
+    \else
+      \EMedef\EMxy@dl@opt@{<\EMxy@dl@opt>}%
+      \Put{(\EMmx@x,\EMmx@y)}{%
+        \expandafter\pIIeArrowLine\EMxy@dl@opt@{\ar@P}{\ar@Q}}%
+    \fi
+}%
+    \Cfor{\Strsep{##3};\ar@str@a\ar@str@b}{\not\equal\ar@str@a\empty\or\not\equal\ar@str@b\empty}%
+        {\Strsep\ar@str@b;\ar@str@a\ar@str@b}\do{%
+      \expandafter\@ar@sub\ar@str@a\@nil
+    }%
+  }}%
+  \def\@ar@sub{\@ifnextchar<{\@@ar@sub}{\@@ar@sub<\empty>}}%
+  \def\@@ar@sub<##1>##2\@nil{%
+    \ifx\empty ##2\else
+    \ifx\relax ##2\else
+    \Put{(\EMmx@x,\EMmx@y)}{%
+    \ifx\empty ##1\relax
+      \HenKo[0]<henkotype=parallel,henkoH=0pt>%
+        \ar@P\ar@Q{\ensuremath{\scriptstyle ##2}}%
+    \else
+      \HenKo[0]<henkotype=parallel,henkoH=0pt,sironuki=false,##1>%
+        \ar@P\ar@Q{\ensuremath{\scriptstyle ##2}}%
+    \fi
+    }%
+    \fi\fi
+  }%
+%
+  \EMedef\EMxy@tbl{\noexpand\strut}%
+  \setlength\@tempdima{\yunitlength-\baselineskip}%
+  \edef\EMxy@tbl@gyoukan{\the\@tempdima}%
+  \edef\EMxy@tbl@gyoukan@{\EMxy@tbl@gyoukan}%
+  \Cfor{\edef\EMmx@y{0}\Strsep{#2}\\\EMmx@a\EMmx@b}{\not\equal\EMmx@a\empty}%
+        {\Strsep\EMmx@b\\\EMmx@a\EMmx@b}\do{%
+    \ifnum\EMmx@y=\z@\else
+      \EMedefappend\EMxy@tbl{\noexpand\\[\EMxy@tbl@gyoukan@]}%
+    \fi
+    \Cfor{\edef\EMmx@x{0}\Strsep\EMmx@a{&}\EMmx@c\EMmx@d}%
+      {\not\equal\EMmx@c\empty\or\not\equal\EMmx@d\empty}%
+      {\Strsep\EMmx@d{&}\EMmx@c\EMmx@d}\do{%
+        \Strsep\EMmx@c{\ar}\EMmx@c\EMmx@arg
+        \ifnum\EMmx@x=\z@
+          \EMedefappend\EMxy@tbl{\noexpand\smash{\EMmx@c}}%
+        \else
+          \EMedefappend\EMxy@tbl{&&\noexpand\smash{\EMmx@c}}%
+        \fi
+        \Incr\EMmx@x
+    }%
+    \Decr\EMmx@y
+  }%
+%
+  \unskip\begin{zahyou*}[ul=10mm,xul=\xunitlength,yul=\yunitlength](0,0)(0,0)\relax
+  \ifnum\EMxy@tpic>\z@
+      \OriginalPictureCmds
+      \let\sensyu\drawline
+  \fi
+\typeout{\meaning\drawline}%
+    \uxkansan\EMxy@ws\EMxy@@ws
+    \uxkansan\EMxy@wa\EMxy@@wa
+    \uykansan\EMxy@yb\EMxy@@yb
+    \Div\EMxy@@ws{2}\EMxy@@wsh
+    \uykansan{\ht\strutbox}\EMxy@@h
+    \uykansan{\dp\strutbox}\EMxy@@d
+    \edef\EMxy@gyousuu{-1}%
+    \edef\EMxy@retusuu{0}%
+    \edef\EMxy@retusuu@{0}%
+    \Cfor{\edef\EMmx@y{0}\Strsep{#2}\\\EMmx@a\EMmx@b}{\not\equal\EMmx@a\empty}%
+        {\Strsep\EMmx@b\\\EMmx@a\EMmx@b}\do{%
+      \Cfor{\edef\EMmx@x{0}\Strsep\EMmx@a{&}\EMmx@c\EMmx@d}{\not\equal\EMmx@c\empty\or\not\equal\EMmx@d\empty}%
+          {\Strsep\EMmx@d{&}\EMmx@c\EMmx@d}\do{%
+        \Strsep\EMmx@c{\ar}\EMmx@c\EMmx@arg
+        \Cfor{\Strsep\EMmx@arg\ar\EMmx@arg\EMmx@nxt}{\not\equal\EMmx@arg\empty}{%
+            \Strsep\EMmx@nxt\ar\EMmx@arg\EMmx@nxt}\do{%
+          \expandafter\@ar\EMmx@arg
+        }%
+        \Incr\EMmx@x
+      }%
+      \Decr\EMmx@y
+      \Incr\EMxy@gyousuu
+    }%
+\zahyouOwari
+  \end{zahyou*}\unskip
+  \setlength{\@tempdima}{\EMxy@ws+\EMxy@wa-2\arraycolsep}%
+  \edef\EMxy@tbl@w{\the\@tempdima}%
+  \ISub\EMmx@x{1}\EMmx@xx
+%\frame{%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \ensuremath{%
+  \begin{array}[\EMxy@pos]{*{\EMmx@xx}{@{}C{\EMxy@ws}@{}C{\EMxy@wa}}@{}C{\EMxy@ws}@{}}%
+    \EMxy@tbl
+  \end{array}}%
+%}%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+}}%
+%%%
+%%%
+\endinput
+%
+v 0.00 2008/04/01
+v 0.01 2010/02/19
+          \EMxy@tbl@gyoukan@
+v 0.02 2010/07/04 ロードオプション [pict2e]

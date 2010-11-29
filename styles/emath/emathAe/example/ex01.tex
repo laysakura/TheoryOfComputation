@@ -1,0 +1,23 @@
+% 解答部分をまとめる一時ファイルの用意をする．
+    \openKaiFile
+% enumerate 環境で問題・解答を配列する．
+    \begin{enumerate}[1.\ ]
+	    \item 1番の問題文
+% 解答文は，問題文に引き続いて Kaitou 環境内に記述する．
+    	    \begin{Kaitou}
+        	    1番の解答文
+	        \end{Kaitou}
+    	\item 2番の問題文
+    	    \begin{Kaitou}
+        	    2番の解答文
+	        \end{Kaitou}
+    \end{enumerate}
+% 一時ファイルを閉じる．
+    \closeKaiFile
+% 問題部分と解答部分の仕切りなどを記述する．
+    \vfill
+    \hrule
+    \begin{center}\textbf{【解答】}\end{center}
+    \small%         解答部分は文字を小さめに
+% 解答ファイルを読み込む．
+    \inputKaiFile

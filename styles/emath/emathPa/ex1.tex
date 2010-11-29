@@ -1,0 +1,20 @@
+\documentclass{jarticle}
+\usepackage{emathPa}
+
+\begin{document}
+\begin{zahyou}[ul=8mm](-1,12)(-1,12)
+  \zahyouMemori[g]%
+  \def\E{(2,1)}%
+  \def\F{(1,2)}%
+  \changeArrowHeadSize{2}%
+  \begin{azahyou}\E\F
+    \tenretu*{A(1,0);B(0,1);P(4,1);Q(2,3)}
+    \azkousi{4}{3}
+    \azArrowLine\O\A\azPut\A[se]{$\beku a$}
+    \azArrowLine\O\B\azPut\B[se]{$\beku b$}
+    \azKuromaru\P
+    \azArrowLine\O\P\azPut\P[se]{$4\beku a+\beku b$}
+    \azArrowLine\O\Q\azPut\Q[nw]{$2\beku a+3\beku b$}
+  \end{azahyou}
+\end{zahyou}
+\end{document}

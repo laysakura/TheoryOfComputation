@@ -1,0 +1,885 @@
+% emathHe.sty by tDB(emath@nifty.com)
+%   平方根の計算
+%     a+b√α+c√β+d√γ+.......
+%       (a,b,c,d,...,α,β,γ,.... : 整数)
+%     の加減乗除（含：分母の有理化）
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{emathHe}[2005/11/26 v0.07α]%
+
+\RequirePackage{emath}
+
+\edef\stack@n{0}%
+
+\def\kakkoh@i{(}%
+\def\kakkoh@ii{\{}%
+\def\kakkoh@iii{[}%
+\def\kakkom@i{)}%
+\def\kakkom@ii{\}}%
+\def\kakkom@iii{]}%
+
+\def\root@mark{"}%
+\def\rootmark#1{\Strlen{#1}\@l
+  \ifnum\@l=\@ne\def\root@mark{#1}\else
+  \errmessage{ルート記号は1文字でなければなりません．}\fi
+}
+
+\def\emHeHeihoukon#1#2{%
+  \ifthenelse{#1=0}{\edef#2{0}}{%
+  \soinsi{#1}{Heihoukon@buf}%
+  \Cfor{\edef\i{0}\edef\siki{}\edef\Heihoukon@soto{1}\edef\Heihoukon@naka{1}}{%
+   \i<\nHeihoukon@buf}{}\do{%
+    \Incr\i
+    \IDivMod{\hairetu{Heihoukon@bufb}{\i}}{2}{\Heihoukon@sotobeki}{\Heihoukon@nakabeki}%
+    \Cfor{}{\Heihoukon@sotobeki>0}{\Decr\Heihoukon@sotobeki}\do{%
+      \IMul\Heihoukon@soto{\hairetu{Heihoukon@buf}{\i}}\Heihoukon@soto}%
+    \ifnum\Heihoukon@nakabeki>0\relax\IMul\Heihoukon@naka{\hairetu{Heihoukon@buf}{\i}}\Heihoukon@naka\fi
+  }%
+  \edef#2{\Heihoukon@soto \root@mark\Heihoukon@naka}%
+  }%
+}
+
+\def\HtoH#1#2{%
+  \def\srch@base##1##2{%
+    \edef\HtoH@found{0}%
+    \Cfor{\edef\HtoH@i{0}}{\HtoH@i<\HtoH@bufn \and \HtoH@found=0}{}\do{%
+      \Incr\HtoH@i
+      \ifnum##1=\hairetu{HtoH@buf}{\HtoH@i}\edef\HtoH@found{1}\fi
+    }%
+    \ifnum\HtoH@found=0\edef##2{0}\else\edef##2{\HtoH@i}\fi%
+  }%
+  \edef\HtoH@bufn{0}%
+  \Cfor{\edef\HtoH@b{#1}}{\not\equal\HtoH@b{}}{}\do{%
+    \septerm\HtoH@b\HtoH@a\HtoH@b
+    \HtoHi\HtoH@a\HtoH@a
+    \seproot\HtoH@a\HtoH@soto\HtoH@naka
+    \srch@base\HtoH@naka\HtoH@n
+    \ifnum\HtoH@n=0\Incr\HtoH@bufn
+      \edefhairetu{HtoH@buf}{\HtoH@bufn}{\HtoH@naka}%
+      \edefhairetu{HtoH@bufc}{\HtoH@bufn}{\HtoH@soto}%
+    \else
+      \IAdd\HtoH@soto{\hairetu{HtoH@bufc}{\HtoH@n}}\HtoH@soto
+      \edefhairetu{HtoH@bufc}{\HtoH@n}{\HtoH@soto}%
+    \fi
+  }%
+  \edef\HtoH@ans{}%
+  \Cfor{\edef\HtoH@i{0}}{\HtoH@i<\HtoH@bufn}{}\do{%
+    \Incr\HtoH@i
+    \ifnum\hairetu{HtoH@bufc}{\HtoH@i}=\z@
+    \else
+      \ifnum\hairetu{HtoH@bufc}{\HtoH@i}<\z@\else
+        \ifthenelse{\equal\HtoH@ans{}}{}{\edefappend\HtoH@ans{+}}%
+      \fi
+      \edefappend\HtoH@ans{\hairetu{HtoH@bufc}{\HtoH@i}\root@mark\hairetu{HtoH@buf}{\HtoH@i}}%
+    \fi
+  }%
+  \ifthenelse{\equal{\HtoH@ans}{}}{\edef\HtoH@ans{0}}{}%
+  \edef#2{\HtoH@ans}%
+}
+
+\def\dpbuf{%
+    \Cfor{\edef\dpbuf@i{0}}{\dpbuf@i<\HtoH@bufn}{}\do{%
+      \Incr\dpbuf@i
+%      \typeout{\dpbuf@i:\hairetu{HtoH@bufc}{\dpbuf@i}\root@mark\hairetu{HtoH@buf}{\dpbuf@i}}%
+    }%
+}%
+
+\def\HtoHi#1#2{%
+  \strsep{#1}{:}\HtoHi@bunsi\HtoHi@bunbo
+  \headchar{\HtoHi@bunsi}\HtoHi@t\HtoHi@r
+  \if -\HtoHi@t\edef\HtoHi@hugou{-}\else\edef\HtoHi@hugou{}\edef\HtoHi@r{\HtoHi@bunsi}\fi
+  \seproot\HtoHi@r\HtoHi@soto\HtoHi@naka
+  \emHeHeihoukon\HtoHi@naka\HtoHi@a
+  \seproot\HtoHi@a\HtoHi@a\HtoHi@naka
+  \IMul\HtoHi@soto\HtoHi@a\HtoHi@soto
+% \edef#2{\HtoHi@hugou\HtoHi@soto\root@mark\HtoHi@naka}%
+  \ifthenelse{\equal\HtoHi@bunbo{}}%
+  {%
+    \edef#2{\HtoHi@hugou\HtoHi@soto\root@mark\HtoHi@naka}}%
+  {%
+    \HYakubun{\HtoHi@hugou\HtoHi@soto\root@mark\HtoHi@naka:\HtoHi@bunbo}#2%
+  }%
+}
+
+\def\HAddi#1#2#3{%
+  \headchar{#2}\HAddi@t\HAddi@r
+  \edef\HAdd@enzansi{}%
+  \if +\HAddi@t%
+  \else\if -\HAddi@t%
+  \else\edef\HAdd@enzansi{+}%
+  \fi\fi
+  \edef\HAddi@a{#1\HAdd@enzansi #2}%
+  \HtoH{\HAddi@a}#3%
+}
+
+\def\HAdd#1#2#3{%
+  \strsep{#1}{:}\HAdd@ai\HAdd@aii
+  \strsep{#2}{:}\HAdd@bi\HAdd@bii
+  \ifthenelse{\equal\HAdd@aii{}}{%
+    \ifthenelse{\equal\HAdd@bii{}}{%
+      \edef\HAdd@bunsuu{0}%
+    }{%
+      \edef\HAdd@aii{1}%
+      \edef\HAdd@bunsuu{1}%
+    }%
+  }{%
+    \edef\HAdd@bunsuu{1}%
+    \ifthenelse{\equal\HAdd@bii{}}{\edef\HAdd@bii{1}}{}%
+  }%
+  \ifnum\HAdd@bunsuu=\z@
+    \HAddi{#1}{#2}#3%
+  \else
+    \HMul\HAdd@ai\HAdd@bii\HAdd@bunsi
+    \HMul\HAdd@aii\HAdd@bi\HAdd@bunsii
+    \HAddi\HAdd@bunsi\HAdd@bunsii\HAdd@bunsi
+    \HMul\HAdd@aii\HAdd@bii\HAdd@bunbo
+    \headchar\HAdd@bunbo\HAdd@t\HAdd@r
+    \if -\HAdd@t\HMul{-1}\HAdd@bunsi\HAdd@bunsi\HMul{-1}\HAdd@bunbo\HAdd@bunbo\fi
+    \edef#3{\HAdd@bunsi:\HAdd@bunbo}%
+    \HYakubun{\HAdd@bunsi:\HAdd@bunbo}#3%
+  \fi
+}
+
+\def\HSubi#1#2#3{%
+  \HMul{#2}{-1}\HSub@a
+  \HAdd{#1}\HSub@a\HSub@a
+  \HtoH{\HSub@a}#3%
+}
+
+\def\HSub#1#2#3{%
+  \strsep{#1}{:}\HSub@ai\HSub@aii
+  \strsep{#2}{:}\HSub@bi\HSub@bii
+  \ifthenelse{\equal\HSub@aii{}}{%
+    \ifthenelse{\equal\HSub@bii{}}{%
+      \edef\HSub@bunsuu{0}%
+    }{%
+      \edef\HSub@aii{1}%
+      \edef\HSub@bunsuu{1}%
+    }%
+  }{%
+    \edef\HSub@bunsuu{1}%
+    \ifthenelse{\equal\HSub@bii{}}{\edef\HSub@bii{1}}{}%
+  }%
+  \ifnum\HSub@bunsuu=\z@
+    \HSubi{#1}{#2}#3%
+  \else
+    \HMul\HSub@ai\HSub@bii\HSub@bunsi
+    \HMul\HSub@aii\HSub@bi\HSub@bunsii
+    \HSubi\HSub@bunsi\HSub@bunsii\HSub@bunsi
+    \HMul\HSub@aii\HSub@bii\HSub@bunbo
+    \headchar\HSub@bunbo\HSub@t\HSub@r
+    \if -\HSub@t\HMul{-1}\HSub@bunsi\HSub@bunsi\HMul{-1}\HSub@bunbo\HSub@bunbo\fi
+    \edef#3{\HSub@bunsi:\HSub@bunbo}%
+    \HYakubun{\HSub@bunsi:\HSub@bunbo}#3%
+  \fi
+}
+
+\def\HMul#1#2#3{%
+%\typeout{ HMul #1 * #2 }%
+  \strsep{#1}{:}\HMul@a\HMul@b
+  \strsep{#2}{:}\HMul@c\HMul@d
+  \ifthenelse{\equal\HMul@b{}\or\equal\HMul@b{1\root@mark1}}{%
+    \ifthenelse{\equal\HMul@d{}\or\equal\HMul@d{1\root@mark1}}{%
+      \HMulsub\HMul@a\HMul@c\HMul@ans%
+    }{%
+      \HMulsub\HMul@a\HMul@c\HMul@bunsi
+      \HMulsub{1}\HMul@d\HMul@bunbo
+      \edef\HMul@ans{\HMul@bunsi:\HMul@bunbo}%
+    }%
+  }{%
+    \ifthenelse{\equal\HMul@d{}\or\equal\HMul@d{1\root@mark1}}{%
+      \HMulsub\HMul@a\HMul@c\HMul@bunsi
+      \HMulsub{1}\HMul@b\HMul@bunbo
+      \edef\HMul@ans{\HMul@bunsi:\HMul@bunbo}%
+    }{%
+      \HMulsub\HMul@a\HMul@c\HMul@bunsi
+      \HMulsub\HMul@b\HMul@d\HMul@bunbo
+      \edef\HMul@ans{\HMul@bunsi:\HMul@bunbo}%
+    }%
+  }%
+  \edef#3{\HMul@ans}%
+%\typeout{ HMul@ans = #3}%
+}
+
+\def\HMulsub#1#2#3{%
+%\typeout{HMulsub #1 * #2}%
+  \edef\HMulsub@bn{0}%
+  \Cfor{\edef\HMulsub@t{#2}}{\not\equal\HMulsub@t{}}{}\do{%
+    \septerm\HMulsub@t\HMulsub@c\HMulsub@t
+    \Incr\HMulsub@bn
+    \edefhairetu{HMulsub@b}{\HMulsub@bn}{\HMulsub@c}%
+  }%
+  \edef\HMulsub@ans{}%
+  \Cfor{\edef\HMulsub@t{#1}}{\not\equal\HMulsub@t{}}{}\do{%
+    \septerm\HMulsub@t\HMulsub@c\HMulsub@t
+    \Cfor{\edef\HMulsub@i{0}}{\HMulsub@i<\HMulsub@bn}{}\do{%
+      \Incr\HMulsub@i
+      \HMuli\HMulsub@c{\hairetu{HMulsub@b}{\HMulsub@i}}\HMulsub@d
+      \headchar\HMulsub@d\HMulsub@@t\HMulsub@@r
+      \ifthenelse{\equal\HMulsub@ans{}}{}{%
+        \if +\HMulsub@@t \else\if -\HMulsub@@t\else\edefappend\HMulsub@ans{+}\fi\fi}%
+      \edefappend\HMulsub@ans{\HMulsub@d}%
+    }%
+  }%
+  \HtoH\HMulsub@ans#3%
+%\typeout{HMulsub@ans = #3}%
+}
+
+\def\HMuli#1#2#3{%
+%\typeout{ @  HMulisub #1 * #2}%
+  \seproot{#1}\HMulisuba@soto\HMulisuba@naka
+  \seproot{#2}\HMulisubb@soto\HMulisubb@naka
+  \IMul\HMulisuba@soto\HMulisubb@soto\HMulisub@soto
+  \IMul\HMulisuba@naka\HMulisubb@naka\HMulisub@naka
+  \emHeHeihoukon\HMulisub@naka\HMulisuba@soto
+  \seproot\HMulisuba@soto\HMulisuba@soto\HMulisub@naka
+  \IMul\HMulisub@soto\HMulisuba@soto\HMulisub@soto
+  \edef#3{\HMulisub@soto \root@mark\HMulisub@naka}%
+%\typeout{ @  HMulisub@ans = #3}%
+}
+
+%\def\HDiv#1#2#3{\edef\HDiv@a{#1:#2}\yuurika\HDiv@a#3}
+\def\HDiv#1#2#3{%
+  \strsep{#2}{:}\HDiv@c\HDiv@d
+  \ifthenelse{\equal\HDiv@d\empty}{\edef\HDiv@d{1}}{}%
+  \HMul{#1}{\HDiv@d:\HDiv@c}\HDiv@a
+  \yuurika\HDiv@a#3%
+}
+
+\def\kukuridasi#1#2{%
+  \edef\kukuridasi@a{0}%
+  \Cfor{\edef\kukuridasi@c{#1}}{\not\equal\kukuridasi@c{}}{}\do{%
+    \septerm\kukuridasi@c\kukuridasi@b\kukuridasi@c
+    \seproot\kukuridasi@b\kukuridasi@b\kukuridasi@r
+    \headchar{\kukuridasi@b}\kukuridasi@t\kukuridasi@r
+    \if -\kukuridasi@t\else\edef\kukuridasi@r{\kukuridasi@b}\fi
+    \ifthenelse{\equal\kukuridasi@b{}}{\edef\kukuridasi@b{1}}{}%
+    \ifnum\kukuridasi@a=\z@\edef\kukuridasi@a{\kukuridasi@b}%
+    \else\saidaikouyakusuu\kukuridasi@a\kukuridasi@b\kukuridasi@a
+    \fi
+  }%
+  \edef#2{\kukuridasi@a}%
+}
+
+\def\HIDiv#1#2#3{%  #2 は整数
+  \Cfor{\edef\HIDiv@b{#1}\edef\HIDiv@ans{}}{\not\equal\HIDiv@b{}}{}\do{%
+    \septerm\HIDiv@b\HIDiv@a\HIDiv@b
+    \seproot\HIDiv@a\HIDiv@soto\HIDiv@naka
+    \IDiv\HIDiv@soto{#2}\HIDiv@soto
+    \ifthenelse{\equal\HIDiv@ans{}}{}{\ifnum\HIDiv@soto>\z@\edefappend\HIDiv@ans{+}\fi}%
+    \edefappend\HIDiv@ans{\HIDiv@soto\root@mark\HIDiv@naka}%
+  }%
+  \edef#3{\HIDiv@ans}%
+}
+
+\def\HYakubun#1#2{%
+  \Strchr{#1}{:}\HYakubun@p
+  \ifnum\HYakubun@p>\z@
+  \strsep{#1}{:}\HYakubun@bunsi\HYakubun@bunbo
+  \else
+  \strsep{#1}{/}\HYakubun@bunsi\HYakubun@bunbo
+  \fi
+  \kukuridasi\HYakubun@bunsi\HYakubun@a
+  \kukuridasi\HYakubun@bunbo\HYakubun@b
+  \saidaikouyakusuu\HYakubun@a\HYakubun@b\HYakubun@g
+  \headchar{#1}\HYakubun@t\HYakubun@r
+  \if -\HYakubun@t\IMul\HYakubun@g{-1}\HYakubun@g\fi
+  \HIDiv\HYakubun@bunsi\HYakubun@g\HYakubun@bunsi
+  \HIDiv\HYakubun@bunbo\HYakubun@g\HYakubun@bunbo
+  \ifthenelse{\equal\HYakubun@bunbo{1}\or \equal\HYakubun@bunbo{1\root@mark1}\or    \equal\HYakubun@bunbo{1\root@mark}}{%
+    \edef#2{\HYakubun@bunsi}}{%
+    \headchar\HYakubun@bunbo\HYakubun@t\HYakubun@r
+    \if -\HYakubun@t\HMul{-1}\HYakubun@bunsi\HYakubun@bunsi
+      \HMul{-1}\HYakubun@bunbo\HYakubun@bunbo\fi
+    \edef#2{\HYakubun@bunsi:\HYakubun@bunbo}}%
+}
+
+\def\yuurika#1#2{%
+  \edef#2{#1}%
+  \strsep{#1}{:}\yuurika@bunsi\yuurika@bunbo
+  \ifthenelse{\equal\yuurika@bunbo{}}{}{%
+    \septerm\yuurika@bunbo\yuurika@bunboi\yuurika@bunboii
+    \ifthenelse{\equal\yuurika@bunboii{}}{%
+      \seproot\yuurika@bunbo\yuurika@soto\yuurika@naka
+      \ifthenelse{\equal\yuurika@naka{}}{}{%
+        \HMul\yuurika@bunsi{\root@mark\yuurika@naka}\yuurika@bunsi
+        \HMul\yuurika@bunbo{\root@mark\yuurika@naka}\yuurika@bunbo
+        \edef#2{\yuurika@bunsi:\yuurika@bunbo}%
+      }%
+      \HYakubun{#2}#2\relax
+    }{%
+      \Cfor{}{%
+        \not\equal\yuurika@bunboii{}}{%
+        \septerm\yuurika@bunbo\yuurika@bunboi\yuurika@bunboii}\do{%
+        \headchar\yuurika@bunboii\yuurika@s\yuurika@z
+        \if -\yuurika@s\edef\yuurika@k{\yuurika@bunboi+\yuurika@z}%
+        \else\if +\yuurika@s\edef\yuurika@k{\yuurika@bunboi-\yuurika@z}%
+        \else\edef\yuurika@k{\yuurika@bunboi-\yuurika@bunboii}\fi\fi
+        \HMul\yuurika@bunsi\yuurika@k\yuurika@bunsi
+        \HMul\yuurika@bunbo\yuurika@k\yuurika@bunbo
+        \HYakubun{\yuurika@bunsi:\yuurika@bunbo}#2\relax
+        \strsep{#2}{:}\yuurika@bunsi\yuurika@bunbo
+      }%
+    }%
+  }%
+}
+
+\def\HPower#1#2#3{%
+%\typeout{now! Hpower #1 ** #2}%
+  \ifnum #2=\z@\edef\HPower@v{1}%
+  \else\ifnum #2>\z@
+    \Cfor{\edef\HPower@i{#2}\edef\HPower@v{1}}{\HPower@i>0}{%
+      \Decr\HPower@i}\do{\HMul\HPower@v{#1}\HPower@v
+%\typeout{HPowr@v = \HPower@v}%
+    }%
+  \else
+    \Cfor{\IMul{-1}{#2}\HPower@i\edef\HPower@v{1}}{\HPower@i>0}{%
+      \Decr\HPower@i}\do{\HDiv\HPower@v{#1}\HPower@v}%
+  \fi\fi
+  \edef#3{\HPower@v}%
+}
+
+\def\prHsort[#1]#2{%
+%\typeout{now! prHsort[#1](#2)}%
+  \edef\separate@type{#1}%
+  \strsep{#2}:\prHsort@a\prHsort@bunbo
+  \ifthenelse{\equal\prHsort@bunbo{}}{\edef\separate@type{n}}{}%
+  \HtoH\prHsort@a\prHsort@a
+  \sort@buf\prHsort@a
+\if s\separate@type
+  \edef\HtoH@ans{}%
+  \Cfor{\edef\HtoH@i{0}}{\HtoH@i<\HtoH@bufn}{}\do{%
+    \Incr\HtoH@i
+    \edef\HtoH@x{\hairetu{HtoH@bufc}{\HtoH@i}}%
+    \ifnum\HtoH@x=\z@
+    \else
+      \ifnum\HtoH@x<\z@ -\headchar\HtoH@x\HtoH@s\HtoH@x\else
+        \ifthenelse{\equal\HtoH@ans{}}{}{+}%
+      \fi
+      \edef\@tmp{\HtoH@x\root@mark\hairetu{HtoH@buf}{\HtoH@i}}%
+      \HYakubun{\@tmp:\prHsort@bunbo}\prHsort@y%
+      \prH\prHsort@y\edef\HtoH@ans{+}%
+    \fi
+  }%
+  \ifthenelse{\equal{\HtoH@ans}{}}{\edef\HtoH@ans{0}}{}%
+\else
+  \edef\HtoH@ans{}%
+  \Cfor{\edef\HtoH@i{0}}{\HtoH@i<\HtoH@bufn}{}\do{%
+    \Incr\HtoH@i
+    \ifnum\hairetu{HtoH@bufc}{\HtoH@i}=\z@
+    \else
+      \ifnum\hairetu{HtoH@bufc}{\HtoH@i}<\z@\else
+        \ifthenelse{\equal\HtoH@ans{}}{}{\edefappend\HtoH@ans{+}}%
+      \fi
+      \edefappend\HtoH@ans{\hairetu{HtoH@bufc}{\HtoH@i}\root@mark\hairetu{HtoH@buf}{\HtoH@i}}%
+    \fi
+  }%
+  \ifthenelse{\equal{\HtoH@ans}{}}{\edef\HtoH@ans{0}}{}%
+  \ifthenelse{\equal\prHsort@bunbo{}}{\edef\prHsort@ans{\HtoH@ans}}{%
+    \edef\prHsort@ans{\HtoH@ans:\prHsort@bunbo}}%
+  \prH\prHsort@ans
+\fi
+}
+
+\def\sort@buf#1{%
+%\typeout{now! sort@buf #1}%
+%\dpbuf
+  \Cfor{\edef\@i{0}\edef\@kitei{0}}{\@i<\HtoH@bufn}{}\do{%
+    \Incr\@i
+    \sf@nexti\@j
+    \expandafter\edef\csname sHtoH@bufc\romannumeral\@i\endcsname{%
+      \csname HtoH@bufc\romannumeral\@j\endcsname}%
+    \expandafter\edef\csname sHtoH@buf\romannumeral\@i\endcsname{%
+      \csname HtoH@buf\romannumeral\@j\endcsname}%
+    \expandafter\edef\csname HtoH@buf\romannumeral\@j\endcsname{30000}%
+  }%
+  \Cfor{\edef\@i{0}\edef\@kitei{0}}{\@i<\HtoH@bufn}{}\do{%
+    \Incr\@i
+    \expandafter\edef\csname HtoH@bufc\romannumeral\@i\endcsname{%
+      \csname sHtoH@bufc\romannumeral\@i\endcsname}%
+    \expandafter\edef\csname HtoH@buf\romannumeral\@i\endcsname{%
+      \csname sHtoH@buf\romannumeral\@i\endcsname}%
+  }%
+%\typeout{end of sort}
+%\dpbuf
+}
+
+\def\sf@nexti#1{%
+%\typeout{now sf@next}
+  \Cfor{\edef\@@i{0}\edef\@@j{30000}}{\@@i<\HtoH@bufn}{}\do{%
+    \Incr\@@i
+    \ifthenelse{\hairetu{HtoH@buf}\@@i<\@@j}{%
+      \edef\@@j{\hairetu{HtoH@buf}\@@i}%
+      \edef\@@found{\@@i}%
+    }{}%
+  }
+  \edef#1{\@@found}%
+%\typeout{nexti:#1}%
+%\dpbuf
+}
+
+\def\prH#1{%
+%\typeout{now! prH (#1)}%
+  \strip@kakko{#1}\prH@@a
+  \Strchr{#1}{.}\prH@p
+  \ifnum\prH@p>\z@
+    \headchar{#1}\prH@h\prH@r
+    \ifthenelse{\equal\prH@h\root@mark}{\sqrt{\prF\prH@r}}{\prF{#1}}%
+  \else
+    \strsep\prH@@a{:}\prH@@a\prH@@b
+    \ifthenelse{\equal\prH@@b{}}%
+    {%
+      \septerm\prH@@a\prH@a\prH@b
+      \prH@\prH@a
+      \Cfor{}{\not\equal\prH@b{}}{}\do{%
+        \septerm\prH@b\prH@a\prH@b
+        \headchar\prH@a\prH@c\prH@d
+        \if -\prH@c -\else +\fi
+        \prH@\prH@d
+      }%
+    }%
+    {%
+      \edef\prH@@@b{\prH@@b}%
+      \ifthenelse{\equal{\prH@@@b}{1}\or\equal{\prH@@@b}{1\root@mark1}}{%
+      \prH\prH@@a}{\bunsuu{\prH\prH@@a}{\prH\prH@@@b}}%
+    }%
+  \fi
+}
+
+\def\prH@#1{%
+    \strsep{#1}{/}\prH@@bunsi\prH@@bunbo
+    \ifthenelse{\equal\prH@@bunbo{}}{\prHe\prH@@bunsi}{%
+      \ifthenelse{\equal\prH@@bunbo{1}\or \equal\prH@@bunbo{1\root@mark1}}{%
+        \prHe\prH@@bunsi}{\bunsuu{\prHe\prH@@bunsi}{\prHe\prH@@bunbo}%
+      }%
+    }%
+}
+
+\def\prHe#1{%
+  \headchar{#1}\prH@t\prH@r
+  \if -\prH@t\edef\prH@hugou{-}\else\edef\prH@hugou{}\edef\prH@r{#1}\fi
+  \seproot\prH@r\prH@soto\prH@naka
+  \prH@hugou
+  \ifthenelse{\prH@soto=1\and \prH@naka>1}{}{\prH@soto}%
+  \ifnum\prH@soto=\z@\else\ifnum\prH@naka>1\relax\sqrt{\prH@naka}\fi\fi%
+}
+
+\def\Hcalc#1=#2{\@Hcalc{(0)+#1}\edef#2{\@koui}}
+\def\@Hcalc#1{%
+\edef\Hcalc@a{#1}%
+  \H@parse{\Hcalc@a}{@kou}{@opcode}{@lvl}\nlvl
+  \Cfor{\edef\max@klvl{0}\edef\@i{0}}{\@i<\nlvl}{}\do{%
+    \Incr\@i
+    \ifnum\csname @lvl\romannumeral\@i\endcsname>\max@klvl
+      \edef\max@klvl{\csname @lvl\romannumeral\@i\endcsname}\fi}%
+  \Cfor{}{\max@klvl>1}{\Decr\max@klvl}\do{%   括弧優先
+    \Cfor{\edef\@i{0}}{\@i<\nlvl}{\Incr\@i}\do{%
+      \Incr\@i
+      \ifnum \csname @lvl\romannumeral\@i\endcsname=\max@klvl\relax
+        \edef\tmp@kou{\csname @kou\romannumeral\@i\endcsname}%
+        \strip@kakko\tmp@kou\tmp@kou
+        \push@parse
+        \Hcalc\tmp@kou=\tmp@ans
+        \pop@parse
+        \expandafter\edef\csname @kou\romannumeral\@i\endcsname{\tmp@ans}%
+        \expandafter\edef\csname @opcode\romannumeral\@i\endcsname{0}%
+        \expandafter\edef\csname @lvl\romannumeral\@i\endcsname{1}%
+      \fi
+    }%
+  }%
+  \Cfor{\edef\@i{2}}{\@i<\nlvl}{}\do{%  冪計算
+    \ifnum\csname @opcode\romannumeral\@i\endcsname =6\relax
+      \ISub\@i{1}\@j
+      \doHcalc@ne{@kou}{@opcode}{@lvl}{\@j}\nlvl
+    \else\Incr[2]\@i
+    \fi
+  }%
+  \Cfor{\edef\@i{1}}{\@i<\nlvl}{}\do{%  単項マイナス
+    \ifnum\csname @opcode\romannumeral\@i\endcsname =5\relax
+%     \ISub\@i{1}\@j
+      \doHcalc@ne{@kou}{@opcode}{@lvl}{\@i}\nlvl
+    \else\Incr\@i
+    \fi
+  }%
+  \Cfor{\edef\@i{2}}{\@i<\nlvl}{}\do{% 乗除
+    \ifnum\csname @opcode\romannumeral\@i\endcsname >\tw@
+      \ISub\@i{1}\@j
+      \doHcalc@ne{@kou}{@opcode}{@lvl}{\@j}\nlvl
+    \else\Incr[2]\@i
+    \fi
+  }%
+  \Cfor{}{\nlvl>\@ne}{}\do{%          加減
+    \doHcalc@ne{@kou}{@opcode}{@lvl}{1}\nlvl
+  }%
+}
+
+\def\H@signchg#1#2{%
+  \push@parse
+  \Hcalc(-1)*(#1)=#2%
+  \pop@parse
+}
+
+\def\H@root#1#2{%
+      \push@parse
+      \Hcalc(#1)=\H@root@a%
+      \strsep\H@root@a{:}\H@root@bunsi\H@root@bunbo
+      \ifthenelse{\equal\H@root@bunbo{}}{%
+        \strsep\H@root@bunsi{"}\H@root@bunsi\@gomi
+        \edef#2{\root@mark\H@root@bunsi}%
+      }{%
+        \strsep\H@root@bunsi{"}\H@root@bunsi\@gomi
+        \strsep\H@root@bunbo{"}\H@root@bunbo\@gomi
+        \edef\H@root@a{\root@mark\H@root@bunsi:\root@mark\H@root@bunbo}%
+        \yuurika\H@root@a#2\relax
+      }%
+      \pop@parse
+}
+
+\def\doHcalc@ne#1#2#3#4#5{%
+  \edef\@op{#4}%
+  \ifnum\csname #2\romannumeral\@op\endcsname=5\relax
+%\@dpstack{@kou}{@opcode}{@lvl}\nlvl
+    \edef\@op{#4}%
+    \IAdd\@op{1}\do@kouii
+    \strip@kakko{\csname #1\romannumeral\do@kouii\endcsname}\@xii
+%\typeout{\@xii,opcode=\csname #2\romannumeral\@op\endcsname}%
+    \edef\@enzansi{\csname #1\romannumeral\@op\endcsname}%
+    \if -\@enzansi
+      \H@signchg\@xii\@ans
+      \expandafter\edef\csname #1\romannumeral\@op\endcsname{\@ans}%
+      \expandafter\edef\csname #2\romannumeral\@op\endcsname{0}%
+      \expandafter\edef\csname #3\romannumeral\@op\endcsname{0}%
+    \else\if \root@mark\@enzansi
+      \H@root\@xii\@ans
+%\typeout{rootans=\@ans}
+      \expandafter\edef\csname #1\romannumeral\@op\endcsname{\@ans}%
+      \expandafter\edef\csname #2\romannumeral\@op\endcsname{0}%
+      \expandafter\edef\csname #3\romannumeral\@op\endcsname{1}%
+%\typeout{@ans=[\@ans]}%
+    \fi\fi
+    \Cfor{\edef\n@t{#4}\IAdd\n@t{1}\n@t\IAdd\n@t{1}\n@s}{\n@t<#5}{}\do{%
+      \Incr\n@t\Incr\n@s
+      \expandafter\edef\csname #1\romannumeral\n@t\endcsname{%
+        \csname #1\romannumeral\n@s\endcsname}%
+      \expandafter\edef\csname #2\romannumeral\n@t\endcsname{%
+        \csname #2\romannumeral\n@s\endcsname}%
+      \expandafter\edef\csname #3\romannumeral\n@t\endcsname{%
+        \csname #3\romannumeral\n@s\endcsname}%
+    }%
+    \ISub{#5}{1}#5\relax
+%\@dpstack{@kou}{@opcode}{@lvl}\nlvl
+  \else
+    \edef\do@koui{#4}%
+    \IAdd\do@koui{1}\@op
+    \IAdd\do@koui{2}\do@kouii
+    \strip@kakko{\csname #1\romannumeral\do@koui\endcsname}\@xi
+    \strip@kakko{\csname #1\romannumeral\do@kouii\endcsname}\@xii
+    \Strchr\@xi{.}\@xi@p
+    \ifnum\@xi@p>\z@\HStoH\@xi\@xi\fi
+    \Strchr\@xii{.}\@xii@p
+    \ifnum\@xii@p>\z@\HStoH\@xii\@xii\fi
+%\typeout{\@xi,\@xii,opcode=\csname #2\romannumeral\@op\endcsname}%
+    \ifcase\csname #2\romannumeral\@op\endcsname\relax
+    \or\HAdd\@xi\@xii\@ans
+      \or\HSub\@xi\@xii\@ans
+      \or\HMul\@xi\@xii\@ans
+      \or\HDiv\@xi\@xii\@ans
+      \or
+      \or\HPower\@xi\@xii\@ans
+    \fi
+%\typeout{@ans=\@ans}%
+    \expandafter\edef\csname #1\romannumeral\do@koui\endcsname{\@ans}%
+    \Cfor{\edef\n@t{#4}\IAdd\n@t{2}\n@s}{\n@t<#5}{}\do{%
+      \Incr\n@t\Incr\n@s
+      \expandafter\edef\csname #1\romannumeral\n@t\endcsname{%
+        \csname #1\romannumeral\n@s\endcsname}%
+      \expandafter\edef\csname #2\romannumeral\n@t\endcsname{%
+        \csname #2\romannumeral\n@s\endcsname}%
+      \expandafter\edef\csname #3\romannumeral\n@t\endcsname{%
+        \csname #3\romannumeral\n@s\endcsname}%
+    }%
+    \ISub{#5}{2}#5\relax
+  \fi
+}
+
+
+\def\HStoH#1#2{%
+%\typeout{now! HStoH(#1)}
+  \headchar{#1}\HStoH@h\HStoH@r
+  \ifthenelse{\equal\HStoH@h\root@mark}{%
+  }{%
+    \edef\HStoH@h{}%
+    \edef\HStoH@r{#1}%
+  }%
+  \StoF\HStoH@r\HStoH@a
+  \strsep\HStoH@a{/}\HStoH@bunsi\HStoH@bunbo
+  \edef\HStoH@a{\HStoH@h\HStoH@bunsi:\HStoH@h\HStoH@bunbo}%
+  \yuurika\HStoH@a#2%
+%\typeout{return (#2)}
+}
+
+\def\septerm#1#2#3{%
+  \edef\septerm@a{}\edef\septerm@b{}\edef\septerm@found{0}%
+  \expandafter\@tfor\expandafter\@@c\expandafter:\expandafter=#1\do{%
+    \ifthenelse{\septerm@found=0\and\not\equal\septerm@a{}\and\(\equal\@@c +\or\equal\@@c -\)}%
+    {%
+      \edef\septerm@found{1}%
+      \if +\@@c\else\edef\septerm@b{\@@c}\fi
+      \edef\septerm@b{\@@c}%
+    }%
+    {%
+      \ifnum \septerm@found=\z@\edefappend\septerm@a{\@@c}%
+      \else\edefappend\septerm@b{\@@c}%
+      \fi 
+    }%
+  }%
+  \edef#2{\septerm@a}\edef#3{\septerm@b}%
+}
+
+\def\seproot#1#2#3{%
+  \strsep{#1}{\root@mark}#2#3\relax
+  \ifthenelse{\equal{#2}{}}{\edef#2{1}}{%
+    \ifthenelse{\equal{#2}{-}}{\edef#2{-1}}{%
+      \ifthenelse{\equal{#2}{+}}{\edef#2{1}}{}%
+    }%
+  }%
+  \ifthenelse{\equal{#3}{}}{\edef#3{1}}{}%
+}
+
+\def\H@prstack#1#2#3#4{%
+  \edef\stk@beki{0}%
+  \edef\max@klvl{2}%
+  \Cfor{\edef\@i{0}}{\@i<#4}{}\do{%
+    \Incr\@i
+    \IAdd\@i{1}\@j
+    \ifthenelse{\@j<#4\and\equal{\hairetu{#1}\@j}{:}}{%
+              \edef\@tmp{\csname #1\romannumeral\@i\endcsname}%
+              \ifnum\hairetu{#3}{\@i}>1\relax
+                \strip@kakko\@tmp\@tmp\fi
+              \Incr[2]\@i
+              \edef\@@tmp{\csname #1\romannumeral\@i\endcsname}%
+              \ifnum\hairetu{#3}{\@i}>1\relax
+                \strip@kakko\@@tmp\@@tmp\fi
+              \bunsuu{\@prHkeisanSiki\@tmp}{\@prHkeisanSiki\@@tmp}%
+    }{%
+    \ifcase\csname #3\romannumeral\@i\endcsname
+      \edef\@tmp{\csname #1\romannumeral\@i\endcsname}%
+      \if *\@tmp\times\else
+      \if /\@tmp\div
+      \else\if p\@tmp\edef\stk@beki{1}
+      \else\if @\@tmp
+      \else\if \root@mark\@tmp
+        \Incr\@i
+        \edef\@@tmp{\csname #1\romannumeral\@i\endcsname}%
+        \ifnum\hairetu{#3}{\@i}>1\relax\strip@kakko\@@tmp\@@tmp\fi
+        \sqrt{\@prHkeisanSiki\@@tmp}
+      \else\@tmp
+      \fi\fi\fi\fi\fi
+    \or
+      \strip@kakko{\csname #1\romannumeral\@i\endcsname}\@tmp
+      \ifnum\stk@beki>\z@ ^{\@tmp}\edef\stk@beki{0}%
+      \else
+          \IAdd\@i{1}\@j
+          \ifnum\@j<#4\relax
+%           \ifnum\hairetu{#2}\@j=6\relax
+%             \left(\prH\@tmp\right)%
+%           \else
+              \prH\@tmp
+%           \fi
+          \else
+            \prH\@tmp
+          \fi
+      \fi
+    \else
+\headchar{\csname #1\romannumeral\@i\endcsname}\@kakkomozi\@tmp
+\edef\prstack@kakkolvl{\hairetu{#3}\@i}%
+\if <\@kakkomozi\left\{%
+\else\if `\@kakkomozi
+\else\left\@kakkomozi
+\fi\fi
+      \push@parse
+        \strip@kakko{\csname #1\romannumeral\@i\endcsname}\@tmp
+        \IAdd\@i{1}\@j
+            \@prHkeisanSiki\@tmp
+      \pop@parse
+\headchar{\csname #1\romannumeral\@i\endcsname}\@kakkomozi\@tmp
+\edef\prstack@kakkolvl{\hairetu{#3}\@i}%
+\if <\@kakkomozi\right\}%
+\else\if [\@kakkomozi\right]%
+\else\if (\@kakkomozi\right)%
+\else\if `\@kakkomozi
+\fi\fi\fi\fi
+    \fi
+  }%
+  }%
+}
+\def\prHkeisanSiki#1{%
+  \@prHkeisanSiki{#1}%
+}
+\def\@prHkeisanSiki#1{%
+  \H@parse{#1}{@kou}{@opcode}{@lvl}\nlvl
+%\@dpstack{@kou}{@opcode}{@lvl}\nlvl
+  \H@prstack{@kou}{@opcode}{@lvl}\nlvl
+}
+
+\def\H@parse#1#2#3#4#5{%
+  \Cfor{\edef\@i{0}\@getH{#1}\@kou\@nokori\@opcode\@kakkolvl}{%
+    \not\equal\@kou{}}{%
+      \@getH{\@nokori}\@kou\@@nokori\@opcode\@kakkolvl
+        \edef\@nokori{\@@nokori}}\do{\Incr\@i
+%\typeout{%
+%return from @getH : @kou=\@kou, @opcode=\@opcode, @kakkolvl=\@kakkolvl}%
+      \ifthenelse{\equal\@kou{-}}%
+      {%  単項マイナス
+        \ifnum\@i=1\edef\@opcode{5}%
+        \else\ISub\@i{1}\@j
+          \ifthenelse{\hairetu{#3}\@j=\z@}{}{\edef\@opcode{5}}%
+        \fi
+      }{}%
+      \expandafter\edef\csname #2\romannumeral\@i\endcsname{\@kou}%
+      \expandafter\edef\csname #3\romannumeral\@i\endcsname{\@opcode}%
+      \expandafter\edef\csname #4\romannumeral\@i\endcsname{\@kakkolvl}%
+  }%
+  \edef#5{\@i}%
+%\@dpstack{@kou}{@opcode}{@lvl}\nlvl
+}
+
+\def\@getH#1#2#3#4#5{%
+  \edef\exist@minus{0}%
+  \edef\kakko@hazime{0}%
+  \edef#5{0}%
+  \edef\kakko@lvl{0}%
+  \headchar{#1}\@t\@remain
+  \edef\@kakkolvl{0}%
+  \edef#2{\@t}%
+  \edef#3{\@remain}%
+  \edef#4{-1}%
+  \if \@t (\Incr\kakko@lvl\edef#4{0}\edef#5{\kakko@lvl}\else
+  \if \@t [\Incr\kakko@lvl\edef#4{0}\edef#5{\kakko@lvl}\else
+  \if \@t <\Incr\kakko@lvl\edef#4{0}\edef#5{\kakko@lvl}\else
+  \if \@t `\Incr\kakko@lvl\edef#4{0}\edef#5{\kakko@lvl}\else
+  \if \@t +\edef#2{\@t}\edef#4{1}\else
+  \if \@t -\edef#2{\@t}\edef#4{2}\else
+  \if \@t @\edef#2{\@t}\edef#4{3}\else
+  \if \@t \root@mark\edef#2{\@t}\edef#4{5}\else
+  \if \@t *%
+    \headchar\@remain\@@t\@@remain
+    \if \@@t*\edef#2{p}\edef#4{6}\edef\@remain{\@@remain}%
+    \else\edef#2{\@t}\edef#4{3}\fi\else
+  \if \@t :\edef#2{\@t}\edef#4{4}\else
+  \if \@t /\edef#2{\@t}\edef#4{4}\else
+    \ifthenelse{\equal\@t{}}{}{%
+      \errmessage{項の始めは括弧が必要です．#1を(#1)と修正してください．}}%
+  \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi
+  \Cfor{}{\kakko@lvl>\z@}{}\do{%
+    \headchar\@remain\@t\@remain
+    \if \@t(\Incr\kakko@lvl\edef\kakko@hazime{1}%
+      \ifnum\kakko@lvl>#5\edef#5{\kakko@lvl}\fi
+    \else\if \@t[\Incr\kakko@lvl\edef\kakko@hazime{1}%
+      \ifnum\kakko@lvl>#5\edef#5{\kakko@lvl}\fi
+    \else\if \@t<\Incr\kakko@lvl\edef\kakko@hazime{1}%
+      \ifnum\kakko@lvl>#5\edef#5{\kakko@lvl}\fi
+    \else\if \@t`\Incr\kakko@lvl\edef\kakko@hazime{1}%
+      \ifnum\kakko@lvl>#5\edef#5{\kakko@lvl}\fi
+    \else\if \@t]\Decr\kakko@lvl\edef\kakko@hazime{0}%
+    \else\if \@t)\Decr\kakko@lvl\edef\kakko@hazime{0}%
+    \else\if \@t>\Decr\kakko@lvl\edef\kakko@hazime{0}%
+    \else\if \@t'\Decr\kakko@lvl\edef\kakko@hazime{0}%
+    \else\if \@t-\ifnum\kakko@hazime>\z@\edef\exist@minus{1}\fi%
+      \edef\kakko@hazime{0}%
+    \else\edef\kakko@hazime{0}%
+    \fi\fi\fi\fi\fi\fi\fi\fi\fi
+%(head=\@t,remain=\@remain,kakkolvl=#5)\\
+    \edef#2{#2\@t}%
+  }%
+%{[#5:#2,\exist@minus]}%
+  \IAdd{#5}\exist@minus#5%
+  \edef#3{\@remain}%
+}
+
+\def\strip@kakko#1#2{%
+  \expandafter\headchar{#1}\stripkakko@dmy\stripkakko@nokori
+  \if (\stripkakko@dmy
+    \tailchar\stripkakko@nokori #2\stripkakko@dmy
+  \else\if [\stripkakko@dmy
+    \tailchar\stripkakko@nokori #2\stripkakko@dmy
+  \else\if <\stripkakko@dmy
+    \tailchar\stripkakko@nokori #2\stripkakko@dmy
+  \else\if `\stripkakko@dmy
+    \tailchar\stripkakko@nokori #2\stripkakko@dmy
+  \else\edef#2{#1}\fi\fi\fi\fi
+}%
+
+\def\push@parse{%
+  \Incr\stack@n
+  \Cfor{\edef\push@i{0}}{\push@i<\nlvl}{}\do{%
+    \Incr\push@i
+    \expandafter\edef\csname\romannumeral\stack@n @@kou\romannumeral\push@i
+      \endcsname{\csname @kou\romannumeral\push@i\endcsname}%
+    \expandafter\edef\csname\romannumeral\stack@n @@opcode\romannumeral\push@i
+      \endcsname{\csname @opcode\romannumeral\push@i\endcsname}%
+    \expandafter\edef\csname\romannumeral\stack@n @@lvl\romannumeral\push@i
+      \endcsname{\csname @lvl\romannumeral\push@i\endcsname}%
+  }%
+  \expandafter\edef\csname\romannumeral\stack@n @@nlvl\endcsname{\nlvl}%
+  \expandafter\edef\csname\romannumeral\stack@n @@i\endcsname{\@i}%
+  \expandafter\edef\csname\romannumeral\stack@n @@maxklvl\endcsname{\max@klvl}%
+}
+
+\def\pop@parse{%
+  \edef\nlvl{\csname\romannumeral\stack@n @@nlvl\endcsname}%
+  \Cfor{\edef\pop@i{0}}{\pop@i<\nlvl}{}\do{%
+    \Incr\pop@i
+    \expandafter\edef\csname @kou\romannumeral\pop@i\endcsname{%
+      \csname\romannumeral\stack@n @@kou\romannumeral\pop@i\endcsname}%
+    \expandafter\edef\csname @opcode\romannumeral\pop@i\endcsname{%
+      \csname\romannumeral\stack@n @@opcode\romannumeral\pop@i\endcsname}%
+    \expandafter\edef\csname @lvl\romannumeral\pop@i\endcsname{%
+      \csname\romannumeral\stack@n @@lvl\romannumeral\pop@i\endcsname}%
+  }%
+  \edef\@i{\csname\romannumeral\stack@n @@i\endcsname}%
+  \edef\max@klvl{\csname\romannumeral\stack@n @@maxklvl\endcsname}%
+  \Decr\stack@n
+}
+%
+%\newwrite\Hkeisan@hndl
+\@ifundefined{em@whndl}{\newwrite\em@whndl}{}%
+\def\Hkeisan{\@ifnextchar<{\@Hkeisan}{\@Hkeisan<M>}}
+\def\@Hkeisan<#1>{\@ifnextchar[{\@@Hkeisan<#1>}{\@@Hkeisan<#1>[n]}}%
+\def\@@Hkeisan<#1>[#2]#3{%
+  \if A#1\relax
+    \immediate\openout\em@whndl=\jobname.tmp%
+    \immediate\write\em@whndl{\string\Hkeisan{#3}}%
+    \immediate\write\em@whndl{%
+      \string\kaitou{\string\Hcalc#3=\string\kotae
+      $\string\prHsort[#2]\string\kotae$}}%
+    \immediate\closeout\em@whndl\input{\jobname.tmp}%
+  \else
+    $\prHkeisanSiki{#3}$%
+  \fi
+}
+%
+%\@ifundefined{zahyou}{\let\Heihoukon\emHeHeihoukon}{}%
+\endinput
+
+% 0.00α 2000/01/04
+% 0.01α 2000/01/05
+%           \yuurika にバグ
+% 0.02α 2000/01/05
+%           : を / に変更
+% 0.03α 2000/01/06-07
+%           : に戻す．
+%           < > でくくられた括弧は表示しない．
+% 0.04α 2000/01/08
+%           \HMul, \HtoH 修正
+% 0.05α 2000/01/09
+%           \HMul バグ修正
+%           単項マイナスの処理
+%           べき乗の底を括弧でくくるときは原稿で明示するように変更
+% 0.06α 2000/01/10
+%           小数をサポート
+%           カッコの種類は原稿で指定 [<(`   ')>]
+%           順序をソート
+%           分離形式 [s]オプション
+% 0.07α 2005/11/26
+%           \Heihoukon ---> \emHeHeihoukon と改名（emathC.sty と同名回避）

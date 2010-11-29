@@ -1,0 +1,114 @@
+% emathEc.sty by tDB (emath@nifty.com)
+
+\NeedsTeXFormat{LaTeX2e}%
+\ProvidesPackage{emathEc}[2010/03/21 v0.10]%
+\RequirePackage{emathC}%
+\RequirePackage{emathK}%
+\RequirePackage{keyval}%
+\RequirePackage{enumerate}%
+\RequirePackage{jquote}%
+%
+\newcount\kizami@ti\kizami@ti=\@ne
+\newcount\syoki@ti\syoki@ti=\z@
+%
+\define@key{emE}{kizamiti}{\kizami@ti=#1\relax}%
+\define@key{emE}{syokiti}{\syoki@ti=#1\relax}%
+\define@key{emE}{apnlist}{\def\apn@list{#1}}%
+\define@key{emE}{listapn}{\def\list@apn{#1}}%
+\define@key{emE}{apnenum}{\edefappend\apn@enum{#1}}%
+%
+\edef\enum@firstleftmargin{0pt}%
+\define@key{emE}{enumfirstleftmargin}{\def\enum@firstleftmargin{#1}}%
+\define@key{emE}{enumleftmargin}{%
+  \edef\apn@enum{%
+    \itemindent=\leftmargin\relax
+    \advance\itemindent-#1\relax
+    \leftmargin=#1\relax
+    \advance\labelsep-\itemindent
+    \advance\labelsep\enum@firstleftmargin
+    \itemindent=\enum@firstleftmargin
+  }%
+}%
+%
+\@ifundefined{ltxitem}{\let\ltxitem\item}{}%
+\let\orgltxitem\item
+%
+%
+\let\ltxstepcounter\stepcounter
+\def\enumstepcounter#1{%
+  \addtocounter{#1}\kizami@ti
+  \begingroup
+    \let\@elt\@stpelt
+    \csname cl@#1\endcsname
+  \endgroup}
+%
+\newif\ifrenzi\renzitrue
+%
+  \let\emromancnt\roman
+  \let\emRomancnt\Roman
+  \let\alphacnt\Alph
+  \let\betacnt\alph
+\def\@enloop@{%
+  \ifx A\@entemp         \def\@tempa{\@enLabel\Alph  }\else
+  \ifx a\@entemp         \def\@tempa{\@enLabel\alph  }\else
+  \ifx i\@entemp         \def\@tempa{\@enLabel\emromancnt }\else
+  \ifx I\@entemp         \def\@tempa{\@enLabel\emRomancnt }\else
+  \ifx 1\@entemp         \def\@tempa{\@enLabel\arabic}\else
+  \ifx m\@entemp         \def\@tempa{\@enLabel\marucnt}\else
+  \ifx M\@entemp         \def\@tempa{\@enLabel\Marucnt}\else
+  \ifx n\@entemp         \def\@tempa{\@enLabel\nagamarucnt}\else
+  \ifx N\@entemp         \def\@tempa{\@enLabel\bnagamarucnt}\else
+  \ifx ア\@entemp         \def\@tempa{\@enLabel\カタカナ}\else
+  \ifx イ\@entemp         \def\@tempa{\@enLabel\イロハ}\else
+  \ifx あ\@entemp         \def\@tempa{\@enLabel\ひらがな}\else
+  \ifx い\@entemp         \def\@tempa{\@enLabel\いろは}\else
+  \ifx 一\@entemp         \renzifalse\def\@tempa{\@enLabel\Kanji}\else
+  \ifx １\@entemp         \def\@tempa{\@enLabel\rensuzi}\else
+  \ifx 甲\@entemp         \def\@tempa{\@enLabel\甲乙}\else
+  \ifx 子\@entemp         \def\@tempa{\@enLabel\十二支}\else
+  \ifx α\@entemp         \def\@tempa{\@enLabel\alphacnt}\else
+  \ifx β\@entemp         \def\@tempa{\@enLabel\betacnt}\else
+  \ifx \@sptoken\@entemp \let\@tempa\@enSpace         \else
+  \ifx \bgroup\@entemp   \let\@tempa\@enGroup         \else
+  \ifx \@enum@\@entemp   \let\@tempa\@gobble          \else
+%%% enumerate パッケージに下の1行を追加
+  \ifx \@edaenum@\@entemp   \let\@tempa\@gobble       \else
+                         \let\@tempa\@enOther
+          \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi
+  \@tempa}
+%
+\def\preitem{}
+\def\postitem{}
+\let\mark@item\item
+\def\item{\@ifstar{\items}{\def\preitem{}\def\postitem{}\mark@item}}
+\def\items{\@ifstar{\items@}{\@items}}
+\def\@items{\@ifnextchar[{\@@items}{\@@items[*]}}
+\def\@@items[#1]{\@ifnextchar[{\@@@items[#1]}{\@@@items[#1][]}}
+\def\@@@items[#1][#2]{\def\preitem{#1}\def\postitem{#2}\mark@item}
+\def\items@{\@ifnextchar[{\items@@}{\items@@[*]}}
+\def\items@@[#1]{\def\preitem{}\def\postitem{#1}\mark@item}
+\let\EMitem\item
+%
+% 全角数字によるナンバリング
+%\def\labelenumi{Ｑ\suuziToZen{\the\c@enumi}}%
+%\def\labelenumi{Ｑ\suuziToZen{\the\value{enumi}}.\ }%
+% 半角数字列を全角数字列に変換する．
+\def\suuziToZen#1{%
+  \expandafter\@tfor\expandafter\@c\expandafter:\expandafter=#1%
+  \do{{\@tempcnta33359\advance\@tempcnta\@c\char\@tempcnta}}}%
+%
+\def\hfilll{\hskip0pt plus 1filll}%
+%
+\endinput
+
+v 0.00 2005/09/05 emathE, emathEy の共通部分
+v 0.01 2006/05/27 \kizami@ti など emathE より移管
+v 0.02 2006/08/22 \ltxitem 
+v 0.03 2007/08/03 \preitem など emathEy より移管
+v 0.04 2008/01/05 \preitem などの修飾enumerate環境における \item を \EMitem とも名付ける。
+v 0.05 2008/01/12 enumerate.sty, jquote.sty, emathK.sty をロードする。
+v 0.06 2008/03/04 enumerate に [甲], [子] オプション
+v 0.07 2008/11/14 \hfilll
+v 0.08 2009/01/20 enumerate[*]: メタ文字に N (\bnagamaru)
+v 0.09 2009/05/01 romancnt など
+v 0.10 2010/03/21 \emromancnt

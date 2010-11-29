@@ -1,0 +1,263 @@
+% EMbigint.sty by tDB(emath@nifty.com)
+%
+\NeedsTeXFormat{LaTeX2e}%
+\ProvidesPackage{EMbigint}[2009/06/07 v0.04]%
+%
+\RequirePackage{emathW}%
+\RequirePackage{emathPl}%
+\useperlpm{Math::BigInt}%
+%
+%
+% bigint
+%
+\def\bigIAdd#1#2#3{\calcval[s]{%
+  Math::BigInt::badd("#1","#2")}#3\strip@sign{#3}#3}%
+\def\bigISub#1#2#3{\calcval[s]{%
+  Math::BigInt::bsub("#1","#2")}#3\strip@sign{#3}#3}%
+\def\bigIMul#1#2#3{\calcval[s]{%
+  Math::BigInt::bmul("#1","#2")}#3\strip@sign{#3}#3}%
+\def\bigIDiv#1#2#3{\calcval[s]{%
+  Math::BigInt::bdiv("#1","#2")}#3\strip@sign{#3}#3}%
+\def\bigIMod#1#2#3{\calcval[s]{%
+  Math::BigInt::bmod("#1","#2")}#3\strip@sign{#3}#3}%
+\def\bigIDivMod#1#2#3#4{%
+  \CalcVal{%
+    @ret=Math::BigInt::bdiv("#1","#2");
+    printf FHNDL "\EMpercentchar s,\EMpercentchar s\string\n",$ret[0],$ret[1];
+  }\tmp@a%
+  \Strsep{\tmp@a}{,}#3#4\relax
+  \strip@sign{#3}{#3}%
+  \strip@sign{#4}{#4}%
+}%
+%
+\def\bigIwarizan{\@ifnextchar<{\bigIwarizan@}{\@bigIwarizan<\empty>}}%
+\def\bigIwarizan@<#1>#2#3{%
+  \ifx #1A\relax
+      \immediate\openout\zyo@hndl=zyo.tmp%
+      \immediate\write\zyo@hndl{#2}%
+      \immediate\write\zyo@hndl{\string\div }%
+      \immediate\write\zyo@hndl{#3}%
+      \immediate\write\zyo@hndl{%
+        $\string\kaitou {\string\bigIwarizan {#2}{#3}}$ }%
+      \immediate\closeout\zyo@hndl%
+      \input{zyo.tmp}
+  \else\@bigIwarizan<#1>{#2}{#3}
+  \fi}%
+
+\def\@bigIwarizan<#1>#2#3{%
+  \ifx M#1\leavevmode\lower-2.62ex\hbox\bgroup\fi%
+%
+  \def\wari@sub{%
+    \xIncr\emW@temp\Incr\hidari@p
+    \edef\@n{zyo@q\romannumeral\emW@temp}
+    \ifnum\@nameuse{\@n}=\z@
+    \else
+      \edef\zyo@amari{\@zyosuu}%
+      \calcval[s]{Math::BigInt::bmul("\zyo@amari","\@nameuse{\@n}")}\zyo@amari
+      \strip@sign\zyo@amari\zyo@amari
+      \xdef\zyo@amari{\zyo@amari}%
+      \@keisuu@{zyo@c}{\zyo@amari}\edef\zyo@cc{\the\@tempcnta}\Decr\zyo@cc
+      \edef\zyo@beki{\zyo@cq}\xISub\zyo@beki\emW@temp\zyo@beki
+      \@tempcntb\zyo@retusuu\advance\@tempcntb-\zyo@beki
+      \advance\@tempcntb-\zyo@cc
+      \@tempcnta\z@\def\@hidari{}%
+      \@whilenum\@tempcnta<\@tempcntb
+        \do{\advance\@tempcnta\@ne\edef\@hidari{\@hidari &}}%
+      \@seikei@{zyo@c}{\zyo@cc}\@hidari\EMw@t\\%
+      \cline{\hidari@p-\migi@p}%
+      \@tempcnta\z@\edef\tmp@a{1}%
+      \@whilenum\@tempcnta<\zyo@beki\do{\advance\@tempcnta\@ne
+        \edefappend\tmp@a{0}%
+      }%
+      \calcval[s]{Math::BigInt::bmul("\zyo@amari","\tmp@a")}\zyo@amari
+      \calcval[s]{Math::BigInt::bsub("\@hizyosuu","\zyo@amari")}\@hizyosuu
+      \strip@sign\zyo@amari\tmp@\xdef\zyo@amari{\tmp@}%
+      \strip@sign\@hizyosuu\@hizyosuu\xdef\@hizyosuu{\@hizyosuu}%
+      \@keisuu@{zyo@a}{\@hizyosuu}\edef\zyo@ca{\the\@tempcnta}\Decr\zyo@ca
+      \@tempcntb\zyo@retusuu\advance\@tempcntb-\zyo@ca
+      \@tempcnta\z@\def\@hidari{}
+      \@whilenum\@tempcnta<\@tempcntb
+        \do{\advance\@tempcnta\@ne\edef\@hidari{\@hidari &}}
+      \@tempcntb\zyo@ca\advance\@tempcntb-\zyo@beki
+      \ifnum\zyo@beki>\z@\advance\@tempcntb\@ne\fi
+      \@tempcnta\zyo@cq\advance\@tempcnta-\zyo@beki\advance\@tempcnta\@ne
+      \@whilenum\@tempcnta<\zyo@cq
+        \do{\edef\n@{zyo@q\romannumeral\@tempcnta}%
+          \ifnum\@nameuse{\n@}=\z@
+            \advance\@tempcntb\@ne\advance\@tempcnta\@ne
+          \else
+            \@tempcnta\zyo@cq
+          \fi
+      }%
+      \@seikei@{zyo@a}{\@tempcntb}\@hidari\EMw@t\\
+    \fi
+\CalcVal{%
+  if (\@hizyosuu<\@zyosuu){$a=1;}
+  else{$a=0;}
+  printf FHNDL "\EMpercentchar d\string\n", $a;
+}\@tmp
+\ifnum\@tmp=\@ne
+%    \ifnum\@hizyosuu<\@zyosuu
+      \let\next\relax
+    \else
+      \let\next\wari@sub
+    \fi\next
+  }%
+%
+  \edef\@hizyosuu{#2}\edef\@zyosuu{#3}\edef\@syou{#2}%
+%  \IDiv\@syou{#3}\@syou
+  \calcval[s]{Math::BigInt::bdiv("\@syou","#3")}\@syou
+  \strip@sign\@syou\@syou
+  \@keisuu@{zyo@a}{\@hizyosuu}\edef\zyo@ca{\the\@tempcnta}\Decr\zyo@ca
+  \@keisuu@{zyo@b}{\@zyosuu}\edef\zyo@cb{\the\@tempcnta}\Decr\zyo@cb
+  \@keisuu@{zyo@q}{\@syou}\edef\zyo@cq{\the\@tempcnta}\Decr\zyo@cq
+  \global\prcalctrue\def\@mozi{}%
+  \edef\hidari@p{\zyo@cb}\Incr\hidari@p
+  \edef\migi@p{\hidari@p}\IAdd\migi@p\zyo@ca\migi@p
+  \@tempcnta\z@\@tempcntb\zyo@cb\advance\@tempcntb\zyo@ca
+  \advance\@tempcntb-\zyo@cq
+  \def\@hidari{}\@whilenum\@tempcnta<\@tempcntb
+  \do{\advance\@tempcnta\@ne\edef\@hidari{\@hidari &}}%
+  \edef\@hidari{\@hidari &}
+  \edef\zyo@retusuu{\zyo@cb}\IAdd\zyo@retusuu\zyo@ca\zyo@retusuu\Incr\zyo@retusuu
+  \leavevmode
+  \begin{array}[t]{*{\zyo@cb}{@{}r}@{}l*{\zyo@ca}{@{}r}}%
+    \ifx M#1\else\@seikei@{zyo@q}{\zyo@cq}\@hidari\EMw@t\\\fi%
+    \cline{\hidari@p-\migi@p}%
+    \@seikei@{zyo@b}{\zyo@cb}\EMw@t & \hissankakko&%
+    \@seikei@{zyo@a}{\zyo@ca}\EMw@t\\%
+    \ifx M#1\else\edef\emW@temp{0}\xIncr\hidari@p\wari@sub\fi%
+  \end{array}%
+  \ifx M#1\egroup\fi
+}%
+%
+%
+%
+\def\bigIkakezan{\@ifnextchar<{\bigIkakezan@}{\@bigIkakezan<\empty>}}%
+\def\bigIkakezan@<#1>#2#3{%
+    \ifx #1A\relax
+        \immediate\openout\zyo@hndl=zyo.tmp%
+      \immediate\write\zyo@hndl{#2}%
+      \immediate\write\zyo@hndl{\string\times }%
+      \immediate\write\zyo@hndl{#3}%
+      \immediate\write\zyo@hndl{%
+        $\string\kaitou {\string\bigIkakezan {#2}{#3}}$ }%
+      \immediate\closeout\zyo@hndl%
+            \input{zyo.tmp}
+    \else\@bigIkakezan<#1>{#2}{#3}
+    \fi
+}%
+%
+\def\@bigIkakezan<#1>#2#3{{%
+  \edef\@hizyosuu{#2}\edef\@zyosuu{#3}\edef\@syou{#2}%
+%  \IMul\@syou{#3}\@syou
+  \calcval[s]{Math::BigInt::bmul("\@syou","#3")}\@syou
+  \strip@sign\@syou\@syou
+  \@keisuu@{zyo@a}{\@hizyosuu}\edef\zyo@ca{\the\@tempcnta}\Decr\zyo@ca
+  \@keisuu@{zyo@b}{\@zyosuu}\edef\zyo@cb{\the\@tempcnta}\Decr\zyo@cb
+  \@keisuu@{zyo@q}{\@syou}\edef\zyo@cq{\the\@tempcnta}\Decr\zyo@cq
+  \leavevmode
+  \begin{array}[t]{@{}r*{\zyo@cq}{@{}r}}
+    \@tempcnta\zyo@cq\advance\@tempcnta-\zyo@ca\advance\@tempcnta\@ne
+    \zyo@tab{\@tempcnta}\@hidari
+    \@seikei@{zyo@a}{\zyo@ca}\EMw@t\\
+    \@tempcnta\zyo@cq\advance\@tempcnta-\zyo@cb
+    \zyo@tab{\@tempcnta}\times\hissankakko&\@hidari
+    \@seikei@{zyo@b}{\zyo@cb}\EMw@t\\\hline
+    \ifx #1M\else
+      \edef\emW@temp{0}%
+      \@whilenum\emW@temp<\zyo@cb\do{%
+        \@tempcntb\zyo@cb\advance\@tempcntb-\emW@temp
+        \xIncr\emW@temp\edef\@n{zyo@b\romannumeral\@tempcntb}%
+        \ifnum\@nameuse{\@n}>\z@
+          \edef\zyo@amari{\@hizyosuu}%
+%          \IMul\zyo@amari{\@nameuse{\@n}}\zyo@amari
+          \calcval[s]{Math::BigInt::bmul("\zyo@amari","\@nameuse{\@n}")}\zyo@amari
+          \strip@sign\zyo@amari\zyo@amari
+          \@keisuu@{zyo@c}{\zyo@amari}\edef\zyo@cc{\the\@tempcnta}\Decr\zyo@cc
+          \@seikei@{zyo@c}{\zyo@cc}%
+          \@tempcnta\zyo@cq\advance\@tempcnta-\zyo@cc
+          \advance\@tempcnta-\emW@temp
+          \advance\@tempcnta\tw@
+          \zyo@tab{\@tempcnta}\@hidari\EMw@t\\
+          \ifnum\emW@temp=\zyo@cb\hline\fi
+        \fi
+      }%
+      \@seikei@{zyo@q}{\zyo@cq}&\EMw@t
+    \fi%
+  \end{array}%
+}}%
+%
+\def\bigItasizan{\@ifnextchar<{\bigItasizan@}{\@bigItasizan<\empty>}}%
+\def\bigItasizan@<#1>#2#3{%
+    \ifx #1A\relax
+      \immediate\openout\zyo@hndl=zyo.tmp%
+      \immediate\write\zyo@hndl{#2}%
+      \immediate\write\zyo@hndl{+}%
+      \immediate\write\zyo@hndl{#3}%
+      \immediate\write\zyo@hndl{%
+        $\string\kaitou {\string\bigItasizan {#2}{#3}}$ }%
+      \immediate\closeout\zyo@hndl%
+            \input{zyo.tmp}
+    \else\@bigItasizan<#1>{#2}{#3}
+    \fi
+}%
+%
+\def\@bigItasizan<#1>#2#3{{%
+  \edef\@hizyosuu{#2}\edef\@zyosuu{#3}\bigIAdd\@hizyosuu\@zyosuu\@syou
+  \@keisuu@{zyo@a}{\@hizyosuu}\edef\zyo@ca{\the\@tempcnta}\Decr\zyo@ca
+  \@keisuu@{zyo@b}{\@zyosuu}\edef\zyo@cb{\the\@tempcnta}\Decr\zyo@cb
+  \@keisuu@{zyo@q}{\@syou}\edef\zyo@cq{\the\@tempcnta}\Decr\zyo@cq
+  \leavevmode
+  \begin{array}[t]{@{}r*{\zyo@cq}{@{\,}r}}
+    \@tempcnta\zyo@cq\advance\@tempcnta-\zyo@ca\advance\@tempcnta\@ne
+    \zyo@tab{\@tempcnta}\@hidari
+    \@seikei@{zyo@a}{\zyo@ca}\EMw@t\\
+    \@tempcnta\zyo@cq\advance\@tempcnta-\zyo@cb
+    \zyo@tab{\@tempcnta}+\hissankakko&\@hidari
+    \@seikei@{zyo@b}{\zyo@cb}\EMw@t\\\hline
+    \ifx #1M\else\@seikei@{zyo@q}{\zyo@cq}&\EMw@t\fi%
+  \end{array}%
+}}%
+%
+\def\bigIhikizan{\@ifnextchar<{\bigIhikizan@}{\@bigIhikizan<\empty>}}%
+\def\bigIhikizan@<#1>#2#3{%
+    \ifx #1A\relax
+       \immediate\openout\zyo@hndl=zyo.tmp%
+      \immediate\write\zyo@hndl{#2}%
+      \immediate\write\zyo@hndl{-}%
+      \immediate\write\zyo@hndl{#3}%
+      \immediate\write\zyo@hndl{%
+        $\string\kaitou {\string\bigIhikizan {#2}{#3}}$ }%
+      \immediate\closeout\zyo@hndl%
+            \input{zyo.tmp}
+    \else\@bigIhikizan<#1>{#2}{#3}
+    \fi
+}%
+%
+\def\@bigIhikizan<#1>#2#3{{%
+  \edef\@hizyosuu{#2}\edef\@zyosuu{#3}%
+  \bigISub{#2}\@zyosuu\@syou
+  \@keisuu@{zyo@a}{\@hizyosuu}\edef\zyo@ca{\the\@tempcnta}\Decr\zyo@ca
+  \@keisuu@{zyo@b}{\@zyosuu}\edef\zyo@cb{\the\@tempcnta}\Decr\zyo@cb
+  \@keisuu@{zyo@q}{\@syou}\edef\zyo@cq{\the\@tempcnta}\Decr\zyo@cq
+  \leavevmode
+  \begin{array}[t]{@{}r*{\zyo@ca}{@{\,}r}}
+    \@seikei@{zyo@a}{\zyo@ca}&\EMw@t\\
+    \@tempcnta\zyo@ca\advance\@tempcnta-\zyo@cb
+    \zyo@tab{\@tempcnta}-\hissankakko&\@hidari
+    \@seikei@{zyo@b}{\zyo@cb}\EMw@t\\\hline
+    \ifx #1M\else
+      \@tempcnta\zyo@ca\advance\@tempcnta-\zyo@cq
+      \zyo@tab{\@tempcnta}\@hidari
+      \@seikei@{zyo@q}{\zyo@cq}&\EMw@t
+    \fi%
+  \end{array}%
+}}%
+%
+\endinput
+
+v 0.00 2009/06/04 BBS #8155 の要望により新設
+v 0.01 2009/06/04 商が倍精度を必要とする場合
+v 0.02 2009/06/04 \strip@sign
+v 0.04 2009/06/07 Math::BigInt を用いる。

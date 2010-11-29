@@ -1,0 +1,921 @@
+% emathE.sty by tDB (emath@nifty.com)
+
+\NeedsTeXFormat{LaTeX2e}%
+\ProvidesPackage{emathE}[2010/07/18 v1.07 拡張enumerate]%
+\@ifundefined{edaenumerate}{}{%
+    \errmessage{emathEy.sty よりも前に emath.sty を読み込みまねばなりません。}%
+}%
+%\RequirePackage{enumerate}%
+\RequirePackage{emathEc}%
+%\RequirePackage{jquote}%
+%\@ifundefined{カタカナ}{\input emathK.sty}{}%
+%
+% 左に0を詰めて指定桁数にする．
+%   \Ofil#1#2
+%     #1 : 指定桁数
+%     #2 : 数字列
+\def\Ofil#1#2{%
+  \edef\Ofil@a{#2}%
+  \Strlen\Ofil@a\Ofil@n
+  \Cfor{\ISub{#1}\Ofil@n\Ofil@n}{\Ofil@n>0}{\Decr\Ofil@n}\do{0}%
+  \Ofil@a}
+\def\OfilStr#1#2#3{%
+  \edef\Ofil@a{#2}%
+  \Strlen\Ofil@a\Ofil@n
+  \edef#3{}%
+  \Cfor{\ISub{#1}\Ofil@n\Ofil@n}{\Ofil@n>0}{\Decr\Ofil@n}\do{%
+    \edefappend#3{0}}%
+  \edef#3{#3\Ofil@a}}
+\def\Ofilii#1{\Ofil{2}{#1}}
+\def\Ofiliii#1{\Ofil{3}{#1}}
+%
+\let\EMRoman\@Roman
+\let\EMroman\@roman
+% ローマ数字を一定の幅の中に置く
+% \emRoman(#1)#2
+% \emroman(#1)#2
+%   #1 : 横幅の基準文字列
+%   #2 : ローマ数字列
+%
+\def\emroman{\@ifstar{\emromanzwnum}{\@emroman}}
+\def\@emroman{\@ifnextchar({\em@roman}{\em@roman(iii)}}
+\def\em@roman(#1)#2{{%
+  \setbox0=\hbox{{#1}}\templa\wd0
+  \edef\emroman@tmp{#2}%
+  \ifx\empty\emroman@tmp\edef\emroman@c{}\else
+    \tailchar{\emroman@tmp}\emroman@dmy\emroman@t
+    \ifthenelse{\equal\emroman@t{.}\or\isodd{0\emroman@t1}}{%
+      \edef\emroman@c{\romannumeral#2}%
+    }{%
+      \edef\emroman@c{#2}%
+    }%
+  \fi
+  \makebox[\wd0][c]{\emroman@c}}}
+\def\emRoman{\@ifstar{\emRomanzwnum}{\@emRoman}}
+\def\@emRoman{\@ifnextchar({\em@Roman}{\em@Roman(III)}}
+\def\em@Roman(#1)#2{{\setbox0=\hbox{{#1}}\templa\wd0
+  \edef\emroman@tmp{#2}%
+  \ifx\empty\emroman@tmp\edef\emroman@c{}\else
+    \tailchar{\emroman@tmp}\emroman@dmy\emroman@t
+    \ifthenelse{\equal\emroman@t{.}\or\isodd{0\emroman@t1}}{%
+      \edef\emRoman@c{\@Roman{#2}}%
+    }{%
+      \edef\emRoman@c{#2}%
+    }%
+  \fi
+  \makebox[\wd0][c]{\emRoman@c}}}
+%
+\def\emromanii{\emroman(ii)}
+\def\emromanviii{\emroman(viii)}
+\def\emRomanII{\emRoman(II)}
+\def\emRomanVIII{\emRoman(VIII)}
+%
+\def\emromannum{\@ifstar{\emromanzwnum}{\@emromannum}}%
+\def\@emromannum{\@ifnextchar({\@@emromannum}{\@@emromannum(iii)}}
+\def\@@emromannum(#1)#2{\count255=0#2\relax\em@roman(#1){\@roman{\the\count255}}}
+\def\emromaniinum#1{\emromanii{\@roman{0#1}}}
+\def\emRomanIInum#1{\emRomanII{\@Roman{0#1}}}
+\def\emromanzwnum#1{\count255=0#1\relax
+  \setbox0=\hbox{\@roman{\the\count255}}%
+  \ifdim \wd0>1zw\relax
+    \resizebox{1zw}{\height}{\@roman{\the\count255}}%
+  \else
+    \makebox[1zw][c]{\@roman{\the\count255}}%
+  \fi
+  }%
+\def\emRomanzwnum#1{\count255=0#1\relax
+  \setbox0=\hbox{\@Roman{\the\count255}}%
+  \ifdim \wd0>1zw\relax
+    \resizebox{1zw}{\height}{\@Roman{\the\count255}}%
+  \else
+    \makebox[1zw][c]{\@Roman{\the\count255}}%
+  \fi
+  }%
+\def\emRomannum{\@ifstar{\emRomanzwnum}{\@emRomannum}}%
+\def\@emRomannum{\@ifnextchar({\@@emRomannum}{\@@emRomannum(III)}}%
+\def\@@emRomannum(#1)#2{\count255=0#2\relax\em@roman(#1){\@Roman{\the\count255}}}%
+\def\emKakkoromannum#1{%
+  \EMedef\emKakkoromannum@tmp{#1}%
+  \count255=0\emKakkoromannum@tmp\relax
+  (\emromannum{\the\count255})}
+\def\emKakkoRomannum#1{(\emRomannum{#1})}
+\def\emKakkoromaniinum#1{(\emromaniinum{#1})}
+\def\emKakkoRomanIInum#1{(\emRomanIInum{#1})}
+\def\emKakuRoman#1{\fbox{\emRoman*{#1}}}
+%\def\emKakkoRoman#1{(\emRoman*{#1})}
+\let\emKakkoRoman\emKakkoRomannum
+\def\emKakkoroman#1{(\emroman*{#1})}
+\def\emKakkoKata#1{\EMedef\emKakkoKata@tmp{#1}%
+  \inhibitglue （\katakana{\emKakkoKata@tmp}）}%
+\def\emKakkoHira#1{\EMedef\emKakkoHira@tmp{#1}%
+  \inhibitglue （\hirakana{\emKakkoHira@tmp}）}%
+%
+\def\emKakkoalph#1{%
+  \EMedef\emKakkoalph@tmp{#1}%
+  \count255=0\emKakkoalph@tmp\relax
+  (\makebox[1em][c]{\@alph{\the\count255}})}%
+\def\emKakkoAlph#1{%
+  \EMedef\emKakkoalph@tmp{#1}%
+  \count255=0\emKakkoalph@tmp\relax
+  (\makebox[1em][c]{\@Alph{\the\count255}})}%
+%
+%\def\emMaruAlphnum#1{{\IAdd{64}{#1}\emMaruAlphnum@i\normalfont\tmaru{\char\emMaruAlphnum@i}}}
+%\def\emMarualphnum#1{{\IAdd{96}{#1}\emMaruAlphnum@i\normalfont\tmaru{\char\emMaruAlphnum@i}}}
+%\def\emAlph#1{{\IAdd{64}{#1}\emAlph@i\normalfont\char\emAlph@i}}
+%\def\emalph#1{{\IAdd{96}{#1}\emAlph@i\normalfont\char\emAlph@i}}
+%
+% (番号)を全角1文字幅
+\def\emnumzw#1{\resizebox{1zw}{\height}{(#1)}}
+
+% 全角数字によるナンバリング
+\def\zarabic#1{\@zarabic{\@nameuse{c@#1}}}%
+\def\@zarabic#1{\expandafter\@izarabic\number#1\relax*}%
+\def\@izarabic#1#2*{\char\jis"233#1%
+  \ifx \empty #2\else\@izarabic#2*\fi}%
+
+
+% list 環境の修正
+\def\apn@list{\relax}
+\def\list@apn{\relax}
+\def\apnlist#1{\def\apn@list{#1}}
+\def\narrowsep{\parsep\z@\itemsep\z@\parskip\z@}
+\let\ltxlist\list
+\edef\old@totalleftmargin{\z@}%
+\def\list#1#2{%
+  \def\in@EMlist{}%
+  \edef\old@totalleftmargin{\the\@totalleftmargin}%
+  \ltxlist{#1}{\apn@list #2 \list@apn}%
+}
+%
+\let\ltxitemize\itemize
+\def\itemize{\@ifnextchar<{\em@itemize}{\ltxitemize}}
+\def\em@itemize<#1>{\setkeys{emE}{#1}\ltxitemize}%
+%
+\let\ltxdescription\description
+\def\description{\@ifnextchar<{\em@description}{\ltxdescription}}
+\def\em@description<#1>{\setkeys{emE}{#1}\ltxdescription}%
+%
+% enumerate環境の行間
+%
+\def\enumsep{}%
+%\def\oldenumsep{%
+% \topsep=7.5pt\parskip=0pt\parsep=0pt\itemsep0pt\leftmargin=9.62216pt}%
+\def\narrowenumsep{\topsep=\z@\parsep=\z@\itemsep\z@\parskip\z@}%
+%
+% enumerate環境の左マージン
+%
+\def\@enumlmargini{}%
+\def\@enumlmarginii{}%
+\def\@enumlmarginiii{}%
+\def\@enumlmarginiv{}%
+\def\enumLmargin#1{\edef\@enumlmargini{#1}\edef\@enumlmarginii{#1}%
+  \edef\@enumlmarginiii{#1}\edef\@enumlmarginiv{#1}}%
+\def\enumLmargini#1{\edef\@enumlmargini{#1}}%
+\def\enumLmarginii#1{\edef\@enumlmarginii{#1}}%
+\def\enumLmarginiii#1{\edef\@enumlmarginiii{#1}}%
+\def\enumLmarginiv#1{\edef\@enumlmarginiv{#1}}%
+%
+\def\@enumsepi{\enumsep}%
+\def\@enumsepii{\enumsep}%
+\def\@enumsepiii{\enumsep}%
+\def\@enumsepiv{\enumsep}%
+\def\enumSep#1{\edef\@enumsepi{#1}\edef\@enumsepii{#1}%
+        \edef\@enumsepiii{#1}\edef\@enumsepiv{#1}}%
+\def\enumSepi#1{\edef\@enumsepi{#1}}%
+\def\enumSepii#1{\edef\@enumsepii{#1}}%
+\def\enumSepiii#1{\edef\@enumsepiii{#1}}%
+\def\enumSepiv#1{\edef\@enumsepiv{#1}}%
+%
+\def\ignoreEnumBrackOption{\def\@@enum@[##1]{\@enum@}%
+%  \def\Enumerate@[##1]{\@Enumerate}%
+  \def\Enumerate@<##1>[##2]{\@Enumerate<##1>}%
+}%
+\def\@@enum@[#1]{%
+  \@enLab{}\let\@enThe\@enQmark
+  \expandafter\@enloop#1\@enum@%%%%%%%%%%%%%%%%%%% さて，\relax のありなしは ????????????
+%  \expandafter\@enloop\relax#1\@enum@
+  \ifx\@enThe\@enQmark\@warning{The counter will not be printed.%
+   ^^J\space\@spaces\@spaces\@spaces The label is: \the\@enLab}\fi
+  \expandafter\edef\csname label\@enumctr\endcsname{\the\@enLab}%
+  \expandafter\let\csname the\@enumctr\endcsname\@enThe
+  \csname c@\@enumctr\endcsname7
+  \expandafter\settowidth
+            \csname leftmargin\romannumeral\@enumdepth\endcsname
+            {\the\@enLab\hspace{\labelsep}}%
+  \@enum@}%
+\def\@enum@{%
+  \@ifundefined{tate}{%
+    \def\ren@suji##1{##1}%
+  }{%
+    \ifrenzi
+      \ifydir\def\ren@suji##1{##1}\else\def\ren@suji##1{\rensuji{##1}}\fi%
+    \else
+      \def\ren@suji##1{##1}%
+    \fi
+  }%
+  \list{\ren@suji{\csname label\@enumctr\endcsname}}{%
+    \usecounter{\@enumctr}%\enumsep
+    \ifthenelse{%
+      \equal{\csname @enumlmargin\romannumeral\@enumdepth\endcsname}{}}{%
+        \csname @enumsep\romannumeral\@enumdepth\endcsname
+    }{%
+%\setlength{\itemindent}{\csname leftmargin\romannumeral\@enumdepth\endcsname}
+      \advance\itemindent
+        -\csname @enumlmargin\romannumeral\@enumdepth\endcsname
+      \advance\itemindent\leftmargin
+%\expandafter\settowidth
+%            \csname leftmargin\romannumeral\@enumdepth\endcsname
+      \setlength{\leftmargin}{%
+        \csname @enumlmargin\romannumeral\@enumdepth\endcsname}%
+      \csname @enumsep\romannumeral\@enumdepth\endcsname
+    }%
+    \setcounter{\@enumctr}{\syoki@ti}%
+    \def\makelabel##1{\hss\llap{##1}}%
+%   \def\makelabel##1{\rlap{##1}}%
+    \apn@enum
+  }%
+}%
+
+%%% 現在のレベルの enumi(ii,iii,iv) に数値をセットする．
+
+\newcommand{\setcurrentenum}[1]{%
+\edef\@currentenum{enum\romannumeral \@enumdepth}%
+\setcounter{\@currentenum}{#1}}
+\def\getcurrentenum{%
+\ifnum\@enumdepth>\z@
+  \expandafter\the\csname c@enum\romannumeral\@enumdepth\endcsname
+\fi
+}%
+
+%
+\def\ltxlabel#1{\@bsphack
+  \protected@write\@auxout{}%
+         {\string\newlabel{#1}{{\@currentlabel}{\thepage}}}%
+  \@esphack}
+%
+\def\EMenumerate{%
+%%  \let\EMlabel\EMenumlabel
+  \@ifnextchar<{\EM@enumerate}{\EM@enumerate<\empty>}}%
+\def\EM@enumerate<#1>{%
+  \kizami@ti=\@ne
+  \syoki@ti=\z@
+  \def\apn@enum{\relax}%
+  \ifx\empty #1\relax\else\setkeys{emE}{#1}\fi
+  \ifnum \@enumdepth >3 \@toodeep\else
+      \advance\@enumdepth \@ne
+      \edef\@enumctr{enum\romannumeral\the\@enumdepth}%
+   \fi
+  \@ifnextchar'{\EMenumerate@}{\@EMenumerate}}%
+\def\EMenumerate@'#1'{\labelenum{#1}\@EMenumerate}%
+\def\@EMenumerate{\@ifnextchar[{\@@enum@}{\@enum@}}%
+\def\labelenum#1{\edef\lbl@tmp{labelenum\romannumeral\@enumdepth}%
+  \edef\enum{enum\romannumeral\@enumdepth}%
+  \expandafter\def\csname\lbl@tmp\endcsname{#1}}%
+\def\@item[#1]{%
+  \if@noparitem
+    \@donoparitem
+  \else
+    \if@inlabel
+      \indent \par
+    \fi
+    \ifhmode
+      \unskip\unskip \par
+    \fi
+    \if@newlist
+      \if@nobreak
+        \@nbitem
+      \else
+        \addpenalty\@beginparpenalty
+        \addvspace\@topsep
+        \addvspace{-\parskip}%
+      \fi
+    \else
+      \addpenalty\@itempenalty
+      \addvspace\itemsep
+    \fi
+    \global\@inlabeltrue
+  \fi
+  \everypar{%
+    \@minipagefalse
+    \global\@newlistfalse
+    \if@inlabel
+      \global\@inlabelfalse
+      {\setbox\z@\lastbox
+       \ifvoid\z@
+         \kern-\itemindent
+       \fi}%
+      \box\@labels
+      \penalty\z@
+    \fi
+    \if@nobreak
+      \@nobreakfalse
+      \clubpenalty \@M
+    \else
+      \clubpenalty \@clubpenalty
+      \everypar{}%
+    \fi}%
+  \if@noitemarg
+    \@noitemargfalse
+    \if@nmbrlist
+      \let\stepcounter\enumstepcounter
+      \refstepcounter\@listctr
+      \let\stepcounter\ltxstepcounter
+    \fi
+  \fi
+  \sbox\@tempboxa{\makelabel{#1}}%
+  \global\setbox\@labels\hbox{%
+    \unhbox\@labels
+    \hskip \itemindent
+    \hskip -\labelwidth
+    \hskip -\labelsep
+    \ifdim \wd\@tempboxa >\labelwidth
+      \box\@tempboxa
+    \else
+      \hbox to\labelwidth {\unhbox\@tempboxa}%
+    \fi
+    \hskip \labelsep}%
+  \ignorespaces}
+
+%%%
+%%% enumerate 環境の中断・継続
+%%%
+\newcounter{Enumi}
+\newcounter{Enumii}
+\newcounter{Enumiii}
+\newcounter{Enumiv}
+\newtoks\tkn@Enum@ang
+\newtoks\tkn@Enum@opt
+%
+\def\Enumerate{\@ifnextchar<{\EM@Enumerate}{\EM@Enumerate<\empty>}}
+\def\EM@Enumerate<#1>{%
+%\typeout{now! EM@Enumerate}%
+  \kizami@ti=\@ne
+  \syoki@ti=\z@
+  \def\apn@enum{\relax}%
+  \@ifnextchar'{\EM@Enumerate@<#1>}{\EM@@Enumerate<#1>}}%
+\def\EM@Enumerate@<#1>'#2'{\labelenum{#2}\EM@@Enumerate<#1>}%
+\def\EM@@Enumerate<#1>{\@ifnextchar[{\Enumerate@<#1>}{\@Enumerate<#1>}}%
+\def\@Enumerate<#1>{%
+  \EMenumerate<#1>\relax
+  \edef\tmpcnt{Enum\romannumeral\@enumdepth}%
+  \setcounter{\tmpcnt}{0}%
+  \global\tkn@Enum@ang={#1}%
+  \global\tkn@Enum@opt={}%
+}%
+\def\Enumerate@<#1>[#2]{\EMenumerate<#1>[#2]\relax
+  \edef\tmpcnt{Enum\romannumeral\@enumdepth}%
+  \setcounter{\tmpcnt}{0}%
+  \global\tkn@Enum@ang={#1}%
+  \global\tkn@Enum@opt={#2}%
+%\typeout{end of Enumerate@}%
+}%
+%
+\expandafter\def\csname Enumerate*\endcsname{%
+  \@ifnextchar[{\@@cEnumerate}{\@cEnumerate}}%
+\def\@cEnumerate{%\par\vskip\itemsep\noindent%
+  \EMedef\Enum@opt@{\the\tkn@Enum@opt}%
+  \ifx\empty\Enum@opt@
+    \EMedef\cEnum@tmp{<\the\tkn@Enum@ang>}%
+    \expandafter\EMenumerate\cEnum@tmp\cont@enum
+  \else
+    \EMedef\cEnum@tmp{<\the\tkn@Enum@ang>[\the\tkn@Enum@opt]}%
+    \expandafter\cEnumerate@\cEnum@tmp
+  \fi
+}%
+\def\cEnumerate@<#1>[#2]{%\par\vskip\topsep\noindent%
+  \EMenumerate<#1>[#2]\cont@enum
+}%
+\def\@@cEnumerate[#1]{%\par\vskip\topsep\noindent%
+  \EMenumerate[#1]\cont@enum
+}%
+%
+\def\cont@enum{%
+  \edef\tmpCnt{Enum\romannumeral\@enumdepth}%
+  \edef\tmpcnt{enum\romannumeral\@enumdepth}%
+  \setcounter{\tmpcnt}{\value{\tmpCnt}}}%
+\def\endEnumerate{%
+  \edef\tmpCnt{Enum\romannumeral\@enumdepth}%
+  \edef\tmpcnt{enum\romannumeral\@enumdepth}%
+  \setcounter{\tmpCnt}{\value{\tmpcnt}}%
+  \endEMenumerate
+%  \end{minipage}\par\vskip\parsep
+}%
+\expandafter\def\csname endEnumerate*\endcsname{%
+  \edef\tmpCnt{Enum\romannumeral\@enumdepth}%
+  \edef\tmpcnt{enum\romannumeral\@enumdepth}%
+  \setcounter{\tmpCnt}{\value{\tmpcnt}}%
+  \endEMenumerate}%
+
+
+%%% enumerate 環境の\item について，相互参照番号を当該レベルのみにする．
+%
+\def\refcurrentenum{\def\p@enumii{}\def\p@enumiii{}\def\p@enumiv{}}%
+\def\refallenum{%
+\renewcommand{\p@enumii}{\theenumi}%
+\renewcommand{\p@enumiii}{\theenumi(\theenumii)}%
+\renewcommand{\p@enumiv}{\p@enumiii\theenumiii}%
+}%
+%
+\def\enumlabel#1{{%
+  \def\el@tmp{\csname labelenum\romannumeral\@enumdepth\endcsname}%
+  \EMedef\@currentlabel{\el@tmp}
+  \label{#1}%
+%  \writeLabel{#1}{{\el@tmp}}%
+}}%
+%
+%\let\enumref\ref
+\def\enumref#1{%
+      \expandafter\ref@chk\csname r@#1\endcsname
+      \if 1\@miteigi
+        \protect\G@refundefinedtrue
+        \nfss@text{\reset@font\bfseries ??}%
+        \@latex@warning{Reference `#1' on page \thepage \space
+               undefined}%
+      \else
+        {%
+%% \c@enumi=\ref{#1}%
+%          \csname c@enum\romannumeral \@enumdepth\endcsname=\ref{#1}%
+%% \labelenumi
+%          \csname labelenum\romannumeral \@enumdepth\endcsname\!
+          \ref{#1}%
+        }%
+      \fi
+}
+%
+%\def\thecurrentenum#1{%
+% \expandafter\def\csname theenum\romannumeral\@enumdepth\endcsname{#1}}%
+%
+%%% \item 直後に別行立て数式を配置する際の縦位置の調整
+%%%
+%%% \itemtopmath<#1>[#2]
+%%%   #1 : 微調整量（単位つき）+で上に，-で下に移動
+%%%   #2 : 1行目の高さが高いとき，その部分を与える
+%%%        ( \emtokena に保存される)
+
+\newtoks\emtokena
+\def\itemtopmath{\@ifnextchar<{\item@topmath}{\item@topmath<\z@>}}
+\def\item@topmath<#1>{\templa=#1\relax
+  \@ifnextchar[{\itemtopmath@}{\@itemtopmath}}
+\def\itemtopmath@[#1]{%
+  \emtokena={#1}%
+  \@ifundefined{hakobanpush}{%
+    \setbox0=\hbox{$\displaystyle #1$}%
+  }{\hakobanpush
+    \setbox0=\hbox{$\displaystyle #1$}\hakobanpop
+  }%
+  \bgroup
+    \EMresetstrutbox
+    \@tempdima=\baselineskip
+    \@tempdimb=\ht0%\advance\@tempdimb\dp0\divide\@tempdimb\tw@% さてどっち
+    \ifdim\@tempdimb>\ht\strutbox
+      \advance\@tempdima\@tempdimb\advance\@tempdima-\ht\strutbox
+    \fi
+\@ifundefined{ifedaenum}{%
+      \advance\@tempdima\abovedisplayskip
+}{%
+    \ifedaenum\else
+      \advance\@tempdima\abovedisplayskip
+    \fi
+}%
+    \advance\@tempdima\templa
+    \leavevmode\vspace{-\@tempdima}%
+  \egroup
+  }
+\def\@itemtopmath{{%
+  \EMresetstrutbox
+  \@tempdima\baselineskip
+\@ifundefined{ifedaenum}{%
+      \advance\@tempdima\abovedisplayskip
+}{%
+  \ifedaenum\else
+    \advance\@tempdima\abovedisplayskip
+  \fi
+}%
+  \advance\@tempdima\templa
+  \leavevmode\vspace{-\@tempdima}}}
+%
+\iffalse
+Q&A #27349
+\item の直後のディスプレイ数式に対しては，
+\box\@labels（\item に対するラベル部分を収めたボックス）の
+中身を横取りし，数式の左側に置きなおせばいいのです．
+
+例えば，（僭越ながら）19834 の後半で例示されている記述に
+さらに手を入れると，次のようになります．
+# amsmath パッケージが提供する各種ディスプレイ数式環境に
+# この類の変更を施すのは，興味がある方にお任せします（というより，
+# 私の腕ではすぐにはできません）．
+
+# enumerate 環境などの“箇条書き”環境の外部の eqnarray 環境などの
+# 挙動は概ねオリジナルのものと同じにしています．
+
+\documentclass{jarticle}
+\makeatletter
+\newbox\@saved@label
+\newskip\@eqn@leftglue
+\def\@displaymath@setlabel{%
+   \if@inlabel
+      \global\setbox\@saved@label\box\@labels
+      \global\@newlistfalse
+      \global\@inlabelfalse
+      \noindent
+      \@eqn@leftglue\z@skip
+      \def\@list@adjust{\topsep\z@ \partopsep\z@}%
+      \abovedisplayskip\z@skip
+      \belowdisplayskip\z@skip
+   \else
+      \global\setbox\@saved@label\box\voidb@x
+      \@eqn@leftglue\@centering
+      \let\@list@adjust\@empty
+   \fi}
+\def\eqnarray{%
+   \@displaymath@setlabel
+   \stepcounter{equation}%
+   \def\@currentlabel{\p@equation\theequation}%
+   \global\@eqnswtrue
+   \m@th
+   \global\@eqcnt\z@
+   \tabskip\@eqn@leftglue
+   \let\\\@eqncr
+   $$\everycr{}\halign to\displaywidth\bgroup
+       \hskip\@centering$\displaystyle\tabskip\z@skip{##}$\@eqnsel
+      &\global\@eqcnt\@ne \hfil$\displaystyle{{}##{}}$\hfil
+      &\global\@eqcnt\tw@ $\displaystyle{##}$\hfil\tabskip\@centering
+      &\global\@eqcnt\thr@@ \hb@xt@\z@\bgroup\hss##\egroup
+         \tabskip\z@skip
+      \cr}
+\def\@@eqncr{%
+   \let\reserved@a\relax
+   \ifcase\@eqcnt \def\reserved@a{& & &}%
+   \or            \def\reserved@a{& &}%
+   \or            \def\reserved@a{&}%
+   \else
+      \let\reserved@a\@empty
+      \@latex@error{Too many columns in eqnarray environment}\@ehc
+   \fi
+   \reserved@a
+   \if@eqnsw
+      \@eqnnum
+      \stepcounter{equation}%
+   \fi
+   \hbox to\z@{%
+      \kern-\displaywidth
+      \box\@saved@label
+      \hss}%
+   \global\@eqnswtrue
+   \global\@eqcnt\z@
+   \cr}
+\def\equation{%
+   \@displaymath@setlabel
+   \@list@adjust
+   \@beginparpenalty\predisplaypenalty
+   \@endparpenalty\postdisplaypenalty
+   \refstepcounter{equation}%
+   \trivlist
+   \item[]\leavevmode
+   \hb@xt@\linewidth\bgroup
+      $\m@th
+       \displaystyle
+       \hskip\@eqn@leftglue}
+\def\endequation{%
+      $\hskip\@centering
+      \displaywidth\linewidth
+      \hbox{%
+         \@eqnnum
+         \hbox to\z@{%
+            \kern-\displaywidth
+            \box\@saved@label
+            \hss}}%
+      \egroup
+   \endtrivlist}
+\def\[{%
+   \relax
+   \begingroup
+   \ifmmode
+      \@badmath
+   \else
+      \@displaymath@setlabel
+      \@list@adjust
+      \begin{trivlist}%
+      \@beginparpenalty\predisplaypenalty
+      \@endparpenalty\postdisplaypenalty
+      \item[]\leavevmode
+      \hb@xt@\linewidth\bgroup
+         $\m@th\displaystyle
+         \hskip\@eqn@leftglue
+         \bgroup
+   \fi}
+\def\]{%
+   \relax
+   \ifmmode
+         \egroup$\hskip\@centering
+         \ifvoid\@saved@label\else
+            \hbox to\z@{%
+               \kern-\linewidth
+               \box\@saved@label
+               \hss}%
+         \fi
+      \egroup
+      \end{trivlist}%
+   \else
+      \@badmath
+   \fi
+   \endgroup}
+\makeatother
+
+\begin{document}
+
+aaa
+\begin{EMenumerate}
+\item
+\[
+  a = b
+\]
+
+\item
+   \begin{eqnarray*}
+     a & = & b = \cdots = m\\
+       & = & o = \cdots = z
+   \end{eqnarray*}
+\end{EMenumerate}
+\end{document}
+\fi
+%
+%\def\dmyln{\@ifnextchar[{\@dmyln}{\@dmyln[-1\baselineskip]}}%
+\def\dmyln{\@ifnextchar[{\@dmyln}{\@dmyln[0pt]}}%
+\def\@dmyln[#1]{\leavevmode\vspace{#1}\par\noindent}%
+%
+% list 環境下で，局部的に版面いっぱいに拡げるための環境
+%
+\def\escapelist{%
+  \@ifundefined{in@EMlist}{\errmessage{escapelist環境は list環境内でしか使用できません}}{}%
+  \@ifundefined{ifedaenum}{}{%
+    \ifedaenum\@latex@warning{escapelist環境は，edaenumerate環境内では正常に動作しません}\fi
+  }%
+  \@ifnextchar[{\@escapelist}{\@escapelist[\old@totalleftmargin]}}
+\def\@escapelist[#1]{\@ifnextchar<{\@@escapelist[#1]}{\@@escapelist[#1]<\z@>}}
+\def\@@escapelist[#1]<#2>{%
+  \EMedef\el@vskip{#2}%
+  \ifdim\el@vskip=\z@\else\vspace{\el@vskip}\fi
+  \par\noindent
+  \setlength{\linewidth}{\columnwidth-#1}\@totalleftmargin#1\relax
+  \parshape\@ne #1 \linewidth\ignorespaces}
+\def\endescapelist{\ifdim\el@vskip=\z@\else\vskip\el@vskip\fi\par\ignorespaces}
+
+
+\def\headingminipage#1{\setbox0=\hbox{{#1}}%
+\@tempdima\linewidth\advance\@tempdima-\wd0\leavevmode\box0%
+\begin{minipage}[t]{\@tempdima}}%
+\def\endheadingminipage{\end{minipage}\vskip\topsep\vskip\parskip\endtrivlist}%
+
+%\newenvironment{jdescription}[1]{%
+%   \list{}{%
+%   \settowidth{\labelwidth}{\hspace\labelsep\normalfont\bfseries #1}%
+%   \setlength{\leftmargin}{\labelwidth}%
+%%   \labelwidth\z@ \itemindent-\leftmargin
+%   \iftdir
+%     \leftmargin\leftskip \advance\leftmargin3\Cwd
+%     \rightmargin\rightskip
+%     \labelsep=1zw \itemsep\z@
+%     \listparindent\z@ \topsep\z@ \parsep\z@ \partopsep\z@
+%   \fi
+%           \let\makelabel\jdescriptionlabel}}{\endlist}
+%\newcommand{\jdescriptionlabel}[1]{%
+%   \hspace\labelsep\normalfont\bfseries #1}
+
+\def\ND@shape{\ifhmode\ND@par%
+  \xISub\ND@gyousuu{\the\prevgraf}\ND@gyousuu\fi
+  \@tempdima\linewidth\advance\@tempdima-\nidan@zuhaba\relax
+  \@tempdimc\@tempdima
+  \advance\@tempdima-\nidansep\advance\@tempdima-\nidansep
+  \ifnum\ND@gyousuu>\z@
+    \edef\zu@shape{\ND@gyousuu}%
+    \Cfor{\edef\zu@i{1}}{\zu@i<\ND@gyousuu}{\Incr\zu@i}\do{%
+      \edefappend\zu@shape{ \@totalleftmargin \@tempdima}}%
+    \edefappend\zu@shape{ \@totalleftmargin \linewidth}%
+    \parshape\zu@shape
+  \else
+    \parshape 1 \@totalleftmargin \linewidth
+  \fi
+}
+%
+\@ifclassloaded{beamer}{}{%
+  \let\enumerate\EMenumerate
+  \let\endEMenumerate\endenumerate
+}%
+\endinput
+%
+% ver.0.07
+% 19990513
+%   \edakaigyou 修正
+% ver.0.08
+% 19990704
+%   \enumsep で list 環境における \parsep などを調整する機能を附加
+% 19990706
+%   edaenumerate 環境内で \vfill を \edakaiyou\vfill と再定義
+% ver.0.09
+% 19990712
+%   nidan 環境に組み方向オプション <t|y|z> をつける．
+% ver.0.10 19990724-31
+% zu 環境内のインデント量を指定するオプションを附加
+% \templa, \templb 未定義のときへの対応
+% ver.0.11 19990823
+% \enumLmargin enumerate 環境の左マージンを調整する．
+% ver.0.12 1999/10/06-12/16
+% \suuziToZen 半角数字列を全角数字列に変換する．
+% \enumerate [...] オプションの処理に \relax を挿入する．
+% headingminipage 環境
+% jdescription 環境
+% nidan, zu 環境の終わりに \endtrivlist を附加
+% enumerate 環境のオプション文字に M を追加
+% \enumsep を層別に指定できるようにするため
+%   \enumSep, \enumSepi, \enumSepii, \enumSepiii, \enumSepiv
+%   を新設
+%   ただし，\enumSep? を使用後は \enumsep は無効となる．
+% ver.0.13  2000/01/25
+%   zu 環境 wrapfig の場合の修正
+% ver.0.14  2000/02/19-26
+%   \Ofil 0を左に詰めて指定桁数にする．
+%   \zu \long を附加．
+% v0.15 2000/06/22-24
+%   \@enum@ の第２引数の終わり修正
+%   betaenumerate 環境を新設（横にベタに並べる enumerate)
+% v0.16 2000/06/27
+%   edaenumerateb 修正
+% v0.17 2000/07/23
+%   edaenumerateb の別名 betaenumerate
+% v0.18 2000/08/17
+%   zu, ninda 環境に，図の左配置を可能とするため，<l>オプションを付加
+% v 0.19  2000/10/24
+%   \OfilStr 結果を制御綴に返す0字詰め
+% v 0.20  2000/11/03-11
+%   \Nidan list 環境下における図の回りこみ
+%   \Nidan* 継続
+%   \Akeru 右空け（コマンド型）
+%   nidanenumerate 環境
+% v 0.21  2000/11/13
+%   nidanenumerate 環境
+%     一番外側のものを終了するとき，\ND@gyousuu を再計算させる。
+%   mawarikomi 環境
+% v 0.22  2000/11/15-16
+%   mawarikomi 環境に図の位置を微調整するオプション (#2,#3) を付与
+%   \mawarikomishape mawarikomi の shape を再計算させる。
+%     \after@end を考案し，\mawarikomishape は不要となる。
+%   <#1>オプションで段落途中からの回り込みを可能とする。
+%   Fmawarikomi, Tmawarikomi 環境
+%     それぞれ，figure, table で caption をつける。
+% v 0.23  2000/11/19
+%   mawarikomi環境に[l]オプションで図を左に
+% v 0.27  2001/01/11
+%   edaenumerate環境の <...> オプションに次の書式を追加
+%     retusuu=整数（横に並べる小問数）
+%     gyoukan=dimension（単位付の数値で行間のサイズ）
+%     gyoukan=\vfill（行間を均等割）
+% v 0.28  2001/05/13
+%   \def\narrowenumsep{\topsep=0pt\parsep=0pt\itemsep0pt}%と修正
+% v 0.29  2001/07/23
+%   \betaitemindent を新設
+% v 0.30  2001/07/24
+%   betaenumerate 環境で，右にはみ出す直前に強制改行する。
+% v 0.31  2001/07/27
+%   enumerate, edaenumerate環境で，番号の前後にマークをつける
+%       (\preitem, \postitem)
+% v 0.32  2001/07/28
+%   betaenumerate 余白調整
+%   edaenumerate 改行タイミング調整
+%   \betaitemindent 保留
+%   yokoenumerate環境 横に並べる個数を自動的に求める。
+% v 0.33  2001/07/30
+%   edaenumerate 改行のタイミング調整に伴い，
+%   \edakaigyou 修正
+% v 0.34  2001/08/06-11
+%   \emroman ローマ数字を一定の幅の中に置く
+% v 0.35  2001/09/24-10/17
+%   \emRoman
+%   mawarikomi 図幅を省略したときは自然の幅とする。
+%     （この場合，\mawarikomisep=10pt となる。）
+% v 0.36  2001/10/23-27
+%   \wakudori
+%   zuhaiti 環境と \haiti
+% v 0.37  2001/11/22
+%   \templa, \templb \newlength ---> \newdimen
+% v 0.38  2001/11/28
+%   \orgltx@item オリジナルの \item を保存
+% v 0.39  2001/12/21
+%   \narrowenumsep に \parskip\z@ を追加。逆に \topsep\z@ を削除
+%   \apnlist list 環境への追加
+% v 0.40  2002/01/10
+%   \mawarikomiowari \leavevmode を先頭に附加
+%   \itemtopmath \item 直後に別行立て数式を配置する際に使用
+% v 0.41  2002/01/31
+%   \narrowenumsep \topsep=\z@ を復元
+%   mawarikomi 環境内の edaenumerate 環境での改行タイミング調整
+%   edaenumerate 環境の <#1> オプションのキーワードに tateiti= を追加
+% v 0.42  2002/05/04
+%   mawarikomi 環境調整
+%     edaenumerate 環境の再定義を止める。
+%     \global\@mawarikomisep=\mawarikomisep
+% v 0.43  2002/05/29
+%   edaEnumerate, edaEnumerate* 環境
+%   gyoukan@a : div by edamonsuu を廃止
+% v 0.44 2002/09/23-29
+%   \itemtopmath : 垂直移動量調整
+%   \endmawarikomo, \begin{mawarikomi*}との調整
+% v 0.45 2002/10/30
+%   \emnumzw : (番号) を全角1文字幅に
+% v 0.46 2002/12/30
+%   nidan, Nidan ---> emathOld
+% v 0.47 2003/02/13
+%   escapelist環境
+% v 0.48 2003/02/14
+%   escapelist 左インデントをつけることを可能とする。
+% v 0.49 2003/04/12
+%   \setedasep : \pre@edasep, \post@edasep の設定
+% v 0.50 2003/05/25
+%   mawarikomi 環境で，図幅を省略した場合，設定値をログファイルに書き出す。
+% v 0.51 2003/06/10
+%   \emRomanII, \emRomanVIII
+% v 0.52 2003/07/03
+%   \edaenumerate 改行のタイミング修正
+% v 0.53 2003/07/21
+%   mawarikomi<0> と jsarticle との関係を調整
+% v 0.54 2003/07/28
+%   mawarikomi<0> の縦方向の調整
+% v 0.55 2003/08/17
+%   mawarikomi*環境と\enumLmarginの調整
+% v 0.56 2003/08/24
+%   v0.55 の修正が「図の左配置」の場合，不適切であった。
+% v 0.57 2003/09/03
+%   mawarikomi環境を emathMw.sty に分離
+% v 0.58 2003/09/19
+%   edaenumerate の <...> オプションに
+%            edasikiri=true を追加
+% v 0.59 2003/09/19
+%   v0.58 のバグ修正
+% v 0.60 2003/11/30
+%   \ifuseitem を新設し，edaenumerate環境下に list系環境を置くことに配慮
+%     \useitemfalse とし，edaenumerateでは \item に替えて \edaitem を
+%     用いることで，edaenumerate環境下で list 系環境を使用可能とする。
+% v 0.61 2004/01/18
+%   edaenumerate環境において，\itemindent 分だけ右にはみ出すのを修正
+% v 0.62 2004/04/02
+%   yokoenumerate環境における，1項目の補正値を truept で与える。
+% v 0.63 2004/05/20
+%   enumerate環境において，番号の初期値，刻み値を指定するオプション
+%       <kizamiti=...,syokiti=...> を新設
+% v 0.64 2004/05/31
+%   \itemtopmath : \EMresetstrutbox を附加
+% v 0.65 2004/06/05
+%   \Ofilii, \Ofiliii
+% v 0.66 2004/07/24
+%   jdescription環境を削除
+% v 0.67 2004/08/19
+%   enumerate環境に<apnenum=..>オプション
+% v 0.68 v0.61の変更を保留
+%   apnenum= .. を edaenumerate環境でも有効とする
+%   preedaesep=.., postedasep=.. 新設
+% v 0.69 \@@enum@[#1] : #1が空の場合 --- 保留
+% v 0.70 2005/05/27 edaenumerate環境に <edaframe> オプション
+%                   \betalabel
+% v 0.71 2005/05/29 edasikiri, gyoukan の併用
+% v 0.72 2005/05/29 edasikiri, vfill の併用不可のエラーメッセージ出力
+% v 0.73 2005/06/10 edaenumerate環境に<edaitemindent=..>を新設
+% v 0.74 2005/06/11 edaenumerate環境に<edafirstindent=..>
+% v 0.75 2005/06/12 betaenumerate環境：最終行は均等割りをしない
+% v 0.76 2005/06/15 \ifbetaraggedlastlinefalse とすれば，最終行も均等割り
+                    edaenumerate環境 : <kaitouYohaku=..>
+% v 0.77 2005/08/01 edaenumerate環境：mawarikomi との調整
+% v 0.78 2005/09/03 emathMw.sty の強制ロード取りやめ
+%                   edaenumerate など ---> emathEy.sty に分離
+% v 0.79 2005/09/05 emathEy.sty を独立させるため emathEc.sty
+% v 0.80 2005/11/18 \itemtopmath : \ifedaenum が未定義の場合
+% v 0.81 2006/03/17 \getcurrentenum : \@enumdepth=0のときは，\empty を返す。
+% v 0.82 2006/04/11 \emromannum, \emRomannum, \emromaniinum
+% v 0.83 2006/05/20 \emromannum : 0を噛ませる
+                    enumerate : <apnlist=..> を有効
+% v 0.84 2006/06/10 \emMaruAlphnum
+% v 0.85 2006/06/19 \emKakkoromannum
+% v 0.86 2006/07/01 \emAlph
+% v 0.87 2006/07/03 \emKakkoromaniinum
+% v 0.88 2006/08/21 \emroman : 引数を 1,2,3,... でも i,ii,iii,... でも可
+% v 0.89 2006/09/04 \description, \itemize に<apnlist=..>を有効とする。
+                    emathEy.sty とのロード順についての警告を修正
+% v 0.90 2007/02/09 \emKakkoRomannum
+% v 0.91 2007/02/23 \emKakkoKata, \emKakkoHira
+% v 0.92 2007/03/06 \em@roman : 引数が \empty の場合
+% v 0.93 2007/03/13 \emKakkoKata, \emKakkoHira
+% v 0.94 2007/06/05 \ignoreEnumBrackOption
+% v 0.95 2007/06/19 Enumerate環境にも<...>オプションを有効とする。(BBS No.6165)
+% v 0.96 2007/06/29 Enumerate環境に対するオプションを token で扱う
+% v 0.97 2007/08/02 \emKakkoalph, \emKakkoAlph
+% v 0.98 2007/09/06 \emRomannum*, \emromannum*
+% v 0.99 2008/01/12 enumerate.sty, jquote.sty, emathK.sty のロードを emathEc.sty に移管。
+% v 1.00 2008/03/02 escapelist <..>オプションで，前後の段落との縦間隔調整
+% v 1.01 2008/03/04 escapelist: list環境外ではエラー終了
+%                               edaenumerate環境内では，警告
+% v 1.02 2008/04/18 enumerate --> EMenumerate: beamer 対策
+% v 1.03 2008/10/13 \EMRoman, \EMroman
+% v 1.04 2008/11/13 Enumerate* : オプション引数の調整 (BBS #7673)
+% v 1.05 2009/03/06 \enumlabel
+% v 1.06 2010/03/21 \enumlabel 整備
+% v 1.07 2010/07/18 escapelist環境：１層前の \@totalleftmargin

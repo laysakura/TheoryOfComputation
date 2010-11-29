@@ -1,0 +1,220 @@
+% emathPha.sty by tDB(emath@nifty.com)
+%
+\@ifundefined{ifpapersize}{\newif\ifpapersize\papersizefalse}{}%
+%
+  \NeedsTeXFormat{LaTeX2e}%
+  \ProvidesPackage{emathPha}[2008/11/27 v 0.05α]%
+  \DeclareOption{notMy}{\def\not@My{}}%
+  \DeclareOption{onlyP}{\def\P@nly{}}%
+  \DeclareOption{times}{\def\em@fonts{1}}%
+  \DeclareOption{txfonts}{\def\em@fonts{2}}%
+  \DeclareOption{pxfonts}{\def\em@fonts{3}}%
+  \DeclareOption{mathabx}{\def\em@fonts{4}}%
+  \DeclareOption{varg}{\def\@varg{}}%
+  \DeclareOption{dviout}{\def\em@grdrv{dviout}}%
+  \DeclareOption{dvips}{\def\em@grdrv{dvips}}%
+  \DeclareOption{dvipdfm}{\def\em@grdrv{dvipdfm}}%
+  \DeclareOption{dvipdfmx}{\def\em@grdrv{dvipdfmx}}%
+  \DeclareOption{EMdvipsk}{\def\em@dvipsk{}}%
+  \DeclareOption{EMdvipdfm}{\def\em@dvipdfm{}}%
+  \DeclareOption{EMdvipdfmx}{\def\em@dvipdfmx{}}%
+  \DeclareOption{papersize}{\papersizetrue}%
+  \ProcessOptions\relax
+  \@ifundefined{P@nly}{%
+    \@ifundefined{emath@Ps}{%
+        \RequirePackage{epic}%
+        \RequirePackage{eepic}%
+    }{}%
+  }{}%
+%
+  \RequirePackage{emathPh}%
+%
+%
+\def\@@@@@phazahyou[#1][#2]<#3><#4><#5>(#6,#7)(#8,#9){\@ifundefined{everyzahyou}{}{\everyzahyou}%
+\define@key{emP}{ex}{%
+  \def\use@exy{}%
+  \headchar{##1}\ex@h\ex@r
+  \ifthenelse{\equal\ex@h{r}}{\expandafter\Rdef\ex@r\pha@@ex}{\edef\pha@@ex{##1}}%
+  }%
+\define@key{emP}{ey}{%
+  \def\use@exy{}%
+  \headchar{##1}\ex@h\ex@r
+  \ifthenelse{\equal\ex@h{r}}{\expandafter\Rdef\ex@r\pha@@ey}{\edef\pha@@ey{##1}}}%
+\def\dp@frame{0}%
+\define@key{emP}{frame}[1]{%
+  \def\dp@frame{##1}%
+}%
+%
+\edef\pha@@ex{(1,0)}%
+\edef\pha@@ey{(0,1)}%
+  \Strchr{#1}{=}\zahyou@tmp
+  \ifnum\zahyou@tmp>\z@
+    \setkeys{emP}{#1}%
+  \else
+    \ifthenelse{\equal{#1}\empty}{}{\edef\yokozikukigou{#1}}%
+    \ifthenelse{\equal{#2}\empty}{}{\edef\tatezikukigou{#2}}%
+    \ifthenelse{\equal{#3}\empty}{}{\edef\yokozikuhaiti{#3}}%
+    \ifthenelse{\equal{#4}\empty}{}{\edef\tatezikuhaiti{#4}}%
+    \ifthenelse{\equal{#5}\empty}{}{\edef\gentenhaiti{#5}}%
+  \fi
+%
+\@ifundefined{use@exy}{}{%
+\def\xytopha##1##2##3{%
+  \vecXY{##1}\xytopha@x\xytopha@y
+  \Mulvec\xytopha@x\pha@@ex\pha@@xx
+  \Mulvec\xytopha@y\pha@@ey\pha@@yy
+  \Addvec\pha@@xx\pha@@yy\xytopha@v
+  \vecXY{\xytopha@v}##2##3}%
+%
+\let\Pha@drawline\@drawline
+\def\@drawline[##1](##2,##3)(##4,##5){%
+  \xytopha{(##2,##3)}\pha@x\pha@y
+  \xytopha{(##4,##5)}\pha@xx\pha@yy
+  \Pha@drawline[##1](\pha@x,\pha@y)(\pha@xx,\pha@yy)\relax}%
+%
+\let\Phput\put
+\def\put(##1,##2)##3{%
+  \xytopha{(##1,##2)}\pha@x\pha@y
+  \Phput(\pha@x,\pha@y){##3}\ignorespaces}%
+%
+\def\@@@nuritubusi(##1,##2){{%
+  \xytopha{(##1,##2)}\pha@x\pha@y
+  \@ifundefined{em@dvipdfm}{%
+    \@tempdima\pha@x\unitlength\@tempdima13.837\@tempdima%
+    \@tempdimb\pha@y\unitlength\@tempdimb-13.837\@tempdimb%
+  }{%
+    \iftdir
+      \@tempdima\pha@y\unitlength\@tempdima13.837\@tempdima%
+      \@tempdimb\pha@x\unitlength\@tempdimb13.837\@tempdimb%
+    \else
+      \@tempdima\pha@x\unitlength\@tempdima13.837\@tempdima%
+      \@tempdimb\pha@y\unitlength\@tempdimb-13.837\@tempdimb%
+    \fi
+  }%
+  \special{pa \@seisuu\@tempdima\space\@seisuu\@tempdimb}}%
+    \@@nuritubusi}%
+%
+\def\@@emathPut##1(##2,##3)[##4]##5{{%
+%\typeout{now! @@emathPut arg5=##5}%
+    \ifx ##20\@tempdima=\z@\else\setlength{\@tempdima}{##2}\fi
+      \Div{\strip@pt\@tempdima}{\strip@pt\unitlength}\emathPut@u@pt%
+    \ifx ##30\@tempdimb=\z@\else\setlength{\@tempdimb}{##3}\fi%        1999.4.28
+      \Div{\strip@pt\@tempdimb}{\strip@pt\unitlength}\v@pt%
+%%% Pha 用修正 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%    \Addvec{##1}{(\emathPut@u@pt,\v@pt)}\@v
+\xytopha{##1}\pha@x\pha@y
+\Addvec{(\pha@x,\pha@y)}{(\emathPut@u@pt,\v@pt)}\@v
+\let\put\Phput
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \ifthenelse{\equal{\bg@white}{1}}{%
+    \edef\kaiten@@kaku{\kaiten@kaku}\wPut\@v<\kaiten@@kaku>[##4]{##5}}{%
+%\typeout{exy}%
+    \ifdim\kaiten@kaku pt=\z@
+      \@@@emathPut\@v{\makebox(0,0)[##4]{##5}}%
+    \else\edef\kaiten@@kaku{\kaiten@kaku}\@@@emathPut\@v{%
+      \rotatebox{\kaiten@@kaku}{\makebox(0,0)[##4]{##5}}}%
+    \fi}%
+}}%
+}%
+%
+  \Strchr{#7}{,}\zahyou@tmp
+  \ifnum\zahyou@tmp>\z@
+    \errmessage{zahyou : illegal x-range}%
+  \fi
+  \Strchr{#9}{,}\zahyou@tmp
+  \ifnum\zahyou@tmp>\z@
+    \errmessage{zahyou : illegal y-range}%
+  \fi
+  \edef\xmin{#6}\edef\xmax{#7}%
+  \edef\ymin{#8}\edef\ymax{#9}%
+\@ifundefined{xunitlength}{}{%
+  \xunitlength\@xscale\unitlength
+  \yunitlength\@yscale\unitlength
+}%
+\edef\truexmin{\xmin}%
+\edef\trueymin{\ymin}%
+\edef\truexmax{\xmax}%
+\edef\trueymax{\ymax}%
+\@ifundefined{use@exy}{}{%
+  \xytopha{(\xmax,\ymax)}\x@MM\y@MM
+  \xytopha{(\xmax,\ymin)}\x@Mm\y@Mm
+  \xytopha{(\xmin,\ymax)}\x@mM\y@mM
+  \xytopha{(\xmin,\ymin)}\x@mm\y@mm
+  \Max{\x@MM,\x@Mm,\x@mM,\x@mm}\xmax
+  \Min{\x@MM,\x@Mm,\x@mM,\x@mm}\xmin
+  \Max{\y@MM,\y@Mm,\y@mM,\y@mm}\ymax
+  \Min{\y@MM,\y@Mm,\y@mM,\y@mm}\ymin
+}%
+%
+% picture 環境の設定
+%
+  \Sub\xmax\xmin\xwd
+  \Add\xwd\migi@yohaku\xwd\Add\xwd\hidari@yohaku\xwd
+  \Sub\xmin\hidari@yohaku\xmin@
+  \Sub\ymax\ymin\ywd
+  \Add\ywd\ue@yohaku\ywd\Add\ywd\sita@yohaku\ywd
+  \Sub\ymin\sita@yohaku\ymin@
+  \if t\zahyou@haiti
+   \@tempdima \ywd\unitlength
+  \else\if x\zahyou@haiti
+    \@tempdima \ymin@\unitlength
+    \@tempdima=-\@tempdima
+  \else\if c\zahyou@haiti
+    \@tempdima \ywd\unitlength
+    \divide \@tempdima \tw@
+    \advance\@tempdima -0.5ex\relax
+  \else
+    \@tempdima\z@
+  \fi\fi\fi
+  \ifthenelse{\equal\zahyou@haiti@hosei\empty}{}{%
+      \@tempdimb\zahyou@haiti@hosei
+      \advance\@tempdima-\@tempdimb}%
+  \leavevmode\lower\@tempdima\hbox\bgroup
+  \changeArrowHeadSize{\arrow@headsize}%
+  \ltxpicture(\xwd,\ywd)(\xmin@,\ymin@)%
+  \def\O{(0,0)}%
+  \def\O@@{(0,0)}%
+  \def\XMAX{(\xmax,0)}%
+  \def\XMIN{(\xmin,0)}%
+  \def\YMAX{(0,\ymax)}%
+  \def\YMIN{(0,\ymin)}%
+  \def\LT{(\xmin,\ymax)}%
+  \def\LB{(\xmin,\ymin)}%
+  \def\RT{(\xmax,\ymax)}%
+  \def\RB{(\xmax,\ymin)}%
+  \def\trueLT{(\truexmin,\trueymax)}%
+  \def\trueLB{(\truexmin,\trueymin)}%
+  \def\trueRT{(\truexmax,\trueymax)}%
+  \def\trueRB{(\truexmax,\trueymin)}%
+  \def\zenheimen{\trueLT\trueLB\trueRB\trueRT}%
+  \Add\xmax\migi@yohaku\xmaxY
+  \Sub\xmin\hidari@yohaku\xminY
+  \Add\ymax\ue@yohaku\ymaxY
+  \Sub\ymin\sita@yohaku\yminY
+  \def\zenheimenY{%
+    (\xmaxY,\yminY)(\xmaxY,\ymaxY)(\xminY,\ymaxY)(\xminY,\yminY)}%
+}%
+%
+\def\phazahyou{\let\@@@@@zahyou\@@@@@phazahyou\zahyou}%
+\def\endphazahyou{%
+  \ifnum\dp@frame>\z@
+    {%
+      \edef\pha@@ex{(1,0)}%
+      \edef\pha@@ey{(0,1)}%
+      \Takakkei<iro=red>\zenheimenY
+    }%
+  \fi
+  \endzahyou
+}%
+%\let\endphazahyou\endzahyou
+\expandafter\def\csname phazahyou*\endcsname{\drawaxisfalse\phazahyou}%
+\expandafter\def\csname endphazahyou*\endcsname{\endphazahyou\@ignoretrue}%
+%
+\endinput
+%
+v 0.01α 2007/08/31
+           emathPxy.sty 対応
+v 0.03α = 0.01
+v 0.04α 空白の混入対策
+v 0.05α 2008/11/27 
+            frame オプションなど

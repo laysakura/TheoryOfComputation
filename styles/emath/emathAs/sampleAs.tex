@@ -1,0 +1,181 @@
+\documentclass[fleqn]{jarticle}
+\usepackage{theorem,multicol,hako}
+\usepackage{emathEy}
+
+%-------------------------------------------------------------
+% emathAs パッケージは，
+%     練習と問題の番号を別立てにするか，
+%     通し番号にするかで，
+% ロード方法が異なります．
+%
+\usepackage{emathAs}%                 練習と問題を別番号
+%\usepackage[toosibangou]{emathAs}%   練習と問題を通し番号
+%
+% 解答を置く位置の指定は emathA と同様です．
+%\usepackage[debug]{emathAs}%
+%\usepackage[debug,toosibangou]{emathAs}%
+%
+%-------------------------------------------------------------
+% mondai環境のキャプションなどの修正
+% emathAs.sty では，問題の環境が次の3種類定義されています．
+%
+%     環境名      キャプション
+% 1:  rensyuu     練習
+% 2:  mondai      問題
+% 3:  hatten      発展問題
+%
+%   このうち，練習，問題は section 毎に番号がリセットされますが，
+%   発展問題はファイルを通しての番号となります．
+%
+% この環境名とキャプションを修正する例です．
+%
+\labelmondai{問}%
+\newenvironment{mon}{ \begin{mondai}}{%
+  \end{mondai}}%
+\labelhatten{}%
+%
+% この他，問題ではありませんが，
+% 次の環境も \newtheorem で定義されています．
+%
+%     環境名      キャプション
+% 4:  teigi       定義
+% 5:  teiri       定理
+% 6:  reidai      例題
+% 7:  rei         例
+%
+%-------------------------------------------------------------
+% 解答の部で，改行する問題レベルの設定
+%\kaikaigyousuizyun{1}%   enumerate 第1層の問題で改行
+%\kaikaigyousuizyun{0}%   デフォルト 練習（問題）ごとに改行
+%\kaikaigyousuizyun{-1}%  改行一切なし．
+%-------------------------------------------------------------
+
+\renewcommand{\labelenumi}{(\arabic{enumi})}%
+
+%\raggedcolumns
+\columnseprule=0.4pt%
+\theorempreskipamount=0pt%
+\theorempostskipamount=0pt%
+\preedaenumskip=-.25\baselineskip%
+%\postedaenumskip=-2.5\baselineskip%
+
+%\renewcommand{\kaitou}{\par 【解】}% デバッグ中は先頭の % を取る．
+
+\begin{document}
+\openrensyuuFile%
+\openmondaiFile%
+\openhattenFile%
+\section{導関数}
+\begin{rensyuu}
+    定義により，次の関数の導関数を求めよ．%
+    \kaitou{}%
+    \begin{edaenumerate}
+      \item $x^2$
+        \kaitou{
+          $2x~\left[\dlim{h \to 0}\bunsuu{(x+h)^2-x^2}{h}\right]$
+        }
+      \item $x^3$
+        \kaitou{
+        $3x^2$
+        }
+    \end{edaenumerate}
+\end{rensyuu}
+\begin{mon}
+  次の関数を微分せよ．\kaitou{}%
+  \begin{edaenumerate}<3>
+    \item $y=x^2$
+      \kaitou{$2x$}
+    \item $y=x^3$
+      \kaitou{$3x^2$}
+    \item $y=x$
+      \kaitou{$1$}
+  \end{edaenumerate}
+\end{mon}
+\begin{rensyuu}
+    次の関数を微分せよ．\kaitou{}
+    \begin{edaenumerate}<1>
+    \item $y=x^3-5x^2+6x-7$
+      \kaitou{$3x^2-10x+6$}
+    \item $y=(2x-1)(3x+1)$
+      \kaitou{$12x-1$}
+    \end{edaenumerate}
+\end{rensyuu}
+\section{接線}
+\begin{mon}
+  放物線 $y=x^2$ 上の点 $(-1,~1)$ における接線の方程式を求めよ．
+\kaitou{$y=-2x-1$}
+\end{mon}
+
+\begin{rensyuu}
+  放物線 $y=x^2$ に点 $(1,~0)$ から引いた接線の方程式を求めよ．
+\kaitou{
+  $y=x^2$ を微分して，$y'=2x$
+
+  接点の $x$座標を $t$ とすれば接線の方程式は\
+  \begin{equation}
+    y-t^2=2t(x-t) \label{eq:setu1}
+  \end{equation}
+  これが点 $(1,~0)$ を通るから，
+  \[0-t^2=2t(1-t)\]
+  これを解いて， $t=0,~2$
+  
+  それぞれ \eqref{eq:setu1} に代入して，求める方程式は
+  \[ \boldsymbol{y=0,~y=4x-4} \]
+}
+\end{rensyuu}
+\vspace{\baselineskip}
+
+\begin{center}
+\textgt{\large 発展問題}
+\end{center}
+
+\begin{hatten}
+\hakosyokika
+\hangafter=1\hangindent2zw%
+$p$ を正の数とし，関数 $f(x)=\bunsuu{1}{3}x^3-px^2+4$ を考える．$f(x)$ は
+\begin{quote}
+  $x=\Hako[L0000199837a] $ で極大値 \Hako をとり，\\
+  $x=\Hako[L0000199837u] p$ で極小値 $\bunsuu{\Hako<2>}{\Hako}p^3+\Hako $ 
+  をとる．
+\end{quote}
+\hangafter=0\hangindent2zw%
+$a=\refHako*{L0000199837a}$, $b=\refHako*{L0000199837u} p$ とおく．
+
+4点 A$(a,~f(a))$, B$(a,~f(b))$, C$(b,~f(b))$, D$(b,~f(a))$ を頂点とする
+四角形ABCDが正方形となるのは
+\[ p=\bunsuu{\sqrt{\Hako }}{\Hako } \]
+のときである．
+\syutten{1998 センター}
+\kaitou{$ア=0$, $イ=4$, $ウ=2$, $エ=-$, $オ=4$, $カ=3$, $キ=4$, $ク=6$, $ケ=2$}
+\end{hatten}
+\closerensyuuFile
+\closemondaiFile
+\closehattenFile
+\vspace{.5ex}
+
+\vfill
+
+%\hrule\vspace{.5ex}
+\clearpage
+
+\preEqlabel{$\cdots\cdots$}%
+\small%
+\abovedisplayskip=2pt%
+\belowdisplayskip=2pt%
+\topsep=0pt%
+\begin{multicols}{2}
+%\prekailabel{\bfseries}
+
+\section*{問の解答}
+\everypar{\hangafter1\hangindent1zw\parindent2zw}
+\inputmondaiFile
+\vspace{\baselineskip}
+\section*{練習の解答}
+\everypar{\hangafter1\hangindent1zw\parindent2zw}
+\inputrensyuuFile
+\vspace{\baselineskip}
+\section*{発展問題の解答}
+\everypar{\hangafter1\hangindent1zw\parindent2zw}
+\inputhattenFile
+\end{multicols}
+\end{document}

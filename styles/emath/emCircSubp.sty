@@ -1,0 +1,200 @@
+% emCircSubp.sty v 0.01 2008/08/28
+%
+  \def\part@kansan#1#2{%
+    \@tempdima#1\cunitlength
+    \ukansan\@tempdima#2}%
+  \def\part@x@kansan#1#2{%
+    \@tempdima#1\cunitlength
+    \uxkansan\@tempdima#2}%
+  \def\part@y@kansan#1#2{%
+    \@tempdima#1\cunitlength
+    \uykansan\@tempdima#2}%
+%
+  \def\emoldresistor{\@ifnextchar<{\@emoldresistor}{\@emoldresistor<\empty>}}%
+  \def\@emoldresistor<#1>{{%
+    \edef\parts@type{\empty}%
+    \edef\parts@H{\empty}%
+    \edef\parts@W{\empty}%
+    \ifx\empty #1\else\setkeys{emCircuit}{#1}\fi
+    \ifx\empty\parts@H\else
+      \setlength{\@tempdima}{\parts@H}%
+      \setlength{\yunitlength}{0.25\@tempdima}%
+    \fi
+    \part@kansan{.25}\res@xi
+    \part@kansan{.75}\res@xii
+    \part@kansan{1.25}\res@xiii
+    \part@kansan{1.5}\res@x
+    \part@kansan{2}\res@xo
+    \part@kansan{.5}\res@y
+    \Nuritubusi[0]{(-\res@x,-\res@y)(\res@x,-\res@y)(\res@x,\res@y)(-\res@x,\res@y)}%
+    \Drawline{(-\res@xo,0)(-\res@x,0)(-\res@xiii,\res@y)(-\res@xii,-\res@y)(-\res@xi,\res@y)%
+      (\res@xi,-\res@y)(\res@xii,\res@y)(\res@xiii,-\res@y)(\res@x,0)(\res@xo,0)}%
+    \getOrgP{(0,\res@y)}\resT
+    \ifx\empty\parts@type
+    \else
+        \part@kansan{1}\res@xx
+        \part@kansan{1.5}\res@xxx
+        \Drawline<yazirusi=a>{(-\res@xx,-\res@xx)(\res@xxx,\res@xxx)}%
+    \fi
+  }}%
+%
+  \def\emresistor{\@ifnextchar<{\@emresistor}{\@emresistor<\empty>}}%
+  \def\@emresistor<#1>{%
+    \edef\parts@type{\empty}%
+    \edef\old@type{\empty}%
+    \ifx\empty #1\else\setkeys{emCircuit}{#1}\fi
+    \ifx\empty\old@type
+      \part@kansan{2}\res@xo
+      \part@kansan{1.5}\res@x
+      \part@kansan{.5}\res@y
+      \edef\res@oresen{(-\res@x,-\res@y)(\res@x,-\res@y)(\res@x,\res@y)(-\res@x,\res@y)}%
+      \Nuritubusi[0]\res@oresen
+      \Takakkei\res@oresen
+      \ifx\empty\parts@type
+        \let\var@P\@undefined
+      \else
+        \part@kansan{1}\res@xx
+        \part@kansan{1.5}\res@xxx
+        \Drawline<yazirusi=a>{(-\res@xx,-\res@xx)(\res@xxx,\res@xxx)}%
+      \fi
+      \getOrgP{(0,\res@y)}\resT
+    \else
+      \ifnum\old@type=\@ne\emoldresistor<#1>\fi
+    \fi
+  }%
+%
+\def\emcoil{\@ifnextchar<{\@emcoil}{\@emcoil<\empty>}}%
+\def\@emcoil<#1>{{%
+  \sironukifalse
+  \edef\old@type{\empty}%
+  \ifx\empty #1\else\setkeys{emCircuit}{#1}\fi
+  \ifx\empty\old@type
+      \part@kansan{2}\coil@x
+      \part@kansan{.5}\coil@a
+\@ifundefined{psdraw}{\edef\coil@cy{0}}{%
+  \@tempdima=-0.1\p@
+  \ukansan{\cur@halflinewidth\@tempdima}\coil@cy
+}%
+    \Nuritubusi[0]{(-\coil@x,-\coil@a)(\coil@x,-\coil@a)(\coil@x,\coil@a)(-\coil@x,\coil@a)}%
+    \Cfor{\edef\coil@i{0}\edef\coil@xo{-2.5}}{\coil@i<4}{}\do{%
+      \Incr\coil@i
+      \Addself\coil@xo{1}%
+      \part@kansan\coil@xo\coil@cx
+      \Enko{(\coil@cx,0)}{\coil@a}{0}{180}%
+    }%
+  \else
+    \emoldcoil<#1>
+  \fi
+}}%
+%
+\def\embattery{\@ifstar{\embattery@}{\@embattery}}%
+\def\@embattery{\@ifnextchar<{\@@embattery}{\@@embattery<\empty>}}%
+\def\@@embattery<#1>{{%
+  \edef\ko@suu{1}%
+  \ifx\empty #1\else\setkeys{emCircuit}{#1}\fi
+  \part@kansan{1}\emb@i
+  \part@kansan{2}\emb@ii
+  \part@kansan{.5}\emb@g
+    \Nuritubusi[0]{(-\emb@g,-\emb@i)(0,-\emb@i)(0,\emb@i)(-\emb@g,\emb@i)}%
+    \Drawlines{(0,-\emb@ii)(0,\emb@ii);(-\emb@g,-\emb@i)(-\emb@g,\emb@i)}%
+}}%
+%
+\def\emcondenser{\@ifnextchar<{\@emcondenser}{\@emcondenser<\empty>}}%
+\def\@emcondenser<#1>{{%
+    \edef\parts@type{\empty}%
+    \edef\parts@H{\empty}%
+    \edef\parts@W{\empty}%
+    \ifx\empty #1\else\setkeys{emCircuit}{#1}\fi
+    \part@kansan{.25}\con@x
+    \part@kansan{2}\con@xo
+    \part@kansan{1}\con@y
+    \Nuritubusi[0]{(-\con@x,-\con@y)(\con@x,-\con@y)(\con@x,\con@y)(-\con@x,\con@y)}%
+    \Drawline{(-\con@x,-\con@y)(-\con@x,\con@y)}
+    \Drawline{(\con@x,-\con@y)(\con@x,\con@y)}
+    \ifx\empty\parts@type
+    \else
+        \part@kansan{1}\res@xx
+        \part@kansan{1.5}\res@xxx
+        \ifdim\Putparts@arg\p@<-45\p@
+          \Drawline<yazirusi=a>{(\res@xx,-\res@xx)(-\res@xxx,\res@xxx)}%
+        \else\ifdim\Putparts@arg\p@>135\p@
+          \Drawline<yazirusi=a>{(\res@xx,\res@xx)(-\res@xxx,-\res@xxx)}%
+        \else\ifdim\Putparts@arg\p@>45\p@
+          \Drawline<yazirusi=a>{(-\res@xx,\res@xx)(\res@xxx,-\res@xxx)}%
+        \else
+          \Drawline<yazirusi=a>{(-\res@xx,-\res@xx)(\res@xxx,\res@xxx)}%
+        \fi\fi\fi
+    \fi
+}}%
+%
+\def\emdiode{\@ifnextchar<{\@emdiode}{\@emdiode<\empty>}}%
+\def\@emdiode<#1>{{%
+  \ifx\empty #1\else\setkeys{emCircuit}{#1}\fi
+  \part@kansan{1}\diode@r
+  \part@kansan{2}\diode@ro
+  \Takakkei{(-\diode@r,\diode@r)(-\diode@r,-\diode@r)(\diode@r,0)}%
+  \Drawline{(\diode@r,-\diode@r)(\diode@r,\diode@r)}%
+  \ifthenelse{\equal{\parts@type}{LED}}{%
+%   \Put{(-\diode@r,\diode@r)}{\Drawline<yazirusi=a>{(0,0)(-\diode@r,\diode@r)}}%
+    \part@kansan{.5}\diode@h
+    \part@kansan{.25}\diode@q
+    \part@kansan{1.5}\diode@rr
+    \Put{(0,\diode@rr)}{\Drawline<yazirusi=a>{(0,0)(-\diode@r,\diode@r)}}%
+    \Put{(-\diode@h,\diode@r)}{\Drawline<yazirusi=a>{(0,0)(-\diode@r,\diode@r)}}%
+  }{%
+  }%
+}}%
+%
+\def\emtransistor{\@ifnextchar<{\@emtransistor}{\@emtransistor<\empty>}}%
+\def\@emtransistor<#1>{{%
+  \edef\parts@type{pnp}%
+  \ifx\empty #1\else\setkeys{emCircuit}{#1}\fi
+  \part@kansan{.5}\part@h
+  \part@kansan{1}\part@i
+  \part@kansan{2}\part@ii
+  \Nuritubusi[0]<border,iro=white>{(0,-\part@ii)(\part@ii,-\part@ii)(\part@ii,\part@ii)(0,\part@ii)}%
+  \Hamidasisenbun<yazirusi=a>{(\part@ii,\part@ii)}{(0,\part@h)}{0}{-.35\cunitlength}%
+  \Drawlines{(0,\part@i)(0,-\part@i);%
+    (0,\part@h)(\part@ii,\part@ii);%
+    (0,-\part@h)(\part@ii,-\part@ii);%
+  }%
+}}%
+%
+\def\emmeter{{%
+  \part@kansan{2}\meter@r
+  \Nuritubusi[0]{(-\meter@r,-\meter@r)(\meter@r,-\meter@r)(\meter@r,\meter@r)(-\meter@r,\meter@r)}%
+  \En\O{\meter@r}\relax
+}}%
+%
+\def\emlamp{{%
+  \part@kansan{1}\lamp@r
+  \rtenretu*{lamp@A(\lamp@r,45);lamp@B(\lamp@r,135);lamp@C(\lamp@r,-135);lamp@D(\lamp@r,-45)}
+  \Nuritubusi[0]{(-\lamp@r,-\lamp@r)(\lamp@r,-\lamp@r)(\lamp@r,\lamp@r)(-\lamp@r,\lamp@r)}%
+  \Drawlines{\lamp@A\lamp@C;\lamp@B\lamp@D}%
+  \En\O{\lamp@r}\relax
+}}%
+%
+\def\emswitch{\@ifnextchar<{\@emswitch}{\@emswitch<\empty>}}%
+\def\@emswitch<#1>{{%
+    \ifx\empty #1\else\setkeys{emCircuit}{#1}\fi
+    \part@kansan{1}\sw@x
+    \part@kansan{1.05}\sw@xi
+    \part@kansan{1.25}\sw@xx
+    \part@kansan{3}\sw@xo
+    \Nuritubusi[0]{(-\sw@x,-\sw@x)(\sw@x,-\sw@x)(\sw@x,\sw@x)(-\sw@x,\sw@x)}%
+    \Drawlines{(-\sw@xo,0)(-\sw@x,0)(\sw@xx,\sw@xx)}%
+    \ifnum\parts@form=\tw@\siromaru{(-\sw@x,0)}\fi
+}}%
+%
+\def\getOrgP#1#2{%
+  \Kaiten{(0,0)}{#1}\Putparts@arg\getorg@tmp
+    \vecXY{\getorg@tmp}\getorgP@x\getorgP@y
+      \@ifundefined{xunitlength}{%
+        \setlength{\@tempdima}{\getorgP@x\unitlength}\kansan\@tempdima\org@ul\getorgP@x@
+        \setlength{\@tempdima}{\getorgP@y\unitlength}\kansan\@tempdima\org@ul\getorgP@y@
+      }{%
+        \setlength{\@tempdima}{\getorgP@x\xunitlength}\kansan\@tempdima\org@ul\getorgP@x@
+        \setlength{\@tempdima}{\getorgP@y\yunitlength}\kansan\@tempdima\org@ul\getorgP@y@
+      }%
+      \Addvec{\Putparts@P}{(\getorgP@x@,\getorgP@y@)}\getorg@P\xdef#2{\getorg@P}}%
+\endinput

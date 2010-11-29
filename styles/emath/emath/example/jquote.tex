@@ -1,0 +1,35 @@
+\noindent
+左端 \hfill 右端\par
+本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文
+\begin{jquote}
+\texttt{jquote}環境による字下げは，左が全角2文字分，
+右は字下げ無しがデフォルトです．
+\end{jquote}
+本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文
+\begin{jquote}(5zw)
+\texttt{jquote}による字下げ量はオプション引数\texttt(...)によって指定することができます．\par
+ここでは \cmd{begin}\texttt{\{jquote\}(5zw)}としてみました．
+\end{jquote}
+本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文
+\begin{jquote}(5zw)(3zw)
+右インデントもつけたいときは，さらに\texttt(...)オプションをつけます．この部分は\\\cmd{begin}\texttt{\{jquote\}(5zw)(3zw)}としてあります．なお，右インデントをつけるときは，必ず左インデント量を指定しなければなりません．
+\end{jquote}
+本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文
+\begin{jquote}[0pt]
+\texttt{jquote}環境のブロックと，その前後の段落との行間は，
+    \begin{jquote}
+        \cmd{topsep}
+    \end{jquote}
+としてあります．これは \texttt{[...]}オプションで指定することが
+できます．このブロックは\cmd{begin}\texttt{\{jquote\}[0pt]}としてみました．
+\the\topsep
+
+上下の間隔を異なる値にしたいときは，
+\begin{jquote}
+\begin{verbatim}
+<tsep=..,bsep=..>
+\end{verbatim}
+\end{jquote}
+オプションを用います。
+\end{jquote}
+本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文

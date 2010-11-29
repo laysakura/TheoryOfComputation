@@ -1,0 +1,79 @@
+% emathP.sty by tDB(CQB00260@nifty.ne.jp)
+%
+%
+\@ifundefined{ifpapersize}{\newif\ifpapersize\papersizefalse}{}%
+%
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{emathP}[2010/01/16 v 0.74]%
+  \DeclareOption{onlyP}{\def\P@nly{}}%
+  \DeclareOption{notMy}{\def\not@My{}}%
+  \DeclareOption{notPp}{\def\not@Pp{}}%
+  \DeclareOption{varg}{\def\@varg{}}%
+  \DeclareOption{times}{\def\em@fonts{1}}%
+  \DeclareOption{txfonts}{\def\em@fonts{2}}%
+  \DeclareOption{pxfonts}{\def\em@fonts{3}}%
+  \DeclareOption{mathabx}{\def\em@fonts{4}}%
+  \DeclareOption{usenames}{\def\em@color@names{}}%
+  \DeclareOption{dviout}{\def\em@grdrv{dviout}}%
+  \DeclareOption{dvips}{\def\em@grdrv{dvips}}%
+  \DeclareOption{dvipdfm}{\def\em@grdrv{dvipdfm}}%
+  \DeclareOption{dvipdfmx}{\def\em@grdrv{dvipdfmx}}%
+  \DeclareOption{oldB}{\def\old@B{}}%
+  \DeclareOption{papersize}{\papersizetrue}
+  \DeclareOption{cmyk}{\def\EMcolor@type{cmyk}}%
+  \ProcessOptions\relax
+%
+\def\dvipdfmx@temp{dvipdfmx.def}%
+\ifx\Gin@driver\dvipdfmx@temp\def\em@grdrv{dvipdfmx}\fi
+%
+\@ifundefined{em@grdrv}{%
+  \@ifpackageloaded{graphics}{}{%
+    \RequirePackage{graphicx}%
+    \RequirePackage{color}%
+  }%
+}{}%
+\RequirePackage{emathPxy}%
+\RequirePackage{emathPk}%
+\RequirePackage{emathT}%
+\RequirePackage{emathPb}%
+\RequirePackage{emathPg}%
+\RequirePackage{emathPsiki}%
+%\RequirePackage{bekutorukata}%
+\@ifundefined{not@Pp}{\RequirePackage{emathPp}}{}%
+\endinput
+
+v0.57 2000/12/02
+  ロードオプション times
+v0.59 2001/10/04
+  Ph, Pk の順に読み込む
+v0.60 2001/12/12
+  dviout, dvips オプション附加
+  emathPp.sty 新設に対応
+v0.61 2002/03/14
+  varg, txfonts オプション対応
+v 0.62 2002/04/25
+  txfonts, pxfonts オプションの処理を変更
+v 0.63 2002/07/24
+  dvipdfm オプション附加
+v 0.64 2003/12/23
+  notMy オプション可
+v 0.65 2005/01/09
+  ロードオプション papersize
+v 0.66 2005/09/19
+  ロードオプション dvipdfmx
+v 0.67 2005/11/11
+  \RequirePackage{emathPsiki}
+v 0.68 2006/01/20
+  [oldB] ロードオプション
+v 0.69 2006/08/27
+  [notPp] ロードオプション：emathPp.sty をロードしない。
+v 0.70 2007/06/28
+  bekutorukata.sty をロード
+v 0.71 2007/08/21
+  graphicx, color の強制ロードを行う。
+v 0.72 2007/11/12
+  bekutorukata.sty のロードを取りやめる。(BBS #6686)
+v 0.73 2008/05/26
+  graphicx, color の先行ロードで [dvipdfmx] とされている場合の処理
+v 0.74 2010/01/16
+  graphicx, color の先行ロードで [dvipdfmx] とされている場合の処理 (BBS #8539)

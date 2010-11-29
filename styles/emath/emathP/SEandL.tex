@@ -1,0 +1,191 @@
+\section{楕円と直線の交点}
+%\subsection{\texorpdfstring{\cmd{EandL}}{EandL}}
+\subsection{\cmd{EandL}}
+円と直線の交点を求めるコマンドを発展させ，
+楕円と直線の交点を求めるコマンドが\cmd{EandL}です。
+その書式は
+
+\begin{boxnote}
+\begin{verbatim}
+\def\EandL#1#2#3#4#5#6#7{%
+  #1 : 楕円の中心
+  #2 : x軸方向の半径
+  #3 : y軸方向の半径
+  #4 : 直線上の点1
+  #5 : 直線上の点2
+  #6 : 交点1を受け取る制御綴
+  #7 : 交点2を受け取る制御綴
+\end{verbatim}
+\end{boxnote}
+\bigskip
+
+使用例です。2点A($-1$, 0), B(2, 1)を通る直線と
+楕円$\bunsuu{x^2}{4}+y^2=1$との交点P, Qを求めます。
+
+\begin{showEx}{\cmd{EandL}}
+\begin{zahyou}[ul=10mm]%
+    (-2.5,2.5)(-1.5,1.5)
+  \tenretu{A(-1,0)nw;B(2,1)nw}
+  \kuromaru{\A;\B}
+  \Put\B[syaei=xy,xpos={[ne]},
+    ypos={[ne]}]{}
+  \Daen\O{2}{1}\Tyokusen\A\B{}{}
+  \EandL\O{2}{1}\A\B\P\Q
+  \Put\P[s]{P}\Put\Q[s]{Q}
+  \kuromaru{\P;\Q}
+\end{zahyou}
+\end{showEx}
+%\clearpage
+
+%\subsection{\texorpdfstring{\cmd{Eandl}}{Eandl}}
+\subsection{\cmd{Eandl}}
+直線を1点と方向ベクトルで与える場合です。
+
+楕円$\bunsuu{(x-2)^2}{4}+(y-1)^2=1$と，
+点A(0, 1)を通り方向ベクトルが(2, 1)の直線の交点を求めます。
+この場合，点Aは楕円上にありますから，交点の一方PとAは一致します。
+
+\begin{showEx}{\cmd{Eandl}}
+\begin{zahyou}[ul=10mm]%
+    (-.5,4.5)(-.5,2.5)
+  \tenretu{A(0,1)nw;C(2,1)se}
+  \Put\C[syaei=xy,ypos={[ne]}]{}
+  \def\m{(2,1)}%
+  \Kuromaru{\A}
+  \Daen\C{2}{1}
+  \mTyokusen\A\m{}{}
+  \Eandl\C{2}{1}\A\m\P\Q
+  \Put\P[se]{P}\Put\Q[s]{Q}
+  \kuromaru{\P;\Q}
+\end{zahyou}
+\end{showEx}
+
+%\subsection{\texorpdfstring{\cmd{Eandk}}{Eandk}}
+\subsection{\cmd{Eandk}}
+直線を1点と方向角（六十分法）で与える場合です。
+
+楕円$\bunsuu{(x-2)^2}{4}+(y-1)^2=1$と，
+点A(1, 2)を通り方向角が$-45\Deg$である直線との交点を求めます。
+
+
+\begin{showEx}{\cmd{Eandk}}
+\begin{zahyou}[ul=10mm]%
+    (-.5,4.5)(-.5,2.5)
+  \tenretu{A(1,2)ne;C(2,1)ne}
+  \Put\A[syaei=xy]{}
+  \Put\C[syaei=xy]{}
+  \def\m{(2,1)}%
+  \Kuromaru{\A}
+  \Daen\C{2}{1}
+  \kTyokusen\A{-45}{}{}
+  \Eandk\C{2}{1}\A{-45}\P\Q
+  \Put\P[s]{P}\Put\Q[n]{Q}
+  \kuromaru{\P;\Q}
+\end{zahyou}
+\end{showEx}
+
+\subsection{楕円の接線}
+%\subsubsection{\texorpdfstring{\cmd{DaennoSessen}}{DaennnoSessen}}
+\subsubsection{\cmd{DaennoSessen}}
+楕円の周上の点における接線の方向ベクトルを求めるコマンドです。
+
+\begin{boxnote}
+\begin{verbatim}
+\DaennoSessen#1#2#3#4#5{%
+ #1 : 楕円の中心
+ #2 : x軸方向の半径
+ #3 : y軸方向の半径
+ #4 : 接点
+ #5 : 接線の方向ベクトルを受け取る制御綴
+\end{verbatim}
+\end{boxnote}
+\bigskip
+
+楕円$\bunsuu{(x-1)^2}{9}+\bunsuu{y^2}{4}=1$上の点A
+$\left(\bunsuu{5}{2},~\sqrt{3} \right)$
+における接線を引きます。
+
+\begin{showEx}(.54,.4){\cmd{EandL}}
+\begin{zahyou}[ul=5mm]%
+      (-2.5,5)(-2.5,4)
+  \tenretu{A(2.5,1.732)ne;[]C(1,0)}
+  \Kuromaru\A
+  \Daen\C{3}{2}
+  \DaennoSessen\C{3}{2}\A\uvec
+  \mTyokusen\A\uvec{}{}
+\end{zahyou}
+\end{showEx}
+%\clearpage
+
+%\subsubsection{\texorpdfstring{\cmd{DaenniSessen}}{DaenniSessen}}
+\subsubsection{\cmd{DaenniSessen}}
+つぎは，楕円の外部の点から楕円に引いた接線の接点を求めます。
+
+\begin{boxnote}
+\begin{verbatim}
+\DaenniSessen#1#2#3#4#5#6{%
+ #1 : 楕円の中心
+ #2 : x軸方向の半径
+ #3 : y軸方向の半径
+ #4 : 楕円の外部の点
+ #5 : 接点1を受け取る制御綴
+ #6 : 接点2を受け取る制御綴
+\end{verbatim}
+\end{boxnote}
+\bigskip
+
+楕円$\bunsuu{(x-3)^2}{9}+\bunsuu{(y+2)^2}{4}=1$に
+点A(6, 1)から接線を引きます。
+
+\begin{showEx}{\cmd{DaennnoSessen}}
+\begin{zahyou}[ul=5mm]%
+    (-1,7)(-5,2)
+  \tenretu{A(6,1)nw;C(3,-2)se}
+  \Put\C[syaei=xy,xpos={[se]}]{}
+  \Put\A[syaei=xy,xpos={[ne]}]{}
+  \Kuromaru{\A}
+  \Daen\C{3}{2}
+  \DaenniSessen\C{3}{2}\A\P\Q
+  \kuromaru{\P;\Q;\C}
+  \Tyokusen\A\P{}{}
+  \Tyokusen\A\Q{}{}
+\end{zahyou}
+\end{showEx}
+%\clearpage
+
+%\subsubsection{\texorpdfstring{\cmd{Earg}}{Earg}}
+\subsubsection{\cmd{Earg}}
+楕円の媒介変数表示
+\begin{align*}
+  x&=x_0+a\cos\theta\\
+  y&=y_0+b\sin\theta
+\end{align*}
+において，周上の点($x$, $y$)を指定して$\theta$を求めるマクロです。
+
+\begin{boxnote}
+\begin{verbatim}
+\Earg#1#2#3#4#5{%
+ #1 : 楕円の中心
+ #2 : x軸方向の半径
+ #3 : y軸方向の半径
+ #4 : 周上の点
+ #5 : 媒介変数の値（六十分法）
+\end{verbatim}
+\end{boxnote}
+\bigskip
+
+\begin{showEx}(.54,.4){\cmd{Earg}}
+\begin{zahyou*}[ul=5mm](-3,5)(-4,6)
+  \tenretu{[]C(1,-1);A(2,5)n}
+  \DaenniSessen\C{3}{2}\A\P\Q
+  \Put\P[nw]{P}\Put\Q[ne]{Q}
+  \kuromaru{\P;\Q}
+  \Earg\C{3}{2}\P\argP
+  \Earg\C{3}{2}\Q\argQ
+  \Put\C{\Daenko<hasen=[.5][.5]>%
+    {3}{2}{\argQ}{\argP}}
+  \Add\argQ{360}\argQQ
+  \Put\C{\Daenko{3}{2}{\argP}{\argQQ}}
+  \Drawline{\P\A\Q}
+\end{zahyou*}
+\end{showEx}

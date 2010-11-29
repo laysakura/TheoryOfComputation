@@ -1,0 +1,173 @@
+% EMpsframed.sty by tDB (emath@nifty.com)
+%
+\NeedsTeXFormat{LaTeX2e}%
+\def\Ps@version{0.06α}%
+\ProvidesPackage{EMpsframed}[2010/07/31 v \Ps@version ]%
+%
+\@ifundefined{pszahyou}{%
+  \errmessage{EMpsframed.sty は emathPs.sty を前提とします。}
+}{}%
+%
+%\RequirePackage{framed}%
+\RequirePackage{emathPsb}%
+\RequirePackage{EMframed}%
+%
+\define@key{emPsb}{framecmd}{\def\frame@cmd{#1}}%
+%
+% このスタイルファイルは，下の framed.sty を拡張したものです。
+%
+% framed.sty   v 0.8a   21-Jul-2003
+% Copyright (C) 1992-2003 by Donald Arseneau
+% These macros may be freely transmitted, reproduced, or modified
+% provided that this notice is left intact.
+% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Create framed or shaded regions that can break across pages using 
+% \begin{framed} ... \end{framed}    -- ordinary frame box (box at margin)
+% \begin{shaded} ... \end{shaded}    -- shaded background (into margin)
+%    ... leftbar ...                 -- line on left side
+% \begin{MakeFramed}{settings} ... \end{MakeFramed}
+%                        -- generic frame (for new environments)
+%
+% The "framed" environment puts the text into "\fbox" with the
+% settings "\fboxrule=\FrameRule" and "\fboxsep=\FrameSep".
+% You can change these lengths (using "\setlength") and you
+% can even change the definition of "\emFrameCommand" to use
+% much fancier boxes.
+%
+% In fact, the "shaded" environment just redefines "\emFrameCommand"
+% to use "\colorbox{shadecolor}" (and you have to define the
+% color "shadecolor": \newcolor{shadecolor}...).
+%
+% A page break is allowed, and even encouraged, before the framed
+% environment.  If you want to attach some text (a box title) to the
+% frame, then the text should be inserted by \emFrameCommand
+%
+% The contents of the framed regions are restricted: 
+% Floats, footnotes, marginpars and head-line entries will be lost.
+% (Some of these may be handled in a later version.)
+% This package will not work with the page breaking of multicol.sty,
+% or other systems that perform column-balancing.
+%
+% The MakeFramed environment does the work.  Its "settings" argument
+% should contain any adjustments to the text width (applied to \hsize,
+% and using the "\width" of the frame itself) as well as a `restore' 
+% command -- \@parboxrestore or \emFrameRestore or something similar.
+% 
+% Expert commands:
+% \MakeFramed, \endMakeFramed: the "MakeFramed" environment
+% \emFrameCommand: command to draw the frame around its argument
+% \emFrameRestore: restore some text settings, but fewer than \@parboxrestore
+% \FrameRule: length register; \fboxrule for default "framed".
+% \FrameSep: length register; \fboxsep for default "framed".
+% \FrameHeightAdjust: macro; height of frame above baseline at top of page
+% 
+% This is still a `pre-production' version because I can think of many
+% features/improvements that should be made.  Nevertheless, starting 
+% with version 0.5 it should be bug-free.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\ProvidesPackage{framed}[2003/07/21 v 0.8a: 
+%   framed or shaded text with page breaks]
+%
+%\newenvironment{framed}% using default \emFrameCommand
+%  {\edef\framed@page{0}\MakeFramed {\advance\hsize-\width \emFrameRestore}}%
+%  {\endMakeFramed}
+\def\EMminipagefootnote{\def\EMminipage@footnote{}}%
+\def\EMpsframed{%
+  \@ifundefined{EMminipage@footnote}{%
+%    \ifnum\nest@box=\z@
+%     \let\rectbox@footnote\footnote
+      \let\ltxfootnote\footnote
+      \xdef\RB@footnote@o{\arabic{footnote}}%
+      \xdef\RB@footnote{\arabic{footnote}}%
+      \def\footnote##1{%
+        \footnotemark
+        \xIncr\RB@footnote
+        \EMedef\@currentlabel{\RB@footnote}%
+        \expandafter\xdef\csname RB@footnotetext@\romannumeral\RB@footnote\endcsname{##1}%
+      }%
+%    \fi
+  }{}%
+%  \Incr\nest@box
+%
+  \hsize=\linewidth
+%  \@ifundefined{EMpsfbox}{%
+%    \errmessage{psfbox は emathPsb.sty を必要とします}%
+%  }{}%
+  \@ifnextchar[{\@EMpsframed}{\@EMpsframed[\empty]}}%
+\def\@EMpsframed[#1]{%
+  \edef\h@sep{\default@hsep}%
+  \edef\v@sep{\default@vsep}%
+  \edef\t@sep{\empty}%
+  \edef\b@sep{\empty}%
+  \edef\rectbox@item{\empty}%
+  \edef\rectbox@bitem{\empty}%
+  \edef\rectbox@parindent{\rectbox@parindent@}%
+  \topsep=\z@
+%
+  \ifx\empty #1\else\setkeys{emPsb}{#1}\fi
+%
+  \@ifundefined{frame@cmd}{%
+    \@ifundefined{emFrameCommand}{%
+      \edef\emFrameCommand@opt{<hsep=\h@sep,vsep=\v@sep}%
+      \ifx\empty #1\else\edefappend\emFrameCommand@opt{,#1}\fi
+      \edefappend\emFrameCommand@opt{>}%
+\typeout{@opt=\emFrameCommand@opt}%
+%      \def\emFrameCommand{\EMpsfbox<#1>}%
+      \def\emFrameCommand{\expandafter\EMpsfbox\emFrameCommand@opt}%
+    }{}%
+  }{%
+    \frame@cmd
+  }%
+%
+  \ifthenelse{\equal\h@sep\empty}{%
+    \ifthenelse{\lengthtest{\rectbox@oval<\default@hsep}}{%
+      \edef\h@sep{\default@hsep}}{\edef\h@sep{\rectbox@oval}}}{}%
+  \ifthenelse{\equal\v@sep\empty}{%
+    \ifthenelse{\lengthtest{\rectbox@oval<\default@vsep}}{%
+      \edef\v@sep{\default@vsep}}{\edef\v@sep{\rectbox@oval}}}{}%
+  \ifx\empty\t@sep\edef\t@sep{\v@sep}\fi
+  \ifx\empty\b@sep\edef\b@sep{\v@sep}\fi
+  \ifthenelse{\equal\rectbox@item\empty}{\def\item@ht{0pt}}{%
+    \setbox\rectb@x=\hbox{\rectbox@item}%
+    \edef\item@w{\strip@pt\wd\rectb@x}%
+    \Div\item@w{2}\item@w@half
+    \@tempdima=\ht\rectb@x\advance\@tempdima\dp\rectb@x
+    \divide\@tempdima\tw@
+    \edef\item@ht{\the\@tempdima}%
+  }%
+  \ifthenelse{\equal\rectbox@bitem\empty}{\def\bitem@ht{0pt}}{%
+    \setbox\rectb@x=\hbox{\rectbox@bitem}%
+    \edef\bitem@w{\strip@pt\wd\rectb@x}%
+    \Div\bitem@w{2}\bitem@w@half
+    \@tempdima=\ht\rectb@x\advance\@tempdima\dp\rectb@x
+    \divide\@tempdima\tw@
+    \edef\bitem@ht{\the\@tempdima}%
+  }%
+  \edef\framed@page{0}%
+  \EMMakeframed {\advance\hsize-\width \emFrameRestore}}%
+\def\endEMpsframed{\endEMMakeframed
+%  \Decr\nest@box
+  \@ifundefined{EMminipage@footnote}{%
+%    \ifnum\nest@box=\z@
+      \Cfor{}{\RB@footnote@o<\RB@footnote}{}\do{%
+        \Incr\RB@footnote@o
+        \footnotetext[\RB@footnote@o]{\csname RB@footnotetext@\romannumeral\RB@footnote@o\endcsname
+        }%
+      }%
+%    \fi
+  }{}%
+}%
+%
+\endinput
+
+v 0.00α 2009/05/30
+v 0.01α 2009/05/31 3ページ以上にわたる場合
+v 0.03α 2009/06/08 emathPs, emathPsb を必ずしも必要としない。
+         ps を使用しない場合は EMframed環境
+         EMframed.sty を新設し，役割分担
+v 0.04α 2009/06/16   \hsize=\linewidth
+v 0.05α 2010/06/06 footnote 処理
+v 0.06α 2010/07/31 \HVsep

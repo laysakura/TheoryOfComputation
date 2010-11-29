@@ -1,0 +1,28 @@
+\documentclass[a4j]{jarticle}
+\usepackage[tx,abx]{emathFx}
+\usepackage{showexample}
+\usepackage{jquote}
+\begin{document}
+$\pm$記号を
+\begin{jquote}
+  \textsf{txfonts}\\
+  \textsf{mathabx}\\
+\end{jquote}
+からつまみ食いするコマンドを付加しました。
+
+\begin{showEx}(.64,.3){$\pm$のいろいろ}
+  $\begin{array}{|l|l|l|}\hline
+    \textsf{cmfonts} & \pm1 & \mp 1\\\hline
+    \textsf{txfonts} & \txpm1 & \txmp1\\\hline
+    \textsf{mathabx} & \abxpm1 & \abxmp1\\\hline
+  \end{array}$
+\end{showEx}
+
+文書全体で，\textsf{txfonts}の\cmd{pm}を用いたければ，
+\begin{jquote}
+\begin{verbatim}
+\let\pm\txpm
+\end{verbatim}
+\end{jquote}
+などを宣言します。
+\end{document}

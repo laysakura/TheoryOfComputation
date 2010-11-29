@@ -1,0 +1,156 @@
+%%% 考査用紙スタイル Ｂ４横四段組 ver0.03 2004/12/01
+%%% by tDB
+%%%
+%%% pLaTeX2e, pLaTeX2.09 共用です．
+%%%
+%%% このスタイルファイルの開発には
+%%%       トニイ さん   (PAG01322)
+%%%       bookworm さん (BYV01204)，
+%%% から，いろいろとご助言をいただきました．
+%%% お礼を申し上げます．
+
+\def\tmpname{LaTeX2e}%
+
+%%% 版面の指定です．
+\setlength{\oddsidemargin}{-.5cm}
+\setlength{\evensidemargin}{-.5cm}
+\setlength{\topmargin}{-10mm}
+\setlength{\headheight}{15pt}
+\setlength{\headsep}{15pt}
+\setlength{\textwidth}{33cm}
+\setlength{\textheight}{24cm}
+\def\enumsep{\itemindent=.5zw}
+
+%%% ヘッダ・フッタの指定です．----------------------------------------
+\def\ps@kousa{\let\@mkboth\@gobbletwo%
+\def\@oddhead{%
+  {\large$\overline{\strut\underline{\textbf{\test@name}}}$}%   考査タイトル
+  \ifprpage\hspace{1zw}\page@ran\fi%                            ページ数
+  \hfill \simei@ran\kern4zw\tokuten@ran%                        氏名欄・得点欄
+  \ifprpage\ifnum\value{page}=1\goukei@ran\fi\fi}%              合計得点欄
+\def\@evenhead{\ifprpage\page@ran\fi\hfill\tokuten@ran}%        裏面
+\let\@oddfoot\@empty\let\@evenfoot\@empty}%                     フッタ
+%%% ヘッダ・フッタの指定，ここまで ------------------------------------
+
+\pagestyle{kousa}
+
+%%% 内部変数です．
+\newif\ifprpage\prpagefalse% 複数ページの場合ページを印刷するか否かのフラッグ
+\newif\iftop@page\top@pagetrue%    一枚目か否かのフラッグ
+\newif\ifdef@ttl\def@ttlfalse%     考査のタイトルが定義済みか否かのフラッグ
+\newcounter{mondai@bangou}%                                 大問番号
+\newcounter{column@number}%                                 列番号
+\newsavebox{\dan@boxi}%                                     |各段の内容を
+\newsavebox{\dan@boxii}%                                    |入れるボックス
+\newsavebox{\dan@boxiii}%                                   |４個
+\newsavebox{\dan@boxiv}%                                    |
+\newlength{\dan@sep}\setlength{\dan@sep}{5pt}%              段間空白の半分
+\newlength{\dan@seprule}\setlength{\dan@seprule}{.4pt}%     段間罫線の太さ
+\newlength{\dan@sepheight}\setlength{\dan@sepheight}{210mm}%段間罫線の長さ
+\newlength{\dan@habai}%                                     段幅1の計算
+\newlength{\yuukou@dan@haba}%
+\setlength{\dan@habai}{\textwidth}\addtolength{\dan@habai}{-6\dan@sep}%
+\addtolength{\dan@habai}{-3\dan@seprule}%
+\setlength{\yuukou@dan@haba}{\dan@habai}%
+\edef\dansuu@{4}%                                           段数
+\divide\dan@habai by \dansuu@\relax
+\newlength{\dan@habaii}\setlength{\dan@habaii}{\dan@habai}%  段幅2
+\newlength{\dan@habaiii}\setlength{\dan@habaiii}{\dan@habai}%段幅3
+\newlength{\dan@habaiv}\setlength{\dan@habaiv}{\dan@habai}%  段幅4
+
+\def\test@name{}%                                           考査のタイトル
+\def\simei@ran{$\Bigl(\kern2zw\Bigr) 組%                    氏名欄
+\Bigl(\kern3zw\Bigr)番\kern1zw氏名\Bigl(\kern14zw\Bigr)$}%  〃
+\def\tokuten@ran{得点 $\Bigl(\kern4zw\Bigr)$}%              得点欄
+\def\goukei@ran{合計 $\Bigl(\kern4zw\Bigr)$}%               合計得点欄
+\def\page@ran{No.~\thepage}%                                ページ数表示形式
+
+%%% 問題番号の出力形式です．
+\renewcommand{\labelenumi}{\framebox[2em][c]{\Large{\arabic{enumi}}}~}% 大問
+\renewcommand{\labelenumii}{\arabic{enumii})}%                          小問
+
+%%% 1枚の用紙を sheet 環境の中に記述します．
+\def\sheet{%
+  \ifdef@ttl\else\errmessage{コマンド：testname が実行されていません}\fi%
+  \iftop@page\else\newpage\fi\setcounter{column@number}{0}}%
+\def\endsheet{%
+  \noindent\box\dan@boxi\box\dan@boxii\box\dan@boxiii\box\dan@boxiv%
+  \top@pagefalse}%
+
+%%% 1つの列（段）を column 環境の中に記述します．
+%%% これは実質，enumerate 環境です．
+%%% 従って，大問の前に \item が必要です．
+%%% 最上段に注意書きなどを書きたいときは
+%%% \item[] 注意書き
+%%% などと，ダミーの \item を入れます．
+\ifx\fmtname\tmpname%
+\def\column{\stepcounter{column@number}%
+  \edef\dan@box@{dan@box\roman{column@number}}%
+  \edef\dan@haba@{dan@haba\roman{column@number}}%
+  \global\setbox\@nameuse{\dan@box@}=\hbox\bgroup% 
+  \begin{minipage}[t][\dan@sepheight]{\@nameuse{\dan@haba@}}%
+  \begin{enumerate}\setcounter{enumi}{\value{mondai@bangou}}%
+%  \itemindent.5zw%
+  }%
+\def\endcolumn{\setcounter{mondai@bangou}{\value{enumi}}%
+  \end{enumerate}\end{minipage}%
+  \ifnum\value{column@number}<\dansuu@\relax\hspace{\dan@sep}%
+    \vrule width \dan@seprule\hspace{\dan@sep}\fi%
+  \egroup}%
+\else
+\def\column{\stepcounter{column@number}%
+  \edef\dan@box@{dan@box\roman{column@number}}%
+  \edef\dan@haba@{dan@haba\roman{column@number}}%
+  \global\setbox\@nameuse{\dan@box@}=\hbox\bgroup% 
+  \begin{minipage}[t]{\@nameuse{\dan@haba@}}%
+  \begin{enumerate}\setcounter{enumi}{\value{mondai@bangou}}%
+  \itemindent.5zw}%
+\def\endcolumn{\setcounter{mondai@bangou}{\value{enumi}}%
+  \end{enumerate}\end{minipage}%
+  \ifnum\value{column@number}<\dansuu@\relax\hspace{\dan@sep}%
+    \vrule depth \dan@sepheight width \dan@seprule\hspace{\dan@sep}\fi%
+  \egroup}%
+\fi
+
+%%% ------------------------------------------------------------------
+%%% カスタマイズ用コマンド
+%
+%%% 考査のタイトルを指定するコマンドです．
+%%% 必ず実行しなければなりません．
+%%% 実行しない場合はタイプセットの際，エラーとなります．
+\def\testname#1{\def\test@name{#1}\def@ttltrue}%
+
+%%% 氏名欄の書式を変更するコマンドです．
+\def\simeiran#1{\def\simei@ran{#1}}%
+
+%%% 得点記入欄の書式を変更するコマンドです．
+\def\tokutenran#1{\def\tokuten@ran{#1}}%
+
+%%% 合計得点記入欄の書式を変更するコマンドです．
+\def\goukeiran#1{\def\goukei@ran{#1}}%
+
+%%% ページ番号の表示形式を変更するコマンドです．
+%%% 例えば，1/3 など，現在ページ／全ページ としたいときは
+%%% 文書の最後に \label{lastpage} などとし，
+%%% 文書の先頭で \pageran{\thepage/\pageref{lastpage}} とします．
+\def\pageran#1{\def\page@ran{#1}}%
+
+%%% 大問番号を変更するコマンドです．
+%%% \mondaibangou{1} とすれば，大問番号が1から振り直されます．
+%%% 裏面に表面の解答を印刷するときなどに使えます．
+\def\mondaibangou#1{\setcounter{mondai@bangou}{#1}%
+\addtocounter{mondai@bangou}{-1}}%
+
+%%% 列の横巾を変更するコマンドです．
+%%% 三等分ではなく，不均等な三分割をしたいときに用います．
+%%% 例えば，\danhaba{0.4}{0.3}{0.3} とすれば，第1段がひろくなります．
+\def\danhaba#1#2#3#4{%             #1+#2+#3+#4=1 となるように数値を与えます．
+  \setlength{\dan@habai}{#1\yuukou@dan@haba}%
+  \setlength{\dan@habaii}{#2\yuukou@dan@haba}%
+  \setlength{\dan@habaiii}{#3\yuukou@dan@haba}%
+  \setlength{\dan@habaiv}{#4\yuukou@dan@haba}%
+  \ifdim\dan@habaiv=\z@\edef\dansuu@{3}\fi
+}
+\endinput
+%
+v 0.03 2004/12/01 第4段の幅を0としたときは，3段組

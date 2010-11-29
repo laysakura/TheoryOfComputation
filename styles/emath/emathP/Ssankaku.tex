@@ -1,0 +1,36 @@
+\section{三角形の決定}
+\subsection{三辺}
+三辺の長さがわかっているときに，その三角形をどのように描画するか，
+という話です．
+
+具体例として $\mathrm{AB=7,~BC=5,~CA=3}$ としましょう．
+まず A(0,0), B(7,0) とします．
+点Cは，Aを中心とする半径3の円と，Bを中心とする半径5の円との交点
+として求めます．
+
+\showexample[三角形の決定(1)三辺](0.55)(0.8){example/sankaku1}
+
+\subsection{二角夾辺}
+$\mathrm{BC=5,~\kaku{B}=60\Deg,~\kaku{C}=45\Deg}$
+としましょう．
+これは，B(0,0), C(5,0) とした上で
+\begin{jquote}
+    点Bを通り，方向角 $60\Deg$ の直線と\\
+    点Cを通り，方向角 $135\Deg$ の直線
+\end{jquote}
+の交点としてAを求めます．
+
+\showexample[三角形の決定(2) 二角夾辺](0.8)(0.8){example/sankaku2}
+
+\subsection{二辺夾角}
+$\mathrm{AB=3,~BC=5,~\kaku{B}=60\Deg}$
+としましょう．
+これは B(0,0), C(5,0) とした上で A の座標を極座標→直交座標変換で
+求めます．すなわち
+\begin{jquote}
+\begin{verbatim}
+    \kyokuTyoku(3,60)\A
+\end{verbatim}
+\end{jquote}
+
+\showexample[三角形の決定(3) 二辺夾角](0.8)(0.8){example/sankaku3}

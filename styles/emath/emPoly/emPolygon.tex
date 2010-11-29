@@ -1,0 +1,172 @@
+\documentclass[a4j]{jarticle}
+\usepackage{emPoly}
+\usepackage{showexample}
+
+\begin{document}
+\section{\textsf{emPoly.sty}}
+正多角形を描画するためのスタイルファイルです。
+\subsection{一辺を与えて正多角形}
+一辺を与えて正多角形を描画するコマンドが\cmd{Rpolygon}です。
+一例として，O\retu(0,0), A\retu(1,0)を結ぶ線分OAを一辺とする
+正六角形を描画してみましょう。
+
+\begin{showEx}(.6,.34){\cmd{Rpolygon}}
+\begin{zahyou}[ul=10mm](-1.5,2)(-.5,2.5)
+  \tenretu{[]O(0,0);A(1,0)s}
+  \Rpolygon\O\A{6}{C}
+\end{zahyou}
+\end{showEx}
+
+\subsection{\cmd{Rpolygon}の書式}
+
+\cmd{Rpolygon}の書式は次のとおりです。
+
+\begin{boxnote}
+\begin{verbatim}
+\Rpolygon[#1]#2#3#4#5
+ 線分#2#3を1辺とする正#4角形
+   戻り値
+     中心 \#5
+     頂点 \#5i(=#2), \#5ii, ......
+ オプション引数
+   #1 = L (default) : 2つの中心のうち，x座標の大きいほう
+      = l           :                         小さいほう
+      = O           :                  大きいほうで正多角形を描画しない
+      = o           :                  小さいほうで正多角形を描画しない
+\end{verbatim}
+\end{boxnote}
+
+先の例では，
+\begin{verbatim}
+  #2 = \O
+  #3 = \A
+  #4 = 6
+  #5 = C
+\end{verbatim}
+としていますから，OAを一辺とする正6角形が描画され，
+\begin{jquote}
+\begin{verbatim}
+中心が \C
+頂点が \Ci, \Cii, \Ciii, \Civ, \Cv, \Cvi
+\end{verbatim}
+\end{jquote}
+と定義されます。そのうち\verb+\Ci=\O+, \verb+\Cii=\A+ です。
+
+\begin{showEx}(.6,.34){\cmd{Rpolygon}の戻り値}
+\begin{zahyou}[ul=10mm](-1.5,2)(-.5,2.5)
+  \tenretu{[]O(0,0);A(1,0)s}
+  \Rpolygon\O\A{6}{C}
+  \Kuromaru\C
+  \Put\C[n]{C}
+  \Put\Ciii[e]{Ciii}
+  \Put\Civ[ne]{Civ}
+  \Put\Cv[nw]{Cv}
+  \Put\Cvi[w]{Cvi}
+\end{zahyou}
+\end{showEx}
+
+OAを一辺とする正多角形は2個存在しますが，
+オプション引数\verb+#1+を指定しないときは，
+中心の$x$座標の大きい方（等しいときは，$y$座標）が指定されたものとみなします。
+逆の方を描画したければ，オプション引数を\verb+[l]+と指定することとなります。
+
+オプション引数を\verb+[O]+ または \verb+[o]+ としたときは，
+正多角形は描画されず，中心，頂点の位置のみが返ってきます。
+
+\begin{showEx}(.6,.34){\cmd{Rpolygon}の\texttt{[l]}オプション}
+\begin{zahyou}[ul=10mm](-1.5,2)(-2.5,.5)
+  \tenretu{[]O(0,0);A(1,0)s}
+  \Rpolygon[l]\O\A{6}{C}
+\end{zahyou}
+\end{showEx}
+
+
+\subsection{中心と一頂点を与えて正多角形}
+
+中心と円周上の一頂点を指定して，円に内接する正多角形を描画するマクロが
+\cmd{CRpolygon}です。
+
+\begin{showEx}(.6,.34){\cmd{CRpolygon}}
+\unitlength10mm\footnotesize
+\begin{zahyou}(-1,3)(-1,3)
+\def\C{(1,1)}
+\def\A{(2,2)}
+\CRpolygon\C\A{5}{F}
+\En\C{1.4142}\Put\C[e]{C}\Kuromaru\C
+\Put\Fi[e]{A=Fi}\Kuromaru\Fi
+\Put\Fii[n]{Fii}\Kuromaru\Fii
+\Put\Fiii[w]{Fiii}\Kuromaru\Fiii
+\Put\Fiv[s]{Fiv}\Kuromaru\Fiv
+\Put\Fv[e]{Fv}\Kuromaru\Fv
+\end{zahyou}
+\end{showEx}
+
+正多角形を描画せず，頂点のみを得るには\texttt{[O]}オプションを用います。
+
+\begin{showEx}(.6,.34){\texttt{[O]}オプション}
+\unitlength10mm\footnotesize
+\begin{zahyou}(-1,3)(-1,3)
+\def\C{(1,1)}
+\def\A{(2,2)}
+\CRpolygon[O]\C\A{5}{Q}
+\En\C{1.4142}\Put\C[e]{C}\Kuromaru\C
+\Put\Qi[e]{A=Pi}\Kuromaru\Qi
+\Put\Qii[n]{Pii}\Kuromaru\Qii
+\Put\Qiii[w]{Piii}\Kuromaru\Qiii
+\Put\Qiv[s]{Piv}\Kuromaru\Qiv
+\Put\Qv[e]{Pv}\Kuromaru\Qv
+\end{zahyou}
+\end{showEx}
+
+\cmd{Rpolygon}と違って，正多角形は一意に決まりますから，\texttt{[l], [o]}
+オプションは意味をもちません。
+
+\cmd{Rpolygon}のときにつけ忘れた〔注〕ですが，正多角形の頂点記号に`P'
+は使用できません。
+これは，\cmd{Pi} が \LaTeX で定義済みであるものを破壊することになるからです。
+また，\cmd{Pii}も\textsf{eclarith.sty}で$2\pi$を表す数値として
+定義されています。
+
+頂点記号として`P'を用いたいときは，\verb/\CRpolygon\C\A{5}{PP}/ などと
+別の記号を用いて，表示ラベルをPとするなどの二重帳簿的な処理が必要となります。
+
+最後に書式です。
+
+\begin{boxnote}
+\begin{verbatim}
+\CRpolygon[#1]#2#3#4#5{%
+  中心#2の円周上の点#3を一つの頂点とする，円に内接する正#4角形
+  戻り値
+    頂点 #5i(=#3), #5ii, #5iii, ...
+  #1 = L (default) : 正多角形を描画する。
+     = O           : 正多角形を描画しない
+\end{verbatim}
+\end{boxnote}
+\clearpage
+
+\subsection{円に外接する正多角形}
+円の中心と，円周上の一点を与えて，円に外接する正多角形を描画するコマンドが
+\cmd{CCRpolygon}です。
+
+\begin{showEx}(.6,.34){\cmd{CCRpolygon}}
+\begin{zahyou}[ul=10mm](-.5,2.5)(-.5,2.5)
+  \tenretu{C(1,1)s;T(1,2)n}
+  \kuromaru{\C;\T}
+  \CCRpolygon\C\T{5}{E}
+  \En\C{1}
+\end{zahyou}
+\end{showEx}
+
+その書式です：
+
+\begin{boxnote}
+\begin{verbatim}
+\CCRpolygon[#1]#2#3#4#5{%
+  中心#2の円周上の点#3を一つの接点とする，円に外接する正#4角形
+  戻り値
+    頂点 #5i, #5ii, #5iii, ...
+  #1 = L (default) : 正多角形を描画する。
+     = O           : 正多角形を描画しない
+\end{verbatim}
+\end{boxnote}
+\end{document}

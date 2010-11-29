@@ -1,0 +1,45 @@
+\documentclass[a4j,fleqn]{jarticle}
+\usepackage{itembbox}
+\usepackage{emathAt}
+\usepackage{emathEy}
+
+\begin{document}
+\begin{itembox}{重複順列}
+次の4種類の数字を用いて，3桁以下の正の整数はいくつ作れるか。
+ただし，同じ数字を繰り返し用いてもよいものとする。
+\begin{edaenumerate}[(1)]
+  \item 1, 2, 3, 4
+  \item 0, 1, 2, 3
+\end{edaenumerate}
+\end{itembox}
+
+\begin{tyuukai}
+\abovedisplayskip=2pt\relax
+\belowdisplayskip=2pt\relax
+【解答】
+\begin{enumerate}[(1)]
+  \item 3桁，2桁，1桁の整数は，それぞれ$4^3$個，$4^2$個，$4$個
+    あるから，全部で
+    \[ 4^3+4^2+4=\bm{84}（個）\]
+  \item 3桁の整数は，\tyuu<-10pt>{数字に0を含むときは要注意！\\
+    最高位には0を置けない}
+    百の位には0以外の数字がくるから，百の位の数字の選びかたは3通り。
+    十，一の位は4種類の数字のどれでもよいから，その選びかたは$4^2$通り。
+      \tyuu<25pt>{十の位の数字の選びかたは0以外の3通りで，
+        一の位は4種類のどれでもよい。}
+    {\mathindent=0pt\relax
+      \begin{alignat*}{2}
+        &よって，3桁の整数は \qquad && 3\times4^2=48（個）\\
+        &同様にして，2桁の整数は && 3\times4=12（個）\\
+        &1桁の正の整数は && 3（個）
+      \end{alignat*}
+    }%
+    ゆえに，3桁以下の正の整数は
+    \[ 48+12+3=\bm{63}（個）\]
+\end{enumerate}
+\end{tyuukai}
+
+次の文章次の文章次の文章次の文章次の文章次の文章次の文章次の文章
+次の文章次の文章次の文章次の文章次の文章次の文章次の文章次の文章
+次の文章次の文章次の文章次の文章次の文章次の文章次の文章次の文章
+\end{document}

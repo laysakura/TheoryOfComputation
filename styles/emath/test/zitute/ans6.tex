@@ -1,0 +1,74 @@
+\documentclass[fleqn,b4j]{jarticle}
+\usepackage{multicol}
+\usepackage{emathPh}
+
+%%% 版面の指定です．
+\setlength{\oddsidemargin}{-0.5cm}
+\setlength{\evensidemargin}{-0.5cm}
+\setlength{\topmargin}{-20mm}
+\setlength{\headheight}{15pt}
+\setlength{\headsep}{15pt}
+\setlength{\textwidth}{21.5cm}
+\setlength{\textheight}{33cm}
+\AtBeginDvi{\special{papersize=25.7cm,36.4cm}}
+
+\begin{document}
+\begin{multicols}{2}
+\begin{caprm}
+\begin{enumerate}[(1)]
+\item 
+  \sankaku{ABC}は正三角形であるから
+  \[ \kaku{BAM}=30\Deg,~AM=\sqrt{3} \]
+  となる。
+  \begin{center}
+  \begin{zahyou*}[ul=30mm](-.2,1.2)(-.2,1)
+    \rtenretu{A(1,60)n;B(0,0)s;C(1,0)s;M(.5,0)s}
+    \Drawline{\A\B\C\A\M}
+  \end{zahyou*}
+  \end{center}
+  \begin{enumerate}[(i)]
+    \item $\vnaiseki{AB}{AM}=2\times\sqrt3\cos30\Deg=\bm{3}$
+    \item $\vnaiseki{AB}{CA}=2\times2\cos120\Deg=\bm{-2}$
+  \end{enumerate}
+\smallskip
+
+\item Q, Rの位置ベクトルは
+  \begin{align*}
+    \bekutoru{AQ}&=\bunsuu{2}{3}\beku{b}\\
+    \bekutoru{AR}&=2\beku{c}
+  \end{align*}
+\columnbreak
+  \begin{center}
+    \begin{zahyou*}[ul=10mm](-4.5,4.5)(-1.2,1.2)
+      \tenretu{A(2,1)n;B(0,0)s;C(3,0)e}
+      \Bunten\A\B21\Q\Put\Q[n]{Q}
+      \Bunten\A\C2{-1}\R\Put\R[e]{R}
+      \LandL\C\Q\B\R\P\Put\P[w]{P}
+      \Hen_ko[0]\A\Q{\maru2}
+      \Hen_ko[0]\Q\B{\maru1}
+      \touhenkigou<2>{\A\C;\C\R}
+      \Drawline{\C\P\R\C}
+      \kuromaru{\P;\Q;\R}
+      {\thicklines\Drawline{\A\B\C\A}}%
+    \end{zahyou*}
+  \end{center}
+  $CP:PQ=s:(1-s)$とすると
+  \begin{equation}
+    \bekutoru{AP}=\bunsuu{2}{3}s\beku{b}+(1-s)\beku{c}
+  \end{equation}
+  $BP:PR=t:(1-t)$とすると
+  \begin{equation}
+    \bekutoru{AP}=(1-t)\beku{b}+2t\beku{c}
+  \end{equation}
+  \beku{b}, \beku{c}は一次独立であるから\maru1, \maru2の係数を比較して
+  \renritu*{%
+    &\bunsuu{2}{3}s=1-t\\
+    &1-s=2t}
+  これを解いて
+  \[ s=3,~t=-1 \]
+  \maru1に代入して
+  \[ \bekutoru{AP}=\bm{2\beku{b}-2\beku{c}} \]
+\end{enumerate}
+\end{caprm}
+\end{multicols}
+\end{document}

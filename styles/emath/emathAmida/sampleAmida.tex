@@ -1,0 +1,237 @@
+\documentclass[a4j]{jarticle}
+\usepackage{color}
+\usepackage{emathAmida}
+\usepackage{showexample}
+%
+\begin{document}
+\title{阿弥陀くじを表示するマクロ\\
+emathAmida.sty {\normalsize ver.0.01α}\\使用例}
+\author{tDB}
+\date{2006/03/31}
+
+\maketitle\thispagestyle{empty}
+\begin{abstract}%
+\parindent1zw%
+アミダくじを表示するマクロです。
+
+\bigskip
+
+このマクロ集のマクロについてのご質問，バグ報告，修正・追加の提案等は
+\begin{center}
+http://emath.s40.xrea.com/
+\end{center}
+の掲示板へどうぞ。
+\end{abstract}
+%\pagebreak
+%\pagenumbering{roman}%
+
+\tableofcontents
+
+\pagebreak
+
+\pagenumbering{arabic}
+
+\section{\textsf{amidakuzi}環境}
+アミダくじを表示するのが，\textsf{amidakuzi}環境です。
+この環境は，必須の引数を2個とります。
+
+第1の引数は，くじの本数です。以下，このくじを左から
+\[ \retu{1,2,3,\cdots} \]
+と表現します。
+
+第2の引数は，横棒左のくじ番号を，上からコンマ区切りで列挙します。
+
+\begin{showEx}{\textsf{amidakuzi}環境}
+\begin{amidakuzi}{4}{1,2,3,3,1}
+\end{amidakuzi}
+\end{showEx}
+
+\section{流れ表示}
+アミダをたどる流れを表示するコマンドが
+\begin{jquote}
+  \cmd{showpathfrom}, \cmd{showpathto}
+\end{jquote}
+です。
+
+まずは，3番のくじを引いた人はどうなるでしょうか。
+
+\begin{showEx}{\cmd{showpathfrom}コマンド}
+\begin{amidakuzi}{4}{1,2,3,3,1}
+  \showpathfrom{3}
+\end{amidakuzi}
+\end{showEx}
+
+逆に3番にたどり着くのはどのくじでしょうか。
+
+\begin{showEx}{\cmd{showpathto}コマンド}
+\begin{amidakuzi}{4}{1,2,3,3,1}
+  \showpathto{3}
+\end{amidakuzi}
+\end{showEx}
+
+\section{置換表示}
+アミダくじは置換で表現されますが，
+その置換を表示するのが
+\begin{jquote}
+  \cmd{amidagyouretu}, \cmd{amidagyakugyouretu}
+\end{jquote}
+です。
+
+\begin{showEx}{\cmd{amidagyouretu}コマンド}
+\begin{amidakuzi}%
+    [Sitayohaku=3\baselineskip]%
+    {4}{1,2,3,2,2}
+  \Put\LB(0,-1zh)[lt]{%
+    置換:\amidagyouretu}
+\end{amidakuzi}
+\end{showEx}
+
+\begin{showEx}{\cmd{amidagyakugyouretu}コマンド}
+\begin{amidakuzi}%
+    [Sitayohaku=3\baselineskip]%
+    {4}{1,2,3,2,2}
+  \Put\LB(0,-1zh)[lt]{%
+    逆置換:\amidagyakugyouretu}
+\end{amidakuzi}
+\end{showEx}
+
+\section{\textsf{amidakuzi}環境のオプション}
+\subsection{\textsf{amidakuzi}環境の原点}
+\textsf{amidakuzi}環境は，実質\textsf{zahyou*}環境です。
+1番くじの上端の座標が\retu(1,0)です。
+
+\begin{showEx}{\textsf{amidakuzi}環境の原点}
+\begin{amidakuzi}{4}{1,2,3,2,2}
+  \Kuromaru{(1,0)}
+\end{amidakuzi}
+\end{showEx}
+
+座標軸と目盛りを入れて見ましょう。
+
+\begin{showEx}(1,.4){\textsf{amidakuzi}環境の原点}
+\begin{amidakuzi}{4}{1,2,3,2,2}
+  \Put\O{\color{cyan}\ArrowLine{(0,0)}{(\xmax,0)}\Put{(\xmax,0)}[e]{$x$}}%
+  \Put\O{\color{cyan}\ArrowLine{(0,\ymin)}{(0,1)}\Put{(0,1)}[n]{$y$}}%
+  \multido{\ix=1+1}{4}{\color{cyan}\xmemori[b]\ix}%
+  \multido{\iy=-1+{-1}}{6}{\color{cyan}\ymemori\iy}%
+\end{amidakuzi}
+\end{showEx}
+
+\textsf{amidakuzi}環境の描画範囲は，上の場合
+\[ 1\leqq x\leqq 4,\quad -6\leqq y\leqq 0 \]
+ですから，$y$軸などは描画範囲の外に飛び出します。
+描画範囲を調整するには，\verb+[Hidariyohaku=..]+などの余白指定オプションを用います。
+
+あみだくじの途中に横線の区切りを入れたいときは，
+\cmd{Ysikirisen}コマンドを用いることが出来ます。
+
+\begin{showEx}(.9,.4){\cmd{Ysikirisen}コマンド}
+\begin{amidakuzi}[yscale=.8,startlabel=number,goallabel=auto,%
+    Hidariyohaku=.5\unitlength,Migiyohaku=\unitlength]{4}{1,2,3}
+  \Ysikirisen{1.5}[e]{$t_1$}
+  \Ysikirisen{2.5}[e]{$t_2$}
+\end{amidakuzi}
+\end{showEx}
+
+\subsection{\textsf{zahyou}環境と共通のオプション}
+\textsf{zahyou*}環境のオプションのうち，次のオプションを
+\textsf{amidakuzi}環境でも使用することが出来ます。
+\begin{jquote}
+  \texttt{ul} （デフォルト値は10\,mm）\\
+  \texttt{haiti} （デフォルト値は`t'）\\
+  \texttt{yscale} （デフォルト値は0.5）\\
+  \texttt{Ueyohaku} （デフォルト値は1zh）\\
+  \texttt{Sitayohaku} （デフォルト値は1zh）\\
+  \texttt{Hidariyohaku} （デフォルト値は0pt）\\
+  \texttt{Migiyohaku} （デフォルト値は0pt）\\
+\end{jquote}
+
+\subsection{\texttt{ymax=..}オプション}
+くじの長さは，デフォルトでは
+\begin{jquote}
+  $(横棒の個数)+1$
+\end{jquote}
+としてあります。
+
+したがって，横棒の個数が異なるアミダを横に並べると，
+長さの違いが目立ちます。
+
+\begin{showEx}(.9,.9){くじの長さ}
+\begin{amidakuzi}{4}{1,2,3}
+\end{amidakuzi}
+%
+\begin{amidakuzi}{4}{1,2,3,2,2}
+\end{amidakuzi}
+\end{showEx}
+
+この場合，2つのアミダくじ環境における，デフォルトのくじの長さはそれぞれ4, 6ですから，
+最長の6に揃えましょう。
+
+\begin{showEx}(.9,.9){\texttt{ymax=..}オプション}
+\begin{amidakuzi}[ymax=6]{4}{1,2,3}
+\end{amidakuzi}
+%
+\begin{amidakuzi}{4}{1,2,3,2,2}
+\end{amidakuzi}
+\end{showEx}
+
+\subsection{ラベルをつけるオプション}
+各くじの上端につけるラベル名を指定するオプションが
+\begin{jquote}
+    \texttt{startlabel=..}
+\end{jquote}
+オプションです。
+
+\begin{showEx}{\texttt{startlabel=..}オプション}
+\begin{amidakuzi}%
+    [startlabel={1,2,3,4}]%
+    {4}{1,2,3,2,2}
+\end{amidakuzi}
+\end{showEx}
+
+特に，ラベルを自然数列
+\begin{jquote}
+  \retu{1,2,3,...}
+\end{jquote}
+とするときは
+\begin{jquote}
+\begin{verbatim}
+startlabel=number
+\end{verbatim}
+\end{jquote}
+とすることも出来ます。
+
+\begin{showEx}{\texttt{startlabel=..}オプション}
+\begin{amidakuzi}%
+    [startlabel=number]%
+    {4}{1,2,3,2,2}
+\end{amidakuzi}
+\end{showEx}
+
+
+下端は
+\begin{jquote}
+    \texttt{goallabel=..}
+\end{jquote}
+オプションです。
+
+\begin{showEx}{\texttt{goallabel=..}オプション}
+\begin{amidakuzi}%
+    [startlabel={1,2,3,4},%
+     goallabel={A,B,C,D}]%
+    {4}{1,2,3,2,2}
+\end{amidakuzi}
+\end{showEx}
+
+なお，\verb+[goallabel=auto]+とすれば，
+\texttt{startlabel}のくじによる到着先を示すことも出来ます。
+
+\begin{showEx}{\texttt{goallabel=auto}オプション}
+\begin{amidakuzi}%
+    [startlabel=number,%
+     goallabel=auto]%
+    {4}{1,2,3,2,2}
+\end{amidakuzi}
+\end{showEx}
+
+\end{document}

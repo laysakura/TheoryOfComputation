@@ -1,0 +1,75 @@
+\documentclass[b4j,fleqn]{jarticle}
+\usepackage{multicol}
+\usepackage[papersize]{emathPh}
+%\usepackage[maskAnstrue]{emathAe}
+\usepackage[maskAnsfalse]{emathAe}
+\usepackage{emathR}
+
+\makeatletter
+\def\yokosikiri{\@ifnextchar[{\@yokosikiri}{\@yokosikiri[\empty]}}
+\def\@yokosikiri[#1]#2{{\setlength{\@tempdima}{#2}\relax
+\Div{\strip@pt\@tempdima}{\strip@pt\unitlength}\yokosikiri@l
+\noindent
+\begin{picture}(0,0)%
+\Drawline{(-.5,0)(\yokosikiri@l,0)}%
+\ifx\empty #1\else
+  \Put{(\yokosikiri@l,0)}{%
+    {\thicklines\Drawline{(0,0)(-2.5,0)(-2.5,2)(0,2)(0,0)}}%
+    \Drawline{(0,.8)(-.8,0)}\Put{(0,0)}[nw]{#1}}%
+\fi
+\end{picture}
+}}
+\makeatother
+
+%%% 版面の指定です．
+\setlength{\oddsidemargin}{-0.5cm}
+\setlength{\evensidemargin}{-0.5cm}
+\setlength{\topmargin}{-20mm}
+\setlength{\headheight}{15pt}
+\setlength{\headsep}{15pt}
+\setlength{\textwidth}{21.5cm}
+\setlength{\textheight}{33cm}
+\AtBeginDvi{\special{papersize=25.7cm,36.4cm}}
+
+\pagestyle{empty}
+
+\def\KaitouTTL{\small}
+
+\begin{document}
+\begin{Large}
+\hfill （2年数学）解　答　用　紙　その2 \hfill2002(H14)年9月
+\end{Large}
+
+\bigskip
+\unitlength10mm
+\begin{picture}(0,0)
+\Hasen{(10.75,0)(10.75,-28.75)}
+\end{picture}
+\abovedisplayskip=0pt
+\belowdisplayskip=0pt
+\raggedcolumns
+\begin{enumerate}[\large\protect\expandafter\fbox1]
+\setcurrentenum{3}
+\item 
+\begin{Kaitou}
+  \ReadTeXFile{ans4.tex}
+\end{Kaitou}
+\yokosikiri[15]{\linewidth+0.5cm}%
+
+\item 
+\begin{Kaitou}
+  \ReadTeXFile{ans5.tex}
+\end{Kaitou}
+\vfill
+\yokosikiri[15]{\linewidth+0.5cm}%
+
+\item 
+\begin{Kaitou}
+  \ReadTeXFile{ans6.tex}
+\end{Kaitou}
+\yokosikiri[15]{\linewidth+0.5cm}%
+\end{enumerate}
+\Large\fboxsep=0pt\fboxrule=1pt
+\hfill 第2学年（　　）組（　　）番 氏名（　　　　　　　　　　　　）\hfill 
+\fbox{\sityuu[1zh]{1.5zh}~\hbox{\tate 　得　点\hfill}~\vrule\hspace*{6zw}}
+\end{document}

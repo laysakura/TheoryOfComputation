@@ -1,0 +1,153 @@
+% emathKs.sty by tDB(emath@nifty.ne.jp)
+
+\def\tmpname{LaTeX2e}%
+\ifx\fmtname\tmpname%
+  \NeedsTeXFormat{LaTeX2e}
+  \ProvidesPackage{emathKs}[2008/09/18 v 0.03]%
+\fi
+
+% 整数の
+% A.  3(4)桁ごとのコンマ（あるいは 四分アキ）区切り
+%   （例１) 84987100000000 ---> 84,987,100,000,000
+%       は \ketakugiri{84987100000000} で実現されます。
+%   （例２) 84987100000000 ---> 84,9871,0000,0000
+%       は \ketakugiri<4>{84987100000000} で実現されます。
+%   区切り記号については，デフォルトで `,' としてあります。
+%     変更するには 
+%       \ketakugiri の [...] オプションを用いるか，
+%       \ketakugirikigou コマンドにより \ketakugirikigou{\,} などとします。
+% B. 漢数字表現
+%   （例１）84987100000000 ---> 八十四兆九千八百七十一億
+%       は \Kansuuzi{84987100000000} で実現されます。
+%   （例２）84987100000000 ---> 84兆9,871億
+%       は \Kansuuzi[a]{84987100000000} で実現されます。
+%   負の数の漢数字表現はデフォルトでは先頭に `▲' をつけるようにしてあります。
+%     変更するには \hukigou コマンドにより \hukigou{▽} などとします。
+
+% ---------------------------------------------------------------------
+\edef\keta@kugirikigou{{,}}
+\def\ketakugirikigou#1{\edef\keta@kugirikigou{#1}}
+
+\def\ketakugiri{\@ifnextchar[{\@ketakugiri}{\@ketakugiri[\keta@kugirikigou]}}
+\def\@ketakugiri[#1]{\@ifnextchar<{\@@ketakugiri[#1]}{\@@ketakugiri[#1]<3>}}
+\def\@@ketakugiri[#1]<#2>#3{{%
+  \edef\suuzi@retu{#3}\@tempcnta=\z@
+  \expandafter\@tfor\expandafter\@@c\expandafter:\expandafter=\suuzi@retu\do{%
+    \if -\@@c\else\advance\@tempcnta\@ne\fi}%
+  \@tempcntb=\@tempcnta
+  \divide\@tempcntb #2\multiply\@tempcntb #2\advance\@tempcnta-\@tempcntb
+  \ifnum\@tempcnta=\z@\@tempcnta #2\relax\fi
+  \expandafter\@tfor\expandafter\@@c\expandafter:\expandafter=\suuzi@retu\do{%
+    \ifnum\@tempcnta=\z@ #1\@tempcnta #2\relax\fi
+    \if -\@@c \ensuremath{-}\else\@@c\advance\@tempcnta\m@ne\fi}}}
+%
+%\def\ketakugiri{\@ifnextchar[{\@ketakugiri}{\@ketakugiri[\keta@kugirikigou]}}
+%\def\@ketakugiri[#1]{\@ifnextchar<{\@@ketakugiri[#1]}{\@@ketakugiri[#1]<3>}}
+%\def\@@ketakugiri[#1]<#2>#3{%
+%    \def\ketakugiri@sub{%
+%        \Cfor{}{\@amari>\z@}{\Decr\@amari}\do{%
+%            \headchar\suuzi@retu\suuzi@retu@i\suuzi@retu
+%            \suuzi@retu@i
+%        }%
+%        \ifnum\@kugirisuu>\z@ #1\fi
+%    }%
+%    \edef\suuzi@retu{#3}%
+%    \headchar{#3}\@h\@r
+%    \if -\@h\edef\suuzi@retu{\@r}$-$\fi
+%    \Strlen{\suuzi@retu}\@ketasuu
+%    \IDivMod\@ketasuu{#2}\@kugirisuu\@amari
+%    \ifnum\@amari>\z@\ketakugiri@sub\fi
+%    \Cfor{\edef\@amari{#2}}{\@kugirisuu>\z@}{\edef\@amari{#2}}\do{%
+%        \Decr\@kugirisuu
+%        \ketakugiri@sub
+%    }%
+%}
+%
+% 結果を #4 に戻す
+%
+\def\Ketakugiri{\@ifnextchar[{\@Ketakugiri}{\@Ketakugiri[\keta@kugirikigou]}}
+\def\@Ketakugiri[#1]{\@ifnextchar<{\@@Ketakugiri[#1]}{\@@Ketakugiri[#1]<3>}}
+\def\@@Ketakugiri[#1]<#2>#3#4{\begingroup\edef\kekka@{}%
+  \edef\suuzi@retu{#3}\@tempcnta=\z@
+  \expandafter\@tfor\expandafter\@@c\expandafter:\expandafter=\suuzi@retu\do{%
+    \if -\@@c\else\advance\@tempcnta\@ne\fi}%
+  \@tempcntb=\@tempcnta
+  \divide\@tempcntb #2\multiply\@tempcntb #2\advance\@tempcnta-\@tempcntb
+  \ifnum\@tempcnta=\z@\@tempcnta #2\relax\fi
+  \expandafter\@tfor\expandafter\@@c\expandafter:\expandafter=\suuzi@retu\do{%
+    \ifnum\@tempcnta=\z@ \edefappend\kekka@{#1}\@tempcnta #2\relax\fi
+    \if -\@@c \ensuremath{-}\else\edefappend\kekka@{\@@c}\advance\@tempcnta\m@ne\fi}%
+    \edef\temp@x{\def\noexpand#4{\kekka@}}%
+    \expandafter\endgroup\temp@x
+}
+%
+% ---------------------------------------------------------------------
+\edef\@Ktani{十}%
+\edef\@Ktanii{百}%
+\edef\@Ktaniii{千}%
+\edef\@Ktan@i{萬}%
+\edef\@Ktan@ii{億}%
+\edef\@Ktan@iii{兆}%
+\edef\@Ktan@iv{京}%
+\edef\@Ktan@v{垓}%
+\edef\hu@kigou{▲}
+\def\hukigou#1{\edef\hu@kigou{#1}}
+
+\def\Kansuuzi{\@ifnextchar[{\@Kansuuzi}{\@Kansuuzi[k]}}
+\def\@Kansuuzi[#1]#2{%
+    \def\Kansuuzi@sub{%
+        \edef\@dpflg{0}%
+        \Cfor{\edef\@i{\Kansuuzi@len@r}}{\@i>\z@}{}\do{%
+            \Decr\@i
+            \headchar\Kansuuzi@retu\Kansuuzi@i\Kansuuzi@retu
+            \ifnum\Kansuuzi@i=\z@
+            \else
+                \ifnum\Kansuuzi@i=\@ne
+                    \ifnum\@i=\z@\kansuji\Kansuuzi@i\fi
+                \else
+                    \kansuji\Kansuuzi@i
+                \fi
+                \csname @Ktan\romannumeral\@i\endcsname
+                \edef\@dpflg{1}%
+            \fi
+        }%
+    }%
+    \def\Kansuuzi@sub@a{%
+        \edef\@dpflg{0}%
+        \Cfor{\edef\@i{\Kansuuzi@len@r}}{\@i>\z@}{}\do{%
+            \Decr\@i
+            \headchar\Kansuuzi@retu\Kansuuzi@i\Kansuuzi@retu
+            \ifthenelse{\Kansuuzi@i=\z@\and\@dpflg=\z@}{}{%
+                \Kansuuzi@i
+                \ifnum\@i=3\relax{,}\fi
+                \edef\@dpflg{1}%
+            }%
+        }%
+    }%
+    \edef\Kansuuzi@retu{#2}%
+    \headchar\Kansuuzi@retu\@h\@r
+    \if -\@h\edef\Kansuuzi@retu{\@r}\hu@kigou\fi
+    \Strlen{\Kansuuzi@retu}\Kansuuzi@len
+    \ifthenelse{\Kansuuzi@len=\@ne \and #2=\z@}{%
+        \if k#1\relax 零\else 0\fi}{%
+        \IDivMod\Kansuuzi@len{4}\Kansuuzi@len@q\Kansuuzi@len@r
+        \ifnum\Kansuuzi@len@r=\z@
+          \Decr\Kansuuzi@len@q\edef\Kansuuzi@len@r{4}\fi
+        \Cfor{\edef\@@i{\Kansuuzi@len@q}\Incr\@@i}{\@@i>\z@}{%
+            \edef\Kansuuzi@len@r{4}}\do{%
+                \if k#1\Kansuuzi@sub\else\Kansuuzi@sub@a\fi
+                \Decr\@@i
+                \ifthenelse{\@@i>\z@\and\@dpflg>\z@}{%
+                    \csname @Ktan@\romannumeral\@@i\endcsname}{}%
+        }%
+    }%
+}
+\endinput
+%
+% v0.00   1999/03/19
+% v0.01   1999/03/20
+%   \ketakugiri を emath.sty なしでも動くように修正する。
+% v 0.02  2001/08/29
+%   \edef\keta@kugirikigou{{,}}と修正（, だけではなく{,}）
+% v 0.03  2008/09/18
+%   \Ketakugiri: 結果を文字列で戻す。

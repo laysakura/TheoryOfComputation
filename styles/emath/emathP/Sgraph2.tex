@@ -1,0 +1,262 @@
+\section{関数のグラフ(2) 一般}
+この節のマクロは,\textsf{emathPg.sty}で定義されています。
+
+\subsection{関数計算式の記述}
+その他の関数のグラフを描画するには，関数の計算式を与える必要があります．
+例えば，$y=\bunsuu{1}{x}$ の計算式は次のように記述します．
+\begin{screen}
+\begin{verbatim}
+\def\Fx#1#2{\Div{1}{#1}\y\edef#2{\y}}
+\end{verbatim}
+\end{screen}
+
+すなわち，関数定義は必ず2つの引数をとります．
+\begin{jquote}
+\begin{verbatim}
+#1 は独立変数の値
+#2 は計算結果を受け取るコントロールシーケンス
+\end{verbatim}
+\end{jquote}
+です．この定義の元で
+\begin{jquote}
+\begin{verbatim}
+\Fx{4}\kekka
+\end{verbatim}
+\end{jquote}
+と記述すると，\cmd{kekka}に $\bunsuu14=0.25$ がセットされます．
+
+また，四則演算は \textsf{eclarith.sty} で定義されている
+\begin{boxnote}
+\begin{verbatim}
+加法が \Add#1#2#3 
+  で #1 + #2 が #3 のコントロールシーケンスに与えられ，
+減法は \Sub#1#2#3
+乗法は \Mul#1#2#3
+除法は \Div#1#2#3
+\end{verbatim}
+\end{boxnote}
+\cindex{Add}\cindex{Sub}\cindex{Mul}\cindex{Div}
+\noindent
+を用います．
+
+始めの関数定義は
+\begin{screen}
+\begin{verbatim}
+\def\Fx#1#2{\Div{1}{#1}#2}
+\end{verbatim}
+\end{screen}
+と簡略化することもできます。
+
+組込み関数については
+\begin{boxnote}
+\begin{verbatim}
+正弦が \Sin#1#2 で sin(#1) が #2 にセットされ，
+余弦が \Cos#1#2
+\end{verbatim}
+\end{boxnote}
+\cindex{Sin}\cindex{Cos}
+\noindent
+は，\textsf{eclarith.sty} で定義されています．
+平方根は \cmd{Sqroot} が定義されていますが，\cindex{Sqroot}
+\cmd{Sqroot}\verb+{0}+ が 1 となるバグ（仕様かも）がありますので
+\cmd{Heihoukon} をかぶせます．指数・対数もほしいので\cindex{Heihoukon}
+\begin{boxnote}
+\begin{verbatim}
+平方根が   \Heihoukon#1#2
+指数関数が \Exp#1#2
+対数関数が \Log#1#2
+
+三角関数の追加 \Tan#1#2
+               \Sec#1#2
+\end{verbatim}
+\end{boxnote}
+\cindex{Exp}\cindex{Heihoukon}\cindex{Tan}\cindex{Sec}
+\noindent
+を \textsf{emathP.sty} で追加しています．ただし，
+グラフが不自然に見えない程度の精度です．
+
+また，円周率 $\pi$, 自然対数の底 $e$ などの定数は次の変数名で利用できます．
+
+\cindex{Pie}\cindex{Pii}\cindex{Pih}\cindex{Piq}
+\begin{boxnote}
+\begin{verbatim}
+% \Pi is a greek letter.
+\def\Piq{0.78539816}%     π/4
+\def\Pih{1.57079633}%     π/2
+\def\Pie{3.14159265}%     π
+\def\Pii{6.28318531}%     2π
+\end{verbatim}
+\end{boxnote}
+\noindent
+が \textsf{eclarith.sty} で定義されています．
+\textsf{emathP.sty}では次のものを追加しています。
+\cindex{Pis}\cindex{Pit}
+\begin{boxnote}
+\begin{verbatim}
+\def\Pis{0.52359878}%     π/6
+\def\Pit{1.04719755}%     π/3
+\def\Pihiii{4.71238898}%  3π/2
+\def\Pitii{2.094395}%     2π/3
+\def\Pitiv{4.188790}%     4π/3
+\def\Pitv{5.235988}%      5π/3
+\def\Piqiii{2.356194}%    3π/4
+\def\Piqv{3.926991}%      5π/4
+\def\Piqvii{5.497787}%    7π/4
+\def\Pisv{2.617994}%      5π/6
+\def\Pisvii{3.665191}%    7π/6
+\def\Pisxi{5.759587}%    11π/6
+\end{verbatim}
+\end{boxnote}
+\noindent
+さらには，75\Deg をラジアンに変換するには \verb/\DegRad{75}\kaku/ で 
+\cmd{kaku} に変換値が求められます。
+
+自然対数の底の方は \textsf{emathP.sty} で次のように定義されています．
+
+\cindex{Napier}\cindex{Napierii}\cindex{Napiermi}
+\begin{boxnote}
+\begin{verbatim}
+\def\Napier{2.718281828}% 自然対数の底 e
+\def\Napierii{7.389056}%  e^2
+\def\Napiermi{0.367879441}% 1/e
+\end{verbatim}
+\end{boxnote}
+
+%\subsection{\texorpdfstring{$y=f(x)$}{y=f(x)}のグラフ}
+\subsection{$y=f(x)$のグラフ}
+\subsubsection{分数関数}
+前節で $y=\bunsuu{1}{x}$ の関数定義を紹介しましたが，
+それを用いてこの関数のグラフを描画します．
+
+\showexample[$y=\bunsuu{1}{x}$のグラフ](0.51)(0.44){example/func41}
+\cindex{yGurafu}
+
+すなわち一般の関数グラフを描画するコマンド \cmd{yGurafu} の書式は
+\begin{boxnote}
+\begin{verbatim}
+\yGurafu(#1)(#2)#3#4#5
+    #1 : xの刻み値 デフォルト=0.05
+    #2 : 点線で描画するときの描画する部分の x のレンジ
+    #3 : 関数式
+    #4 : xの始め値
+    #5 : xの終り値
+\end{verbatim}
+\end{boxnote}
+
+\subsubsection{無理関数}
+\showexample[$y=\sqrt{x}$のグラフ](0.51)(0.44){example/func42}
+
+\subsubsection{三角関数}
+\showexample[$y=\sin 2x$のグラフ](0.7)(0.7){example/func43}
+
+\subsubsection{指数関数}
+\showexample[$y=e^{-x^2}$のグラフ](0.9)(0.6){example/func44}
+
+\subsubsection{対数関数}
+\showexample[$y=\bunsuu{\log x}{x}$のグラフ](0.9)(0.6){example/func45}
+
+%\subsection{\texorpdfstring{$x=g(y)$}{x=g(y)} で与えられた曲線}
+\subsection{$x=g(y)$で与えられた曲線}
+$x=g(y)$ の形で与えられた曲線を描画するには \cmd{xGurafu} を用います．
+\cindex{xGurafu}
+
+\showexample[$x=\sin y$ のグラフ](0.55)(0.35){example/func50}
+
+
+\subsection{媒介変数表示}
+$x=f(t)$, $y=g(t)$ と，2つの関数を与える必要があります．すなわち
+\cindex{bGurafu}
+
+\begin{boxnote}
+\begin{verbatim}
+\bGurafu(#1)(#2)#3#4#5#6
+   #1 : t の刻み値（デフォルト値は 0.05 ）
+   #2 : 点線で描画するときの描画する部分の t のレンジ
+   #3 : x=f(t)
+   #4 : y=g(t)
+   #5 : t の始め値
+   #6 :     終り値
+\end{verbatim}
+\end{boxnote}
+という書式です．では，サイクロイドを描いてみます．
+
+\showexample[サイクロイド](1)(0.8){example/func46}
+
+二次曲線は媒介変数表示を利用するのが良いでしょう．
+
+\showexample[双曲線](1)(0.75){example/func48}
+
+\subsection{極方程式}
+$r=f(\theta)$ を与えます．
+\cindex{rGurafu}
+
+\showexample[レムニスケート](0.97)(0.75){example/func47}
+
+\begin{boxnote}
+\begin{verbatim}
+\rGurafu(#1)(#2)#3#4#5
+    #1 : θの刻み値（デフォルトは 0.05）
+    #2 : 点線で描画するときの描画する部分の θ のレンジ
+    #3 : 関数 r=f(θ)
+    #4 : θの初期値
+    #5 : θの終値
+\end{verbatim}
+\end{boxnote}
+
+\subsection{グラフの点線描画}
+グラフの一部を点線で描画したいときは，
+
+\centerline{\cmd{yGurafu}, \cmd{bGurafu}, \cmd{rGurafu}}
+の第2の \texttt{(...)} オプションを利用します．
+
+\showexample[グラフの点線描画](1)(0.85){example/func49}
+
+
+\subsection{スプライン曲線}
+\bgroup
+この節は，dvi-ware 依存です。
+\texttt{Windows}上の\texttt{dviout.exe}を想定しています。
+\textsf{tpic}には，\textsf{spline}曲線を描画するコマンド
+\begin{boxnote}
+\begin{verbatim}
+sp
+\end{verbatim}
+\end{boxnote}
+があります。
+
+\special{Bz 1}%
+\begin{showEx}(.54,.4){\cmd{Drawtpic}}
+\begin{zahyou}[ul=8mm](-1,5)(-1,4.5)
+  \zahyouMemori[g]
+  \tenretu{A(1,3)nw;B(2,4)n;%
+      C(3,3)ne;D(4,0)ne}
+  \Drawtpic{\O\A\B\C\D}
+  \kuromaru{\O;\A;\B;\C;\D}
+\end{zahyou}
+\end{showEx}
+
+新設コマンド\cmd{Drawtpic}の引数には，点列を与えます。
+スプライン曲線といっていますが，ご覧頂けばわかるように，
+両端は指定された点になりますが，途中点A, B, Cは
+制御点として使われ，通過はしません。
+その意味ではベジェ曲線というべきでしょう。
+
+\textsf{tpic}の拡張機能には，途中点A, B, Cも通過するスプライン曲線とする
+機能がありますが，これをサポートしている dvi ウェアは少ないようです。
+
+dviout はこの拡張機能をサポートしていますから，
+Windows で dviout を用いた場合は，次のリストが有効です。
+
+\begin{showEx}(.54,.4){\cmd{Drawtpic}}
+\begin{zahyou}[ul=8mm](-1,5)(-1,4.5)
+  \zahyouMemori[g]
+  \tenretu{A(1,3)nw;B(2,4)n;%
+      C(3,3)ne;D(4,0)ne}
+  \Drawtpic[tpicBz=0]{\O\A\B\C\D}
+  \kuromaru{\O;\A;\B;\C;\D}
+\end{zahyou}
+\end{showEx}
+
+残念ながら，dvips(k), dvipdfm(x) は，この拡張機能をサポートしていませんから，
+pdf を作ることはできません。
+\egroup

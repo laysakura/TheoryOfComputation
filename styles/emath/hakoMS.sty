@@ -1,0 +1,206 @@
+% hakoMS.sty by tDB (CQB00260@nifty.ne.jp)
+%
+\NeedsTeXFormat{LaTeX2e}%
+\ProvidesPackage{hakoMS}[2010/06/19 v0.06]%
+%
+\RequirePackage{hako}%
+\RequirePackage{emathPh}%
+%  \RequirePackage{emath}%   emath は前提
+%  \RequirePackage{emathPh}% 正答部を与えるときは color パッケージが必要
+%
+% \EMmarksheet<key=val>[配点]'正答'{行数}{記号配列}
+%
+\newcounter{gyouban}
+%
+\define@key{HMS}{syokiti}{\edef\HMS@syokiti{#1}}%
+\define@key{HMS}{pos}{\edef\HMS@pos{#1}}%
+%
+%\def\h@komozisyu{ア}
+\def\h@kosyotai{\normalfont}%
+%\def\hakosyotai#1{\def\h@kosyotai{#1}}%
+%\def\@aiueo{ア}%
+%\def\@AIUEO{あ}%
+%\def\@iroha{イ}%
+%\def\@IROHA{い}%
+%\def\@kan{一}%
+%\def\hakomozisyu#1{\def\h@komozisyu{#1}}%
+%
+\def\EMmarksheet{\edef\HMS@pos{c}\def\HMS@syokiti{0}\@ifnextchar<{\EMmarksheet@}{%
+                      \@EMmarksheet}}
+\def\EMmarksheet@<#1>{\setkeys{HMS}{#1}\@EMmarksheet}
+\def\@EMmarksheet{\@ifnextchar[{\@@EMmarksheet}{\@@EMmarksheet[\empty]}}
+\def\@@EMmarksheet[#1]{%
+  \@ifnextchar'{\@@@EMmarksheet[#1]}{\@@@EMmarksheet[#1]'\empty'}}
+\def\@@@EMmarksheet[#1]'#2'#3#4{%
+  \edef\gyousuu{#3}\IAdd\gyousuu\HMS@syokiti\HMS@owariti
+  \Decr\HMS@owariti\edef\kigousuu{0}%
+  \def\setmds{%
+    \def\m@ziretu{}%
+    \expandafter\@tfor\expandafter\@c\expandafter:\expandafter=\h@komozisyu%
+    \do {%
+      \ifx\@c\@aiueo%
+        \ifnum\c@gyouban>48\relax
+          \errmessage{ア,イ,ウ,... は48個までしかありません。}\fi
+        \edefappend\m@ziretu{\カタカナ{gyouban}}%
+      \else\ifx\@c\@iroha%
+        \ifnum\c@gyouban>48\relax
+          \errmessage{イ,ロ,ハ,... は48個までしかありません。}\fi
+        \edefappend\m@ziretu{\イロハ{gyouban}}%
+      \else\ifx\@c\@AIUEO%
+        \ifnum\c@gyouban>48\relax
+          \errmessage{あ,い,う,... は48個までしかありません。}\fi
+        \edefappend\m@ziretu{\ひらがな{gyouban}}%
+      \else\ifx\@c\@IROHA%
+        \ifnum\c@gyouban>48\relax
+          \errmessage{い,ろ,は,... は48個までしかありません。}\fi
+        \edefappend\m@ziretu{\いろは{gyouban}}%
+      \else\ifx\@c\@kan\edef\m@ziretu{%
+                            \m@ziretu \Kanji{gyouban}}%
+      \else\if\@c a\edef\m@ziretu{%
+                            \m@ziretu \alph{gyouban}}%
+      \else\if\@c A\edef\m@ziretu{%
+                            \m@ziretu \Alph{gyouban}}%
+      \else\if\@c 1\edef\m@ziretu{%
+                            \m@ziretu \arabic{gyouban}}%
+      \else\if\@c i\edef\m@ziretu{%
+                            \m@ziretu \roman{gyouban}}%
+      \else\if\@c I\edef\m@ziretu{%
+                            \m@ziretu \Roman{gyouban}}%
+      \else\if\@c m\def\m@ziretu{%
+                            \maru{\thegyouban}}%
+      \else\edef\m@ziretu{\m@ziretu \@c}%
+      \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi
+    }%
+    {\h@kosyotai{\m@ziretu}}%
+  }%
+  \edef\haiten@suu{0}%
+  \ifx\empty #1\relax\else
+    \expandafter\@for\expandafter\@@c\expandafter:\expandafter=#1\do{%
+      \Incr\haiten@suu
+      \expandafter\edef\csname haiten@\haiten@suu\endcsname{\@@c}}%
+  \fi
+  \edef\kotae@suu{0}%
+  \ifx\empty #2\relax\else
+    \expandafter\@for\expandafter\@@c\expandafter:\expandafter=#2\do{%
+      \Incr\kotae@suu
+      \expandafter\EMedef\csname kotae@\kotae@suu\endcsname{\@@c}}%
+  \fi
+  \expandafter\@for\expandafter\@@c\expandafter:\expandafter=#4\do{%
+    \Incr\kigousuu
+    \expandafter\EMedef\csname kigou@\kigousuu\endcsname{\@@c}}%
+  \IAdd\kigousuu{1}\ransuu
+  \ifnum\haiten@suu>\z@
+    \ifnum\haiten@suu=#3\else\errmessage{配点と行数が不一致です}\fi
+  \fi
+  \ifnum\kotae@suu>\z@
+    \ifnum\kotae@suu=#3\else\errmessage{正答と行数が不一致です}\fi
+  \fi
+  \ifnum\haiten@suu>\z@
+    \IAdd\kigousuu{2}\Ransuu
+    \begin{tabular}[\HMS@pos]{|c|*{\kigousuu}{c}|r|}\hline
+      & \multicolumn{\kigousuu}{c|}{解　　　　答　　　　欄}& 配点
+          \\\cline{2-\Ransuu}
+      \Cfor{\xdef\i{0}}{\i<\kigousuu}{}\do{%
+        &\xIncr\i\csname kigou@\i\endcsname}&\\\hline
+      \Cfor{\setcounter{gyouban}{\HMS@syokiti}}{\thegyouban<\HMS@owariti}{}%
+      \do{%
+          \refstepcounter{gyouban}%
+          \edef\HMS@lnnum{\thegyouban}\xISub\HMS@lnnum\HMS@syokiti\HMS@lnnum
+          \setmds
+          \Cfor{\xdef\i{0}}{\i<\kigousuu}{}\do{%
+            \xIncr\i&%
+%           \nagamaru{\csname kigou@\i\endcsname}%
+            \ifnum\kotae@suu>\z@
+              \ifthenelse{\equal{\csname kotae@\HMS@lnnum\endcsname}{%
+                              \csname kigou@\i\endcsname}}{%
+                \knagamaru{\csname kigou@\i\endcsname}%
+              }{%
+                \nagamaru{\csname kigou@\i\endcsname}%
+              }%
+            \else
+              \nagamaru{\csname kigou@\i\endcsname}%
+            \fi
+          }&%
+%         \ifthenelse{\equal{\csname haiten@\thegyouban\endcsname}{\empty}}{%
+          \ifthenelse{\equal{\csname haiten@\HMS@lnnum\endcsname}{\empty}}{%
+              \\%\cline{1-\ransuu}%
+          }{%
+              \csname haiten@\HMS@lnnum\endcsname\\\hline
+          }%
+      }%
+      \refstepcounter{gyouban}%
+      \edef\HMS@lnnum{\thegyouban}\xISub\HMS@lnnum\HMS@syokiti\HMS@lnnum
+      \setmds
+      \Cfor{\xdef\i{0}}{\i<\kigousuu}{}\do{%
+        \xIncr\i&%
+        \ifnum\kotae@suu>\z@
+          \ifthenelse{\equal{\csname kotae@\HMS@lnnum\endcsname}{%
+                            \csname kigou@\i\endcsname}}{%
+                \knagamaru{\csname kigou@\i\endcsname}%
+          }{%
+                \nagamaru{\csname kigou@\i\endcsname}%
+          }%
+        \else
+          \nagamaru{\csname kigou@\i\endcsname}%
+        \fi
+      }&%
+      \csname haiten@\HMS@lnnum\endcsname\\\hline
+    \end{tabular}%
+  \else
+    \begin{tabular}[\HMS@pos]{|c|*{\kigousuu}{c}|}\hline
+      & \multicolumn{\kigousuu}{c|}{解　　　　答　　　　欄} \\\cline{2-\ransuu}
+      \Cfor{\xdef\i{0}}{\i<\kigousuu}{}\do{%
+        &\xIncr\i\csname kigou@\i\endcsname}\\\hline
+        \Cfor{\setcounter{gyouban}{\HMS@syokiti}}{\thegyouban<\HMS@owariti}{}%
+        \do{%
+          \refstepcounter{gyouban}%
+          \edef\HMS@lnnum{\thegyouban}\xISub\HMS@lnnum\HMS@syokiti\HMS@lnnum
+          \setmds
+          \Cfor{\xdef\i{0}}{\i<\kigousuu}{}\do{%
+            \xIncr\i&
+            \ifnum\kotae@suu>\z@
+              \ifthenelse{\equal{\csname kotae@\HMS@lnnum\endcsname}{%
+                                \csname kigou@\i\endcsname}}{%
+                \knagamaru{\csname kigou@\i\endcsname}%
+              }{%
+                \nagamaru{\csname kigou@\i\endcsname}%
+              }%
+            \else
+              \nagamaru{\csname kigou@\i\endcsname}%
+            \fi
+            }\\\hline
+        }%
+      \refstepcounter{gyouban}%
+      \edef\HMS@lnnum{\thegyouban}\xISub\HMS@lnnum\HMS@syokiti\HMS@lnnum
+      \setmds
+      \Cfor{\xdef\i{0}}{\i<\kigousuu}{}\do{%
+        \xIncr\i&
+        \ifnum\kotae@suu>\z@
+          \ifthenelse{\equal{\csname kotae@\HMS@lnnum\endcsname}{%
+                            \csname kigou@\i\endcsname}}{%
+                \knagamaru{\csname kigou@\i\endcsname}%
+          }{%
+                \nagamaru{\csname kigou@\i\endcsname}%
+          }%
+        \else
+          \nagamaru{\csname kigou@\i\endcsname}%
+        \fi
+      }\\\hline
+    \end{tabular}%
+  \fi
+}
+\endinput
+v 0.00 2004/06/20
+v 0.01 2004/06/20
+    hako.sty の \hakomozisyu, \hakosyotai を有効とする。
+v 0.02 2004/07/30
+    <key=val> オプションを追加
+        syokiti=..
+v 0.03 2004/09/06
+    syokiti を指定した際の，配点欄・正解欄の修正
+v 0.04 2005/04/12
+    hako.sty を読み込む
+v 0.05 2007/10/29
+    \EMmarksheel <pos=.>オプション
+v 0.06 2010/06/19
+    \edef --> \EMedef

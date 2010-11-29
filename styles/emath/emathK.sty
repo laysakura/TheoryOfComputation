@@ -1,0 +1,198 @@
+%%% emathK.sty by tDB(emath@nifty.com)
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{emathK}[2010/08/15 0.13]
+%
+%%%
+%%% ------------------------------------------------------------------
+%%% 以下の定義は Waver さんから頂きました．
+%%% ありがとうございます．＞ Waver さん．
+%%% --------------------------------------
+%%%
+%%%    enumerate環境でア，イ，ウ，．．．
+%%%    created by Waver
+%%%
+%%%  数値 → カタカナ
+%%%
+\def\@カタカナ#1{%
+  \ifcase#1\unskip\or ア\or イ\or ウ\or エ\or オ\or%
+                      カ\or キ\or ク\or ケ\or コ\or%
+                      サ\or シ\or ス\or セ\or ソ\or%
+                      タ\or チ\or ツ\or テ\or ト\or%
+                      ナ\or ニ\or ヌ\or ネ\or ノ\or%
+                      ハ\or ヒ\or フ\or ヘ\or ホ\or%
+                      マ\or ミ\or ム\or メ\or モ\or%
+                      ヤ\or ユ\or ヨ\or%
+                      ラ\or リ\or ル\or レ\or ロ\or%
+                      ワ\or ヰ\or ヱ\or ヲ\or ン\else%
+                      \@ctrerr\fi\relax%
+}%
+%%%
+%%%  c@カウンタ → カタカナ
+%%%
+\def\カタカナ#1{%
+  \@カタカナ{\@nameuse{c@#1}}%
+}%
+%%%
+%%%  数値 → イロハ
+%%%
+\def\@イロハ#1{%
+  \ifcase#1\unskip\or イ\or ロ\or ハ\or ニ\or ホ\or%
+                      ヘ\or ト\or チ\or リ\or ヌ\or%
+                      ル\or ヲ\or ワ\or カ\or ヨ\or%
+                      タ\or レ\or ソ\or ツ\or ネ\or%
+                      ナ\or ラ\or ム\or ウ\or ヰ\or%
+                      ノ\or オ\or ク\or ヤ\or マ\or%
+                      ケ\or フ\or コ\or エ\or テ\or%
+                      ア\or サ\or キ\or ユ\or メ\or%
+                      ミ\or シ\or ヱ\or ヒ\or モ\or%
+                      セ\or ス\or ン\else\@ctrerr\fi\relax%
+}%
+%%%
+%%%  c@カウンタ → イロハ
+%%%
+\def\イロハ#1{%
+  \@イロハ{\@nameuse{c@#1}}%
+}%
+%%%
+%%%  数値 → ひらがな
+%%%
+\def\@ひらがな#1{%
+  \ifcase#1\unskip\or あ\or い\or う\or え\or お\or%
+                      か\or き\or く\or け\or こ\or%
+                      さ\or し\or す\or せ\or そ\or%
+                      た\or ち\or つ\or て\or と\or%
+                      な\or に\or ぬ\or ね\or の\or%
+                      は\or ひ\or ふ\or へ\or ほ\or%
+                      ま\or み\or む\or め\or も\or%
+                      や\or ゆ\or よ\or%
+                      ら\or り\or る\or れ\or ろ\or%
+                      わ\or ゐ\or ゑ\or を\or ん\else%
+                      \@ctrerr\fi\relax%
+}%
+%%%
+%%%  c@カウンタ → ひらがな
+%%%
+\def\ひらがな#1{%
+  \@ひらがな{\@nameuse{c@#1}}%
+}%
+%%%
+%%%  数値 → いろは
+%%%
+\def\@いろは#1{%
+  \ifcase#1\unskip\or い\or ろ\or は\or に\or ほ\or%
+                      へ\or と\or ち\or り\or ぬ\or%
+                      る\or を\or わ\or か\or よ\or%
+                      た\or れ\or そ\or つ\or ね\or%
+                      な\or ら\or む\or う\or ゐ\or%
+                      の\or お\or く\or や\or ま\or%
+                      け\or ふ\or こ\or え\or て\or%
+                      あ\or さ\or き\or ゆ\or め\or%
+                      み\or し\or ゑ\or ひ\or も\or%
+                      せ\or す\or ん\else\@ctrerr\fi\relax%
+}%
+%%%
+%%%  c@カウンタ → いろは
+%%%
+\def\いろは#1{%
+  \@いろは{\@nameuse{c@#1}}%
+}%
+%%%
+%%% 数値 → いろは(数値)
+%%%
+\def\irohanum#1{%
+  \ifcase#1\unskip\or 2 \or 43\or 26\or 22\or 30\or%
+                      29\or 20\or 17\or 40\or 23\or%
+                      41\or 47\or 44\or 6 \or 38\or%
+                      16\or 42\or 15\or 18\or 24\or%
+                      21\or 39\or 33\or 3 \or 45\or%
+                      25\or 5 \or 8 \or 36\or 31\or%
+                      9 \or 28\or 10\or 4 \or 19\or%
+                      1 \or 11\or 7 \or 37\or 34\or%
+                      32\or 12\or 46\or 27\or 35\or%
+                      14\or 13\or 48\else\@ctrerr\fi\relax%
+}%
+
+%%%
+%%% 数値 → アカサタナ(数値)
+%%%
+\def\akasatana#1{%
+  \ifcase#1\relax0\or
+    1\or 6\or11\or16\or21\or26\or31\or36\or39\or44\or
+    2\or 7\or12\or17\or22\or27\or32\or     40\or45\or
+    3\or 8\or13\or18\or23\or28\or33\or37\or41\or
+    4\or 9\or14\or19\or24\or29\or34\or     42\or46\or
+    5\or10\or15\or20\or25\or30\or35\or38\or43\or47\or48\else0
+  \fi}
+\let\akasa\akasatana
+%
+%
+%甲乙丙丁戊己庚辛壬癸
+%
+\def\@甲乙#1{%
+  \ifcase#1\unskip\or 甲\or 乙\or 丙\or 丁\or 戊\or 己\or 庚\or 辛\or 壬\or 癸\else
+                      \@ctrerr\fi\relax%
+}%
+\def\甲乙#1{%
+  \@甲乙{\@nameuse{c@#1}}%
+}%
+%
+\def\@十二支#1{%
+  \ifcase#1\unskip\or 子\or 丑\or 寅\or 卯\or 辰\or 巳\or 午\or 未\or 申\or 酉\or 戌\or 亥\else
+                      \@ctrerr\fi\relax%
+}%
+\def\十二支#1{%
+  \@十二支{\@nameuse{c@#1}}%
+}%
+%
+\def\@数字#1{%
+  \ifcase#1 ０\or １\or ２\or ３\or ４\or ５\or%
+                      ６\or ７\or ８\or ９\or １０\else
+                      \@ctrerr\fi\relax%
+}%
+\def\数字#1{%
+  \@数字{\@nameuse{c@#1}}%
+}%
+\newcommand{\rensuzi}[1]{%
+  \iftdir
+    \rensuji{\arabic{#1}}%
+  \else
+    \数字{#1}%
+  \fi
+}%
+%
+%
+\ifx\fmtname\tmpname%
+% NTT JLaTeX2e 用
+\@ifundefined{jintercharskip}{}{%
+\newlength\tbaselineshift%
+\newcommand{\gt}{\pdg}%
+\newcommand{\textgt}[1]{{\pdg #1}}%
+\newcommand{\textmc}[1]{{\pmin #1}}}%
+\fi
+
+\def\katakana#1{\@カタカナ{0#1}}%
+\def\hirakana#1{\@ひらがな{0#1}}%
+\def\iroha#1{\@イロハ{0#1}}%
+\def\IROHA#1{\@いろは{0#1}}%
+\def\kouotu#1{\@甲乙{0#1}}%
+\def\zyunisi#1{\@十二支{0#1}}%
+\def\emKanji#1{\@ifundefined{c@tempcnta}{\newcounter{tempcnta}}{}
+  {\c@tempcnta=#1\relax\Kanji{tempcnta}}}
+\endinput
+%
+% 1999.7.10
+% emathK.sty と改名
+%
+% 2000/03/11 ver.0.08
+%   \@カタカナ を#1が未定義のときも使用できるようにし，
+%       別名 \katakana を与える．
+% 2006/08/17 v 0.10
+%   \akasatana
+%   \irohanum
+% 2008/03/04 v 0.11
+%   十干（甲乙．．．．．）
+%   十二支（
+% 2009/04/30
+%   \数字：全角１，２，３，．．．．．
+% 2010/08/15
+%   \emKanji など

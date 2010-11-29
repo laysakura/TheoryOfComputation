@@ -1,0 +1,263 @@
+% EMkeizu.sty by tDB (CQB00260@nifty.ne.jp)
+
+\NeedsTeXFormat{pLaTeX2e}
+\ProvidesPackage{EMkeizu}[2008/08/29 v 0.10]%
+\RequirePackage{emathC}
+\RequirePackage{keyval}
+%\RequirePackage{eclarith}
+
+% EMkeizu 環境
+%   オプション引数は
+%   [tyouseigyousuu=符号付き整数値] デフォルトは tyouseigyousuu=0
+%           先頭段落に何行記述できるかを計算で求めているが，
+%           それを増減するためのオプション
+%             その段落に，
+%                 \section, \item, .....
+%           などがあるときは，
+%                 [tyouseigyousuu=-1]
+%           と，行数を減ずる必要がある．
+%   [hkeisen=単位を伴った数値] 縦組における縦罫線の長さを変更する．
+%           デフォルト値は hkeisen=40pt
+%           階層が深くなり，下にはみ出すときは
+%                 [hkeisen=1zh]
+%           などと縦罫線を短くする．
+%   [gyoukan=単位を伴った数値] 基準の行間隔
+%           デフォルト値は gyoukan=10pt
+%           人名と人名の横間隔です．
+%   [yokogakihosei=単位を伴った数値] 横書き時，横罫線の縦位置補正量
+%           デフォルト値は 3pt（ベースラインから 3pt 上方）
+%
+\def\EMkeizu{\@ifnextchar[{\@EMkeizu}{\@EMkeizu[\empty]}}%
+\def\@EMkeizu[#1]{%
+  \edef\tyousei@gyousuu{0}%
+  \edef\cur@i{1}%
+  \edef\cur@j{1}%
+  \edef\max@i{1}%
+  \edef\max@j{0}%
+  \edef\c@wd{40}%
+  \edef\c@ht{10}%
+  \edef\@parent@i{}%
+  \edef\@parent@j{}%
+  \edef\top@ln{0}%
+  \edef\ydir@hosei{3}%
+  \ifx\empty #1\else\setkeys{EMkeizu}{#1}\fi
+  \ISub\c@wd{5}\l@wd
+  \mbox{}\vspace{-\baselineskip}\par
+  \offinterlineskip
+  \noindent%
+  \@tempdima\pagegoal\advance\@tempdima-\pagetotal
+  \advance\@tempdima\tyousei@gyousuu\baselineskip
+  \ifdim\@tempdima<40pt\relax
+    \newpage
+    \@tempdima\@colht
+  \fi
+  \edef\keizu@ht{\strip@pt\@tempdima}%
+  \edef\keizu@ht@nokori{\keizu@ht}%
+}%
+\def\bunki{%
+  \edef\@parent@i{\cur@i}%
+  \edef\@parent@j{\cur@j}%
+  \Incr\cur@i\ifnum\cur@i>\max@i\xdef\max@i{\cur@i}\fi
+  \ignorespaces
+}
+\def\endbunki{\@ignoretrue}
+\def\endEMkeizu{\dptree\cleartree\@ignoretrue}%
+\def\eda#1{\edef\cur@j{\max@j}\Incr\cur@j
+  \ifnum\cur@j>\max@j\xdef\max@j{\cur@j}\fi
+  \expandafter\gdef\csname node@\cur@i @\cur@j\endcsname{#1}%
+  \expandafter\xdef\csname iparent@\cur@i @\cur@j\endcsname{\@parent@i}%
+  \expandafter\xdef\csname jparent@\cur@i @\cur@j\endcsname{\@parent@j}%
+  \setbox0=\vbox{#1}%
+  \expandafter\xdef\csname ht@\cur@j\endcsname{\strip@pt\ht0}%
+  \expandafter\xdef\csname dp@\cur@j\endcsname{\strip@pt\dp0}%
+  \ignorespaces
+}%
+\def\dptree{%
+\Cfor{\edef\@j{0}}{\@j<\max@j}{}\do{%
+  \unitlength1pt\relax
+  \begin{picture}(0,0)%
+  \edef\@y{0}%
+  \xdef\dp@break{0}%
+  \Cfor{}{\dp@break=\z@ \and \@j<\max@j}{}\do{%
+    \xIncr\@j
+    \Sub\@y{\csname ht@\@j\endcsname}\@y@
+    \Sub\@y@{\csname dp@\@j\endcsname}\@y@@
+    \Add\@y@@\keizu@ht\@tmp
+    \ifdim\@tmp pt>10pt\relax
+      \Cfor{\edef\@i{0}}{\@i<\max@i}{}\do{%
+        \IMul{\c@wd}\@i\@x
+        \Incr\@i
+        \@ifundefined{node@\@i @\@j}{}{%
+          \edef\@y{\@y@}%
+%          \put(\@x,\@y){\csname node@\@i @\@j\endcsname}%
+          \put(\@x,\@y){\csname node@\@i @\@j\endcsname}%
+          \ifnum\@i>\@ne
+            \ISub\@x\l@wd\@@x
+\ifydir\Add\@y\ydir@hosei\@y@y\else\edef\@y@y{\@y}\fi
+            \put(\@x,\@y@y){\line(-1,0){\l@wd}}%
+            \edef\p@x{\csname iparent@\@i @\@j\endcsname}%
+            \edef\p@y{\csname jparent@\@i @\@j\endcsname}%
+            \ifnum\p@y<\top@ln\edef\p@y{\top@ln}\fi
+            \Cfor{\edef\@tmp{\csname ht@\@j\endcsname}%
+              \edef\@@j{\@j}\Decr\@@j}{\@@j>\p@y}{\Decr\@@j}\do{%
+                \Add\@tmp{\csname ht@\@@j\endcsname}\@tmp
+                \Add\@tmp{\csname dp@\@@j\endcsname}\@tmp
+                \Add\@tmp\c@ht\@tmp
+            }%
+            \ifnum\p@y=\top@ln\Add\@tmp{10}\@tmp\else
+%               \Add\@tmp{\csname dp@\p@y\endcsname}\@tmp
+                \Add\@tmp\c@ht\@tmp\fi
+%           \Sub\@tmp{5}\@tmp
+            \strsep\@tmp{.}\@tmp\@@tmp
+\ifydir\Sub\@tmp\ydir@hosei\@tmp\fi
+            \put(\@@x,\@y@y){\line(0,1){\@tmp}}%
+          \fi
+          \Sub\@y{\csname dp@\@j\endcsname}\@y
+          \Sub\@y\c@ht\@y
+        }%
+      }%
+    \else
+      \xDecr\@j
+      \xdef\dp@break{1}%
+    \fi
+    }%
+    \xdef\@y{\@y}%
+  \end{picture}%
+  \vrule width \z@ depth -\@y pt height \z@%
+  \ifthenelse{\@j<\max@j \and \dp@break>\z@}{\keizu@newpage{\@j}}{}%
+}}
+
+\def\cleartree{%
+  \Cfor{\edef\@i{0}}{\@i<\max@i}{}\do{%
+    \Incr\@i
+    \Cfor{\edef\@j{0}}{\@j<\max@j}{}\do{%
+      \Incr\@j
+      \@ifundefined{node@\@i @\@j}{}{%
+        \global\expandafter\let\csname node@\@i @\@j\endcsname\undefined}%
+    }%
+  }%
+}
+\long\def\keizu@newpage#1{%
+  \edef\old@top@ln{\top@ln}%
+  \edef\old@bottom@ln{#1}%
+  \edef\top@ln{\old@bottom@ln}%
+  {%
+    \Cfor{\edef\np@j{\top@ln}}{\np@j<\max@j}{}\do{%
+      \Incr\np@j
+      \Cfor{\edef\@i{0}}{\@i<\max@i}{}\do{%
+        \Incr\@i
+        \@ifundefined{node@\@i @\np@j}{}{%
+          \edef\p@y{\csname jparent@\@i @\np@j\endcsname}%
+          \edef\p@x{\csname iparent@\@i @\np@j\endcsname}%
+          \ifnum\p@y>\top@ln\else
+            \Cfor{\edef\@tmp{\c@ht}%
+              \edef\@@j{\old@bottom@ln}\Decr\@@j}{\@@j>\p@y}{\Decr\@@j}\do{%
+                \Add\@tmp{\csname ht@\@@j\endcsname}\@tmp
+                \Add\@tmp{\csname dp@\@@j\endcsname}\@tmp
+                \Add\@tmp\c@ht\@tmp
+            }%
+            \Add\@tmp{\csname dp@\p@y\endcsname}\@tmp
+            \strsep\@tmp{.}\@tmp\@@tmp
+              \Decr\p@x
+              \IMul{\c@wd}\p@x\@x
+            \ifnum\top@ln=\p@y\ISub\@tmp{5}\@tmp\fi
+            \IAdd\@x{5}\@x
+            \put(\@x,\@y){\line(0,1){\@tmp}}%
+          \fi
+        }%
+      }%
+    }%
+  }%
+  \newpage\noindent
+  \@tempdima\@colht
+  \edef\keizu@ht{\strip@pt\@tempdima}%
+  \edef\keizu@ht@nokori{\keizu@ht}%
+}
+%
+%
+\define@key{EMkeizu}{tyouseigyousuu}{\def\tyousei@gyousuu{#1}}%
+\define@key{EMkeizu}{gyoukan}{%
+  \@tempdima#1\edef\c@ht{\seisuu\@tempdima}}%
+\define@key{EMkeizu}{hkeisen}{%
+  \@tempdima#1\edef\c@wd{\seisuu\@tempdima}}%
+\define@key{EMkeizu}{yokogakihosei}{%
+  \@tempdima#1\edef\ydir@hosei{\seisuu\@tempdima}}%
+
+% ----------------------------------------------------
+% 藤田眞作 氏の作成された \twarichu を picture環境内で使用するための
+% \ptwarichu                                2000/12/30 v 0.03
+\newdimen\twarichu@tbaselineshift
+\let\org@twarichu\twarichu
+\def\twarichu{\@ifundefined{tbaselineshift}{\twarichu@tbaselineshift=\z@}{%
+  \twarichu@tbaselineshift=\tbaselineshift}\org@twarichu}
+\def\ptwarichu{\twarichu@tbaselineshift=\save@tbaselineshift\org@twarichu}
+\def\@twarichu#1{\leavevmode%
+\setbox0=\hbox{\warisize #1}%
+\setbox1=\hbox{\warisize あ}%
+\dimen1=.5\ht1 \dimen0=0pt \@tempcnta=\z@
+\@whiledim\dimen0<\wd0\do%
+{\advance\dimen0 by\wd1 \advance\@tempcnta\@ne}%
+%\typeout{文字数\the\@tempcnta; 長さ\the\dimen0; 文字列長さ\the\wd0}%
+\dimen2=\dimen0 \advance\dimen2 -\wd0
+\ifdim\dimen2<0.05pt
+%{\let\。=\relax\let\、=\relax \typeout{OK #1; \the\@tempcnta}}%
+ \ifodd\@tempcnta \advance\@tempcnta\@ne\fi
+ \divide\@tempcnta by2\relax
+ \dimen0=\the\@tempcnta \wd1\relax
+%{\let\。=\relax\let\、=\relax \typeout{OK/2 #1; \the\@tempcnta}}%
+\else
+ \divide\dimen0 by2\relax\fi
+\ifnakabu\dimen0=\hsize\fi
+%%%%%
+ \setbox2=\vbox{\hsize=\dimen0\warilineskip
+ \warichuowari
+ \warisize\noindent #1%
+ \hbox to\dimen0{　\hfill}}%%全角空白
+ \setbox2=\vbox{\hsize=\dimen0\unvbox2\setbox4=\lastbox}%
+ \setbox2=\vbox{\hsize=\dimen0\unvbox2\unskip}%
+%%%%
+ \leavevmode
+ \dimen3=\ht2 \divide\dimen3 by2
+ \dimen4=\dimen3
+ \advance\dimen3 by\twarichu@tbaselineshift
+ \advance\dimen3 by-.1zw
+ \advance\dimen4 by-\twarichu@tbaselineshift
+ \advance\dimen4 by.1zw
+ \dp2=\dimen4\ht2=\dimen3\box2}%
+\endinput
+% ----------------------------------------------------
+%
+2000/12/28 v 0.00 keizu.sty
+2000/12/29 v 0.01
+  EMkeizu.sty と改名
+  (1) 一文書に複数の keizu 環境を含める際，配列のクリアルーティンを含める．
+  (2) picture 環境のサイズを TeX に伝えるため \vrule を使用する．
+  (3) 系図が２ページ以上にわたる場合，先頭ページの行数を調整するため
+         \begin{keizu}[tyouseigyousuu=-1]
+      などとオプション指定を可能とする．
+      ただし，このため keyval.sty を援用する．
+2000/12/30 v 0.02
+  (1) node@i@j の定義を \xdef から \gdef に変更
+  (2) 系図の罫線長を
+         \begin{keizu}[hkeisen=2zw]
+      などとオプション指定を可能とする。（デフォルト値=40pt)
+  (3) ルビを振ったとき，罫線と人名との位置関係がずれるのを修正
+      （ただし，横組だと更に修正が必要 --- 今回は見送り）
+2000/12/30  v 0.03
+  (1) 行数の計算に \textheight を用いていたのを \@colht に修正
+  (2) 藤田眞作 氏の作成された warichu.sty における \twarichu を
+      picture 環境で使用するための \ptwarichu を付加
+2000/12/31  v 0.04
+  (1) \textheight ---> \@colht もう一箇所あり。
+2001/01/01  v 0.05
+  (1) 行ピッチを可変長とする。
+  (2) 必要とするスタイルファイル： ifthen, keyval に加えて eclarith
+      これらを \RequirePackage で読み込むようにする。  
+2001/01/02  v0.06
+  (1) tyouseigyousuu オプションが無効となっていたバグを修正
+2001/01/04  v 0.07
+  (1) gyoukan=.. で基準行間隔を変更(デフォルト値は 10pt)
+2005/03/13  v 0.09
+  横書き時の罫線位置修正
+2008/08/29
+  空白の混入対策 (\@ignoretrue)

@@ -1,0 +1,28 @@
+% EMboutyuu.sty by tDB (CQB00260@nifty.ne.jp)
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{EMboutyuu}[2008/03/28 v 0.00]%
+%
+\@ifundefined{c@marginpar}{%
+  \newcounter{marginpar}%
+  \def\themarginpar{\@arabic\c@marginpar}%
+}{}%
+% 本文右肩に番号，傍注を付ける。
+% \boutyuu[#1]#2
+%   #1 : 傍注マーク（デフォルトは \themarginpar ）
+%   #2 : 傍注
+%
+\def\boutyuu{\@ifnextchar[{\boutyuu@}{\@boutyuu}}
+\def\@boutyuu#1{{\refstepcounter{marginpar}\unskip
+  \hbox{${}^{\themarginpar}$}\marginpar{\footnotesize
+  \setbox0=\hbox{${}^{\themarginpar}$~}%
+  \@tempdima\marginparwidth\advance\@tempdima-\wd0
+  \mbox{}\box0\parbox[t]{\@tempdima}{#1}}}}
+\def\boutyuu@[#1]#2{{\unskip\hbox{\ensuremath{{}^{#1}}}\ignorespaces
+  \marginpar{\footnotesize
+    \setbox0=\hbox{${}^{#1}$~}%
+    \@tempdima\marginparwidth\advance\@tempdima-\wd0
+    \mbox{}\box0\parbox[t]{\@tempdima}{#2}}}}
+\endinput
+
+ver 0.00 2008/03/28 emathBt.sty から独立

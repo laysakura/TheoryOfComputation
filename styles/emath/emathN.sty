@@ -1,0 +1,1334 @@
+% emathN.sty  by tDB(CQB00260@nifty.ne.jp)
+% 流れ図を描画するためのマクロ
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{emathN}[2006/08/21 v0.17]%
+%\RequirePackage{calc}
+\RequirePackage{emathPh}
+\RequirePackage{emathLb}
+
+% nagarezu環境
+%   この環境内に流れ図を記述します．
+% 実質は picture環境です．
+%   座標原点は，上辺中点です．
+% \begin{nagarezu}[原点の位置比率](流れ図の横幅,縦幅)
+
+\def\nagare@line{arrowline}
+\define@key{emN}{nagaremuki}{\def\nagare@muki{#1}}%
+\define@key{emN}{nagaresen}{\def\nagare@sen{#1}}%
+
+\newcounter{curP@stacklvl}%
+\edef\nagare@muki{d}%
+\edef\nizyuusen@kankaku{1}%
+\def\nboxsep{1zw}%
+\def\nagaresentyou{20pt}%
+
+
+\def\nagarezu{\@ifnextchar[{\@nagarezu}{\@nagarezu[.5]}}%
+\def\@nagarezu[#1](#2,#3){\@ifnextchar({\@@nagarezu[#1](#2,#3)}{%
+  \@@nagarezu[#1](#2,#3)(\empty,\empty)}}%
+\def\@@nagarezu[#1](#2,#3)(#4,#5){\unitlength1pt\relax%
+\changeArrowHeadSize{1}%
+  \@tempdima=#3\relax%
+  \vrule width\z@ depth\@tempdima%
+  \@tempdima=#2\relax%
+  \@tempdimb=#1\@tempdima%
+  \setlength{\@tempdimc}{\@tempdima-\@tempdimb}%
+  \edef\cur@P{(0,0)}%
+  \edef\uetyuuten{\cur@P}%
+  \edef\sitatyuuten{\cur@P}%
+  \edef\migityuuten{\cur@P}%
+  \edef\hidarityuuten{\cur@P}%
+\ifx\empty#4\relax
+  \edef\xmin{-\strip@pt\@tempdimb}%
+  \edef\xmax{\strip@pt\@tempdimc}%
+  \leavevmode\hspace{\@tempdimb}%
+  \begin{picture}(\strip@pt\@tempdimc,0)\else%
+  \@tempdimb=#4\@tempdimd=#5\relax
+  \begin{picture}(\strip@pt\@tempdima,0)(%
+    -\strip@pt\@tempdimb,-\strip@pt\@tempdimd)\fi}%
+\def\endnagarezu{\vecXY\cur@P\cur@x\cur@y%
+  \setlength{\@tempdima}{-\cur@y pt+10pt}%
+  \xdef\@hukasa{\the\@tempdima}%
+  \end{picture}}%
+
+% 端子記号
+% 左右に半円形の出窓を伴った長方形です．
+% 描画後は，カレントポイントは長方形下辺の中点に移動します．
+% 書式：\tansi#1
+%     #1 : 中に記述する文字列
+\def\tansi{\@ifnextchar[{\@tansi}{\@tansi[\empty]}}%
+\def\@tansi[#1]#2{%
+%  \vecXY\cur@P\cur@x\cur@y%
+    \setbox0\hbox{{#2}}%
+    \setlength{\@tempdima}{\wd0+\nboxsep}%
+    \@tempdima=.5\@tempdima
+    \edef\yoko@han{\strip@pt\@tempdima}%
+    \setlength{\@tempdimb}{\ht0+\dp0+\nboxsep}%
+    \edef\tate@{\strip@pt\@tempdimb}%
+    \@tempdimb=.5\@tempdimb%
+    \edef\tate@han{\strip@pt\@tempdimb}%
+  \if d\nagare@muki\Addvec\cur@P{(0,-\tate@han)}\center@P\else%
+  \if l\nagare@muki\Addvec\cur@P{(-\yoko@han,0)}\center@P
+    \Addvec\center@P{(-\tate@han,0)}\center@P\else%
+  \if r\nagare@muki\Addvec\cur@P{(\yoko@han,0)}\center@P
+    \Addvec\center@P{(\tate@han,0)}\center@P\else%
+  \if u\nagare@muki\Addvec\cur@P{(0,\tate@han)}\center@P\fi\fi\fi\fi%
+    \Addvec\center@P{(\yoko@han,0)}\@P
+    \kyokuTyoku(\tate@han,45)\@migiue\Addvec\@P\@migiue\@migiue%
+      \xdef\migiue{\@migiue}%
+    \kyokuTyoku(\tate@han,-45)\@migisita\Addvec\@P\@migisita\@migisita%
+      \xdef\migisita{\@migisita}%
+    \Addvec\@P{(\tate@han,0)}\@P\xdef\migityuuten{\@P}%
+    \Addvec\center@P{(-\yoko@han,0)}\@P
+    \kyokuTyoku(\tate@han,135)\@hidariue\Addvec\@P\@hidariue\@hidariue%
+      \xdef\hidariue{\@hidariue}%
+    \kyokuTyoku(\tate@han,-135)\@hidarisita\Addvec\@P\@hidarisita\@hidarisita%
+      \xdef\hidarisita{\@hidarisita}%
+    \Addvec\@P{(-\tate@han,0)}\@P\xdef\hidarityuuten{\@P}%
+    \Addvec\center@P{(0,-\tate@han)}\@P\xdef\sitatyuuten{\@P}%
+    \Addvec\center@P{(0,\tate@han)}\@P\xdef\uetyuuten{\@P}%
+  \emathPut\center@P{\begin{picture}(0,0)%
+  \ifx\empty#1\relax\else%
+    \put(-\yoko@han,0){\ougigata*[#1]{\tate@han}{90}{270}}%
+      \put(\yoko@han,0){\ougigata*[#1]{\tate@han}{-90}{90}}%
+      \nuritubusi[#1](-\yoko@han,-\tate@han)(\yoko@han,-\tate@han)(%
+      \yoko@han,\tate@han)(-\yoko@han,\tate@han)(-\yoko@han,-\tate@han)\fi%
+    \put(-\yoko@han,0){\EMenko{\tate@han}{90}{270}}%
+    \put(\yoko@han,0){\EMenko{\tate@han}{-90}{90}}%
+    \drawline(-\yoko@han,-\tate@han)(\yoko@han,-\tate@han)%
+    \drawline(-\yoko@han,\tate@han)(\yoko@han,\tate@han)%
+    \put(0,0){\makebox(0,0)[c]{\box0}}%
+  \end{picture}}%
+  \edef\P@migi{\migityuuten}%
+  \edef\P@hidari{\hidarityuuten}%
+  \edef\cur@P{\sitatyuuten}%
+  \edef\P@sita{\cur@P}%
+  \ignorespaces
+}%
+%
+% 結合子
+%
+\def\ketugousi{\@ifnextchar[{\@ketugousi}{\@ketugousi[\empty]}}%
+\def\@ketugousi[#1]{\@ifnextchar({\@@ketugousi[#1]}{\@@ketugousi[#1](\empty)}}%
+\def\@@ketugousi[#1](#2)#3{%
+    \ifx\empty#2\setbox0\hbox{{#3}}\else\setbox0\hbox{\makebox[#2][c]{#3}}\fi%
+    \@tempdima.5\wd0\relax\advance\@tempdima.5\nboxsep
+    \@tempdimb.5\ht0\relax\advance\@tempdimb.5\nboxsep
+    \advance\@tempdimb.5\dp0\relax
+    \edef\ketugou@x{\strip@pt\@tempdima}%
+    \edef\ketugou@y{\strip@pt\@tempdimb}%
+    \Kyori{(\ketugou@x,\ketugou@y)}{(0,0)}\tate@han
+    \edef\yoko@han{\tate@han}%
+  \if d\nagare@muki\Addvec\cur@P{(0,-\tate@han)}\center@P\else%
+  \if l\nagare@muki\Addvec\cur@P{(-\yoko@han,0)}\center@P\else%
+  \if r\nagare@muki\Addvec\cur@P{(\yoko@han,0)}\center@P\else%
+  \if u\nagare@muki\Addvec\cur@P{(0,\tate@han)}\center@P\fi\fi\fi\fi%
+    \Addvec\center@P{(\yoko@han,0)}\@P\xdef\migityuuten{\@P}%
+    \Addvec\center@P{(\yoko@han,-\tate@han)}\@P\xdef\migisita{\@P}%
+    \Addvec\center@P{(\yoko@han,\tate@han)}\@P\xdef\migiue{\@P}%
+    \Addvec\center@P{(-\yoko@han,0)}\@P\xdef\hidarityuuten{\@P}%
+    \Addvec\center@P{(-\yoko@han,-\tate@han)}\@P\xdef\hidarisita{\@P}%
+    \Addvec\center@P{(-\yoko@han,\tate@han)}\@P\xdef\hidariue{\@P}%
+    \Addvec\center@P{(0,-\tate@han)}\@P\xdef\sitatyuuten{\@P}%
+    \Addvec\center@P{(0,\tate@han)}\@P\xdef\uetyuuten{\@P}%
+  \emathPut\center@P{\begin{picture}(0,0)%
+  \ifx\empty#1\relax\else%
+      \nuritubusi[#1](-\yoko@han,-\tate@han)(\yoko@han,-\tate@han)(%
+      \yoko@han,\tate@han)(-\yoko@han,\tate@han)(-\yoko@han,-\tate@han)\fi%
+    \if 0#1\else%
+      \En{(0,0)}\tate@han\fi
+    \put(0,0){\makebox(0,0)[c]{\box0}}%
+  \end{picture}}%
+  \edef\P@migi{\migityuuten}%
+  \edef\P@hidari{\hidarityuuten}%
+  \edef\cur@P{\sitatyuuten}%
+  \edef\P@sita{\cur@P}%
+  \ignorespaces
+ }%
+%
+% 繰り返し処理
+\newbox\lp@waribox
+\def\lp@zennuri{0}
+
+\def\kurikaesi{\@ifnextchar[{\@kurikaesi}{\@kurikaesi[\empty]}}%
+\def\@kurikaesi[#1]{\@ifnextchar({\@@kurikaesi[#1]}{\@@kurikaesi[#1](\empty)}}%
+\def\@@kurikaesi[#1](#2)#3#4{%
+  \xdef\lp@nuri{#1}%
+  \setbox\lp@waribox=\hbox{{#4}}%
+    \ifx\empty#2\setbox0\hbox{{#3}}\else\setbox0\hbox{\makebox[#2][c]{#3}}\fi%
+    \edef\kurikaesiyokohaba{\the\wd0}%
+    \setlength{\@tempdima}{\nboxsep+.5\wd0}%
+    \edef\lp@yoko@h{\strip@pt\@tempdima}%
+    \setlength{\@tempdimb}{\ht0+\dp0+\nboxsep}%
+    \edef\tate@{\strip@pt\@tempdimb}%
+    \@tempdimb=.5\@tempdimb%
+    \edef\lp@tate@h{\strip@pt\@tempdimb}%
+  \if d\nagare@muki\Addvec\cur@P{(0,-\lp@tate@h)}\center@P
+        \Addvec\center@P{(0,-10)}\center@P\else%
+  \if l\nagare@muki\Addvec\cur@P{(-\lp@yoko@h,0)}\center@P\else%
+  \if r\nagare@muki\Addvec\cur@P{(\lp@yoko@h,0)}\center@P\else%
+  \if u\nagare@muki\Addvec\cur@P{(0,\lp@tate@h)}\center@P\fi\fi\fi\fi%
+    \Addvec\center@P{(\lp@yoko@h,0)}\@P\xdef\migityuuten{\@P}%
+    \Addvec\center@P{(\lp@yoko@h,-\lp@tate@h)}\@P\xdef\migisita{\@P}%
+    \Addvec\center@P{(\lp@yoko@h,\lp@tate@h)}\@P\xdef\migiue{\@P}%
+    \Addvec\center@P{(-\lp@yoko@h,0)}\@P\xdef\hidarityuuten{\@P}%
+    \Addvec\center@P{(-\lp@yoko@h,-\lp@tate@h)}\@P\xdef\hidarisita{\@P}%
+    \Addvec\center@P{(-\lp@yoko@h,\lp@tate@h)}\@P\xdef\hidariue{\@P}%
+    \Addvec\center@P{(0,-\lp@tate@h)}\@P\xdef\sitatyuuten{\@P}%
+    \Addvec\center@P{(0,\lp@tate@h)}\@P
+      \Addvec\@P{(0,10)}\@P\xdef\uetyuuten{\@P}%
+    \edef\lp@LT{\hidarisita}%
+    \edef\lp@RT{\migisita}%
+  \emathPut\center@P{\begin{picture}(0,0)%
+  \Sub\lp@yoko@h{10}\yoko@@h
+  \Add\lp@tate@h{10}\tate@@h
+  \ifx\empty#1\relax\else%
+      \nuritubusi[\lp@nuri](-\lp@yoko@h,-\lp@tate@h)(\lp@yoko@h,-\lp@tate@h)(%
+      \lp@yoko@h,\lp@tate@h)%
+      (\yoko@@h,\tate@@h)(-\yoko@@h,\tate@@h)%
+      (-\lp@yoko@h,\lp@tate@h)(-\lp@yoko@h,-\lp@tate@h)\fi%
+    \if 0#1\else\drawline(-\lp@yoko@h,-\lp@tate@h)(\lp@yoko@h,-\lp@tate@h)(%
+      \lp@yoko@h,\lp@tate@h)%
+      (\yoko@@h,\tate@@h)(-\yoko@@h,\tate@@h)%
+      (-\lp@yoko@h,\lp@tate@h)(-\lp@yoko@h,-\lp@tate@h)\fi%
+    \put(0,0){\makebox(0,0)[c]{\box0}}%
+  \end{picture}}%
+  \edef\P@migi{\migityuuten}%
+  \edef\P@hidari{\hidarityuuten}%
+  \edef\cur@P{\sitatyuuten}%
+  \edef\P@sita{\cur@P}%
+ }%
+
+\def\endkurikaesi{%
+  \if d\nagare@muki\Addvec\cur@P{(0,-\lp@tate@h)}\center@P\else
+  \if l\nagare@muki\Addvec\cur@P{(-\lp@yoko@h,0)}\center@P\else%
+  \if r\nagare@muki\Addvec\cur@P{(\lp@yoko@h,0)}\center@P\else%
+  \if u\nagare@muki\Addvec\cur@P{(0,\lp@tate@h)}\center@P\fi\fi\fi\fi%
+    \Addvec\center@P{(\lp@yoko@h,0)}\@P\xdef\migityuuten{\@P}%
+    \Addvec\center@P{(\lp@yoko@h,-\lp@tate@h)}\@P\xdef\migisita{\@P}%
+    \Addvec\center@P{(\lp@yoko@h,\lp@tate@h)}\@P\xdef\migiue{\@P}%
+    \Addvec\center@P{(-\lp@yoko@h,0)}\@P\xdef\hidarityuuten{\@P}%
+    \Addvec\center@P{(-\lp@yoko@h,-\lp@tate@h)}\@P\xdef\hidarisita{\@P}%
+    \Addvec\center@P{(-\lp@yoko@h,\lp@tate@h)}\@P\xdef\hidariue{\@P}%
+    \Addvec\center@P{(0,-\lp@tate@h)}\@P
+      \Addvec\@P{(0,-10)}\@P\xdef\sitatyuuten{\@P}%
+    \Addvec\center@P{(0,\lp@tate@h)}\@P\xdef\uetyuuten{\@P}%
+  \emathPut\center@P{\begin{picture}(0,0)%
+  \Sub\lp@yoko@h{10}\yoko@@h
+  \Add\lp@tate@h{10}\tate@@h
+%  \ifx\empty\lp@nuri
+   \ifthenelse{\equal\lp@nuri\empty}{%
+      \drawline(-\lp@yoko@h,-\lp@tate@h)%
+        (-\yoko@@h,-\tate@@h)(\yoko@@h,-\tate@@h)%
+        (\lp@yoko@h,-\lp@tate@h)(\lp@yoko@h,\lp@tate@h)%
+        (-\lp@yoko@h,\lp@tate@h)(-\lp@yoko@h,-\lp@tate@h)%
+%  \else%
+   }{%
+      \nuritubusi[\lp@nuri](-\lp@yoko@h,-\lp@tate@h)%
+        (-\yoko@@h,-\tate@@h)(\yoko@@h,-\tate@@h)%
+        (\lp@yoko@h,-\lp@tate@h)(\lp@yoko@h,\lp@tate@h)%
+        (-\lp@yoko@h,\lp@tate@h)(-\lp@yoko@h,-\lp@tate@h)%
+    \ifdim \lp@nuri pt=\z@\else
+      \drawline(-\lp@yoko@h,-\lp@tate@h)%
+        (-\yoko@@h,-\tate@@h)(\yoko@@h,-\tate@@h)%
+        (\lp@yoko@h,-\lp@tate@h)(\lp@yoko@h,\lp@tate@h)%
+        (-\lp@yoko@h,\lp@tate@h)(-\lp@yoko@h,-\lp@tate@h)%
+    \fi%
+    }%
+     \put(0,0){\makebox(0,0)[c]{\box\lp@waribox}}%
+  \end{picture}}%
+  \ifnum\lp@zennuri>\z@
+    \Nuritubusi[\lp@nuri]{\lp@LT\hidariue\migiue\lp@RT\lp@LT}%
+  \fi
+  \xdef\P@migi{\migityuuten}%
+  \xdef\P@hidari{\hidarityuuten}%
+  \xdef\cur@P{\sitatyuuten}%
+  \xdef\P@sita{\cur@P}%
+ }%
+
+\@namedef{kurikaesi*}{\def\lp@zennuri{1}\kurikaesi}
+\@namedef{endkurikaesi*}{\endkurikaesi\def\lp@zennuri{0}}
+%
+% 処理記号
+%
+\def\syori{\@ifnextchar[{\@syori}{\@syori[\empty]}}%
+\def\@syori[#1]{\@ifnextchar({\@@syori[#1]}{\@@syori[#1](\empty)}}%
+\def\@@syori[#1](#2)#3{%
+    \ifx\empty#2\setbox0\hbox{{#3}}\else\setbox0\hbox{\makebox[#2][c]{#3}}\fi%
+    \setlength{\@tempdima}{\nboxsep+.5\wd0}%
+    \edef\yoko@han{\strip@pt\@tempdima}%
+    \setlength{\@tempdimb}{\ht0+\dp0+\nboxsep}%
+    \edef\tate@{\strip@pt\@tempdimb}%
+    \@tempdimb=.5\@tempdimb%
+    \edef\tate@han{\strip@pt\@tempdimb}%
+  \if d\nagare@muki\Addvec\cur@P{(0,-\tate@han)}\center@P\else%
+  \if l\nagare@muki\Addvec\cur@P{(-\yoko@han,0)}\center@P\else%
+  \if r\nagare@muki\Addvec\cur@P{(\yoko@han,0)}\center@P\else%
+  \if u\nagare@muki\Addvec\cur@P{(0,\tate@han)}\center@P\fi\fi\fi\fi%
+    \Addvec\center@P{(\yoko@han,0)}\@P\xdef\migityuuten{\@P}%
+    \Addvec\center@P{(\yoko@han,-\tate@han)}\@P\xdef\migisita{\@P}%
+    \Addvec\center@P{(\yoko@han,\tate@han)}\@P\xdef\migiue{\@P}%
+    \Addvec\center@P{(-\yoko@han,0)}\@P\xdef\hidarityuuten{\@P}%
+    \Addvec\center@P{(-\yoko@han,-\tate@han)}\@P\xdef\hidarisita{\@P}%
+    \Addvec\center@P{(-\yoko@han,\tate@han)}\@P\xdef\hidariue{\@P}%
+    \Addvec\center@P{(0,-\tate@han)}\@P\xdef\sitatyuuten{\@P}%
+    \Addvec\center@P{(0,\tate@han)}\@P\xdef\uetyuuten{\@P}%
+  \emathPut\center@P{\begin{picture}(0,0)%
+  \ifx\empty#1\relax\else%
+      \nuritubusi[#1](-\yoko@han,-\tate@han)(\yoko@han,-\tate@han)(%
+      \yoko@han,\tate@han)(-\yoko@han,\tate@han)(-\yoko@han,-\tate@han)\fi%
+    \if 0#1\else\drawline(-\yoko@han,-\tate@han)(\yoko@han,-\tate@han)(%
+      \yoko@han,\tate@han)(-\yoko@han,\tate@han)(-\yoko@han,-\tate@han)\fi%
+    \put(0,0){\makebox(0,0)[c]{\box0}}%
+  \end{picture}}%
+  \edef\P@migi{\migityuuten}%
+  \edef\P@hidari{\hidarityuuten}%
+  \edef\cur@P{\sitatyuuten}%
+  \edef\P@sita{\cur@P}%
+  \ignorespaces
+ }%
+%
+% 左右：二重罫線
+%
+\def\syorii{\@ifnextchar[{\@syorii}{\@syorii[\empty]}}%
+\def\@syorii[#1]{\@ifnextchar({\@@syorii[#1]}{\@@syorii[#1](\empty)}}%
+\def\@@syorii[#1](#2)#3{%
+    \ifx\empty#2\setbox0\hbox{{#3}}\else\setbox0\hbox{\makebox[#2][c]{#3}}\fi%
+    \setlength{\@tempdima}{\nboxsep+.5\wd0}%
+    \edef\yoko@han{\strip@pt\@tempdima}%
+    \advance\@tempdima-3\p@
+    \edef\yoko@han@{\strip@pt\@tempdima}%
+    \setlength{\@tempdimb}{\ht0+\dp0+\nboxsep}%
+    \edef\tate@{\strip@pt\@tempdimb}%
+    \@tempdimb=.5\@tempdimb%
+    \edef\tate@han{\strip@pt\@tempdimb}%
+  \if d\nagare@muki\Addvec\cur@P{(0,-\tate@han)}\center@P\else%
+  \if l\nagare@muki\Addvec\cur@P{(-\yoko@han,0)}\center@P\else%
+  \if r\nagare@muki\Addvec\cur@P{(\yoko@han,0)}\center@P\else%
+  \if u\nagare@muki\Addvec\cur@P{(0,\tate@han)}\center@P\fi\fi\fi\fi%
+    \Addvec\center@P{(\yoko@han,0)}\@P\xdef\migityuuten{\@P}%
+    \Addvec\center@P{(\yoko@han,-\tate@han)}\@P\xdef\migisita{\@P}%
+    \Addvec\center@P{(\yoko@han,\tate@han)}\@P\xdef\migiue{\@P}%
+    \Addvec\center@P{(-\yoko@han,0)}\@P\xdef\hidarityuuten{\@P}%
+    \Addvec\center@P{(-\yoko@han,-\tate@han)}\@P\xdef\hidarisita{\@P}%
+    \Addvec\center@P{(-\yoko@han,\tate@han)}\@P\xdef\hidariue{\@P}%
+    \Addvec\center@P{(0,-\tate@han)}\@P\xdef\sitatyuuten{\@P}%
+    \Addvec\center@P{(0,\tate@han)}\@P\xdef\uetyuuten{\@P}%
+  \emathPut\center@P{\begin{picture}(0,0)%
+  \ifx\empty#1\relax\else%
+      \nuritubusi[#1](-\yoko@han,-\tate@han)(\yoko@han,-\tate@han)(%
+      \yoko@han,\tate@han)(-\yoko@han,\tate@han)(-\yoko@han,-\tate@han)\fi%
+    \if 0#1\else\drawline(-\yoko@han,-\tate@han)(\yoko@han,-\tate@han)(%
+      \yoko@han,\tate@han)(-\yoko@han,\tate@han)(-\yoko@han,-\tate@han)%
+      \drawline(-\yoko@han@,\tate@han)(-\yoko@han@,-\tate@han)%
+      \drawline(\yoko@han@,\tate@han)(\yoko@han@,-\tate@han)%
+    \fi%
+    \put(0,0){\makebox(0,0)[c]{\box0}}%
+  \end{picture}}%
+  \edef\P@migi{\migityuuten}%
+  \edef\P@hidari{\hidarityuuten}%
+  \edef\cur@P{\sitatyuuten}%
+  \edef\P@sita{\cur@P}%
+  \ignorespaces
+ }%
+%
+% カード
+%
+\def\cardbox{\@ifnextchar[{\@cardbox}{\@cardbox[\empty]}}%
+\def\@cardbox[#1]{\@ifnextchar({\@@cardbox[#1]}{\@@cardbox[#1](\empty)}}%
+\def\@@cardbox[#1](#2)#3{%
+    \ifx\empty#2\setbox0\hbox{{#3}}\else\setbox0\hbox{\makebox[#2][c]{#3}}\fi%
+    \setlength{\@tempdima}{\nboxsep+.5\wd0}%
+    \edef\yoko@han@{\strip@pt\@tempdima}%
+    \advance\@tempdima5\p@
+    \edef\yoko@han{\strip@pt\@tempdima}%
+    \setlength{\@tempdimb}{\ht0+\dp0+\nboxsep}%
+    \edef\tate@{\strip@pt\@tempdimb}%
+    \@tempdimb=.5\@tempdimb%
+    \edef\tate@han{\strip@pt\@tempdimb}%
+    \advance\@tempdimb-5\p@
+    \edef\tate@han@{\strip@pt\@tempdimb}%
+  \if d\nagare@muki\Addvec\cur@P{(0,-\tate@han)}\center@P\else%
+  \if l\nagare@muki\Addvec\cur@P{(-\yoko@han,0)}\center@P\else%
+  \if r\nagare@muki\Addvec\cur@P{(\yoko@han,0)}\center@P\else%
+  \if u\nagare@muki\Addvec\cur@P{(0,\tate@han)}\center@P\fi\fi\fi\fi%
+    \Addvec\center@P{(\yoko@han,0)}\@P\xdef\migityuuten{\@P}%
+    \Addvec\center@P{(\yoko@han,-\tate@han)}\@P\xdef\migisita{\@P}%
+    \Addvec\center@P{(\yoko@han,\tate@han)}\@P\xdef\migiue{\@P}%
+    \Addvec\center@P{(-\yoko@han,0)}\@P\xdef\hidarityuuten{\@P}%
+    \Addvec\center@P{(-\yoko@han,-\tate@han)}\@P\xdef\hidarisita{\@P}%
+    \Addvec\center@P{(-\yoko@han,\tate@han)}\@P\xdef\hidariue{\@P}%
+    \Addvec\center@P{(0,-\tate@han)}\@P\xdef\sitatyuuten{\@P}%
+    \Addvec\center@P{(0,\tate@han)}\@P\xdef\uetyuuten{\@P}%
+  \emathPut\center@P{\begin{picture}(0,0)%
+  \ifx\empty#1\relax\else%
+      \nuritubusi[#1](-\yoko@han,-\tate@han)(\yoko@han,-\tate@han)(%
+      \yoko@han,\tate@han)(-\yoko@han,\tate@han)(-\yoko@han,-\tate@han)\fi%
+    \if 0#1\else\drawline(-\yoko@han,-\tate@han)(\yoko@han,-\tate@han)(%
+      \yoko@han,\tate@han)(-\yoko@han@,\tate@han)(-\yoko@han,\tate@han@)(-\yoko@han,-\tate@han)\fi%
+    \put(0,0){\makebox(0,0)[c]{\box0}}%
+  \end{picture}}%
+  \edef\P@migi{\migityuuten}%
+  \edef\P@hidari{\hidarityuuten}%
+  \edef\cur@P{\sitatyuuten}%
+  \edef\P@sita{\cur@P}%
+  \ignorespaces
+ }%
+%
+% 手作業
+%
+\def\tesagyou{\@ifnextchar[{\@tesagyou}{\@tesagyou[\empty]}}%
+\def\@tesagyou[#1]{\@ifnextchar({\@@tesagyou[#1]}{\@@tesagyou[#1](\empty)}}%
+\def\@@tesagyou[#1](#2)#3{%
+    \ifx\empty#2\setbox0\hbox{{#3}}\else\setbox0\hbox{\makebox[#2][c]{#3}}\fi%
+    \setlength{\@tempdima}{\nboxsep+.5\wd0}%
+    \edef\yoko@han{\strip@pt\@tempdima}%
+    \advance\@tempdima.25em\relax
+    \edef\yoko@han@t{\strip@pt\@tempdima}%
+    \advance\@tempdima-.5em\relax
+    \edef\yoko@han@b{\strip@pt\@tempdima}%
+    \setlength{\@tempdimb}{\ht0+\dp0+\nboxsep}%
+    \edef\tate@{\strip@pt\@tempdimb}%
+    \@tempdimb=.5\@tempdimb%
+    \edef\tate@han{\strip@pt\@tempdimb}%
+  \if d\nagare@muki\Addvec\cur@P{(0,-\tate@han)}\center@P\else%
+  \if l\nagare@muki\Addvec\cur@P{(-\yoko@han,0)}\center@P\else%
+  \if r\nagare@muki\Addvec\cur@P{(\yoko@han,0)}\center@P\else%
+  \if u\nagare@muki\Addvec\cur@P{(0,\tate@han)}\center@P\fi\fi\fi\fi%
+    \Addvec\center@P{(\yoko@han,0)}\@P\xdef\migityuuten{\@P}%
+    \Addvec\center@P{(\yoko@han,-\tate@han)}\@P\xdef\migisita{\@P}%
+    \Addvec\center@P{(\yoko@han,\tate@han)}\@P\xdef\migiue{\@P}%
+    \Addvec\center@P{(-\yoko@han,0)}\@P\xdef\hidarityuuten{\@P}%
+    \Addvec\center@P{(-\yoko@han,-\tate@han)}\@P\xdef\hidarisita{\@P}%
+    \Addvec\center@P{(-\yoko@han,\tate@han)}\@P\xdef\hidariue{\@P}%
+    \Addvec\center@P{(0,-\tate@han)}\@P\xdef\sitatyuuten{\@P}%
+    \Addvec\center@P{(0,\tate@han)}\@P\xdef\uetyuuten{\@P}%
+  \emathPut\center@P{\begin{picture}(0,0)%
+  \ifx\empty#1\relax\else%
+      \nuritubusi[#1](-\yoko@han,-\tate@han)(\yoko@han,-\tate@han)(%
+      \yoko@han,\tate@han)(-\yoko@han,\tate@han)(-\yoko@han,-\tate@han)\fi%
+    \if 0#1\else\drawline(-\yoko@han@b,-\tate@han)(\yoko@han@b,-\tate@han)(%
+      \yoko@han@t,\tate@han)(-\yoko@han@t,\tate@han)(-\yoko@han@b,-\tate@han)\fi%
+    \put(0,0){\makebox(0,0)[c]{\box0}}%
+  \end{picture}}%
+  \edef\P@migi{\migityuuten}%
+  \edef\P@hidari{\hidarityuuten}%
+  \edef\cur@P{\sitatyuuten}%
+  \edef\P@sita{\cur@P}%
+  \ignorespaces
+ }%
+%
+% 内部記憶
+%
+\def\naibukioku{\@ifnextchar[{\@naibukioku}{\@naibukioku[\empty]}}%
+\def\@naibukioku[#1]{\@ifnextchar({\@@naibukioku[#1]}{\@@naibukioku[#1](\empty)}}%
+\def\@@naibukioku[#1](#2)#3{%
+    \ifx\empty#2\setbox0\hbox{{#3}}\else\setbox0\hbox{\makebox[#2][c]{#3}}\fi%
+    \setlength{\@tempdima}{\nboxsep+.5\wd0}%
+    \edef\yoko@han@{\strip@pt\@tempdima}%
+    \advance\@tempdima3\p@
+    \edef\yoko@han{\strip@pt\@tempdima}%
+    \setlength{\@tempdimb}{\ht0+\dp0+\nboxsep}%
+    \edef\tate@{\strip@pt\@tempdimb}%
+    \@tempdimb=.5\@tempdimb%
+    \edef\tate@han@{\strip@pt\@tempdimb}%
+    \advance\@tempdimb3\p@
+    \edef\tate@han{\strip@pt\@tempdimb}%
+  \if d\nagare@muki\Addvec\cur@P{(0,-\tate@han)}\center@P\else%
+  \if l\nagare@muki\Addvec\cur@P{(-\yoko@han,0)}\center@P\else%
+  \if r\nagare@muki\Addvec\cur@P{(\yoko@han,0)}\center@P\else%
+  \if u\nagare@muki\Addvec\cur@P{(0,\tate@han)}\center@P\fi\fi\fi\fi%
+    \Addvec\center@P{(\yoko@han,0)}\@P\xdef\migityuuten{\@P}%
+    \Addvec\center@P{(\yoko@han,-\tate@han)}\@P\xdef\migisita{\@P}%
+    \Addvec\center@P{(\yoko@han,\tate@han)}\@P\xdef\migiue{\@P}%
+    \Addvec\center@P{(-\yoko@han,0)}\@P\xdef\hidarityuuten{\@P}%
+    \Addvec\center@P{(-\yoko@han,-\tate@han)}\@P\xdef\hidarisita{\@P}%
+    \Addvec\center@P{(-\yoko@han,\tate@han)}\@P\xdef\hidariue{\@P}%
+    \Addvec\center@P{(0,-\tate@han)}\@P\xdef\sitatyuuten{\@P}%
+    \Addvec\center@P{(0,\tate@han)}\@P\xdef\uetyuuten{\@P}%
+  \emathPut\center@P{\begin{picture}(0,0)%
+  \ifx\empty#1\relax\else%
+      \nuritubusi[#1](-\yoko@han,-\tate@han)(\yoko@han,-\tate@han)(%
+      \yoko@han,\tate@han)(-\yoko@han,\tate@han)(-\yoko@han,-\tate@han)\fi%
+    \if 0#1\else\drawline(-\yoko@han,-\tate@han)(\yoko@han,-\tate@han)(%
+      \yoko@han,\tate@han)(-\yoko@han,\tate@han)(-\yoko@han,-\tate@han)%
+      \drawline(-\yoko@han@,-\tate@han)(-\yoko@han@,\tate@han)%
+      \drawline(-\yoko@han,\tate@han@)(\yoko@han,\tate@han@)%
+    \fi%
+    \put(0,0){\makebox(0,0)[c]{\box0}}%
+  \end{picture}}%
+  \edef\P@migi{\migityuuten}%
+  \edef\P@hidari{\hidarityuuten}%
+  \edef\cur@P{\sitatyuuten}%
+  \edef\P@sita{\cur@P}%
+  \ignorespaces
+ }%
+%
+% 記憶データ
+%
+\def\kioku{\@ifnextchar[{\@kioku}{\@kioku[\empty]}}%
+\def\@kioku[#1]#2{%
+%  \vecXY\cur@P\cur@x\cur@y%
+    \setbox0\hbox{{#2}}%
+    \setlength{\@tempdima}{\wd0+\nboxsep}%
+    \@tempdima=.5\@tempdima
+    \edef\yoko@han{\strip@pt\@tempdima}%
+    \advance\@tempdima.5em\relax
+    \edef\yoko@han@r{\strip@pt\@tempdima}%
+    \setlength{\@tempdimb}{\ht0+\dp0+\nboxsep}%
+    \edef\tate@{\strip@pt\@tempdimb}%
+    \@tempdimb=.5\@tempdimb%
+    \edef\tate@han{\strip@pt\@tempdimb}%
+  \if d\nagare@muki\Addvec\cur@P{(0,-\tate@han)}\center@P\else%
+  \if l\nagare@muki\Addvec\cur@P{(-\yoko@han,0)}\center@P
+    \Addvec\center@P{(-\tate@han,0)}\center@P\else%
+  \if r\nagare@muki\Addvec\cur@P{(\yoko@han,0)}\center@P
+    \Addvec\center@P{(\tate@han,0)}\center@P\else%
+  \if u\nagare@muki\Addvec\cur@P{(0,\tate@han)}\center@P\fi\fi\fi\fi%
+    \Addvec\center@P{(\yoko@han,0)}\@P
+    \kyokuTyoku(\tate@han,45)\@migiue\Addvec\@P\@migiue\@migiue%
+      \xdef\migiue{\@migiue}%
+    \kyokuTyoku(\tate@han,-45)\@migisita\Addvec\@P\@migisita\@migisita%
+      \xdef\migisita{\@migisita}%
+    \Addvec\@P{(\tate@han,0)}\@P\xdef\migityuuten{\@P}%
+    \Addvec\center@P{(-\yoko@han,0)}\@P
+    \kyokuTyoku(\tate@han,135)\@hidariue\Addvec\@P\@hidariue\@hidariue%
+      \xdef\hidariue{\@hidariue}%
+    \kyokuTyoku(\tate@han,-135)\@hidarisita\Addvec\@P\@hidarisita\@hidarisita%
+      \xdef\hidarisita{\@hidarisita}%
+    \Addvec\@P{(-\tate@han,0)}\@P\xdef\hidarityuuten{\@P}%
+    \Addvec\center@P{(0,-\tate@han)}\@P\xdef\sitatyuuten{\@P}%
+    \Addvec\center@P{(0,\tate@han)}\@P\xdef\uetyuuten{\@P}%
+  \emathPut\center@P{\begin{picture}(0,0)%
+    \ifx\empty#1\relax\else%
+      \put(-\yoko@han,0){\ougigata*[#1]{\tate@han}{90}{270}}%
+      \put(\yoko@han,0){\ougigata*[#1]{\tate@han}{-90}{90}}%
+      \nuritubusi[#1](-\yoko@han,-\tate@han)(\yoko@han,-\tate@han)(%
+      \yoko@han,\tate@han)(-\yoko@han,\tate@han)(-\yoko@han,-\tate@han)\fi%
+    \HenKo<henkoH=.5em>{(-\yoko@han,\tate@han)}{(-\yoko@han,-\tate@han)}{}%
+%    \HenKo<henkoH=.5em>{(\yoko@han@r,\tate@han)}{(\yoko@han@r,-\tate@han)}{}%
+    \drawline(-\yoko@han,-\tate@han)(\yoko@han@r,-\tate@han)%
+    \drawline(-\yoko@han,\tate@han)(\yoko@han@r,\tate@han)%
+    \put(0,0){\makebox(0,0)[c]{\box0}}%
+  \end{picture}}%
+  \edef\P@migi{\migityuuten}%
+  \edef\P@hidari{\hidarityuuten}%
+  \edef\cur@P{\sitatyuuten}%
+  \edef\P@sita{\cur@P}%
+  \ignorespaces
+}%
+%
+% 順次アクセス記憶
+%
+\def\Saccessbox{\@ifnextchar[{\@Saccessbox}{\@Saccessbox[\empty]}}%
+\def\@Saccessbox[#1]{\@ifnextchar({\@@Saccessbox[#1]}{\@@Saccessbox[#1](\empty)}}%
+\def\@@Saccessbox[#1](#2)#3{%
+    \ifx\empty#2\setbox0\hbox{{#3}}\else\setbox0\hbox{\makebox[#2][c]{#3}}\fi%
+    \@tempdima.5\wd0\relax\advance\@tempdima.5\nboxsep
+    \@tempdimb.5\ht0\relax\advance\@tempdimb.5\nboxsep
+    \advance\@tempdimb.5\dp0\relax
+    \edef\ketugou@x{\strip@pt\@tempdima}%
+    \edef\ketugou@y{\strip@pt\@tempdimb}%
+    \Kyori{(\ketugou@x,\ketugou@y)}{(0,0)}\tate@han
+    \edef\yoko@han{\tate@han}%
+  \if d\nagare@muki\Addvec\cur@P{(0,-\tate@han)}\center@P\else%
+  \if l\nagare@muki\Addvec\cur@P{(-\yoko@han,0)}\center@P\else%
+  \if r\nagare@muki\Addvec\cur@P{(\yoko@han,0)}\center@P\else%
+  \if u\nagare@muki\Addvec\cur@P{(0,\tate@han)}\center@P\fi\fi\fi\fi%
+    \Addvec\center@P{(\yoko@han,0)}\@P\xdef\migityuuten{\@P}%
+    \Addvec\center@P{(\yoko@han,-\tate@han)}\@P\xdef\migisita{\@P}%
+    \Addvec\center@P{(\yoko@han,\tate@han)}\@P\xdef\migiue{\@P}%
+    \Addvec\center@P{(-\yoko@han,0)}\@P\xdef\hidarityuuten{\@P}%
+    \Addvec\center@P{(-\yoko@han,-\tate@han)}\@P\xdef\hidarisita{\@P}%
+    \Addvec\center@P{(-\yoko@han,\tate@han)}\@P\xdef\hidariue{\@P}%
+    \Addvec\center@P{(0,-\tate@han)}\@P\xdef\sitatyuuten{\@P}%
+    \Addvec\center@P{(0,\tate@han)}\@P\xdef\uetyuuten{\@P}%
+  \emathPut\center@P{\begin{picture}(0,0)%
+  \ifx\empty#1\relax\else%
+      \nuritubusi[#1](-\yoko@han,-\tate@han)(\yoko@han,-\tate@han)(%
+      \yoko@han,\tate@han)(-\yoko@han,\tate@han)(-\yoko@han,-\tate@han)\fi%
+    \if 0#1\else%
+      \En{(0,0)}\tate@han
+      \Put{(0,-\tate@han)}{\drawline(0,0)(\tate@han,0)}%
+    \fi
+    \put(0,0){\makebox(0,0)[c]{\box0}}%
+  \end{picture}}%
+  \edef\P@migi{\migityuuten}%
+  \edef\P@hidari{\hidarityuuten}%
+  \edef\cur@P{\sitatyuuten}%
+  \edef\P@sita{\cur@P}%
+  \ignorespaces
+ }%
+%
+% 直接アクセス記憶
+%
+\def\Daccessbox{\@ifnextchar[{\@Daccessbox}{\@Daccessbox[\empty]}}%
+\def\@Daccessbox[#1]#2{%
+%  \vecXY\cur@P\cur@x\cur@y%
+    \setbox0\hbox{{#2}}%
+    \setlength{\@tempdima}{\wd0+\nboxsep}%
+    \@tempdima=.5\@tempdima
+    \edef\yoko@han{\strip@pt\@tempdima}%
+    \advance\@tempdima.5em\relax
+    \edef\yoko@han@r{\strip@pt\@tempdima}%
+    \setlength{\@tempdimb}{\ht0+\dp0+\nboxsep}%
+    \edef\tate@{\strip@pt\@tempdimb}%
+    \@tempdimb=.5\@tempdimb%
+    \edef\tate@han{\strip@pt\@tempdimb}%
+  \if d\nagare@muki\Addvec\cur@P{(0,-\tate@han)}\center@P\else%
+  \if l\nagare@muki\Addvec\cur@P{(-\yoko@han,0)}\center@P
+    \Addvec\center@P{(-\tate@han,0)}\center@P\else%
+  \if r\nagare@muki\Addvec\cur@P{(\yoko@han,0)}\center@P
+    \Addvec\center@P{(\tate@han,0)}\center@P\else%
+  \if u\nagare@muki\Addvec\cur@P{(0,\tate@han)}\center@P\fi\fi\fi\fi%
+    \Addvec\center@P{(\yoko@han,0)}\@P
+    \kyokuTyoku(\tate@han,45)\@migiue\Addvec\@P\@migiue\@migiue%
+      \xdef\migiue{\@migiue}%
+    \kyokuTyoku(\tate@han,-45)\@migisita\Addvec\@P\@migisita\@migisita%
+      \xdef\migisita{\@migisita}%
+    \Addvec\@P{(\tate@han,0)}\@P\xdef\migityuuten{\@P}%
+    \Addvec\center@P{(-\yoko@han,0)}\@P
+    \kyokuTyoku(\tate@han,135)\@hidariue\Addvec\@P\@hidariue\@hidariue%
+      \xdef\hidariue{\@hidariue}%
+    \kyokuTyoku(\tate@han,-135)\@hidarisita\Addvec\@P\@hidarisita\@hidarisita%
+      \xdef\hidarisita{\@hidarisita}%
+    \Addvec\@P{(-\tate@han,0)}\@P\xdef\hidarityuuten{\@P}%
+    \Addvec\center@P{(0,-\tate@han)}\@P\xdef\sitatyuuten{\@P}%
+    \Addvec\center@P{(0,\tate@han)}\@P\xdef\uetyuuten{\@P}%
+  \emathPut\center@P{\begin{picture}(0,0)%
+  \ifx\empty#1\relax\else%
+    \put(-\yoko@han,0){\ougigata*[#1]{\tate@han}{90}{270}}%
+      \put(\yoko@han,0){\ougigata*[#1]{\tate@han}{-90}{90}}%
+      \nuritubusi[#1](-\yoko@han,-\tate@han)(\yoko@han,-\tate@han)(%
+      \yoko@han,\tate@han)(-\yoko@han,\tate@han)(-\yoko@han,-\tate@han)\fi%
+    \HenKo<henkoH=.4em>{(-\yoko@han,\tate@han)}{(-\yoko@han,-\tate@han)}{}%
+    \HenKo<henkoH=.4em>{(\yoko@han@r,\tate@han)}{(\yoko@han@r,-\tate@han)}{}%
+    \HenKo<henkoH=.4em>{(\yoko@han@r,-\tate@han)}{(\yoko@han@r,\tate@han)}{}%
+    \drawline(-\yoko@han,-\tate@han)(\yoko@han@r,-\tate@han)%
+    \drawline(-\yoko@han,\tate@han)(\yoko@han@r,\tate@han)%
+    \put(0,0){\makebox(0,0)[c]{\box0}}%
+  \end{picture}}%
+  \edef\P@migi{\migityuuten}%
+  \edef\P@hidari{\hidarityuuten}%
+  \edef\cur@P{\sitatyuuten}%
+  \edef\P@sita{\cur@P}%
+  \ignorespaces
+}%
+%
+% 書類
+%
+\def\syorui{\@ifnextchar[{\@syorui}{\@syorui[\empty]}}%
+\def\@syorui[#1]{\@ifnextchar({\@@syorui[#1]}{\@@syorui[#1](\empty)}}%
+\def\@@syorui[#1](#2)#3{%
+    \ifx\empty#2\setbox0\hbox{{#3}}\else\setbox0\hbox{\makebox[#2][c]{#3}}\fi%
+    \setlength{\@tempdima}{\nboxsep+.5\wd0}%
+    \edef\yoko@han{\strip@pt\@tempdima}%
+    \setlength{\@tempdimb}{\ht0+\dp0+\nboxsep+1em}%
+    \edef\tate@{\strip@pt\@tempdimb}%
+    \@tempdimb=.5\@tempdimb%
+    \edef\tate@han{\strip@pt\@tempdimb}%
+  \if d\nagare@muki\Addvec\cur@P{(0,-\tate@han)}\center@P\else%
+  \if l\nagare@muki\Addvec\cur@P{(-\yoko@han,0)}\center@P\else%
+  \if r\nagare@muki\Addvec\cur@P{(\yoko@han,0)}\center@P\else%
+  \if u\nagare@muki\Addvec\cur@P{(0,\tate@han)}\center@P\fi\fi\fi\fi%
+    \Addvec\center@P{(\yoko@han,0)}\@P\xdef\migityuuten{\@P}%
+    \Addvec\center@P{(\yoko@han,-\tate@han)}\@P\xdef\migisita{\@P}%
+    \Addvec\center@P{(\yoko@han,\tate@han)}\@P\xdef\migiue{\@P}%
+    \Addvec\center@P{(-\yoko@han,0)}\@P\xdef\hidarityuuten{\@P}%
+    \Addvec\center@P{(-\yoko@han,-\tate@han)}\@P\xdef\hidarisita{\@P}%
+    \Addvec\center@P{(-\yoko@han,\tate@han)}\@P\xdef\hidariue{\@P}%
+    \Addvec\center@P{(0,-\tate@han)}\@P\xdef\sitatyuuten{\@P}%
+    \Addvec\center@P{(0,\tate@han)}\@P\xdef\uetyuuten{\@P}%
+  \emathPut\center@P{\begin{picture}(0,0)%
+  \ifx\empty#1\relax\else%
+      \nuritubusi[#1](-\yoko@han,-\tate@han)(\yoko@han,-\tate@han)(%
+      \yoko@han,\tate@han)(-\yoko@han,\tate@han)(-\yoko@han,-\tate@han)\fi%
+    \if 0#1\else\drawline(\yoko@han,-\tate@han)(%
+      \yoko@han,\tate@han)(-\yoko@han,\tate@han)(-\yoko@han,-\tate@han)%
+      \HenKo<henkoH=.5em>{(-\yoko@han,-\tate@han)}{(0,-\tate@han)}{}%
+      \HenKo<henkoH=.5em>{(\yoko@han,-\tate@han)}{(0,-\tate@han)}{}%
+    \fi%
+    \put(0,0){\makebox(0,0)[c]{\box0}}%
+  \end{picture}}%
+  \edef\P@migi{\migityuuten}%
+  \edef\P@hidari{\hidarityuuten}%
+  \edef\cur@P{\sitatyuuten}%
+  \edef\P@sita{\cur@P}%
+  \ignorespaces
+ }%
+%
+% 表示
+%
+\def\hyouzi{\@ifnextchar[{\@hyouzi}{\@hyouzi[\empty]}}%
+\def\@hyouzi[#1]{\@ifnextchar({\@@hyouzi[#1]}{\@@hyouzi[#1](\empty)}}%
+\def\@@hyouzi[#1](#2)#3{%
+    \ifx\empty#2\setbox0\hbox{{#3}}\else\setbox0\hbox{\makebox[#2][c]{#3}}\fi%
+    \setlength{\@tempdima}{\nboxsep+.5\wd0}%
+    \edef\yoko@han{\strip@pt\@tempdima}%
+    \advance\@tempdima.5em\relax
+    \edef\yoko@han@{\strip@pt\@tempdima}%
+    \advance\@tempdima-1em\relax
+    \edef\yoko@han@l{\strip@pt\@tempdima}%
+    \setlength{\@tempdimb}{\ht0+\dp0+\nboxsep}%
+    \edef\tate@{\strip@pt\@tempdimb}%
+    \@tempdimb=.5\@tempdimb%
+    \edef\tate@han{\strip@pt\@tempdimb}%
+  \if d\nagare@muki\Addvec\cur@P{(0,-\tate@han)}\center@P\else%
+  \if l\nagare@muki\Addvec\cur@P{(-\yoko@han,0)}\center@P\else%
+  \if r\nagare@muki\Addvec\cur@P{(\yoko@han,0)}\center@P\else%
+  \if u\nagare@muki\Addvec\cur@P{(0,\tate@han)}\center@P\fi\fi\fi\fi%
+    \Addvec\center@P{(\yoko@han,0)}\@P\xdef\migityuuten{\@P}%
+    \Addvec\center@P{(\yoko@han,-\tate@han)}\@P\xdef\migisita{\@P}%
+    \Addvec\center@P{(\yoko@han,\tate@han)}\@P\xdef\migiue{\@P}%
+    \Addvec\center@P{(-\yoko@han,0)}\@P\xdef\hidarityuuten{\@P}%
+    \Addvec\center@P{(-\yoko@han,-\tate@han)}\@P\xdef\hidarisita{\@P}%
+    \Addvec\center@P{(-\yoko@han,\tate@han)}\@P\xdef\hidariue{\@P}%
+    \Addvec\center@P{(0,-\tate@han)}\@P\xdef\sitatyuuten{\@P}%
+    \Addvec\center@P{(0,\tate@han)}\@P\xdef\uetyuuten{\@P}%
+  \emathPut\center@P{\begin{picture}(0,0)%
+  \ifx\empty#1\relax\else%
+      \nuritubusi[#1](-\yoko@han,-\tate@han)(\yoko@han,-\tate@han)(%
+      \yoko@han,\tate@han)(-\yoko@han,\tate@han)(-\yoko@han,-\tate@han)\fi%
+    \if 0#1\else\drawline(-\yoko@han@l,-\tate@han)(\yoko@han,-\tate@han)%
+      \drawline(\yoko@han,\tate@han)(-\yoko@han@l,\tate@han)%
+      \HenKo<henkoH=.4em>{(\yoko@han,-\tate@han)}{(\yoko@han,\tate@han)}{}%
+      \HenKo<henkoH=.2em>{(-\yoko@han@l,\tate@han)}{(-\yoko@han@,0)}{}%
+      \HenKo<henkoH=.2em>{(-\yoko@han@,0)}{(-\yoko@han@l,-\tate@han)}{}%
+      \fi
+    \put(0,0){\makebox(0,0)[c]{\box0}}%
+  \end{picture}}%
+  \edef\P@migi{\migityuuten}%
+  \edef\P@hidari{\hidarityuuten}%
+  \edef\cur@P{\sitatyuuten}%
+  \edef\P@sita{\cur@P}%
+  \ignorespaces
+ }%
+%
+% 準備
+%
+\def\zyunbi{\@ifnextchar[{\@zyunbi}{\@zyunbi[\empty]}}%
+\def\@zyunbi[#1]{\@ifnextchar({\@@zyunbi[#1]}{\@@zyunbi[#1](\empty)}}%
+\def\@@zyunbi[#1](#2)#3{%
+    \ifx\empty#2\setbox0\hbox{{#3}}\else\setbox0\hbox{\makebox[#2][c]{#3}}\fi%
+    \setlength{\@tempdima}{\nboxsep+.5\wd0}%
+    \edef\yoko@han{\strip@pt\@tempdima}%
+    \advance\@tempdima.5em\relax
+    \edef\yoko@han@{\strip@pt\@tempdima}%
+    \setlength{\@tempdimb}{\ht0+\dp0+\nboxsep}%
+    \edef\tate@{\strip@pt\@tempdimb}%
+    \@tempdimb=.5\@tempdimb%
+    \edef\tate@han{\strip@pt\@tempdimb}%
+  \if d\nagare@muki\Addvec\cur@P{(0,-\tate@han)}\center@P\else%
+  \if l\nagare@muki\Addvec\cur@P{(-\yoko@han,0)}\center@P\else%
+  \if r\nagare@muki\Addvec\cur@P{(\yoko@han,0)}\center@P\else%
+  \if u\nagare@muki\Addvec\cur@P{(0,\tate@han)}\center@P\fi\fi\fi\fi%
+    \Addvec\center@P{(\yoko@han,0)}\@P\xdef\migityuuten{\@P}%
+    \Addvec\center@P{(\yoko@han,-\tate@han)}\@P\xdef\migisita{\@P}%
+    \Addvec\center@P{(\yoko@han,\tate@han)}\@P\xdef\migiue{\@P}%
+    \Addvec\center@P{(-\yoko@han,0)}\@P\xdef\hidarityuuten{\@P}%
+    \Addvec\center@P{(-\yoko@han,-\tate@han)}\@P\xdef\hidarisita{\@P}%
+    \Addvec\center@P{(-\yoko@han,\tate@han)}\@P\xdef\hidariue{\@P}%
+    \Addvec\center@P{(0,-\tate@han)}\@P\xdef\sitatyuuten{\@P}%
+    \Addvec\center@P{(0,\tate@han)}\@P\xdef\uetyuuten{\@P}%
+  \emathPut\center@P{\begin{picture}(0,0)%
+  \ifx\empty#1\relax\else%
+      \nuritubusi[#1](-\yoko@han,-\tate@han)(\yoko@han,-\tate@han)(%
+      \yoko@han,\tate@han)(-\yoko@han,\tate@han)(-\yoko@han,-\tate@han)\fi%
+    \if 0#1\else\drawline(-\yoko@han,-\tate@han)(\yoko@han,-\tate@han)(%
+      \yoko@han@,0)(\yoko@han,\tate@han)(-\yoko@han,\tate@han)(%
+      -\yoko@han@,0)(-\yoko@han,-\tate@han)\fi%
+    \put(0,0){\makebox(0,0)[c]{\box0}}%
+  \end{picture}}%
+  \edef\P@migi{\migityuuten}%
+  \edef\P@hidari{\hidarityuuten}%
+  \edef\cur@P{\sitatyuuten}%
+  \edef\P@sita{\cur@P}%
+  \ignorespaces
+}%
+%
+% 手操作入力
+%
+\def\tenyuryoku{\@ifnextchar[{\@tenyuryoku}{\@tenyuryoku[\empty]}}%
+\def\@tenyuryoku[#1]{\@ifnextchar({\@@tenyuryoku[#1]}{\@@tenyuryoku[#1](\empty)}}%
+\def\@@tenyuryoku[#1](#2)#3{%
+    \ifx\empty#2\setbox0\hbox{{#3}}\else\setbox0\hbox{\makebox[#2][c]{#3}}\fi%
+    \setlength{\@tempdima}{\nboxsep+.5\wd0}%
+    \edef\yoko@han{\strip@pt\@tempdima}%
+    \setlength{\@tempdimb}{\ht0+\dp0+\nboxsep}%
+    \edef\tate@{\strip@pt\@tempdimb}%
+    \@tempdimb=.5\@tempdimb%
+    \edef\tate@han{\strip@pt\@tempdimb}%
+    \advance\@tempdimb.2em\relax
+    \edef\tate@han@r{\strip@pt\@tempdimb}%
+    \advance\@tempdimb-.4em\relax
+    \edef\tate@han@l{\strip@pt\@tempdimb}%
+  \if d\nagare@muki\Addvec\cur@P{(0,-\tate@han)}\center@P\else%
+  \if l\nagare@muki\Addvec\cur@P{(-\yoko@han,0)}\center@P\else%
+  \if r\nagare@muki\Addvec\cur@P{(\yoko@han,0)}\center@P\else%
+  \if u\nagare@muki\Addvec\cur@P{(0,\tate@han)}\center@P\fi\fi\fi\fi%
+    \Addvec\center@P{(\yoko@han,0)}\@P\xdef\migityuuten{\@P}%
+    \Addvec\center@P{(\yoko@han,-\tate@han)}\@P\xdef\migisita{\@P}%
+    \Addvec\center@P{(\yoko@han,\tate@han)}\@P\xdef\migiue{\@P}%
+    \Addvec\center@P{(-\yoko@han,0)}\@P\xdef\hidarityuuten{\@P}%
+    \Addvec\center@P{(-\yoko@han,-\tate@han)}\@P\xdef\hidarisita{\@P}%
+    \Addvec\center@P{(-\yoko@han,\tate@han)}\@P\xdef\hidariue{\@P}%
+    \Addvec\center@P{(0,-\tate@han)}\@P\xdef\sitatyuuten{\@P}%
+    \Addvec\center@P{(0,\tate@han)}\@P\xdef\uetyuuten{\@P}%
+  \emathPut\center@P{\begin{picture}(0,0)%
+  \ifx\empty#1\relax\else%
+      \nuritubusi[#1](-\yoko@han,-\tate@han)(\yoko@han,-\tate@han)(%
+      \yoko@han,\tate@han)(-\yoko@han,\tate@han)(-\yoko@han,-\tate@han)\fi%
+    \if 0#1\else\drawline(-\yoko@han,-\tate@han)(\yoko@han,-\tate@han)(%
+      \yoko@han,\tate@han@r)(-\yoko@han,\tate@han@l)(-\yoko@han,-\tate@han)\fi%
+    \put(0,0){\makebox(0,0)[c]{\box0}}%
+  \end{picture}}%
+  \edef\P@migi{\migityuuten}%
+  \edef\P@hidari{\hidarityuuten}%
+  \edef\cur@P{\sitatyuuten}%
+  \edef\P@sita{\cur@P}%
+  \ignorespaces
+ }%
+%
+% 入出力記号
+\def\nyuusyuturyoku{\@ifnextchar[{\@nyuusyuturyoku}{\@nyuusyuturyoku[\empty]}}%
+\def\@nyuusyuturyoku[#1]{\@ifnextchar({\@@nyuusyuturyoku[#1]}{%
+  \@@nyuusyuturyoku[#1](\empty)}}%
+\def\@@nyuusyuturyoku[#1](#2)#3{%
+    \ifx\empty#2\setbox0\hbox{{#3}}\else\setbox0\hbox{\makebox[#2][c]{#3}}\fi%
+    \setlength{\@tempdima}{\nboxsep+.5\wd0}%
+    \edef\yoko@han{\strip@pt\@tempdima}%
+    \setlength{\@tempdima}{.5\wd0}%
+    \edef\yoko@@han{\strip@pt\@tempdima}%
+    \setlength{\@tempdimb}{\ht0+\dp0+\nboxsep}%
+    \@tempdimb=.5\@tempdimb%
+    \edef\tate@han{\strip@pt\@tempdimb}%
+\setlength{\@tempdima}{\yoko@han pt+\yoko@@han pt}%
+\@tempdima=.5\@tempdima
+\edef\yoko@@@han{\strip@pt\@tempdima}%
+  \if d\nagare@muki\Addvec\cur@P{(0,-\tate@han)}\center@P\else%
+  \if l\nagare@muki\Addvec\cur@P{(-\yoko@@@han,0)}\center@P\else%
+  \if r\nagare@muki\Addvec\cur@P{(\yoko@@@han,0)}\center@P\else%
+  \if u\nagare@muki\Addvec\cur@P{(0,\tate@han)}\center@P\fi\fi\fi\fi%
+    \Addvec\center@P{(\yoko@@@han,0)}\@P\xdef\migityuuten{\@P}%
+    \Addvec\center@P{(-\yoko@@@han,0)}\@P\xdef\hidarityuuten{\@P}%
+    \Addvec\center@P{(0,-\tate@han)}\@P\xdef\sitatyuuten{\@P}%
+    \Addvec\sitatyuuten{(-\yoko@han,0)}\@P\xdef\hidarisita{\@P}%
+    \Addvec\sitatyuuten{(\yoko@@han,0)}\@P\xdef\migisita{\@P}%
+    \Addvec\center@P{(0,\tate@han)}\@P\xdef\uetyuuten{\@P}%
+    \Addvec\uetyuuten{(-\yoko@@han,0)}\@P\xdef\hidariue{\@P}%
+    \Addvec\uetyuuten{(\yoko@han,0)}\@P\xdef\migiue{\@P}%
+  \emathPut\center@P{\begin{picture}(0,0)%
+  \ifx\empty #1\relax\else\nuritubusi[#1](-\yoko@han,-\tate@han)(%
+    \yoko@@han,-\tate@han)(\yoko@han,\tate@han)(-\yoko@@han,\tate@han)(%
+    -\yoko@han,-\tate@han)\fi%
+    \drawline(-\yoko@han,-\tate@han)(\yoko@@han,-\tate@han)(%
+      \yoko@han,\tate@han)(-\yoko@@han,\tate@han)(-\yoko@han,-\tate@han)%
+    \put(0,0){\makebox(0,0)[c]{\box0}}%
+  \end{picture}}%
+  \edef\P@migi{\migityuuten}%
+  \edef\P@hidari{\hidarityuuten}%
+  \edef\cur@P{\sitatyuuten}%
+  \edef\P@sita{\cur@P}%
+}%
+
+% 条件判断記号
+\def\handan{\@ifnextchar[{\handan@}{\handan@[\empty]}}%
+\def\handan@[#1]{\@ifnextchar<{\@handan[#1]}{\@handan[#1]<1>}}%
+\def\@handan[#1]<#2>{\@ifnextchar<{\@@handan[#1]<#2>}{%
+  \@@handan[#1]<#2><1>}}%
+\def\@@handan[#1]<#2><#3>#4{%
+    \setbox0\hbox{{#4}}%
+    \@tempdima\wd0%
+    \@tempdima#2\@tempdima%
+    \edef\yoko@han{\strip@pt\@tempdima}%
+    \setlength{\@tempdima}{\ht0+\dp0}%
+    \@tempdima#3\@tempdima%
+    \edef\tate@han{\strip@pt\@tempdima}%
+    \@tempdima=2\@tempdima%
+    \edef\tate@{\strip@pt\@tempdima}%
+  \if d\nagare@muki\Addvec\cur@P{(0,-\tate@han)}\center@P\else%
+  \if l\nagare@muki\Addvec\cur@P{(-\yoko@han,0)}\center@P\else%
+  \if r\nagare@muki\Addvec\cur@P{(\yoko@han,0)}\center@P\else%
+  \if u\nagare@muki\Addvec\cur@P{(0,\tate@han)}\center@P\fi\fi\fi\fi%
+    \Addvec\center@P{(\yoko@han,0)}\@P\xdef\migityuuten{\@P}%
+    \Addvec\center@P{(-\yoko@han,0)}\@P\xdef\hidarityuuten{\@P}%
+    \Addvec\center@P{(0,-\tate@han)}\@P\xdef\sitatyuuten{\@P}%
+    \Addvec\center@P{(0,\tate@han)}\@P\xdef\uetyuuten{\@P}%
+  \emathPut\center@P{\begin{picture}(0,0)%
+  \ifx\empty #1\relax\else
+      \nuritubusi[#1](-\yoko@han,0)(0,\tate@han)(%
+        \yoko@han,0)(0,-\tate@han)(-\yoko@han,0)\fi%
+    \drawline(-\yoko@han,0)(0,\tate@han)(%
+      \yoko@han,0)(0,-\tate@han)(-\yoko@han,0)%
+    \put(0,0){\makebox(0,0)[c]{\box0}}%
+  \end{picture}}%
+  \edef\P@migi{\migityuuten}%
+  \edef\P@hidari{\hidarityuuten}%
+  \edef\cur@P{\sitatyuuten}%
+  \edef\P@sita{\cur@P}%
+  \ignorespaces
+}%
+\def\endhandan{\popcurrentP}%
+
+\def\pushcurP@lvl{0}%
+\def\pushcurrentP{%
+  \xIncr\pushcurP@lvl
+  \expandafter\xdef\csname save@wariT@\romannumeral\pushcurP@lvl\endcsname{%
+    \cur@P}%
+  \expandafter\xdef\csname save@nagare@muki\romannumeral\pushcurP@lvl\endcsname{\nagare@muki}%
+}
+\def\popcurrentP{%
+  \ifnum\pushcurP@lvl>\z@
+    \xdef\cur@P{\csname save@wariT@\romannumeral\pushcurP@lvl\endcsname}%
+    \xdef\nagare@muki{\csname save@nagare@muki\romannumeral\pushcurP@lvl\endcsname}%
+    \xDecr\pushcurP@lvl
+  \fi
+}
+
+% 流れ線記号
+%   (1) 右
+%
+\def\migibunki{\edef\migityuuten{\P@migi}}%
+\def\endmigibunki{}%
+
+% 右方向に進行
+% \migihe<線の形状指定オプション>
+%         a = 矢印をつける（デフォルト）
+%         n = 矢印なし
+%         r = 逆方向に矢印
+%         w = 二重線
+%         m = 線を引かない (move)
+%   (線の長さ)  20pt
+%   [ラベル]
+%   "矢線の上の文字列"
+%   <文字列の位置>
+%   "矢線の下の文字列"
+%   <文字列の位置>
+%   `行き先'
+
+\def\migihe{%
+  \@ifnextchar<{\@migihe}{\@migihe<a>}}%
+\def\@migihe<#1>{\@ifnextchar({\@@migihe<#1>}{%
+  \@@migihe<#1>(\nagaresentyou)}}%
+\def\@@migihe<#1>(#2){\@ifnextchar[{\@@@migihe<#1>(#2)}{%
+  \@@@migihe<#1>(#2)[\empty]}}%
+\def\@@@migihe<#1>(#2)[#3]{\@ifnextchar"{\@@@@migihe<#1>(#2)[#3]}{%
+  \@@@@migihe<#1>(#2)[#3]"\empty"}}%
+\def\@@@@migihe<#1>(#2)[#3]"#4"{\@ifnextchar"{%
+  \@@@@@migihe<#1>(#2)[#3]"#4"}{%
+  \@@@@@migihe<#1>(#2)[#3]"#4""\empty"}}%
+\def\@@@@@migihe<#1>(#2)[#3]"#4""#5"{\@ifnextchar`{%
+  \@@@@@@migihe<#1>(#2)[#3]"#4""#5"}{%
+  \@@@@@@migihe<#1>(#2)[#3]"#4""#5"`\empty'}}%
+\def\@@@@@@migihe<#1>(#2)[#3]"#4""#5"`#6'{%
+  \@tempdima#2\relax%
+  \edef\@yasen{a}%
+  \edef\@nizyuusen{n}%
+  \@tfor\@c:=#1\do{%
+    \if a\@c\edef\@yasen{a}\else%
+    \if b\@c\edef\@yasen{b}\else%
+    \if n\@c\edef\@yasen{n}\else%
+    \if r\@c\edef\@yasen{r}\else%
+    \if m\@c\edef\@yasen{m}\else%
+    \if w\@c\edef\@nizyuusen{y}%
+    \fi\fi\fi\fi\fi\fi%
+  }%
+% \edef\@P{\cur@P}%
+  \edef\nagare@muki{r}%
+  \edef\@P{\migityuuten}%
+  \ifx\empty#6\relax\Addvec\@P{(\strip@pt\@tempdima,0)}\@Q\else%
+      \vecXY\@P\@Px\@Py
+%   \expandafter\vecXY{\csname #6\endcsname}\@Qx\@Qy
+    \vec@ref{#6}\edef\@Q{(\vec@refX,\@Py)}\fi%
+  \if y\@nizyuusen%
+    \if n\@yasen%
+      \Addvec\@P{(0,\nizyuusen@kankaku)}\@@P%
+      \Addvec\@Q{(0,\nizyuusen@kankaku)}\@@Q%
+      \Drawline{\@@Q\@@P}%
+      \Addvec\@P{(0,-\nizyuusen@kankaku)}\@@P%
+      \Addvec\@Q{(0,-\nizyuusen@kankaku)}\@@Q%
+      \Drawline{\@@Q\@@P}%
+    \else\if a\@yasen%
+      \Addvec\@P{(0,\nizyuusen@kankaku)}\@@P%
+      \Addvec\@Q{(-3,\nizyuusen@kankaku)}\@@Q%
+      \Drawline{\@@Q\@@P}%
+      \Addvec\@P{(0,-\nizyuusen@kankaku)}\@@P%
+      \Addvec\@Q{(-3,-\nizyuusen@kankaku)}\@@Q%
+      \Drawline{\@@Q\@@P}%
+    \else\if r\@yasen%
+      \Addvec\@P{(3,\nizyuusen@kankaku)}\@@P%
+      \Addvec\@Q{(0,\nizyuusen@kankaku)}\@@Q%
+      \Drawline{\@@Q\@@P}%
+      \Addvec\@P{(3,-\nizyuusen@kankaku)}\@@P%
+      \Addvec\@Q{(0,-\nizyuusen@kankaku)}\@@Q%
+      \Drawline{\@@Q\@@P}%
+    \fi\fi\fi%
+  \else\if m\@yasen\else\Drawline{\@Q\@P}\fi\fi%
+  \if a\@yasen\emathPut\@Q{\yaziri{(1,0)}}%
+  \else\if b\@yasen\emathPut\@P{\yaziri{(-1,0)}}\emathPut\@Q{\yaziri{(1,0)}}%
+  \else\if r\@yasen\emathPut\@P{\yaziri{(-1,0)}}%
+  \fi\fi\fi%
+%  \ifx a#1\ArrowLine\@P\@Q\else\Drawline{\@P\@Q}\fi%
+  \@tempdima=.5\@tempdima%
+% \Addvec\@P{(\strip@pt\@tempdima,0)}\@@Q%
+  \Bunten\@P\@Q{1}{1}\@@Q
+  \emathPut\@@Q(0,2pt)[cb]{#4}%
+  \emathPut\@@Q(0,-2pt)[ct]{#5}%
+  \ifx\empty#3\relax\else%
+  \writeLabel{#3}{\@@Q}%
+%   \expandafter\xdef\csname #3\endcsname{\@@Q}%
+  \fi%
+  \edef\siten{\@P}%
+  \edef\syuuten{\@Q}%
+  \edef\cur@P{\@Q}%
+  \edef\uetyuuten{\@Q}%
+  \edef\sitatyuuten{\@Q}%
+  \edef\migityuuten{\@Q}%
+  \edef\hidarityuuten{\@Q}%
+\ignorespaces
+}%
+
+% (2) 左
+\def\hidaribunki{\edef\hidarityuuten{\P@hidari}}%
+\def\endhidaribunki{}%
+\def\hidarihe{%
+  \@ifnextchar<{\@hidarihe}{\@hidarihe<a>}}%
+\def\@hidarihe<#1>{\@ifnextchar({\@@hidarihe<#1>}{%
+  \@@hidarihe<#1>(\nagaresentyou)}}%
+\def\@@hidarihe<#1>(#2){\@ifnextchar[{\@@@hidarihe<#1>(#2)}{%
+  \@@@hidarihe<#1>(#2)[\empty]}}%
+\def\@@@hidarihe<#1>(#2)[#3]{\@ifnextchar"{\@@@@hidarihe<#1>(#2)[#3]}{%
+  \@@@@hidarihe<#1>(#2)[#3]"\empty"}}%
+\def\@@@@hidarihe<#1>(#2)[#3]"#4"{\@ifnextchar"{%
+  \@@@@@hidarihe<#1>(#2)[#3]"#4"}{%
+  \@@@@@hidarihe<#1>(#2)[#3]"#4""\empty"}}%
+\def\@@@@@hidarihe<#1>(#2)[#3]"#4""#5"{\@ifnextchar`{%
+  \@@@@@@hidarihe<#1>(#2)[#3]"#4""#5"}{%
+  \@@@@@@hidarihe<#1>(#2)[#3]"#4""#5"`\empty'}}%
+\def\@@@@@@hidarihe<#1>(#2)[#3]"#4""#5"`#6'{%
+  \@tempdima#2\relax%
+  \edef\@yasen{a}%
+  \edef\@nizyuusen{n}%
+  \@tfor\@c:=#1\do{%
+    \if a\@c\edef\@yasen{a}\else%
+    \if n\@c\edef\@yasen{n}\else%
+    \if r\@c\edef\@yasen{r}\else%
+    \if m\@c\edef\@yasen{m}\else%
+    \if w\@c\edef\@nizyuusen{y}%
+    \fi\fi\fi\fi\fi%
+  }%
+% \edef\@P{\cur@P}%
+  \edef\nagare@muki{l}%
+  \edef\@P{\hidarityuuten}%
+  \ifx\empty#6\relax\Addvec\@P{(-\strip@pt\@tempdima,0)}\@Q\else%
+    \vecXY\@P\@Px\@Py
+%   \expandafter\vecXY{\csname #6\endcsname}\@Qx\@Qy
+    \vec@ref{#6}\edef\@Q{(\vec@refX,\@Py)}\fi%
+  \if y\@nizyuusen%
+    \if n\@yasen%
+      \Addvec\@P{(0,\nizyuusen@kankaku)}\@@P%
+      \Addvec\@Q{(0,\nizyuusen@kankaku)}\@@Q%
+      \Drawline{\@@Q\@@P}%
+      \Addvec\@P{(0,-\nizyuusen@kankaku)}\@@P%
+      \Addvec\@Q{(0,-\nizyuusen@kankaku)}\@@Q%
+      \Drawline{\@@Q\@@P}%
+    \else\if a\@yasen
+      \Addvec\@P{(0,\nizyuusen@kankaku)}\@@P%
+      \Addvec\@Q{(5,\nizyuusen@kankaku)}\@@Q%
+      \Drawline{\@@Q\@@P}%
+      \Addvec\@P{(0,-\nizyuusen@kankaku)}\@@P%
+      \Addvec\@Q{(5,-\nizyuusen@kankaku)}\@@Q%
+      \Drawline{\@@Q\@@P}%
+    \else\if r\@yasen%
+      \Addvec\@P{(-5,\nizyuusen@kankaku)}\@@P%
+      \Addvec\@Q{(0,\nizyuusen@kankaku)}\@@Q%
+      \Drawline{\@@Q\@@P}%
+      \Addvec\@P{(-5,-\nizyuusen@kankaku)}\@@P%
+      \Addvec\@Q{(0,-\nizyuusen@kankaku)}\@@Q%
+      \Drawline{\@@Q\@@P}%
+    \fi\fi\fi%
+  \else\if m\@yasen\else\Drawline{\@Q\@P}\fi\fi%
+  \if a\@yasen\emathPut\@Q{\yaziri{(-1,0)}}%
+  \else\if r\@yasen\emathPut\@P{\yaziri{(1,0)}}%
+  \fi\fi%
+%  \ifx a#1\ArrowLine\@P\@Q\else\Drawline{\@P\@Q}\fi%
+  \@tempdima=.5\@tempdima%
+%  \Addvec\@P{(-\strip@pt\@tempdima,0)}\@@Q%
+  \Bunten\@P\@Q{1}{1}\@@Q
+  \emathPut\@@Q(0,2pt)[cb]{#4}%
+  \emathPut\@@Q(0,-2pt)[ct]{#5}%
+  \ifx\empty#3\relax\else%
+  \writeLabel{#3}{\@@Q}%
+%   \expandafter\xdef\csname #3\endcsname{\@@Q}%
+  \fi%
+  \edef\siten{\@P}%
+  \edef\syuuten{\@Q}%
+  \edef\cur@P{\@Q}%
+  \edef\uetyuuten{\@Q}%
+  \edef\sitatyuuten{\@Q}%
+  \edef\migityuuten{\@Q}%
+  \edef\hidarityuuten{\@Q}%
+\ignorespaces
+}%
+
+
+%   (3) 下
+\def\sitabunki{\edef\sitatyuuten{\P@sita}}%
+\def\endsitabunki{}%
+\def\sitahe{%
+  \@ifnextchar<{\@sitahe}{\@sitahe<a>}}%
+\def\@sitahe<#1>{\@ifnextchar({\@@sitahe<#1>}{%
+  \@@sitahe<#1>(\nagaresentyou)}}%
+\def\@@sitahe<#1>(#2){\@ifnextchar[{\@@@sitahe<#1>(#2)}{%
+  \@@@sitahe<#1>(#2)[\empty]}}%
+\def\@@@sitahe<#1>(#2)[#3]{\@ifnextchar"{\@@@@sitahe<#1>(#2)[#3]}{%
+  \@@@@sitahe<#1>(#2)[#3]"\empty"}}%
+\def\@@@@sitahe<#1>(#2)[#3]"#4"{\@ifnextchar"{%
+  \@@@@@sitahe<#1>(#2)[#3]"#4"}{%
+  \@@@@@sitahe<#1>(#2)[#3]"#4""\empty"}}%
+\def\@@@@@sitahe<#1>(#2)[#3]"#4""#5"{\@ifnextchar`{%
+  \@@@@@@sitahe<#1>(#2)[#3]"#4""#5"}{%
+  \@@@@@@sitahe<#1>(#2)[#3]"#4""#5"`\empty'}}%
+\def\@@@@@@sitahe<#1>(#2)[#3]"#4""#5"`#6'{%
+  \edef\nagare@muki{d}%
+  \edef\@yasen{a}%
+  \edef\@nizyuusen{n}%
+  \@tfor\@c:=#1\do{%
+    \if a\@c\edef\@yasen{a}\else%
+    \if n\@c\edef\@yasen{n}\else%
+    \if r\@c\edef\@yasen{r}\else%
+    \if m\@c\edef\@yasen{m}\else%
+    \if w\@c\edef\@nizyuusen{y}%
+    \fi\fi\fi\fi\fi%
+  }%
+  \@tempdima#2\relax%
+  \edef\@P{\cur@P}%
+  \ifx\empty#6\relax\Addvec\@P{(0,-\strip@pt\@tempdima)}\@Q\else%
+      \vecXY\@P\@Px\@Py
+%   \expandafter\vecXY{\csname #6\endcsname}\@Qx\@Qy
+    \vec@ref{#6}\edef\@Q{(\@Px,\vec@refY)}\fi%
+  \if y\@nizyuusen%
+    \if n\@yasen%
+      \Addvec\@P{(\nizyuusen@kankaku,0)}\@@P%
+      \Addvec\@Q{(\nizyuusen@kankaku,0)}\@@Q%
+      \Drawline{\@@Q\@@P}%
+      \Addvec\@P{(-\nizyuusen@kankaku,0)}\@@P%
+      \Addvec\@Q{(-\nizyuusen@kankaku,0)}\@@Q%
+      \Drawline{\@@Q\@@P}%
+    \else\if a\@yasen%
+      \Addvec\@P{(\nizyuusen@kankaku,0)}\@@P%
+      \Addvec\@Q{(\nizyuusen@kankaku,3)}\@@Q%
+      \Drawline{\@@Q\@@P}%
+      \Addvec\@P{(-\nizyuusen@kankaku,0)}\@@P%
+      \Addvec\@Q{(-\nizyuusen@kankaku,3)}\@@Q%
+      \Drawline{\@@Q\@@P}%
+    \else\if r\@yasen%
+      \Addvec\@P{(\nizyuusen@kankaku,-3)}\@@P%
+      \Addvec\@Q{(\nizyuusen@kankaku,0)}\@@Q%
+      \Drawline{\@@Q\@@P}%
+      \Addvec\@P{(-\nizyuusen@kankaku,-3)}\@@P%
+      \Addvec\@Q{(-\nizyuusen@kankaku,0)}\@@Q%
+      \Drawline{\@@Q\@@P}%
+    \fi\fi\fi%
+  \else\if m\@yasen\else\Drawline{\@Q\@P}\fi\fi%
+  \if a\@yasen\emathPut\@Q{\yaziri{(0,-1)}}%
+  \else\if r\@yasen\emathPut\@P{\yaziri{(0,1)}}%
+  \fi\fi%
+  \@tempdima#2\relax%
+  \@tempdima=.5\@tempdima%
+\Addvec\@P{(0,-\strip@pt\@tempdima)}\@@Q%
+  \Bunten\@P\@Q{1}{1}\@@Q
+  \emathPut\@@Q(0,0)[r]{#4\ }%
+  \emathPut\@@Q(0,0)[l]{\ #5}%
+  \ifx\empty#3\relax\else%
+  \writeLabel{#3}{\@@Q}%
+%   \expandafter\xdef\csname #3\endcsname{\@@Q}%
+  \fi%
+  \edef\siten{\@P}%
+  \edef\syuuten{\@Q}%
+  \edef\cur@P{\@Q}%
+  \edef\uetyuuten{\@Q}%
+  \edef\sitatyuuten{\@Q}%
+  \edef\migityuuten{\@Q}%
+  \edef\hidarityuuten{\@Q}%
+\ignorespaces
+}%
+
+%   (4) 上
+\def\uebunki{\edef\uetyuuten{\P@ue}}%
+\def\enduebunki{}%
+\def\uehe{%
+  \@ifnextchar<{\@uehe}{\@uehe<a>}}%
+\def\@uehe<#1>{\@ifnextchar({\@@uehe<#1>}{%
+  \@@uehe<#1>(\nagaresentyou)}}%
+\def\@@uehe<#1>(#2){\@ifnextchar[{\@@@uehe<#1>(#2)}{%
+  \@@@uehe<#1>(#2)[\empty]}}%
+\def\@@@uehe<#1>(#2)[#3]{\@ifnextchar"{\@@@@uehe<#1>(#2)[#3]}{%
+  \@@@@uehe<#1>(#2)[#3]"\empty"}}%
+\def\@@@@uehe<#1>(#2)[#3]"#4"{\@ifnextchar"{%
+  \@@@@@uehe<#1>(#2)[#3]"#4"}{%
+  \@@@@@uehe<#1>(#2)[#3]"#4""\empty"}}%
+\def\@@@@@uehe<#1>(#2)[#3]"#4""#5"{\@ifnextchar`{%
+  \@@@@@@uehe<#1>(#2)[#3]"#4""#5"}{\@@@@@@uehe<#1>(#2)[#3]"#4""#5"`\empty'}}%
+\def\@@@@@@uehe<#1>(#2)[#3]"#4""#5"`#6'{%
+  \edef\nagare@muki{u}%
+  \edef\@yasen{a}%
+  \edef\@nizyuusen{n}%
+  \@tfor\@c:=#1\do{%
+    \if a\@c\edef\@yasen{a}\else%
+    \if n\@c\edef\@yasen{n}\else%
+    \if r\@c\edef\@yasen{r}\else%
+    \if m\@c\edef\@yasen{m}\else%
+    \if w\@c\edef\@nizyuusen{y}%
+    \fi\fi\fi\fi\fi%
+  }%
+  \@tempdima#2\relax%
+  \edef\@P{\uetyuuten}%
+  \ifx\empty#6\relax\Addvec\@P{(0,\strip@pt\@tempdima)}\@Q\else%
+    \vecXY\@P\@Px\@Py
+%   \expandafter\vecXY{\csname #6\endcsname}\@Qx\@Qy
+    \vec@ref{#6}\edef\@Q{(\@Px,\vec@refY)}\fi%
+  \if y\@nizyuusen%
+    \if n\@yasen%
+      \Addvec\@P{(\nizyuusen@kankaku,0)}\@@P%
+      \Addvec\@Q{(\nizyuusen@kankaku,0)}\@@Q%
+      \Drawline{\@@Q\@@P}%
+      \Addvec\@P{(-\nizyuusen@kankaku,0)}\@@P%
+      \Addvec\@Q{(-\nizyuusen@kankaku,0)}\@@Q%
+      \Drawline{\@@Q\@@P}%
+    \else\if a\@yasen%
+      \Addvec\@P{(\nizyuusen@kankaku,0)}\@@P%
+      \Addvec\@Q{(\nizyuusen@kankaku,-3)}\@@Q%
+      \Drawline{\@@Q\@@P}%
+      \Addvec\@P{(-\nizyuusen@kankaku,0)}\@@P%
+      \Addvec\@Q{(-\nizyuusen@kankaku,-3)}\@@Q%
+      \Drawline{\@@Q\@@P}%
+    \else\if r\@yasen%
+      \Addvec\@P{(\nizyuusen@kankaku,3)}\@@P%
+      \Addvec\@Q{(\nizyuusen@kankaku,0)}\@@Q%
+      \Drawline{\@@Q\@@P}%
+      \Addvec\@P{(-\nizyuusen@kankaku,3)}\@@P%
+      \Addvec\@Q{(-\nizyuusen@kankaku,0)}\@@Q%
+      \Drawline{\@@Q\@@P}%
+    \fi\fi\fi%
+  \else\if m\@yasen\else\Drawline{\@Q\@P}\fi\fi%
+  \if a\@yasen\emathPut\@Q{\yaziri{(0,1)}}%
+  \else\if r\@yasen\emathPut\@P{\yaziri{(0,-1)}}%
+  \fi\fi%
+  \@tempdima=.5\@tempdima%
+  \Bunten\@P\@Q{1}{1}\@@Q
+%  \Addvec\@P{(0,-\strip@pt\@tempdima)}\@@Q%
+  \emathPut\@@Q(0,0)[r]{#4\ }%
+  \emathPut\@@Q(0,0)[l]{\ #5}%
+  \ifx\empty#3\relax\else%
+  \writeLabel{#3}{\@@Q}%
+%   \expandafter\xdef\csname #3\endcsname{\@@Q}%
+  \fi%
+  \edef\siten{\@P}%
+  \edef\syuuten{\@Q}%
+  \edef\cur@P{\@Q}%
+  \edef\uetyuuten{\@Q}%
+  \edef\sitatyuuten{\@Q}%
+  \edef\migityuuten{\@Q}%
+  \edef\hidarityuuten{\@Q}%
+\ignorespaces
+}%
+
+%   (5) ラベル
+%     \nahuda{位置}{ラベル名}
+%
+\def\nahuda#1#2{\writeLabel{#2}{#1}}
+
+\def\nahudahe{\@ifnextchar<{\nahudahe@}{\@nahudahe}}
+\def\nahudahe@<#1>{\setkeys{emN}{#1}\@nahudahe}%
+\def\@nahudahe#1{%
+  \vecXY\cur@P\cur@x\cur@y%
+%  \expandafter\vecXY\csname #1\endcsname\syuuten@x\syuuten@y%
+  \vec@ref{#1}%
+  \ifthenelse{\equal\nagare@sen{arrowline}}{%
+    \put(0,0){\drawline(\cur@x,\cur@y)(\cur@x,\vec@refY)}%
+    \ArrowLine{(\cur@x,\vec@refY)}{(\vec@refX,\vec@refY)}}{%
+  }%
+  \edef\cur@P{(\vec@refX,\vec@refY)}%
+  \edef\uetyuuten{\cur@P}%
+  \edef\sitatyuuten{\cur@P}%
+  \edef\migityuuten{\cur@P}%
+  \edef\hidarityuuten{\cur@P}%
+}%
+
+% 分岐
+\def\bunki#1{%
+  \ifx r#1\relax\edef\migityuuten{\P@migi}\else
+  \ifx l#1\relax\edef\hidarityuuten{\P@hidari}\else
+  \ifx d#1\relax\edef\sitatyuuten{\P@sita}\else
+  \ifx b#1\relax\edef\sitatyuuten{\P@sita}\else
+  \ifx u#1\relax\edef\uetyuuten{\P@ue}\else
+  \ifx t#1\relax\edef\uetyuuten{\P@ue}\fi\fi\fi\fi\fi\fi}%
+\def\endbunki{}%
+
+% 現在位置保存・復帰（スタック構造）
+\def\pushcurP{\stepcounter{curP@stacklvl}%
+  \expandafter\xdef\csname Cur@P\romannumeral\c@curP@stacklvl\endcsname{%
+  \cur@P}}%
+\def\popcurP{\edef\cur@P{%
+  \csname Cur@P\romannumeral\c@curP@stacklvl\endcsname}%
+  \addtocounter{curP@stacklvl}{-1}}%
+% 現在位置の取得
+\def\getcurP#1{\xdef#1{\cur@P}}%
+% 現在位置の変更
+\def\setcurP#1{\edef\cur@P{#1}%
+  \edef\uetyuuten{\cur@P}%
+  \edef\sitatyuuten{\cur@P}%
+  \edef\migityuuten{\cur@P}%
+  \edef\hidarityuuten{\cur@P}}%
+
+\let\nyuusyutu\nyuusyuturyoku%
+\let\termbox\tansi
+\let\iobox\nyuusyuturyoku%
+\let\opbox\syori
+\let\ifbox\handan
+\let\endifbox\endhandan
+\let\downto\sitahe
+\let\upto\uehe
+\let\leftto\hidarihe
+\let\rightto\migihe
+\let\branch\bunki
+\let\endbranch\endbunki
+\let\repbox\kurikaesi
+\let\endrepbox\endkurikaesi
+\let\subopbox\syorii
+\let\dpbox\hyouzi
+\@namedef{repbox*}{\csname kurikaesi*\endcsname}
+\@namedef{endrepbox*}{\csname endkurikaesi*\endcsname}
+\endinput
+%
+ver0.04   1999/11/29
+    分岐を左右上下，統一的に \begin{bunki}{方向} とする．
+      1999/12/13
+    ラベルを .aux ファイルを利用した相互参照形式とする．
+ver0.06   2000/01/25-27
+    \nahudahe 修正
+ver0.07   2000/07/14-23
+    \ArrowHeadSize{5}を削除
+ver0.09   2002/08/23
+    繰り返しを表す kurikaesi 環境
+ver0.10   2002/08/24
+    kurikaesi環境全体を塗りつぶす kurikaesi*環境
+    handan環境の後，流れ図をどこに続けるかを指定する\pushcurrentP
+ver0.11 2003/03/03
+    \opbox など，空白の混入を避けるため，末尾に \ignorespaces
+ver0.12 2003/06/20
+    \nahudahe <..> オプションで key=val
+        nagaremuki=d/u/l/r
+        nagaresen=arrowline(default)/no
+ver0.13 2003/11/17
+    calc.sty の読み込みを止める。
+ver 0.14 2003/11/28
+    \writeLabel を emathLb.sty に移管したことに対応。
+ver 0.15 2004/12/19
+    \sitahe など : 最後に \ignorespaces を付加
+ver 0.16 2006/06/18
+    \syorii : 定義済み処理 など JIS X 0121 に準拠
+ver 0.17 2006/08/21
+    \enko ---> \EMenko

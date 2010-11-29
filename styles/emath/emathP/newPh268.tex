@@ -1,0 +1,95 @@
+\documentclass[a4j]{jarticle}
+\usepackage{emathPh}
+\usepackage{showexample}
+
+\begin{document}
+\tableofcontents
+\bigskip
+
+\section{\cmd{PutStr}に機能追加}
+\subsection{\cmd{PutStr*}コマンド}
+\cmd{PutStr}の変形として\cmd{PutStr*}を新設しました。
+
+\begin{jquote}
+\verb+\PutStr#1#2to#3+は，\\
+　　文字列(\verb+#2+)を配置する点\verb+#1+から，点\verb+#3+へ矢線を引きます
+\end{jquote}
+それに対して，新設した\cmd{PutStr*}は，\verb+#1+の意味が異なります。
+\begin{jquote}
+\verb+\PutStr*#1#2to#3+は，\\
+\begin{jquote}
+文字列(\verb+#2+)を配置する点は\verb+#1+ではなく，\\
+描画される矢線の終点からの変位ベクトル（成分は単位付の数値）です。
+\end{jquote}
+\end{jquote}
+
+具体例をご覧ください。
+
+\begin{showEx}(.7,.24){\cmd{PutStr*}}
+  \begin{zahyou}[ul=5mm](-1,3)(-3,1)
+    \tenretu{A(1.414,0)n}
+    \PutStr*{(5pt,-10pt)}(0,0)[t]{$\sqrt2$}to\A
+  \end{zahyou}
+\end{showEx}
+
+すなわち，点A\retu(\sqrt2,0)へ矢線を引いて，その始点に文字列$\sqrt2$を配置する際，
+文字列を配置する位置を点Aから\texttt{(5pt,\,-10pt)}ずらしたところ，
+と点Aからの相対位置で指定するのが目的です。
+\newpage
+
+\subsection{\texttt{[enkoH=..]}オプション}
+点と文字列を結ぶ線分を円弧にする場合，
+半径を指定するようになっていましたが，
+弧高（円弧の中点と弦との距離）により間接的に半径を指定する
+オプション\verb+[enkoH=..]+（右辺値は単位つき数値）を新設しました。
+
+\begin{showEx}(.7,.24){\cmd{PutStr*}}
+  \begin{zahyou}[ul=5mm](-1,3)(-3,1)
+    \tenretu{A(1.414,0)n}
+    \PutStr*{(8pt,-15pt)}(0,0)[t]{$\sqrt2$}%
+      to[enkoH=-2pt]\A
+  \end{zahyou}
+\end{showEx}
+
+このオプションはアスタリスクなしのコマンド \cmd{PutStr}に対しても有効です。
+
+\section{\cmd{Mulvec*}}
+\verb+\Mulvec#1#2#3+は，ベクトル\verb+#2+をスカラー\verb+#1+倍したベクトルを
+\verb+#3+の制御綴に与えるコマンドです。
+
+それに対し，\verb+Mulvec*#1#2#3+は，\verb+#1+の意味が異なります。
+ベクトル\verb+#2+と同じ向きで，大きさが\verb+#1+（単位付の数値）であるベクトルを
+\verb+#3+の制御綴に与えるコマンドです。
+
+
+\begin{showEx}(.7,.24){\cmd{Mulvec*}}
+\begin{zahyou}[ul=5mm](-1,4)(-4,1)
+    \footnotesize
+    \zahyouMemori[g]
+    \tenretu{A(3,-3)ne}
+    \ArrowLine\O\A
+    \Mulvec*{7.07mm}\A\B
+    \Put\B[sw]{B}
+    {\Thicklines
+    \changeArrowHeadSize{2}
+    \ArrowLine\O\B}%
+\end{zahyou}
+\end{showEx}
+\newpage
+
+\section{\cmd{Hamidasiten}}
+線分ABの延長上に点を設定するためのコマンドです。
+
+\begin{showEx}(.7,.24){\cmd{Hamidasiten}}
+  \begin{zahyou}[ul=5mm](-1,3)(-3,1)
+    \tenretu{A(-1,-3)nw;B(1,-1)se}
+    \kuromaru{\A;\B}
+    \Hantyokusen\A\B
+    \Hamidasiten\A\B{7.07mm}\C
+    \Put\C[nw]{C}
+    \Kuromaru\C
+  \end{zahyou}
+\end{showEx}
+
+すなわち，線分ABをBの方へ\texttt{7.07mm}だけ延長した点をCとしています。
+\end{document}

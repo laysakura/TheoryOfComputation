@@ -1,0 +1,66 @@
+\documentclass[a4j]{jarticle}
+
+\usepackage{emath}[2006/04/15]
+\usepackage{showexample}
+
+
+\begin{document}
+数式が上下不均等な場合，\verb+\left|...\right|+では，
+絶対値記号に不満を申し立てる人がいます。
+
+\begin{showEx}(.74,.2){上下不均等な場合の括弧記号}
+$ x=\left| \bunsuu{\bunsuu12}{3} \right| $
+\end{showEx}
+
+これに対する公式的な回答は
+
+\begin{showEx}(.74,.2){正式な書法}
+\begin{gather*}
+ x=\left| \bunsuu{\frac12}{3} \right| \\
+ x=\left| \bunsuu{1/2}{3} \right| \\
+ x=|(1/2)/3|
+\end{gather*}
+\end{showEx}
+
+\noindent
+のようにすべし，というものでしょう。
+
+\textsf{emath}では，姑息な手段として，\verb+\zettaiti+コマンドを用意しています。
+
+\begin{showEx}(.74,.2){\cmd{zettaiti}}
+$ x=\zettaiti{\bunsuu{\bunsuu12}{3}} $
+\end{showEx}
+
+今回，この絶対値記号を「大括弧記号（カギ括弧）」にするオプションを用意しました。
+
+\begin{showEx}(.74,.2){\texttt{<kagi>}オプション}
+$ x=\zettaiti<kagi>{\bunsuu{\bunsuu12}{3}} $
+\end{showEx}
+
+この\verb+<..>+オプションは
+\begin{jquote}
+\verb+key=val+
+\end{jquote}
+形式で与えるもので，\verb+<kagi=5pt>+などと，右辺値を単位付の数値で指定します。
+この数値は，左右の大括弧記号の上下４箇所で折れる横線部分の長さです。
+
+\begin{showEx}(.74,.2){\texttt{<kagi=..>}オプション}
+$ x=\zettaiti<kagi=5pt>{\bunsuu{\bunsuu12}{3}} $
+\end{showEx}
+
+右辺値を省略した場合は\verb+<kagi=0.25em>+と解釈されます。
+また，\texttt{key}には，\texttt{senhaba=..}で大括弧記号の
+線の太さを変更するオプションも用意しました（デフォルト値は\texttt{0.4pt}です）。
+
+\begin{showEx}(.74,.2){\texttt{<senhaba=..>}オプション}
+$ x=\zettaiti<kagi,senhaba=0.8pt>{%
+  \bunsuu{\bunsuu12}{3}} $
+\end{showEx}
+
+なお，この記号は，\verb+\vrule, \hrule+を用いています
+（tpic-specials ではありません）。
+
+大括弧だけではなく，小括弧もどうか，というご意見は却下します。\\
+理由ですか，左右に出っ張る中央と，等号の位置がずれるというのは，
+美しくありません。
+\end{document}

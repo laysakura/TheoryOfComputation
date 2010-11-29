@@ -1,0 +1,199 @@
+\documentclass{jarticle}
+    \usepackage{moreverb}
+    \usepackage{emath}
+    \usepackage{showexample}
+
+\begin{document}
+\textsf{showexample.sty} は \LaTeX のソースとタイプセットした結果を
+対比して示すためのスタイルファイルです．
+\section{\texttt{showEx}環境}
+\texttt{showEx}環境の使用例です。
+\subsection{基本例}
+例えば，
+\begin{dblbox}
+\begin{verbatim}
+\begin{showEx}{簡単な例}
+    $\frac12$\vspace{1ex}
+    
+    $\dfrac12$
+\end{showEx}
+\end{verbatim}
+\end{dblbox}
+と記述すると
+\begin{showEx}{簡単な例}
+    $\frac12$\vspace{1ex}
+
+    $\dfrac12$
+\end{showEx}
+\texttt{showEx}環境内に記述されたものが
+\begin{jquote}
+左側には，ソースリストが角の丸い囲みの中に表示され，\\
+右側には，タイプセットした結果が影付きの囲みの中に表示されます．
+\end{jquote}
+今までは，対比すべき部分を別ファイルにして \cmd{showexample} コマンドで
+読み取っていましたが，今回新設した \texttt{showEx}環境では，
+環境内に記述した部分が対比の対象となります．
+\clearpage
+
+\subsection{\texttt{showEx}の書式}
+\texttt{showEx}環境の書式です．
+\begin{boxnote}
+\begin{verbatim}
+\begin{showEx}(#1,#2)#3
+    (#1,#2) はオプション引数
+        #1 : 左側ソース部分横幅
+             \linewidth の #1倍 (0<#1<=1)デフォルト0.45
+        #2 : 右側結果表示部横幅 
+             \linewidth の #2倍 (0<#2<=1)デフォルト0.45
+    #3 : 左側ソース部分表題は必須の引数
+        （表題なしのときは
+                \begin{showExample}{}
+          と，空文字列を与える．）
+\end{verbatim}
+\end{boxnote}
+
+\begin{description}
+\item[（注）] \texttt{showEx}環境は，
+一時ファイル \textsf{showex.tmp} を作ります．
+終了後もこのファイルは削除されません．
+\end{description}
+\subsection{表題が不要の場合}
+表題が不要の場合の例です．
+\begin{dblbox}
+\begin{verbatim}
+\begin{showEx}{}
+    $\dfrac12$
+\end{showEx}
+\end{verbatim}
+\end{dblbox}
+と記述すると
+\begin{showEx}{}
+    $\dfrac12$
+\end{showEx}
+\clearpage
+
+\subsection{左右の囲み幅の変更}
+左右の囲みの横幅を変更したいときは，(左幅,右幅) オプション引数を与えます．
+\begin{dblbox}
+\begin{verbatim}
+\begin{showEx}(.6,.3){\texttt{(.,.)}オプション}
+    $\bunsuu12$
+\end{showEx}
+\end{verbatim}
+\end{dblbox}
+と記述すると
+\begin{showEx}(.6,.3){\texttt{(.,.)}オプション}
+    $\bunsuu12$
+\end{showEx}
+\medskip
+
+枠が大きくなり，$（左幅）+（右幅）> 0.95$ になると，
+1行には出来ませんから，上下2段になります．
+\begin{dblbox}
+\begin{verbatim}
+\begin{showEx}(.75,.75){$（左幅）+（右幅）> 0.95$}}
+    \begin{equation}x+y=1\end{equation}
+\end{showEx}
+\end{verbatim}
+\end{dblbox}
+と記述すると
+\begin{showEx}(.75,.75){$（左幅）+（右幅）> 0.95$}
+    \begin{equation}x+y=1\end{equation}
+\end{showEx}
+\clearpage
+
+（右幅）が 0.95 を超えると矢印の位置・向きが変わります．
+\begin{dblbox}
+\begin{verbatim}
+\begin{showEx}(.75,1){$（右幅）> 0.95$}
+    \begin{equation}x+y=1\end{equation}
+\end{showEx}
+\end{verbatim}
+\end{dblbox}
+と記述すると
+\begin{showEx}(.75,1){$（右幅）> 0.95$}
+    \begin{equation}x+y=1\end{equation}
+\end{showEx}
+
+\subsection{ソース部に行番号}
+左側のリストに行番号を付与するには，
+\textsf{showEx}に\verb+[listing]+オプションを付与します。
+ただし，この機能は \textsf{moreverb.sty}を前提としますので，
+\begin{jquote}
+\begin{verbatim}
+\usepackage{showexample}
+\end{verbatim}
+\end{jquote}
+に先立って
+\begin{jquote}
+\begin{verbatim}
+\usepackage{moreverb}
+\end{verbatim}
+\end{jquote}
+としておかねばなりません。
+
+\begin{dblbox}
+\begin{verbatim}
+\begin{showEx}[listing](.5,.44){行番号附加オプション}
+あああ
+\abovedisplayskip=0pt
+\belowdisplayskip=0pt
+\[ y=f(x) \]
+いいい
+\end{showEx}
+\end{verbatim}
+\end{dblbox}
+と記述すると
+
+\begin{showEx}[listing](.5,.44){行番号附加オプション}
+あああ
+\abovedisplayskip=0pt
+\belowdisplayskip=0pt
+\[ y=f(x) \]
+いいい
+\end{showEx}
+
+\clearpage
+
+\section{\cmd{showex}コマンド}
+ファイルから読み取った部分を対訳形式にするコマンド \cmd{showexample} も
+以前の通り使えますが，\textsf{showEx} 環境と書式がずれてしまいましたので，
+\cmd{showex} コマンドを新設しました．
+
+\subsection{\cmd{showex}コマンドの使用例}
+ファイル \texttt{ex1.tex} の内容が
+\begin{jquote}
+\begin{verbatim}
+\begin{enumerate}[(1)]
+    \item $\frac12$
+    \item $\dfrac12$
+    \item $\bunsuu12$
+\end{enumerate}
+\end{verbatim}
+\end{jquote}
+のとき，
+\begin{dblbox}
+\begin{verbatim}
+    \showex(.6,.3){\cmd{showex}コマンド}{ex1}
+\end{verbatim}
+\end{dblbox}
+と記述すると
+
+    \showex(.6,.3){\cmd{showex}コマンド}{ex1}
+
+\subsection{\cmd{showex}コマンドの書式}
+\begin{boxnote}
+\begin{verbatim}
+\showex(#1,#2)#3#4
+    (#1,#2) はオプション引数
+        #1 : 左側ソース部分横幅
+             \linewidth の #1倍 (0<#1<=1)デフォルト0.45
+        #2 : 右側結果表示部横幅 
+             \linewidth の #2倍 (0<#2<=1)デフォルト0.45
+    #3 : 左側ソース部分表題は必須の引数
+    #4 : 読み込むファイル名
+        （ただし，拡張子は .tex でなければならず，
+          引数には拡張子をつけずに記述します．）
+\end{verbatim}
+\end{boxnote}
+\end{document}

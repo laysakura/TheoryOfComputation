@@ -1,0 +1,478 @@
+% EMframed.sty by tDB (emath@nifty.com)
+%
+\NeedsTeXFormat{LaTeX2e}%
+\def\Ps@version{0.07α}%
+\ProvidesPackage{EMframed}[2010/07/31 v \Ps@version ]%
+%
+%\RequirePackage{emathC}
+%\@ifpackageloaded{emathPh}{}{\RequirePackage[notpic]{emathPh}}%
+\RequirePackage{emathPb}%
+%
+\define@key{EMframed}{LRonly}[B]{\def\rectbox@LR{#1}}%
+\define@key{EMframed}{Lonly}[L]{\def\rectbox@LR{#1}}%
+\define@key{EMframed}{Ronly}[R]{\def\rectbox@LR{#1}}%
+%\define@key{EMframed}{tpic}[0]{\edef\by@vrule{0}}%
+\define@key{EMframed}{rectboxtopsep}{\edef\rectbox@topsep{#1}}%
+\define@key{EMframed}{rectboxbottomsep}{\edef\rectbox@bottomsep{#1}}%
+\define@key{EMframed}{rectboxoval}[10pt]{\edef\by@vrule{0}\edef\rectbox@oval{#1}}%
+\define@key{EMframed}{oval}[10pt]{\edef\by@vrule{0}\edef\rectbox@oval{#1}}%
+%\define@key{EMframed}{rectboxoct}[10pt]{\edef\by@vrule{0}\edef\rectbox@oval{#1}\edef\rectbox@oct{#1}}%
+%\define@key{EMframed}{rectboxcorner}[1]{\def\rect@corner{}}%
+%\define@key{EMframed}{tate}{\edef\rectbox@tate{#1}}%
+%\define@key{EMframed}{linewidth}{\edef\default@linewidth{#1}\edef\frame@linewidth{#1}}%
+\define@key{EMframed}{linethickness}{\edef\default@linewidth{#1}\edef\frame@linewidth{#1}}%
+%\define@key{EMframed}{dash}{\edef\rectbox@dash{#1}}%
+\define@key{EMframed}{borderwidth}{\edef\border@width{#1}}%
+\define@key{EMframed}{item}{\def\rectbox@item{#1}}%
+\define@key{EMframed}{preitem}{\def\rectbox@preitem{#1}}%
+\define@key{EMframed}{postitem}{\def\rectbox@postitem{#1}}%
+\define@key{EMframed}{bitem}{\def\rectbox@bitem{#1}}%
+\define@key{EMframed}{prebitem}{\def\rectbox@prebitem{#1}}%
+\define@key{EMframed}{postbitem}{\def\rectbox@postbitem{#1}}%
+\define@key{EMframed}{pos}{\def\@pos{#1}}%
+\define@key{EMframed}{itempos}{\def\rectbox@item@pos{#1}}%
+\define@key{EMframed}{bitempos}{\def\rectbox@bitem@pos{#1}}%
+\define@key{EMframed}{rectboxparindent}{\edef\rectbox@parindent{#1}}%
+\define@key{EMframed}{rectboxwidth}[0pt]{\setlength{\@tempdima}{#1}\edef\rectbox@width{\the\@tempdima}}%
+\define@key{EMframed}{rectboxWidth}[0pt]{\setlength{\@tempdima}{#1}\edef\rectbox@Width{\the\@tempdima}}%
+%\define@key{EMframed}{AeEnv}{\EMedef\Aeprobname{#1}}%
+\define@key{EMframed}{fboxsep}{\setlength\fboxsep{#1}}%
+\define@key{EMframed}{hsep}{\def\h@sep{#1}}%
+\define@key{EMframed}{tsep}{\def\t@sep{#1}}%
+\define@key{EMframed}{bsep}{\def\b@sep{#1}}%
+\define@key{EMframed}{vsep}{\def\v@sep{#1}\def\t@sep{#1}\def\b@sep{#1}}%
+\define@key{EMframed}{hvsep}{\def\h@sep{#1}\def\v@sep{#1}}%
+\define@key{EMframed}{lsep}{\def\l@sep{#1}}%
+\define@key{EMframed}{rsep}{\def\r@sep{#1}}%
+\define@key{EMframed}{shade}[5pt]{\def\shade@rule{#1}}%
+\define@key{EMframed}{fboxrule}{\setlength\fboxrule{#1}}%
+%\define@key{EMframed}{pszoption}{\def\psz@option{#1}}%
+%\define@key{EMframed}{waku}[1]{\def\ps@drawwaku{#1}}%
+%\define@key{EMframed}{wakuhutosa}[1]{\def\waku@hutosa{#1}}%
+%\def\wakusensyu{\drawline}%
+%\define@key{EMframed}{sensyu}{\edef\by@vrule{0}\def\wakusensyu{#1}}%
+%\define@key{EMframed}{allinethickness}{\allinethickness{#1}}%
+%\define@key{EMframed}{linethickness}{\linethickness{#1}}%
+\define@key{EMframed}{framelinewidth}{\edef\frame@linewidth{#1}}%
+\define@key{EMframed}{framethickness}{\edef\frame@linewidth{#1}}%
+\define@key{EMframed}{framecolor}{\def\frame@color{#1}}%
+\define@key{EMframed}{shadecolor}{\def\shade@color{#1}}%
+%\define@key{EMframed}{midasibackgroundcolor}{\def\midasi@background@color{#1}}%
+\define@key{EMframed}{backgroundcolor}{\edef\background@color{#1}}%
+\define@key{EMframed}{bgcolor}{\edef\background@color{#1}}%
+%\define@key{EMframed}{liningcolor}{\def\lining@color{#1}}%
+%\define@key{EMframed}{henvi}{\def\hen@i{#1}}%
+%\define@key{EMframed}{Henvi}{%
+% \vecXY{#1}\henv@x\henv@y\ukansan\henv@x\henv@x\ukansan\henv@y\henv@y
+%                        \edef\hen@i{(\henv@x,\henv@y)}}%
+\define@key{EMframed}{hasenLG}{\relax}%
+%
+%\define@key{EMframed}{mekurex}{\def\mekure@x{#1}}%
+%\define@key{EMframed}{mekurey}{\def\mekure@y{#1}}%
+%\define@key{EMframed}{mekurez}{\def\mekure@z{#1}}%
+%\define@key{EMframed}{mekured}{\def\mekure@d{#1}}%
+%\define@key{EMframed}{debeso}[1]{\def\rectbox@debeso{#1}}%
+\define@key{EMframed}{kagi}[3pt]{%\edef\by@vrule{0}%
+  \def\rectbox@kagi{#1}}%
+%\define@key{EMframed}{notbreak}[1]{\def\not@break{#1}}%
+%\define@key{emPb}{notbreak}[1]{\def\not@break{#1}}%
+%
+\define@key{EMframed}{enlarge}[1]{\def\enlarge@p{#1}\enlargethispage*{#1\baselineskip}}%
+\define@key{emPb}{enlarge}[1]{\def\enlarge@p{#1}\enlargethispage*{#1\baselineskip}}%
+\define@key{emPsb}{enlarge}[1]{\def\enlarge@p{#1}\enlargethispage*{#1\baselineskip}}%
+%
+%\define@key{EMframed}{brace}{\def\LB@lbrace{#1}%
+%  \if (#1\def\LB@rbrace{)}%
+%  \else\if [#1\def\LB@rbrace{]}%
+%  \else\if |#1\def\LB@rbrace{|}%
+%  \fi\fi\fi
+%}%
+%\define@key{EMframed}{prestr}{\def\pre@str{#1}}%
+\define@key{EMframed}{framecmd}{\def\frame@cmd{#1}}%
+\define@key{EMframed}{vyohaku}{\edef\v@yohaku{#1}}%
+%
+\@ifundefined{rectb@x}{\newbox\rectb@x}{}%
+\@ifundefined{rectbox@item@box}{\newbox\rectbox@item@box}{}%
+\@ifundefined{rectbox@bitem@box}{\newbox\rectbox@bitem@box}{}%
+%
+\edef\v@yohaku{0pt}%
+%
+% このスタイルファイルは，下の framed.sty を拡張したものです。
+%
+% framed.sty   v 0.8a   21-Jul-2003
+% Copyright (C) 1992-2003 by Donald Arseneau
+% These macros may be freely transmitted, reproduced, or modified
+% provided that this notice is left intact.
+% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Create framed or shaded regions that can break across pages using 
+% \begin{framed} ... \end{framed}    -- ordinary frame box (box at margin)
+% \begin{shaded} ... \end{shaded}    -- shaded background (into margin)
+%    ... leftbar ...                 -- line on left side
+% \begin{MakeFramed}{settings} ... \end{MakeFramed}
+%                        -- generic frame (for new environments)
+%
+% The "framed" environment puts the text into "\fbox" with the
+% settings "\fboxrule=\FrameRule" and "\fboxsep=\FrameSep".
+% You can change these lengths (using "\setlength") and you
+% can even change the definition of "\emFrameCommand" to use
+% much fancier boxes.
+%
+% In fact, the "shaded" environment just redefines "\emFrameCommand"
+% to use "\colorbox{shadecolor}" (and you have to define the
+% color "shadecolor": \newcolor{shadecolor}...).
+%
+% A page break is allowed, and even encouraged, before the framed
+% environment.  If you want to attach some text (a box title) to the
+% frame, then the text should be inserted by \emFrameCommand
+%
+% The contents of the framed regions are restricted: 
+% Floats, footnotes, marginpars and head-line entries will be lost.
+% (Some of these may be handled in a later version.)
+% This package will not work with the page breaking of multicol.sty,
+% or other systems that perform column-balancing.
+%
+% The MakeFramed environment does the work.  Its "settings" argument
+% should contain any adjustments to the text width (applied to \hsize,
+% and using the "\width" of the frame itself) as well as a `restore' 
+% command -- \@parboxrestore or \FrameRestore or something similar.
+% 
+% Expert commands:
+% \MakeFramed, \endMakeFramed: the "MakeFramed" environment
+% \emFrameCommand: command to draw the frame around its argument
+% \FrameRestore: restore some text settings, but fewer than \@parboxrestore
+% \FrameRule: length register; \fboxrule for default "framed".
+% \FrameSep: length register; \fboxsep for default "framed".
+% \FrameHeightAdjust: macro; height of frame above baseline at top of page
+% 
+% This is still a `pre-production' version because I can think of many
+% features/improvements that should be made.  Nevertheless, starting 
+% with version 0.5 it should be bug-free.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\ProvidesPackage{framed}[2003/07/21 v 0.8a: 
+%   framed or shaded text with page breaks]
+%
+\def\rectbox@oval{\z@}%
+\def\default@hsep{\the\fboxsep}%
+\def\default@vsep{\the\fboxsep}%
+\def\HVsep#1#2{\edef\default@hsep{#1}\edef\default@vsep{#2}}%
+%
+%\newenvironment{framed}% using default \emFrameCommand
+%  {\edef\framed@page{0}\MakeFramed {\advance\hsize-\width \FrameRestore}}%
+%  {\endMakeFramed}
+\def\EMframed{%
+  \hsize=\linewidth
+  \@ifnextchar[{\@EMframed}{\@EMframed[\empty]}}%
+\def\@EMframed[#1]{%
+  \edef\h@sep{\default@hsep}%
+  \edef\v@sep{\default@vsep}%
+  \edef\t@sep{\empty}%
+  \edef\b@sep{\empty}%
+  \edef\rectbox@item{\empty}%
+  \edef\rectbox@bitem{\empty}%
+  \edef\rectbox@oval{0pt}%
+  \@ifundefined{rectbox@parindent@}{\edef\rectbox@parindent{\z@}}{%
+    \edef\rectbox@parindent{\rectbox@parindent@}%
+  }%
+  \topsep=\z@
+%
+  \ifx\empty #1\else\setkeys{EMframed}{#1}\fi
+  \ifdim\rectbox@oval=\z@\else
+    \errmessage{EMframed 環境では，oval オプションは使用できません}%
+  \fi
+%
+  \ifthenelse{\equal\h@sep\empty}{%
+    \ifthenelse{\lengthtest{\rectbox@oval<\default@hsep}}{%
+      \edef\h@sep{\default@hsep}}{\edef\h@sep{\rectbox@oval}}}{}%
+  \ifthenelse{\equal\v@sep\empty}{%
+    \ifthenelse{\lengthtest{\rectbox@oval<\default@vsep}}{%
+      \edef\v@sep{\default@vsep}}{\edef\v@sep{\rectbox@oval}}}{}%
+%
+  \@ifundefined{frame@cmd}{%
+    \@ifundefined{emFrameCommand}{%
+      \edef\emFrameCommand@opt{<hsep=\h@sep,vsep=\v@sep}%
+      \ifx\empty #1\else\edefappend\emFrameCommand@opt{,#1}\fi
+      \edefappend\emFrameCommand@opt{>}%
+      \def\emFrameCommand{\expandafter\EMfbox\emFrameCommand@opt}%
+    }{}%
+  }{%
+    \frame@cmd
+  }%
+%
+  \ifx\empty\t@sep\edef\t@sep{\v@sep}\fi
+  \ifx\empty\b@sep\edef\b@sep{\v@sep}\fi
+  \ifthenelse{\equal\rectbox@item\empty}{\def\item@ht{0pt}}{%
+    \setbox\rectb@x=\hbox{\rectbox@item}%
+    \edef\item@w{\strip@pt\wd\rectb@x}%
+    \Div\item@w{2}\item@w@half
+    \@tempdima=\ht\rectb@x\advance\@tempdima\dp\rectb@x
+    \divide\@tempdima\tw@
+    \edef\item@ht{\the\@tempdima}%
+  }%
+  \ifthenelse{\equal\rectbox@bitem\empty}{\def\bitem@ht{0pt}}{%
+    \setbox\rectb@x=\hbox{\rectbox@bitem}%
+    \edef\bitem@w{\strip@pt\wd\rectb@x}%
+    \Div\bitem@w{2}\bitem@w@half
+    \@tempdima=\ht\rectb@x\advance\@tempdima\dp\rectb@x
+    \divide\@tempdima\tw@
+    \edef\bitem@ht{\the\@tempdima}%
+  }%
+  \edef\framed@page{0}%
+%  \edef\emFrameCommand@opt{<hsep=\h@sep,vsep=\v@sep}%
+%  \ifx\empty #1\else\edefappend\emFrameCommand@opt{,#1}\fi
+%  \edefappend\emFrameCommand@opt{>}%
+  \EMMakeframed {\advance\hsize-\width \emFrameRestore}}%
+\def\endEMframed{\endEMMakeframed}%
+%
+%\newenvironment{shaded}{%
+%  \def\emFrameCommand{\colorbox{shadecolor}}%
+%  \MakeFramed {\FrameRestore}}%
+% {\endMakeFramed}
+
+%\newenvironment{leftbar}{%
+%  \def\emFrameCommand{\vrule width 3pt \hspace{10pt}}%
+%  \MakeFramed {\advance\hsize-\width \FrameRestore}}%
+% {\endMakeFramed}
+
+\chardef\emFrameRestore=\catcode`\| % for debug
+%\catcode`\|=\catcode`\% % (debug: insert space after backslash)
+\catcode`\|=\catcode`\% % (debug: insert space after backslash)
+
+\def\EMMakeframed#1{\par
+ % measure added width and height; call result \width and \height
+ \setbox\z@\vbox{\vskip-1in \hbox{\hskip-1in 
+      \emFrameCommand{\hbox{\vrule \@height .7in \@depth.3in \@width 1in}}%
+  }%
+  \vskip\z@skip}%
+ \def\width{\wd\z@}\def\height{\ht\z@}%
+ \edef\fb@frw{\the\width}\edef\fb@frh{\the\height}%
+ % insert pre-penalties and skips
+ \begingroup
+ \skip@\lastskip
+ \if@nobreak\else 
+    \penalty9999 % updates \page parameters
+    \ifdim\pagefilstretch=\z@ \ifdim\pagefillstretch=\z@
+       \edef\@tempa{\the\skip@}%
+       \ifx\@tempa\zero@glue \penalty-30
+       \else \vskip-\skip@ \penalty-30 \vskip\skip@
+    \fi\fi\fi
+    \penalty\z@
+    % Give a stretchy breakpoint that will always be taken in preference
+    % to the \penalty 9999 used to update page parameters.  The cube root
+    % of 10000/100 indicates a multiplier of 0.21545, but the maximum 
+    % calculated badness is really 8192, not 10000, so the multiplier
+    % is 0.2301. 
+    \advance\skip@ \z@ plus-.5\baselineskip
+    \advance\skip@ \z@ plus-.231\height
+    \advance\skip@ \z@ plus-.231\skip@
+    \advance\skip@ \z@ plus-.231\topsep
+    \vskip-\skip@ \penalty 1800 \vskip\skip@
+ \fi
+ \addvspace{\topsep}%
+ \endgroup
+ % clear out pending page break
+ \penalty\@M \vskip 2\baselineskip \vskip\height
+ \penalty9999 \vskip -2\baselineskip \vskip-\height
+ \penalty9999 % updates \pagetotal
+|\message{After clearout, \pagetotal=\the\pagetotal, \pagegoal=\the\pagegoal. }%
+ \fb@adjheight 
+ \setbox\@tempboxa\vbox\bgroup
+   #1% Modifications to \hsize (can use \width and \height)
+   \textwidth\hsize \columnwidth\hsize
+   \setlength{\parindent}{\rectbox@parindent}%
+}
+%
+\def\break@EMframed{1}%
+\def\breakEMframed#1{\edef\break@EMframed{#1}}%
+\def\endEMMakeframed{\par
+     \kern\z@ \penalty-100 % put depth into height
+ \egroup
+ \ifnum\break@EMframed>\z@
+   \begingroup \EMput@frame \endgroup
+ \else
+   \begingroup
+    \centerline{\hskip2\@totalleftmargin\emFrameCommand{\box\@tempboxa}}%
+   \endgroup
+ \fi
+  \@ifundefined{enlarge@p}{}{%
+    \enlargethispage{-\enlarge@p\baselineskip}%
+  }%
+}
+%
+% \put@frame takes the contents of \@tempboxa and puts all, or a piece,
+% of it on the page with a frame (\emFrameCommand).  It recurses until
+% all of \@tempboxa has been used up. (\@tempboxa must have zero depth.)
+
+\def\EMput@frame{\relax
+ \ifdim\pagegoal=\maxdimen \pagegoal\vsize \fi
+|   \message{=============== Entering putframe ====================^^J
+|     \pagegoal=\the\pagegoal,  \pagetotal=\the\pagetotal. }%
+ \ifinner \else
+    \dimen@\pagegoal \advance\dimen@-\pagetotal % natural space left on page
+  \ifdim\dimen@<2\baselineskip 
+|   \message{Page has only \the\dimen@\space room left; eject. }%
+    \eject \fb@adjheight \EMput@frame
+  \else % there's appreciable room left on the page
+\ifnum\framed@page>\z@\def\not@T{}\fi
+%\def\not@B{}%
+\@ifundefined{not@break}{%
+      \@ifundefined{not@T}{%
+        \setlength{\@tempdima}{\fb@frh-\bitem@ht-\b@sep+\v@yohaku}%
+        \edef\fb@frh@{\the\@tempdima}%
+      }{% 上なし
+        \setlength{\@tempdima}{\fb@frh-\bitem@ht-\b@sep-\item@ht-\t@sep+\v@yohaku}%
+        \edef\fb@frh@{\the\@tempdima}%
+      }%
+}{%
+  \edef\fb@frh@{\fb@frh}%
+}%
+%\typeout{page=\framed@page,fb@frh@=\fb@frh@,fb@frh=\fb@frh}%
+|    \message{\string\pagetotal=\the\pagetotal,
+|        \string\pagegoal=\the\pagegoal, 
+|        \string\pagestretch=\the\pagestretch,
+|        \string\pageshrink=\the\pageshrink,
+|        \string\fb@frh=\fb@frh. \space}
+|    \message{Box of size \the\ht\@tempboxa\space + \fb@frh}%
+     \begingroup % temporarily set \dimen@ to be...
+     \advance\dimen@.8\pageshrink  % maximum space available on page
+     \advance\dimen@-\fb@frh@\relax % space available for frame's contents
+     \expandafter\endgroup
+     % restore \dimen@ to real room left on page
+     \ifdim\dimen@>\ht\@tempboxa % whole box does fit
+|       \message{fits in \the\dimen@. }%
+     \else % box must be split
+|       \message{must be split to fit in \the\dimen@. }%
+\def\not@B{}%
+%\setlength{\@tempdima}{\fb@frh@-\bitem@ht-\b@sep}%
+%\edef\fb@frh@{\the\@tempdima}%
+        \setbox\@tempboxa\vbox{% simulate frame and flexiblity of the page:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+           \vskip \fb@frh@ \@plus\pagestretch \@minus.8\pageshrink
+%           \@tempdima=\fb@frh@
+%\typeout{fb@frh@=\fb@frh@}%
+%           \vskip \z@ \@plus\pagestretch \@minus.8\pageshrink
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+           \kern137sp\kern-137sp\penalty-30
+           \unvbox\@tempboxa}%
+        \edef\fb@resto@set{\boxmaxdepth\the\boxmaxdepth \splittopskip\the\splittopskip}%
+        \boxmaxdepth\z@ \splittopskip\z@
+        \setbox\tw@\vsplit\@tempboxa to\dimen@
+        \setbox\tw@\vbox{\unvbox\tw@}% natural-sized
+|       \message{Box of size \the\ht\@tempboxa\space split to \the\dimen@. 
+|          Natural height of split box is \the\ht\tw@. }%
+        % If the split-to size > (\vsize-\topskip), then set box to full size
+        \begingroup
+          \advance\dimen@\topskip
+          \expandafter\endgroup
+        \ifdim\dimen@>\pagegoal
+|         \message{Frame is big -- Use up the full column. }%
+          \dimen@ii\pagegoal
+          \advance\dimen@ii -\topskip
+          \advance\dimen@ii \FrameHeightAdjust\relax
+        \else  % suspect this is wrong:
+          % If the split-to size > feasible room_on_page, rebox it smaller.
+          \advance\dimen@.8\pageshrink
+          \ifdim\ht\tw@>\dimen@
+|           \message{Box too tall; rebox it to \the\dimen@. }%
+            \dimen@ii\dimen@
+          \else % use natural size
+            \dimen@ii\ht\tw@
+          \fi
+        \fi
+        % Re-box contents to desired size \dimen@ii
+        \advance\dimen@ii -\fb@frh@
+        \setbox\tw@\vbox to\dimen@ii \bgroup
+        % remove simulated frame and page flexibility:
+        \vskip -\fb@frh@ \@plus-\pagestretch \@minus-.8\pageshrink
+        \unvbox\tw@ \unpenalty\unpenalty
+        \ifdim\lastkern=-137sp % whole box went to next page
+|          \message{box split at beginning! }%
+           \egroup \fb@resto@set \eject % (\vskip for frame size was discarded) 
+           \fb@adjheight
+        \else %
+           \egroup \fb@resto@set
+           \ifvoid\@tempboxa % it all fit after all
+|             \message{box split at end! }%
+              \setbox\@tempboxa\box\tw@
+           \else % it really did split
+|             \message{box split as expected. Its reboxed height is \the\ht\tw@. }%
+              \ifdim\wd\tw@>\z@
+                {% ??? \centerline bad idea
+%                  \ifnum\framed@page>\z@\def\not@T{}\fi
+%                  \def\not@B{}%
+                  \centerline{\hskip2\@totalleftmargin\emFrameCommand{\box\tw@}}%
+                }%
+                \Incr\framed@page
+              \else
+|               \message{Zero width means likely blank. Don't frame it (guess)}%
+                \box\tw@
+              \fi
+              \hrule \@height\z@
+              \eject
+              \fb@adjheight
+              \EMput@frame
+  \fi\fi\fi\fi\fi
+  \ifvoid\@tempboxa\else
+    {%
+      \let\not@B\undefined
+      \ifnum\framed@page>\z@\def\not@T{}\fi
+      \centerline{\hskip2\@totalleftmargin\emFrameCommand{\box\@tempboxa}}%
+    }%
+    \nointerlineskip \null %{\showoutput \showlists}
+    \penalty-30 \vskip\topsep
+  \fi}
+
+\def\fb@adjheight{%
+  \vbox to\FrameHeightAdjust{}% get proper baseline skip from above.
+  \penalty\@M \nointerlineskip
+  \vskip-\FrameHeightAdjust
+  \penalty\@M} % useful for tops of pages
+
+\edef\zero@glue{\the\z@skip}
+
+\catcode`\|=\emFrameRestore
+
+% Provide configuration commands:
+%\providecommand\emFrameCommand{\fboxrule=\FrameRule \fboxsep=\FrameSep \fbox}
+%\@ifundefined{FrameRule}{\newdimen\FrameRule \FrameRule=\fboxrule}{}
+%\@ifundefined{FrameSep} {\newdimen\FrameSep  \FrameSep =3\fboxsep}{}
+
+% Height of frame above first baseline when frame starts a page:
+\providecommand\FrameHeightAdjust{6pt}
+
+% \FrameRestore has parts of \@parboxrestore.  See how it is used in the 
+% "settings" argument of \MakeFrame.  Previous behavior can be restored by 
+% using \@parboxrestore there, or redefining:
+% \makeatletter \renewcommand\FrameRestore{\@parboxrestore} \makeatother
+\def\emFrameRestore{%
+  \let\if@nobreak\iffalse
+  \let\if@noskipsec\iffalse
+%  \let\par\@@par  ??
+  \let\-\@dischyph
+  \let\'\@acci\let\`\@accii\let\=\@acciii
+%  \parindent\z@ \parskip\z@skip    Definitely omit!
+%  \everypar{}%  ??
+  \linewidth\hsize
+%  \@totalleftmargin\z@
+%  \leftskip\z@skip \rightskip\z@skip \@rightskip\z@skip
+%  \parfillskip\@flushglue \lineskip\normallineskip
+%  \baselineskip\normalbaselineskip
+  \sloppy
+%  \let\\\@normalcr
+}
+
+%  Compatibility with previous versions (temporary!):
+%\let\fram@d=\MakeFramed  \let\endfram@d=\endMakeFramed
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\endinput
+
+v 0.00α 2009/05/30
+v 0.01α 2009/05/31 3ページ以上にわたる場合
+v 0.03α 2009/06/08 emathPs, emathPsb を必ずしも必要としない。
+         ps を使用しない場合は EMframed環境
+v 0.04α \hsize=\linewidth
+v 0.05α 2009/07/02 enlarge オプション
+v 0.06α 2010/05/24 shade オプション
+v 0.07α 2010/07/31 \HVsep

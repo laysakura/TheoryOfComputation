@@ -1,0 +1,226 @@
+%%% emathAs.sty by tDB(CQB00260@nifty.ne.jp)
+%%% 複数の環境に対する，解答別刷り用
+
+\NeedsTeXFormat{pLaTeX2e}
+\ProvidesPackage{emathAs}[2004/08/17 v0.01β]
+
+\newif\iftoosi@bangou\toosi@bangoufalse% rensyuu と mondai を通し番号
+\DeclareOption{toosibangou}{\toosi@bangoutrue}
+
+\newif\ifdebugkai%              解答を置く位置の指定
+%                               デフォルトは巻末にまとめる．
+\DeclareOption{debug}{\debugkaitrue}%   debug オプションを
+%                                       指定したときは，問題の下．
+\ProcessOptions\relax
+
+\@ifundefined{c@kaitou@syorihou}{\newcounter{kaitou@syorihou}}{}%
+\ifdebugkai\setcounter{kaitou@syorihou}{1}\fi
+
+\theorembodyfont{\normalfont}
+\newtheorem{teigi}{定義}
+\newtheorem{teiri}{定理}
+\newtheorem{reidai}{例題}
+\newtheorem{rei}{例}
+
+\newif\ifrensyuu\rensyuufalse%
+\newif\ifmondai\mondaifalse%
+\newif\ifhatten\hattenfalse%
+
+
+\def\label@mondai@s{問題}%
+\def\label@rensyuu@s{練習}%
+\def\label@hatten@s{発展問題}%
+
+\def\labelmondai#1{\def\label@mondai@s{#1}}%
+\def\labelrensyuu#1{\def\label@rensyuu@s{#1}}%
+\def\labelhatten#1{\def\label@hatten@s{#1}}%
+
+\newtheorem{@mondai@s}{\label@mondai@s}[section]
+
+\iftoosi@bangou%
+%   練習と問題を通し番号で
+  \newtheorem{@rensyuu@s}[@mondai@s]{\label@rensyuu@s}\else%
+%   練習と問題を別番号で
+  \newtheorem{@rensyuu@s}{\label@rensyuu@s}[section]%
+    \fi%
+
+\newtheorem{@hatten@s}{\label@hatten@s}
+
+\newenvironment{rensyuu}{\rensyuutrue\begin{@rensyuu@s}}{%
+  \rensyuufalse\end{@rensyuu@s}}%
+\newenvironment{mondai}{\mondaitrue\begin{@mondai@s}}{%
+  \mondaifalse\end{@mondai@s}}%
+\newenvironment{hatten}{\hattentrue\begin{@hatten@s}}{%
+  \hattenfalse\end{@hatten@s}}%
+
+%%% ファイルハンドル
+\newwrite\kai@hndl%   一時ファイルのハンドル
+\newwrite\rensyuu@hndl%   rensyuu 環境のファイルハンドル
+\newwrite\mondai@hndl%    mondai 環境のファイルハンドル
+\newwrite\hatten@hndl%    hatten 環境のファイルハンドル
+
+%%% open files
+%  練習の解答を書き出す一時ファイルの作成
+\newcommand{\openrensyuuFile}{%
+    \immediate\openout\rensyuu@hndl=\jobname.ren%
+    \openFileSub{\rensyuu@hndl}%
+    }%
+%   問題の解答を書き出す一時ファイルの作成
+\newcommand{\openmondaiFile}{%
+    \immediate\openout\mondai@hndl=\jobname.mon%
+    \openFileSub{\mondai@hndl}%
+    }%
+% 発展問題の解答を書き出す一時ファイルの作成
+\newcommand{\openhattenFile}{%
+    \immediate\openout\hatten@hndl=\jobname.ten%
+    \openFileSub{\hatten@hndl}%
+    }%
+
+\def\openFileSub#1{%
+% \immediate\write#1{%
+%       \string\preedaMon{}}
+  }%
+
+
+%%% 解答の番号付けラベル
+\def\@rensyuuLabel{\the@rensyuu@s\ }% 練習の解答の番号付け
+%                               デフォルトは rensyuu 環境に対応
+\def\@mondaiLabel{\the@mondai@s\ }%   問題の解答の番号付け
+%                               デフォルトは mondai 環境に対応
+\def\@hattenLabel{\the@hatten@s\ }%
+
+\newcommand{\rensyuuLabel}[1]{%     練習の番号付けを変更するコマンド
+  \def\@rensyuuLabel{#1}}%
+\newcommand{\toiLabel}[1]{%         問題の番号付けを変更するコマンド
+  \def\@toiLabel{#1}}%
+\newcommand{\hattenLabel}[1]{%      発展問題の番号付けを変更するコマンド
+  \def\@hattenLabel{#1}}%
+
+% 改行するレベル
+\newcounter{kaikaigyou@suizyun}%
+  \setcounter{kaikaigyou@suizyun}{0}%
+\newcommand{\kaikaigyousuizyun}[1]{%
+  \setcounter{kaikaigyou@suizyun}{#1}}%
+\newcounter{kaikaigyou@kinsi}% 0のとき改行あり，その他のとき改行なし
+
+%%% 解答の書き出し
+\ifdebugkai
+  \newcommand{\kaimdsb}{\par\begin{small}【解】}%
+  \newcommand{\kaimdse}{\end{small}}%
+  \long\def\kaitou#1{%
+    \if\empty#1\else%
+    \ifmmode $\kaimdsb #1\kaimdse $\else\kaimdsb #1\kaimdse%
+        \fi\fi}%
+\else
+\def\kaitou{%                   \kaitou コマンドの引数に解答を書き，
+%                               それを一時ファイルに書き出す．
+  \ifrensyuu\let\kai@hndl=\rensyuu@hndl%
+    \def\@KaiLabel{\@rensyuuLabel}\else%
+  \ifmondai\let\kai@hndl=\mondai@hndl%
+      \def\@KaiLabel{\@mondaiLabel}\else%
+  \ifhatten\let\kai@hndl=\hatten@hndl%
+      \def\@KaiLabel{\@hattenLabel}%
+        \fi\fi\fi%    現在の環境の判定と，適切なファイルハンドルを選定
+  \ifcase\@enumdepth%
+    \def\@@KaiLabel{\@KaiLabel}%
+  \or%
+    \def\@@KaiLabel{\labelenumi\ }%
+  \or%
+    \def\@@KaiLabel{\labelenumii\ }%
+  \or%
+    \def\@@KaiLabel{\labelenumiii\ }%
+  \or%
+    \def\@@KaiLabel{\labelenumiv\ }%
+  \else%
+    \def\@@KaiLabel{\@KaiLabel}%
+  \fi%
+  \@ifnextchar[{\@kaitou}{\@kaitou[\@@KaiLabel]}}%
+  \long\def\@kaitou[#1]#2{%
+    \ifnum\value{kaikaigyou@kinsi}=\z@
+      \ifnum\@enumdepth>\value{kaikaigyou@suizyun}%
+        \def\pre@kaitou{\ }%
+      \else\def\pre@kaitou{\string\par\string\noindent}%
+      \fi%
+    \else\def\pre@kaitou{}\setcounter{kaikaigyou@kinsi}{0}%
+    \fi%
+    \immediate\write\kai@hndl{\pre@kaitou\string\kaidukuri`#1`}%
+    \begingroup%
+      \def\kai@hontai{#2}%
+      \ifx\kai@hontai\empty\setcounter{kaikaigyou@kinsi}{1}%
+        \else\setcounter{kaikaigyou@kinsi}{0}\fi%
+      \newlinechar='40%
+      \immediate\write\kai@hndl{\meaning\kai@hontai}%
+    \endgroup%
+  }%
+\fi%
+
+\def\Kaitou{%
+  \ifrensyuu\let\kai@hndl=\rensyuu@hndl%
+    \def\@KaiLabel{\@rensyuuLabel}\else%
+  \ifmondai\let\kai@hndl=\mondai@hndl%
+      \def\@KaiLabel{\@mondaiLabel}\else%
+  \ifhatten\let\kai@hndl=\hatten@hndl%
+      \def\@KaiLabel{\@hattenLabel}%
+        \fi\fi\fi%    現在の環境の判定と，適切なファイルハンドルを選定
+  \ifcase\@enumdepth%
+    \def\@@KaiLabel{\@KaiLabel}%
+  \or%
+    \def\@@KaiLabel{\labelenumi\ }%
+  \or%
+    \def\@@KaiLabel{\labelenumii\ }%
+  \or%
+    \def\@@KaiLabel{\labelenumiii\ }%
+  \or%
+    \def\@@KaiLabel{\labelenumiv\ }%
+  \else%
+    \def\@@KaiLabel{\@KaiLabel}%
+  \fi%
+%  \@ifnextchar[{\@Kaitou}{\@Kaitou[\@@KaiLabel]}}%
+%  \long\def\@Kaitou[#1]{%
+    \ifnum\value{kaikaigyou@kinsi}=\z@
+      \ifnum\@enumdepth>\value{kaikaigyou@suizyun}%
+        \def\pre@kaitou{\ }%
+      \else\def\pre@kaitou{\string\par\string\noindent}%
+      \fi%
+    \else\def\pre@kaitou{}\setcounter{kaikaigyou@kinsi}{0}%
+    \fi%
+%    \immediate\write\kai@hndl{\pre@kaitou\string\kaidukuri`#1`}%
+    \immediate\write\kai@hndl{\pre@kaitou\string\kaidukuri`\@@KaiLabel`}%
+    \immediate\write\kai@hndl{\string\macro:->}%
+\relax
+  \@bsphack
+  \let\do\@makeother\dospecials
+  \catcode`\^^M\active
+  \def\verbatim@processline{%
+    \immediate\write\kai@hndl{\the\verbatim@line}}%
+  \verbatim@start}
+\def\endKaitou{\@esphack}
+
+%%% close files
+%    練習の解答を書き出すファイルの作成終了宣言
+\newcommand{\closerensyuuFile}{%
+    \immediate\closeout\rensyuu@hndl}%
+%    問題の解答を書き出すファイルの作成終了宣言
+\newcommand{\closemondaiFile}{%
+    \immediate\closeout\mondai@hndl}%
+\newcommand{\closehattenFile}{%
+  \immediate\closeout\hatten@hndl}%
+
+%%% 解答ファイルの読み込み
+\newcommand{\inputrensyuuFile}{%
+    \input{\jobname.ren}}%      練習の解答の一時ファイルの読み取り
+\newcommand{\inputmondaiFile}{%
+    \input{\jobname.mon}}%      問題の解答の一時ファイルの読み取り
+\newcommand{\inputhattenFile}{%
+    \input{\jobname.ten}}%
+
+\def\pre@kailabel{\bfseries}%
+\newcommand{\prekailabel}[1]{\def\pre@kailabel{#1}}%
+
+% 読み取った解答をタイプセットする．
+\def\kaidukuri`#1`#2>{{\pre@kailabel{#1}}}%
+\endinput%
+%%% end of emathAs.sty
+v 0.00 1998/02/26
+v 0.01 2004/08/17
+       \kaitou コマンドに代えて，Kaitou環境も使用可能とする。

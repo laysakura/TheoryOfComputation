@@ -1,0 +1,268 @@
+\documentclass[a4j]{jarticle}
+\usepackage{emathPp}
+\usepackage{emathPxy}
+\usepackage{showexample}
+
+\begin{document}
+$xy$平面の$x$軸，$y$軸の単位の長さを不揃いにすることを許容する試みです。
+関連して，座標目盛りについての機能を補強しました。
+
+新たに \textsf{emathPxy.sty} と名付けることとしましたが，
+まだアルファテスト段階です。
+バグ報告をBBSでお待ちしています。
+
+\tableofcontents
+\clearpage
+
+\section{座標目盛り}
+現在の座標目盛りは0を中心として$x$, $y$軸共通の間隔で
+目盛線を入れています。
+
+\begin{showEx}(.5,.44){間隔2の目盛線}
+\small
+\begin{zahyou}[ul=4mm](-5,5)(-5,5)
+\zahyouMemori[g]<2>
+\end{zahyou}
+\end{showEx}
+
+\subsection{目盛間隔の指定オプション}
+今回，目盛間隔を$x$軸，$y$軸で別々の値を指定できるようにしました。
+\verb/<#3>/の部分に
+\begin{jquote}
+\begin{verbatim}
+dx=2,dy=3
+\end{verbatim}
+\end{jquote}
+などと記述します。デフォルト値は\verb/dx/, \verb/dy/ともに1です。
+
+\begin{showEx}(.5,.44){目盛間隔の指定}
+\small
+\begin{zahyou}[ul=4mm](-5,5)(-5,5)
+\zahyouMemori[g]<dx=2>
+\end{zahyou}
+\end{showEx}
+
+間隔は整数でなくても受け付けますが，目盛の数値は別途\cmd{xmomori}などで
+打った方がよいでしょう。
+
+\begin{showEx}(.5,.44){間隔指定}
+\footnotesize
+\begin{zahyou}[ul=5mm](-5,5)(-1.5,2)
+\zahyouMemori[g][n]<dx=1.57,dy=.5>
+\ymemori{1}
+\ymemori{-1}
+\xmemori<\pi>{3.14}
+\xmemori<-\pi>{-3.14}
+\end{zahyou}
+\end{showEx}
+
+\cmd{xmemori}も\texttt{dx}で指定した間隔で目盛を打つために
+機能を強化したものを\cmd{xMemori}と号します。
+
+下のリストは，$x$軸方向$\mbox{\cmd{Pis}}=\pi/6$間隔で目盛を入れています。
+
+\begin{showEx}(.5,.44){\cmd{xmemori}}
+\footnotesize
+\begin{zahyou}[ul=6mm](-1,7)(-1.5,2)
+\zahyouMemori[g][n]<%
+dx=\Pis,dy=.5,sensyu=\drawline>
+\ymemori{1}
+\ymemori{-1}
+\xMemori<\frac{\pi}{6}>{1}
+\xMemori<\frac{\pi}{3}>{2}
+\xMemori<\frac{\pi}{2}>{3}
+\xMemori<\pi>{6}
+\xMemori<\frac{3\pi}{2}>{9}
+\xMemori<2\pi>(\Pis){12}
+\end{zahyou}
+\end{showEx}
+
+\subsection{\cmd{xMemori}の書式}
+新設した\cmd{xMemori}, \cmd{yMemori}の書式です。
+
+\begin{boxnote}
+\begin{verbatim}
+座標軸上任意位置に目盛
+\xMemori[#1]<#2>(#3)#4
+\yMemori[#1]<#2>(#3)#4
+  #1 : t = 座標軸の下に目盛（デフォルト）
+       b =         上
+  #2 : 目盛の文字
+       （省略すれば，#4 に指定したものが代用されます．）
+  #3 : 単位の長さ（デフォルト値=\zahyouMemoriで指定したdx）
+  #4 : 単位の長さの#4倍の位置に目盛を打つ
+\end{verbatim}
+\end{boxnote}
+
+\subsection{目盛基準点の変更}
+通常は原点を基準として目盛を打ちますが，これを変更するオプションも
+つけました。すなわち
+\begin{jquote}
+\begin{verbatim}
+<xo=-0.5236,yo=0.5>
+\end{verbatim}
+\end{jquote}
+で基準点が\verb/(-0.5236,0.5)/となります。
+\cmd{xMemori}, \cmd{yMemori}もこれに追随します。
+
+\begin{showEx}(.5,.44){\cmd{xmemori}}
+\footnotesize
+\begin{zahyou}[%
+ul=6mm,gentenhaiti={[se]}](%
+-1,7)(-1.5,2)
+\zahyouMemori[+][n]<xo=-\Pis,dx=\Pih>
+\ymemori{1}
+\ymemori{-1}
+\xMemori<-\frac{\pi}{6}>{0}
+\xMemori<\frac{\pi}{3}>{1}
+\xMemori<\frac{5\pi}{6}>{2}
+\xMemori<\frac{4\pi}{3}>{3}
+\xMemori<\frac{11\pi}{6}>{4}
+\end{zahyou}
+\end{showEx}
+
+\subsection{\cmd{zahyouMemori}の書式}
+拡張された\cmd{zahyouMemori}の書式です。
+
+\begin{boxnote}
+\begin{verbatim}
+座標軸に目盛を打つ．
+\zahyouMemori[#1][#2]<#3>
+  #1 : g : グリッド
+       + : 格子点に +マーク
+       o : 格子点に黒丸
+       z : 座標軸上の格子点に +マーク
+  #2 : n : 目盛り数値なし
+  #3 : 刻み
+        dx= xの刻み値
+        dy= yの刻み値
+        xo= xの基準値
+        yo= yの基準値
+\end{verbatim}
+\end{boxnote}
+
+\section{単位長の変更}
+\subsection{xscale, yscale オプション}
+\textsf{emathPh.sty}で用意している座標系は$x$, $y$軸の単位長は
+同一となっています。これを別のものにすることを可能とする試みです。
+
+次のリストは\verb/yscale=4/として，$y$軸方向を4倍引き伸ばしています。
+
+\begin{showEx}{\texttt{<yscale=...>}オプション}
+\begin{zahyou}[ul=3mm,yscale=4](%
+  -1,15)(-1.5,1.5)
+\zahyouMemori[z][n]<dx=\Pih>
+\YGurafu*{exp(-X/6)}
+\YGurafu*{-exp(-X/6)}
+\YGurafu*{exp(-X/6)*sin(X)}
+\ymemori{1}
+\ymemori{-1}
+\xMemori<\frac{\pi}{2}>{1}
+\xMemori<\pi>{2}
+\end{zahyou}
+\end{showEx}
+
+次は横長の格子を描く例です。
+\begin{jquote}
+\begin{verbatim}
+ul=3mm,xscale=3,yscale=2
+\end{verbatim}
+\end{jquote}
+というオプションで
+\begin{jquote}
+\begin{verbatim}
+ul=3mm で \unitlength は 3mm
+x軸方向の単位長は ul×xscale 9mm で \xunitlength が 9mm
+y軸方向の単位長は ul×yscale 6mm で \yunitlength が 6mm
+\end{verbatim}
+\end{jquote}
+に設定されます。
+
+\begin{showEx}{横長の格子}
+\begin{zahyou*}[ul=3mm,xscale=3,%
+  yscale=2](0,4)(0,5)%
+  \Put\O{\kousi{4}{5}}%
+  \Kuromaru{(2,3)}%
+\end{zahyou*}%
+\end{showEx}
+
+最後に$x$軸方向のスケールを変更する例です。
+
+\begin{showEx}{$x$軸方向のスケール変更}
+\calcval{$pi/180}\xs
+\begin{zahyou}[%
+  ul=6mm,xscale=\xs](%
+  -15,400)(-1.5,2)%
+\zahyouMemori[g]<%
+  sensyu=\protect\drawline,%
+  dx=90>
+\YGurafu*(1){sin($pi*X/180)}%
+\Put\migiT[e]{$y=\sin x\Deg$}%
+\end{zahyou}
+\end{showEx}
+
+\subsection{\textsf{zahyou}環境の書式}
+拡張された\textsf{zahyou}環境の書式です。
+
+\begin{boxnote}
+\begin{verbatim}
+    \begin{zahyou}[#1](#2,#3)(#4,#5)
+      #1 : key=val の形式で，key には次のものが使えます。
+          yokozikukigou デフォルトは $x$
+          tatezikukigou デフォルトは $y$
+          gentenkigou   デフォルトは O
+          yokozikuhaiti デフォルトは (0,-3pt)[rt]
+          tatezikuhaiti デフォルトは (-3pt,0)[rt]
+          gentenhaiti   デフォルトは [sw]
+          ul            \unitlength を変更します。デフォルトは 1pt
+          yscale        デフォルトは1
+          xscale        デフォルトは1
+      (#2,#3) : xの範囲
+      (#4,#5) : yの範囲
+\end{verbatim}
+\end{boxnote}
+
+\subsection{適用除外コマンド}
+\texttt{xscale}, \texttt{yscale}を指定した座標系には3つの単位長があります。
+\begin{jquote}
+\begin{verbatim}
+\unitlength  : picture 環境の単位長
+\xunitlength : zahyou 環境における x軸方向単位長
+\yunitlength : zahyou 環境における y軸方向単位長
+\end{verbatim}
+\end{jquote}
+
+次のコマンドは \cmd{unitlength}にのみ従います。
+すなわち，\verb/xscale, yscale/ は無視されます。
+\begin{jquote}
+\begin{verbatim}
+\En, \Enko, \Daen
+\yumigata, \oogigata, ...
+\end{verbatim}
+\end{jquote}
+
+\cmd{En}は\verb/xscale, yscale/の影響を受けません。
+
+\begin{showEx}{\cmd{En}}
+\begin{zahyou}[%
+ul=8mm,xscale=2,yscale=.5](%
+-1.5,1.5)(-4,4)
+\zahyouMemori[g]
+\En\O{1}
+\end{zahyou}
+\end{showEx}
+
+\verb/xscale, yscale/を反映させた円を描画したいときは，
+媒介変数表示を用います。
+
+\begin{showEx}{円}
+\begin{zahyou}[%
+ul=8mm,xscale=2,yscale=.5](%
+-1.5,1.5)(-4,4)
+\zahyouMemori[g]
+\BGurafu{cos(T)}{sin(T)}{0}{2*$pi}
+\end{zahyou}
+\end{showEx}
+
+2次以下の整関数を描画する\cmd{Gurafu}も適用除外です。
+\end{document}

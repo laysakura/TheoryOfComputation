@@ -1,0 +1,156 @@
+\section{三角形の五心}
+\subsection{重心}
+
+\showexample[重心](0.55)(0.4){example/zyusin01}
+\cindex{Zyuusin}
+
+\begin{boxnote}
+\begin{verbatim}
+\Zyuusin#1#2#3#4
+    #1,#2,#3 を頂点とする三角形の重心を #4 にセットします．
+\end{verbatim}
+\end{boxnote}
+
+\subsection{外心}
+三角形の外心を求めるコマンド \cmd{Gaisin} です．
+
+\showexample[外心](0.55)(0.4){example/gaisin01}
+\cindex{Gaisin}
+
+\begin{boxnote}
+\begin{verbatim}
+\Gaisin#1#2#3#4
+    #1,#2,#3 を頂点とする三角形の外心を #4 にセットします．
+\end{verbatim}
+\end{boxnote}
+
+三角形の外接円を描くコマンド \cmd{Gaisetuen} もあります．
+\cindex{Gaisetuen}
+
+\showexample[外接円](0.55)(0.4){example/gaisin02}
+
+\begin{boxnote}
+\begin{verbatim}
+\Gaisetuen#1#2#3
+    #1,#2,#3 を頂点とする三角形の外接円を描画します．
+        外心は \vGaisin にセット，半径は \lR
+\end{verbatim}
+\end{boxnote}
+\cindex{vGaisin}\cindex{lR}
+
+\subsection{内心}
+三角形の内心を求めるコマンド \cmd{Naisin} です．
+\cindex{Naisin}
+
+\showexample[内心](0.55)(0.4){example/naisin01}
+
+\begin{boxnote}
+\begin{verbatim}
+\Naisin#1#2#3#4
+    #1,#2,#3 を頂点とする三角形の内心を #4 にセットします．
+\end{verbatim}
+\end{boxnote}
+
+
+三角形の内接円を描くコマンド \cmd{Naisetuen} もあります．
+\cindex{Naisetuen}
+
+\showexample[内接円](0.55)(0.4){example/naisin02}
+
+\begin{boxnote}
+\begin{verbatim}
+\Naisetuen#1#2#3
+    #1,#2,#3 を頂点とする三角形の内接円を描画します．
+        内心は \vNaisin にセット，半径は \lr
+\end{verbatim}
+\end{boxnote}
+\cindex{vNaisin}\cindex{lr}
+
+\subsection{傍心}
+三角形の傍心を求めるコマンド \cmd{Bousin} です．
+\cindex{Bousin}
+
+\showexample[傍心](0.55)(0.4){example/bousin01}
+
+\begin{boxnote}
+\begin{verbatim}
+\Bousin#1#2#3#4
+    #1,#2,#3 を頂点とする三角形の，
+      ∠A内にある傍心を #4 にセットします．
+\end{verbatim}
+\end{boxnote}
+
+
+三角形の傍接円を描くコマンド \cmd{Bousetuen} もあります．
+\cindex{Bousetuen}
+
+\showexample[傍接円](0.55)(0.4){example/bousin02}
+
+\begin{boxnote}
+\begin{verbatim}
+\Bousetuen#1#2#3
+    #1,#2,#3 を頂点とする三角形の傍接円を描画します．
+        傍心は \vBousin にセット，半径は \BousetuenHankei
+\end{verbatim}
+\end{boxnote}
+\cindex{vBousin}\cindex{BousetuenHankei}
+
+三角形の内接円，3つの傍接円を描画する例です。
+
+\showexample[内接円と傍接円](0.9)(0.9){example/bousin03}
+
+\subsection{垂心}
+三角形の垂心を求めるコマンドは用意してありません．
+\cmd{Suisen} で垂線を引き，\cmd{LandL} で交点を求めることで
+垂心が得られます．
+
+\showexample[垂心](0.55)(0.4){example/suisin01}
+
+\subsection{角の二等分線}
+三角形の二等分線と対辺の交点を求めるには，
+コマンド\cmd{Nitoubunsen}を用います。
+その書式です。
+
+\begin{boxnote}
+\begin{verbatim}
+三角形の二等分線と対辺の交点を求める。
+\Nitoubunsen[#1]#2#3#4#5
+  角#2#3#4（#3が角の頂点）を2等分する直線が辺#2#4と交わる点を#5に与える。
+  #1を与えたときは，外角の2等分線を#1に与える。
+\end{verbatim}
+\end{boxnote}
+%\clearpage
+
+まずは，内角の二等分線です。
+
+\begin{showEx}(1,1){\cmd{Nitoubunsen}}
+\begin{zahyou*}[ul=10mm](-1,5)(-1,3)\footnotesize
+  \tenretu{A(3,2)n;B(0,0)s;C(4,0)s}
+  \Nitoubunsen\B\A\C\D
+  \Put\D[s]{D}
+  \Drawline{\A\B\C\A\D}
+  \Kakukigou<0>\B\A\D(0,0)[c]{$\bullet$}
+  \Kakukigou<0>\D\A\C(0,0)[c]{$\bullet$}
+\end{zahyou*}
+\end{showEx}
+%\clearpage
+
+外角の二等分線と対辺（の延長）との交点を得るには，
+オプション引数\verb+[#1]+に交点を受け取る制御綴を与えます。
+
+\begin{showEx}(1,1){外角の二等分線}
+\begin{zahyou*}[ul=10mm](-1,12)(-1,4)\footnotesize
+  \tenretu{A(3,2)n;B(0,0)s;C(4,0)s}
+  \Nitoubunsen[\E]\B\A\C\D
+  \Put\D[s]{D}
+  \Put\E[s]{E}
+  \Hantyokusen\B\C
+  \Hantyokusen\B\A
+  \Drawlines{\A\B\C\A\D;\A\E}
+  \Kakukigou<0>\B\A\D(0,0)[c]{$\bullet$}
+  \Kakukigou<0>\D\A\C(0,0)[c]{$\bullet$}
+  \Bunten\A\B{-1}{2}\T
+  \Kakukigou<0>\C\A\E(0,0)[c]{$\times$}
+  \Kakukigou<0>\E\A\T(0,0)[c]{$\times$}
+\end{zahyou*}
+\end{showEx}

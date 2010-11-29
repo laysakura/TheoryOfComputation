@@ -1,0 +1,2370 @@
+% emathPk.sty by tDB(CQB00260@nifty.ne.jp)
+\NeedsTeXFormat{LaTeX2e}%
+%
+\@ifundefined{ifpapersize}{\newif\ifpapersize\papersizefalse}{}%
+%
+\ProvidesPackage{emathPk}[2010/05/09 v 1.21]%
+  \DeclareOption{times}{\def\em@fonts{1}}%
+  \DeclareOption{times}{\def\em@fonts{1}}%
+  \DeclareOption{txfonts}{\def\em@fonts{2}}%
+  \DeclareOption{pxfonts}{\def\em@fonts{3}}%
+  \DeclareOption{mathabx}{\def\em@fonts{4}}%
+  \DeclareOption{varg}{\def\@varg{}}%
+  \DeclareOption{usenames}{\def\em@color@names{}}%
+  \DeclareOption{dviout}{\def\em@grdrv{dviout}}%
+  \DeclareOption{dvips}{\def\em@grdrv{dvips}}%
+  \DeclareOption{dvipdfm}{\def\em@grdrv{dvipdfm}}%
+  \DeclareOption{dvipdfmx}{\def\em@grdrv{dvipdfmx}}%
+  \DeclareOption{EMdvipsk}{\def\em@dvipsk{}}%
+  \DeclareOption{EMdvipdfm}{\def\em@dvipdfm{}}%
+  \DeclareOption{EMdvipdfmx}{\def\em@dvipdfm{x}}%
+  \DeclareOption{notMy}{\def\not@My{}}%
+  \DeclareOption{papersize}{\papersizetrue}%
+  \ProcessOptions\relax
+\RequirePackage{emathPh}%
+
+%%% -----------------------------------------------
+%     空間図形
+%%% -----------------------------------------------
+
+\newif\ifDrawaxis\Drawaxistrue%
+
+\define@key{emP}{ExO}{\def\Ex@Org{#1}}%
+\define@key{emP}{ExR}{\def\Ex@R{#1}}%
+
+\def\Zahyou{\@ifnextchar[{\@Zahyou}{\@Zahyou[]}}%
+\def\@Zahyou[#1]{\@ifnextchar[{\@@Zahyou[#1]}{\@@Zahyou[#1][][]}}%
+\def\@@Zahyou[#1][#2][#3](#4,#5)(#6,#7)(#8,#9){%
+%
+\define@key{emP}{Ex}{%
+  \headchar{##1}\Ex@@@h\Ex@@@o
+  \ifthenelse{\equal\Ex@@@h{r}}{\expandafter\Rdef\Ex@@@o\@@@Ex}{\def\@@@Ex{##1}}%
+}%
+\define@key{emP}{Ey}{%
+  \headchar{##1}\Ey@@@h\Ey@@@o
+  \ifthenelse{\equal\Ey@@@h{r}}{\expandafter\Rdef\Ey@@@o\@@@Ey}{\def\@@@Ey{##1}}}%
+\define@key{emP}{Ez}{%
+  \headchar{##1}\Ez@@@h\Ez@@@o
+  \ifthenelse{\equal\Ez@@@h{r}}{\expandafter\Rdef\Ez@@@o\@@@Ez}{\def\@@@Ez{##1}}}%
+\define@key{emP}{frame}[1]{%
+  \def\dp@frame{##1}%
+}%
+%
+  \@ifundefined{Ey}{%
+    \def\@@@Ey{(1,0)}%             y軸正方向の単位ベクトル
+  }{\def\@@@Ey{\Ey}}%
+  \@ifundefined{Ez}{%
+    \def\@@@Ez{(0,1)}%             z軸正方向の単位ベクトル
+  }{\def\@@@Ez{\Ez}}%
+  \edef\Ex@Org{\empty}%
+  \edef\Ex@R{.9}%
+  \@ifundefined{Ex}{%
+    \Rdef(.667,-138)\@@@Ex%  x軸正方向の単位ベクトル
+  }{\def\@@@Ex{\Ex}}%
+  \def\zahyou@haiti{b}%
+  \def\zahyou@haiti@hosei{}%
+  \def\ue@yohaku{0}%
+  \def\sita@yohaku{0}%
+  \def\migi@yohaku{0}%
+  \def\hidari@yohaku{0}%
+  \def\arrow@headsize{1}%
+  \def\dp@frame{0}%
+  \Strchr{#1}{=}\zahyou@tmp
+  \ifnum\zahyou@tmp>\z@
+    \setkeys{emP}{#1}%
+  \else
+    \ifthenelse{\equal{#1}\empty}{}{\edef\@@@Ex{#1}}%
+    \ifthenelse{\equal{#2}\empty}{}{\edef\@@@Ey{#2}}%
+    \ifthenelse{\equal{#3}\empty}{}{\edef\@@@Ez{#3}}%
+  \fi
+  \edef\Xmin{#4}\edef\Xmax{#5}%
+  \edef\Ymin{#6}\edef\Ymax{#7}%
+  \edef\Zmin{#8}\edef\Zmax{#9}%
+% \Piiitoii{(\Xmax,0,0)}\Zh@tmp\vecXY\Zh@tmp\Xmax@x\Xmax@y
+% \Piiitoii{(\Xmin,0,0)}\Zh@tmp\vecXY\Zh@tmp\Xmin@x\Xmin@y
+% \Piiitoii{(0,\Ymax,0)}\Zh@tmp\vecXY\Zh@tmp\Ymax@x\Ymax@y
+% \Piiitoii{(0,\Ymin,0)}\Zh@tmp\vecXY\Zh@tmp\Ymin@x\Ymin@y
+% \Piiitoii{(0,0,\Zmax)}\Zh@tmp\vecXY\Zh@tmp\Zmax@x\Zmax@y
+% \Piiitoii{(0,0,\Zmin)}\Zh@tmp\vecXY\Zh@tmp\Zmin@x\Zmin@y
+%  \Mulvec\Xmax\@@@Ex\Zh@tmp\vecXY\Zh@tmp\Xmax@x\Xmax@y
+%  \Mulvec\Xmin\@@@Ex\Zh@tmp\vecXY\Zh@tmp\Xmin@x\Xmin@y
+%  \Mulvec\Ymax\@@@Ey\Zh@tmp\vecXY\Zh@tmp\Ymax@x\Ymax@y
+%  \Mulvec\Ymin\@@@Ey\Zh@tmp\vecXY\Zh@tmp\Ymin@x\Ymin@y
+%  \Mulvec\Zmax\@@@Ez\Zh@tmp\vecXY\Zh@tmp\Zmax@x\Zmax@y
+%  \Mulvec\Zmin\@@@Ez\Zh@tmp\vecXY\Zh@tmp\Zmin@x\Zmin@y
+%  \Max{\Xmax@x,\Xmin@x,\Ymax@x,\Ymin@x,\Zmax@x,\Zmin@x}\xmax
+%  \Min{\Xmax@x,\Xmin@x,\Ymax@x,\Ymin@x,\Zmax@x,\Zmin@x}\xmin
+%  \Max{\Xmax@y,\Xmin@y,\Ymax@y,\Ymin@y,\Zmax@y,\Zmin@y}\ymax
+%  \Min{\Xmax@y,\Xmin@y,\Ymax@y,\Ymin@y,\Zmax@y,\Zmin@y}\ymin
+  \Piiitoii{(\Xmin,\Ymin,\Zmin)}\Zh@tmp\vecXY\Zh@tmp\X@mmm\Y@mmm
+  \Piiitoii{(\Xmin,\Ymin,\Zmax)}\Zh@tmp\vecXY\Zh@tmp\X@mmM\Y@mmM
+  \Piiitoii{(\Xmin,\Ymax,\Zmin)}\Zh@tmp\vecXY\Zh@tmp\X@mMm\Y@mMm
+  \Piiitoii{(\Xmin,\Ymax,\Zmax)}\Zh@tmp\vecXY\Zh@tmp\X@mMM\Y@mMM
+  \Piiitoii{(\Xmax,\Ymin,\Zmin)}\Zh@tmp\vecXY\Zh@tmp\X@Mmm\Y@Mmm
+  \Piiitoii{(\Xmax,\Ymin,\Zmax)}\Zh@tmp\vecXY\Zh@tmp\X@MmM\Y@MmM
+  \Piiitoii{(\Xmax,\Ymax,\Zmin)}\Zh@tmp\vecXY\Zh@tmp\X@MMm\Y@MMm
+  \Piiitoii{(\Xmax,\Ymax,\Zmax)}\Zh@tmp\vecXY\Zh@tmp\X@MMM\Y@MMM
+  \Max{\X@mmm,\X@mmM,\X@mMm,\X@mMM,\X@Mmm,\X@MmM,\X@MMm,\X@MMM}\xmax
+  \Min{\X@mmm,\X@mmM,\X@mMm,\X@mMM,\X@Mmm,\X@MmM,\X@MMm,\X@MMM}\xmin
+  \Max{\Y@mmm,\Y@mmM,\Y@mMm,\Y@mMM,\Y@Mmm,\Y@MmM,\Y@MMm,\Y@MMM}\ymax
+  \Min{\Y@mmm,\Y@mmM,\Y@mMm,\Y@mMM,\Y@Mmm,\Y@MmM,\Y@MMm,\Y@MMM}\ymin
+  \drawaxisfalse
+  \changeArrowHeadSize{\arrow@headsize}%
+  \z@hyou(\xmin,\xmax)(\ymin,\ymax)%
+\def\O{(0,0,0)}%
+\def\O@@@{(0,0,0)}%
+\def\iiiXMAX{(\Xmax,0,0)}%
+\def\iiiYMAX{(0,\Ymax,0)}%
+\def\iiiZMAX{(0,0,\Zmax)}%
+\def\iiiXMIN{(\Xmin,0,0)}%
+\def\iiiYMIN{(0,\Ymin,0)}%
+\def\iiiZMIN{(0,0,\Zmin)}%
+%  \ifDrawaxis
+%    \iiiArrowLine{(0,0,0)}{(\Xmax,0,0)}%
+%    \iiiArrowLine{(0,0,0)}{(0,\Ymax,0)}%
+%    \iiiArrowLine{(0,0,0)}{(0,0,\Zmax)}%
+%  \fi
+}%
+\def\endZahyou{%
+  \ifnum\dp@frame>\z@
+    \bgroup%\color{red}%
+    \iiitenretu*{X@X(\Xmax,\Ymin,\Zmin);Y@Y(\Xmax,\Ymax,\Zmin);Z@Z(\Xmin,\Ymax,\Zmin);O@O(\Xmin,\Ymin,\Zmin)}%
+    \iiitenretu*{X@XX(\Xmax,\Ymin,\Zmax);Y@YY(\Xmax,\Ymax,\Zmax);Z@ZZ(\Xmin,\Ymax,\Zmax);O@OO(\Xmin,\Ymin,\Zmax)}%
+    \iiiTakakkei<linethickness=.1pt,iro=red>{\X@X\Y@Y\Z@Z\O@O}%
+    \iiiTakakkei<linethickness=.1pt,iro=red>{\X@XX\Y@YY\Z@ZZ\O@OO}%
+    \iiiDrawlines<linethickness=.1pt,iro=red>{\X@X\X@XX;\Y@Y\Y@YY;\Z@Z\Z@ZZ;\O@O\O@OO}%
+    \Takakkei<linethickness=.1pt,iro=green>\zenheimenY
+    \Takakkei<linethickness=.1pt,iro=cyan>\zenheimen
+    \egroup
+  \fi
+  \ifDrawaxis
+    \Piiitoii\iiiXMAX\endZahyou@x\edef\endZahyou@tmp{(0,0)\endZahyou@x}%
+      \put(0,0){\expandafter\zikusensyu\endZahyou@tmp}%
+    \Piiitoii\iiiYMAX\endZahyou@x\edef\endZahyou@tmp{(0,0)\endZahyou@x}%
+      \put(0,0){\expandafter\zikusensyu\endZahyou@tmp}%
+    \Piiitoii\iiiZMAX\endZahyou@x\edef\endZahyou@tmp{(0,0)\endZahyou@x}%
+      \put(0,0){\expandafter\zikusensyu\endZahyou@tmp}%
+%    \iiiArrowLine{(0,0,0)}\iiiXMAX
+%    \iiiArrowLine{(0,0,0)}\iiiYMAX
+%    \iiiArrowLine{(0,0,0)}\iiiZMAX
+  \fi
+  \endzahyou
+  \@ignoretrue
+}%
+
+% 座標軸を描画しない Zahyou* 環境
+\expandafter\def\csname Zahyou*\endcsname{\Drawaxisfalse\Zahyou}%
+\expandafter\def\csname endZahyou*\endcsname{\endZahyou\@ignoretrue}%
+
+% 2点間の距離（空間）
+% \Kyori#1#2#3
+%   2点 #1, #2 の距離を #3 に代入
+%
+%\def\iiiKyori#1#2#3{\ifx#1#2\edef#3{0.}\else\edef\iiiKyori@AB{#1#2}%
+%  \expandafter\Distance\iiiKyori@AB\iiiKyori@AB\edef#3{\iiiKyori@AB}\fi}%
+\def\iiiKyori#1#2#3{\SubVec{#2}{#1}\@v\vecXYZ\@v\@xi\@yi\@zi
+  \Mul\@xi\@xi\@xi\Mul\@yi\@yi\@yi\Add\@xi\@yi\@xi
+  \Mul\@zi\@zi\@zi\Add\@xi\@zi\@xi\Heihoukon\@xi#3}%
+%
+\def\iiiperlKyori#1#2#3{%
+% #1: 点P
+% #2,#3,#4: 平面上の点A, B, C
+% #5: 垂線の足（戻り値）
+  \vecXYZ{#1}\TS@xi\TS@yi\TS@zi
+  \vecXYZ{#2}\TS@xii\TS@yii\TS@zii
+  \CalcVal{%
+    my $vxi=\TS@xi;
+    my $vyi=\TS@yi;
+    my $vzi=\TS@zi;
+    my $vxii=\TS@xii;
+    my $vyii=\TS@yii;
+    my $vzii=\TS@zii;
+       printf FHNDL "\EMpercentchar s\string\n",
+        sqrt(($vxi-$vxii)**2+($vyi-$vyii)**2+($vzi-$vzii)**2);}#3\relax
+  }%
+%
+% 距離の平方（空間）
+\def\iiiKyorii#1#2#3{\SubVec{#2}{#1}\@v\vecXYZ\@v\@xi\@yi\@zi
+  \Mul\@xi\@xi\@xi\Mul\@yi\@yi\@yi\Add\@xi\@yi\@yi
+  \Mul\@zi\@zi\@zi\Add\@yi\@zi#3}%
+
+%
+\def\iiiNormvec#1#2#3{% 2つのベクトル#1,#2に垂直な単位ベクトルを#3に求める。
+  \vecXYZ{#1}\NV@a\NV@b\NV@c\vecXYZ{#2}\NV@aa\NV@bb\NV@cc
+  \Detii\NV@b\NV@bb\NV@c\NV@cc\edef\NV@x{\Det@ans}%
+  \Detii\NV@c\NV@cc\NV@a\NV@aa\edef\NV@y{\Det@ans}%
+  \Detii\NV@a\NV@aa\NV@b\NV@bb\edef\NV@z{\Det@ans}%
+  \iiiKyori{(\NV@x,\NV@y,\NV@z)}{(0,0,0)}\NV@l%
+  \Div\NV@x\NV@l\NV@x
+  \Div\NV@y\NV@l\NV@y
+  \Div\NV@z\NV@l\NV@z
+  \edef#3{(\NV@x,\NV@y,\NV@z)}}%
+%
+% 2直線の交点
+%
+  \def\iiilandl#1#2#3#4#5{% 点A(#1)を通り方向ベクトル(#2)の直線と
+%                           点B(#3)を通り方向ベクトル(#4)の直線が交わる場合，交点を #5 に返す。
+%                             交わらない場合は #5 は \empty となる。
+  \edef\iiill@P{\empty}%
+  \edef\iiill@Q{\empty}%
+  \iiiSubvec{#3}{#1}\iiill@BA
+  \vecXYZ\iiill@BA\iiill@x\iiill@y\iiill@z
+  \vecXYZ{#2}\iiill@li\iiill@mi\iiill@ni
+  \iiiMulvec{-1}{#4}\iiill@tmp
+  \vecXYZ{\iiill@tmp}\iiill@lii\iiill@mii\iiill@nii
+  \iiRenritu\iiill@li\iiill@lii\iiill@x\iiill@mi\iiill@mii\iiill@y\iiill@si\iiill@ti
+  \iiRenritu\iiill@mi\iiill@mii\iiill@y\iiill@ni\iiill@nii\iiill@z\iiill@sii\iiill@tii
+  \iiRenritu\iiill@ni\iiill@nii\iiill@z\iiill@li\iiill@lii\iiill@x\iiill@siii\iiill@tiii
+  \ifx\empty\iiill@si
+    \ifx\empty\iiill@sii
+      \ifx\empty\iiill@siii
+      \else
+        \iiiMulvec\iiill@siii{#2}\iiill@v\iiiAddvec\iiill@v{#1}\iiill@P
+        \iiiMulvec\iiill@tiii{#4}\iiill@v\iiiAddvec\iiill@v{#3}\iiill@Q
+      \fi
+    \else
+        \iiiMulvec\iiill@sii{#2}\iiill@v\iiiAddvec\iiill@v{#1}\iiill@P
+        \iiiMulvec\iiill@tii{#4}\iiill@v\iiiAddvec\iiill@v{#3}\iiill@Q
+    \fi
+  \else
+        \iiiMulvec\iiill@si{#2}\iiill@v\iiiAddvec\iiill@v{#1}\iiill@P
+        \iiiMulvec\iiill@ti{#4}\iiill@v\iiiAddvec\iiill@v{#3}\iiill@Q
+  \fi
+  \ifx\empty\iiill@P\empty
+    \edef#5{\empty}%
+  \else
+    \iiiKyori\iiill@P\iiill@Q\iiill@tmp
+    \ifdim\iiill@tmp\p@>\emLlim\p@
+      \edef#5{\empty}%
+    \else
+      \edef#5{\iiill@P}%
+    \fi
+  \fi
+}%
+%
+\def\iiiLandL#1#2#3#4#5{%
+  \iiiSubvec{#2}{#1}\iiiLl@u
+  \iiiSubvec{#4}{#3}\iiiLl@v
+  \iiilandl{#1}\iiiLl@u{#3}\iiiLl@v#5}%
+%
+\def\iiLandL#1#2#3#4#5#6{%
+% 2点 #1, #2 を結ぶ直線と
+% 2点 #3, #4 を結ぶ直線との
+% 見かけ交点を #5, #6 に返す。
+%
+  \Piiitoii{#1}\iiLL@A
+  \Piiitoii{#2}\iiLL@B
+  \Piiitoii{#3}\iiLL@C
+  \Piiitoii{#4}\iiLL@D
+  \LandL\iiLL@A\iiLL@B\iiLL@C\iiLL@D\iiLL@iiP
+  \vecXY\iiLL@iiP\iiLL@Px\iiLL@Py
+  \vecXY\iiLL@A\iiLL@Ax\iiLL@Ay
+  \vecXY\iiLL@B\iiLL@Bx\iiLL@By
+  \ifdim\iiLL@Px pt=\iiLL@Ax pt
+    \Sub\iiLL@Py\iiLL@Ay\iiLL@AP
+    \Sub\iiLL@By\iiLL@Py\iiLL@PB
+  \else
+    \Sub\iiLL@Px\iiLL@Ax\iiLL@AP
+    \Sub\iiLL@Bx\iiLL@Px\iiLL@PB
+  \fi
+  \iiiBunten{#1}{#2}\iiLL@AP\iiLL@PB#5\relax
+  \vecXY\iiLL@C\iiLL@Cx\dmy
+  \vecXY\iiLL@D\iiLL@Dx\dmy
+  \ifdim\iiLL@Px pt=\iiLL@Cx pt
+    \Sub\iiLL@Py\iiLL@Cy\iiLL@CP
+    \Sub\iiLL@Dy\iiLL@Py\iiLL@PD
+  \else
+    \Sub\iiLL@Px\iiLL@Cx\iiLL@CP
+    \Sub\iiLL@Dx\iiLL@Px\iiLL@PD
+  \fi
+  \iiiBunten{#3}{#4}\iiLL@CP\iiLL@PD#6\relax
+}%
+%
+% 平面と直線
+\def\Naiseki#1#2#3{%
+  \vecXYZ{#1}\Naiseki@xi\Naiseki@yi\Naiseki@zi
+  \vecXYZ{#2}\Naiseki@xii\Naiseki@yii\Naiseki@zii
+  \Mul\Naiseki@xi\Naiseki@xii\Naiseki@ans
+  \Mul\Naiseki@yi\Naiseki@yii\Naiseki@tmp
+  \Add\Naiseki@tmp\Naiseki@ans\Naiseki@ans
+  \Mul\Naiseki@zi\Naiseki@zii\Naiseki@tmp
+  \Add\Naiseki@tmp\Naiseki@ans#3}%
+\def\gyakusuu#1#2{%
+  \Abs{#1}\gyakusuu@tmp
+  \ifdim\gyakusuu@tmp pt<0.005pt\relax\edef#2{1000}\else\Div1{#1}#2\fi}%
+\def\Pandl#1#2#3#4#5#6{% #4=(x0,y0,z0), #5=(l,m,n) 直線 ax+by+cz=d
+  \iiiSubvec{#2}{#1}\Pandl@AB% 平面上のベクトル1
+  \iiiSubvec{#3}{#1}\Pandl@AC% 平面上のベクトル2
+  \iiiNormvec\Pandl@AB\Pandl@AC\Pandl@nv% 平面の垂直単位ベクトル (a,b,c)
+  \Naiseki\Pandl@nv{#1}\Pandl@d%  d
+  \Naiseki\Pandl@nv{#5}\Pandl@a%  al+bm+cn
+  \Naiseki\Pandl@nv{#4}\Pandl@b%  ax0+by0+cy0
+  \Sub\Pandl@d\Pandl@b\Pandl@b
+  \Div\Pandl@b\Pandl@a\Pandl@t%   t=(d-(ax0+by0+cz0))/(al+bm+cn)
+  \iiiMulvec\Pandl@t{#5}\Pandl@v% t(#5)
+  \iiiAddvec\Pandl@v{#4}#6}%      t(#5)+(#4)=結果
+%\def\Pandl#1#2#3#4#5#6{%
+%  \edef\Pandl@tmp{#1#2#3}%
+%  \expandafter\Eqplane\Pandl@tmp
+%  \gyakusuu\xSeppen\Pandl@x
+%  \gyakusuu\ySeppen\Pandl@y
+%  \gyakusuu\zSeppen\Pandl@z
+%  \edef\Pandl@xyz{(\Pandl@x,\Pandl@y,\Pandl@z)}%
+%  \Naiseki{#4}\Pandl@xyz\Pandl@b
+%  \Sub{\uhenti}\Pandl@b\Pandl@b
+%  \Naiseki{#5}\Pandl@xyz\Pandl@a
+%  \Div\Pandl@b\Pandl@a\Pandl@t
+%  \MulVec\Pandl@t{#5}\Pandl@ans
+%  \AddVec\Pandl@ans{#4}#6}%
+\def\PandL#1#2#3#4#5#6{%
+  \SubVec{#4}{#5}\PandL@v\Pandl{#1}{#2}{#3}{#4}\PandL@v#6}%
+\def\LandP#1#2#3#4#5#6{\PandL{#3}{#4}{#5}{#1}{#2}#6}%
+%
+\def\perlPandL#1#2#3#4#5#6{%
+% \typeout{PandL:arg1=#1,arg2=#2,arg3=#3,arg4=#4,arg5=#5}%
+  \vecXYZ{#1}\TS@xi\TS@yi\TS@zi
+  \vecXYZ{#2}\TS@xii\TS@yii\TS@zii
+  \vecXYZ{#3}\TS@xiii\TS@yiii\TS@ziii
+  \vecXYZ{#4}\TS@x\TS@y\TS@z
+  \vecXYZ{#5}\TS@xx\TS@yy\TS@zz
+  \CalcVal{%
+    my $d=-detiii(\TS@xi,\TS@yi,\TS@zi,\TS@xii,\TS@yii,\TS@zii,\TS@xiii,\TS@yiii,\TS@ziii);
+    my $a=detiii(\TS@yi,\TS@zi,1,\TS@yii,\TS@zii,1,\TS@yiii,\TS@ziii,1);
+    my $b=-detiii(\TS@xi,\TS@zi,1,\TS@xii,\TS@zii,1,\TS@xiii,\TS@ziii,1);
+    my $c=detiii(\TS@xi,\TS@yi,1,\TS@xii,\TS@yii,1,\TS@xiii,\TS@yiii,1);
+    my $xo=\TS@x;
+    my $yo=\TS@y;
+    my $zo=\TS@z;
+    my $l=\TS@xx-$xo;
+    my $m=\TS@yy-$yo;
+    my $n=\TS@zz-$zo;
+    my $t=-($a*$xo+$b*$yo+$c*$zo+$d)/($a*$l+$b*$m+$c*$n);
+      printf FHNDL "(\EMpercentchar s,\EMpercentchar s,\EMpercentchar s)",
+        $xo+$l*$t,$yo+$m*$t,$zo+$n*$t;}#6\relax}%
+\def\perlPandl#1#2#3#4#5#6{%
+  \vecXYZ{#1}\TS@xi\TS@yi\TS@zi
+  \vecXYZ{#2}\TS@xii\TS@yii\TS@zii
+  \vecXYZ{#3}\TS@xiii\TS@yiii\TS@ziii
+  \vecXYZ{#4}\TS@x\TS@y\TS@z
+  \vecXYZ{#5}\TS@l\TS@m\TS@n
+  \CalcVal{%
+    my $d=-detiii(\TS@xi,\TS@yi,\TS@zi,\TS@xii,\TS@yii,\TS@zii,\TS@xiii,\TS@yiii,\TS@ziii);
+    my $a=detiii(\TS@yi,\TS@zi,1,\TS@yii,\TS@zii,1,\TS@yiii,\TS@ziii,1);
+    my $b=-detiii(\TS@xi,\TS@zi,1,\TS@xii,\TS@zii,1,\TS@xiii,\TS@ziii,1);
+    my $c=detiii(\TS@xi,\TS@yi,1,\TS@xii,\TS@yii,1,\TS@xiii,\TS@yiii,1);
+    my $l=\TS@l;
+    my $m=\TS@m;
+    my $n=\TS@n;
+    my $xo=\TS@x;
+    my $yo=\TS@y;
+    my $zo=\TS@z;
+    my $t=-($a*$xo+$b*$yo+$c*$zo+$d)/($a*$l+$b*$m+$c*$n);
+      printf FHNDL "(\EMpercentchar s,\EMpercentchar s,\EMpercentchar s)",
+        $xo+$l*$t,$yo+$m*$t,$zo+$n*$t;}#6\relax}%
+%
+% 点#1を通り，法線ベクトルが#2の平面と
+% 点#3を通り，方向ベクトルが#4の直線
+% との交点を#5に与える。
+
+\def\pandl#1#2#3#4#5{%
+  \Naiseki{#2}{#1}\pandl@b
+  \Naiseki{#2}{#3}\pandl@tmp
+  \Sub\pandl@b\pandl@tmp\pandl@b
+  \Naiseki{#2}{#4}\pandl@a
+  \Div\pandl@b\pandl@a\pandl@t
+  \MulVec\pandl@t{#4}\pandl@v
+  \AddVec\pandl@v{#3}#5}%
+\def\pandL#1#2#3#4#5{%
+  \SubVec{#4}{#3}\pandL@v\pandl{#1}{#2}#3\pandL@v#5}%
+
+\def\LSuisen#1#2#3#4{% 点 #1 から直線 #2#3 へ下ろした垂線の足を #4 にセット
+  \ifx #1#2\edef#4{#1}\else\ifx #1#3\edef#4{#1}\else
+  \iiiKyorii{#2}{#3}\lla\Heihoukon\lla\la
+  \iiiKyorii{#3}{#1}\llb\Heihoukon\llb\lb
+  \iiiKyorii{#1}{#2}\llc\Heihoukon\llc\lc
+  \Add\llc\lla\LS@a\Sub\LS@a\llb\cosB
+    \Mul\la\lc\LS@b\Mul2\LS@b\LS@b\Div\cosB\LS@b\cosB
+  \Add\llb\lla\LS@a\Sub\LS@a\llc\cosC
+    \Mul\lb\la\LS@b\Mul2\LS@b\LS@b\Div\cosC\LS@b\cosC
+  \Mul\lc\cosB\LS@m\Mul\lb\cosC\LS@n\iiiBunten{#2}{#3}\LS@m\LS@n#4\fi\fi}%
+\def\iiilSuisen#1#2#3#4{% 点#1から，点#2を通り，方向ベクトルが#3の直線への垂線
+  \AddVec{#2}{#3}\lS@B\LSuisen{#1}{#2}\lS@B#4}%
+\def\pSuisen#1#2#3#4{% 点#1から，#2を通り法線ベクトルが#3である平面
+%                      に下ろした垂線の足を#4に与える。
+  \pandl{#2}{#3}{#1}{#3}#4}%
+\def\PSuisen#1#2#3#4#5{% 点#1から，三点#2,#3,#4を通る平面
+%                      に下ろした垂線の足を#5に与える。
+  \SubVec{#3}{#2}\PSuisen@a\vecXYZ\PSuisen@a\PS@a\PS@b\PS@c
+  \SubVec{#4}{#2}\PSuisen@a\vecXYZ\PSuisen@a\PS@aa\PS@bb\PS@cc
+  \Detii\PS@b\PS@bb\PS@c\PS@cc\edef\PS@x{\Det@ans}%
+  \Detii\PS@c\PS@cc\PS@a\PS@aa\edef\PS@y{\Det@ans}%
+  \Detii\PS@a\PS@aa\PS@b\PS@bb\edef\PS@z{\Det@ans}%
+  \edef\PS@v{(\PS@x,\PS@y,\PS@z)}%
+  \pSuisen{#1}{#2}\PS@v#5}%
+%
+\def\perlPSuisen#1#2#3#4#5{%
+% #1: 点P
+% #2,#3,#4: 平面上の点A, B, C
+% #5: 垂線の足（戻り値）
+  \vecXYZ{#1}\pS@Px\pS@Py\pS@Pz
+  \vecXYZ{#2}\TS@xo\TS@yo\TS@zo
+  \vecXYZ{#3}\TS@xi\TS@yi\TS@zi
+  \vecXYZ{#4}\TS@xii\TS@yii\TS@zii
+  \CalcVal{%
+    my $Px=\pS@Px;
+    my $Py=\pS@Py;
+    my $Pz=\pS@Pz;
+    my $vxo=\TS@xo;
+    my $vyo=\TS@yo;
+    my $vzo=\TS@zo;
+    my $vxi=\TS@xi;
+    my $vyi=\TS@yi;
+    my $vzi=\TS@zi;
+    my $vxii=\TS@xii;
+    my $vyii=\TS@yii;
+    my $vzii=\TS@zii;
+    $vxi-=$vxo;
+    $vyi-=$vyo;
+    $vzi-=$vzo;
+    $vxii-=$vxo;
+    $vyii-=$vyo;
+    $vzii-=$vzo;
+    my $px=$vyii*$vzi-$vyi*$vzii;
+    my $py=$vzii*$vxi-$vzi*$vxii;
+    my $pz=$vxii*$vyi-$vxi*$vyii;
+    my $nval=sqrt($px**2+$py**2+$pz**2);
+    $px/=$nval;
+    $py/=$nval;
+    $pz/=$nval; % 法線ベクトル正規化
+    my $apx=$vxo-$Px;
+    my $apy=$vyo-$Py;
+    my $apz=$vzo-$Pz;
+    my $lval=$apx*$px+$apy*$py+$apz*$pz; % 内積 AP・nvec
+       printf FHNDL "(\EMpercentchar s,\EMpercentchar s,\EMpercentchar s)",
+        $Px+$lval*$px,
+        $Py+$lval*$py,
+        $Pz+$lval*$pz;}#5\relax
+  }%
+%
+\def\perlpSuisen#1#2#3#4{%
+% #1: 点P
+% #2: 平面上の点A
+% #3: 平面の法線ベクトル(nvec)
+% #4: 垂線の足（戻り値）
+  \vecXYZ{#1}\pS@Px\pS@Py\pS@Pz
+  \vecXYZ{#2}\pS@Ax\pS@Ay\pS@Az
+  \vecXYZ{#3}\pS@vx\pS@vy\pS@vz
+  \CalcVal{%
+    my $ax=\pS@Ax;
+    my $ay=\pS@Ay;
+    my $az=\pS@Az;
+    my $px=\pS@Px;
+    my $py=\pS@Py;
+    my $pz=\pS@Pz;
+    my $vx=\pS@vx;
+    my $vy=\pS@vy;
+    my $vz=\pS@vz;
+       $ax-=$px;
+       $ay-=$py;
+       $az-=$pz;
+    my $nval=sqrt($vx**2+$vy**2+$vz**2);
+       $vx/=$nval;
+       $vy/=$nval;
+       $vz/=$nval; % 法線ベクトル正規化
+    my $lval=$ax*$vx+$ay*$vy+$az*$vz; % 内積 AP・nvec
+       printf FHNDL "(\EMpercentchar s,\EMpercentchar s,\EMpercentchar s)",
+        $px+$lval*$vx,
+        $py+$lval*$vy,
+        $pz+$lval*$vz;}#4\relax
+  }%
+%
+\def\iiiperlnaikaku#1#2#3#4{%
+  \vecXYZ{#1}\TS@xo\TS@yo\TS@zo
+  \vecXYZ{#2}\TS@xi\TS@yi\TS@zi
+  \vecXYZ{#3}\TS@xii\TS@yii\TS@zii
+  \CalcVal{%
+    my $vxo=\TS@xi;
+    my $vyo=\TS@yi;
+    my $vzo=\TS@zi;
+    my $vxi=\TS@xo;
+    my $vyi=\TS@yo;
+    my $vzi=\TS@zo;
+    my $vxii=\TS@xii;
+    my $vyii=\TS@yii;
+    my $vzii=\TS@zii;
+    $vxi-=$vxo;
+    $vyi-=$vyo;
+    $vzi-=$vzo;
+    $vxii-=$vxo;
+    $vyii-=$vyo;
+    $vzii-=$vzo;
+    my $ab=$vxi*$vxii+$vyi*$vyii+$vzi*$vzii;
+    my $a=sqrt($vxi**2+$vyi**2+$vzi**2);
+    my $b=sqrt($vxii**2+$vyii**2+$vzii**2);
+    my $arg=RadDeg(acos($ab/($a*$b)));
+      printf FHNDL "\EMpercentchar s\string\n",$arg;}#4\relax}
+\let\iiinaikaku\iiiperlnaikaku
+%
+\def\iiiMenseki#1#2#3#4{%
+  \iiiKyori{#2}{#3}\iiiM@l
+  \LSuisen{#1}{#2}{#3}\iiiM@H
+  \iiiKyori{#1}\iiiM@H\iii@h
+  \Mulself\iiiM@l\iii@h
+  \Divself\iiiM@l{2}%
+  \edef#4{\iiiM@l}%
+}%
+\def\iiiperlMenseki#1#2#3#4{%
+  \vecXYZ{#1}\TS@xo\TS@yo\TS@zo
+  \vecXYZ{#2}\TS@xi\TS@yi\TS@zi
+  \vecXYZ{#3}\TS@xii\TS@yii\TS@zii
+  \CalcVal{%
+    my $vxo=\TS@xo;
+    my $vyo=\TS@yo;
+    my $vzo=\TS@zo;
+    my $vxi=\TS@xi;
+    my $vyi=\TS@yi;
+    my $vzi=\TS@zi;
+    my $vxii=\TS@xii;
+    my $vyii=\TS@yii;
+    my $vzii=\TS@zii;
+    $vxi-=$vxo;
+    $vyi-=$vyo;
+    $vzi-=$vzo;
+    $vxii-=$vxo;
+    $vyii-=$vyo;
+    $vzii-=$vzo;
+    my $px=$vyii*$vzi-$vyi*$vzii;
+    my $py=$vzii*$vxi-$vzi*$vxii;
+    my $pz=$vxii*$vyi-$vxi*$vyii;
+    my $s=sqrt($px**2+$py**2+$pz**2)/2;
+      printf FHNDL "\EMpercentchar s\string\n",$s;}#4\relax}
+%
+\def\Taiseki#1#2#3#4#5{%
+  \iiiMenseki{#2}{#3}{#4}\iiiT@S
+  \PSuisen{#1}{#2}{#3}{#4}\iiiT@H
+  \iiiKyori{#1}\iiiT@H\iiiT@tmp
+  \Mulself\iiiT@S\iiiT@tmp
+  \Divself\iiiT@S{3}%
+  \edef#5{\iiiT@S}%
+}%
+%
+\def\perlTaiseki#1#2#3#4#5{%
+  \vecXYZ{#1}\TS@xi\TS@yi\TS@zi
+  \vecXYZ{#2}\TS@xii\TS@yii\TS@zii
+  \vecXYZ{#3}\TS@xiii\TS@yiii\TS@ziii
+  \vecXYZ{#4}\TS@x\TS@y\TS@z
+  \CalcVal{%
+    my $d=-detiii(\TS@xi,\TS@yi,\TS@zi,\TS@xii,\TS@yii,\TS@zii,\TS@xiii,\TS@yiii,\TS@ziii);
+    my $a=detiii(\TS@yi,\TS@zi,1,\TS@yii,\TS@zii,1,\TS@yiii,\TS@ziii,1);
+    my $b=-detiii(\TS@xi,\TS@zi,1,\TS@xii,\TS@zii,1,\TS@xiii,\TS@ziii,1);
+    my $c=detiii(\TS@xi,\TS@yi,1,\TS@xii,\TS@yii,1,\TS@xiii,\TS@yiii,1);
+    my $h=abs($a*\TS@x+$b*\TS@y+$c*\TS@z+$d)/sqrt($a**2+$b**2+$c**2);
+    my $vxi=\TS@xii-\TS@xi;
+    my $vyi=\TS@yii-\TS@yi;
+    my $vzi=\TS@zii-\TS@zi;
+    my $vxii=\TS@xiii-\TS@xi;
+    my $vyii=\TS@yiii-\TS@yi;
+    my $vzii=\TS@ziii-\TS@zi;
+    my $ss=sqrt(($vxi**2+$vyi**2+$vzi**2)*($vxii**2+$vyii**2+$vzii**2)
+      -($vxi*$vxii+$vyi*$vyii+$vzi*$vzii)**2);
+      printf FHNDL "\EMpercentchar s\string\n",$ss*$h/6;}#5\relax}
+%
+\def\iiiTyokkaku#1[#2]#3{%
+  \Piiitoii{#1}\iiiTyo@H
+  \Piiitoii{#2}\iiiTyo@A
+  \Piiitoii{#3}\iiiTyo@B
+  \Tyokkaku\iiiTyo@H[\iiiTyo@A]\iiiTyo@B}%
+
+\def\iiiTyokkakukigou{\@ifnextchar[{\@iiiTyokkakukigou}{\@iiiTyokkakukigou[0]}}%
+\def\@iiiTyokkakukigou[#1]{\@ifnextchar({\@@iiiTyokkakukigou[#1]}{%
+  \@@iiiTyokkakukigou[#1](5)}}%
+\def\@@iiiTyokkakukigou[#1](#2)#3#4#5{%
+  \Piiitoii{#3}\iiiTyo@A
+  \Piiitoii{#4}\iiiTyo@B
+  \Piiitoii{#5}\iiiTyo@C
+  \Tyokkakukigou[#1](#2)\iiiTyo@A\iiiTyo@B\iiiTyo@C}%
+
+% 複数の角に直角記号
+\def\iiityokkakukigou{\@ifnextchar[{\@iiityokkakukigou}{\@iiityokkakukigou[0]}}%
+\def\@iiityokkakukigou[#1]{\@ifnextchar({\@@iiityokkakukigou[#1]}{%
+  \@@iiityokkakukigou[#1](5)}}%
+\def\@@iiityokkakukigou[#1](#2)#3{%
+    \def\@@iiityokkakukigou@sub(##1,##2,##3)(##4,##5,##6)(##7,##8,##9){%
+      \iiiTyokkakukigou[#1](#2){(##1,##2,##3)}{(##4,##5,##6)}{(##7,##8,##9)}}%
+  \Cfor{\edef\iiityokkaku@a{#3}}{\not\equal\iiityokkaku@a\empty}{}\do{%
+    \strsep\iiityokkaku@a{;}\iiityokkaku@a\iiityokkaku@b
+    \expandafter\@@iiityokkakukigou@sub\iiityokkaku@a
+    \edef\iiityokkaku@a{\iiityokkaku@b}}}%
+%
+\def\iiiHeikoukigou{\edef\heikoukigou@nomi{0}\@ifstar{\edef\heikoukigou@nomi{1}\@iiiHeikoukigou}{\@iiiHeikoukigou}}%
+\def\@iiiHeikoukigou{\@ifnextchar[{\@@iiiHeikoukigou}{\@@iiiHeikoukigou[1]}}%
+\def\@@iiiHeikoukigou[#1]#2#3{%
+  \Piiitoii{#2}\iiiHk@A
+  \Piiitoii{#3}\iiiHk@B
+  \@@Heikoukigou[#1]\iiiHk@A\iiiHk@B
+}%
+\def\iiiheikoukigou{\edef\heikoukigou@nomi{0}\@ifstar{\edef\heikoukigou@nomi{1}\@iiiheikoukigou}{\@iiiheikoukigou}}%
+\def\@iiiheikoukigou{\@ifnextchar[{\@@iiiheikoukigou}{\@@iiiheikoukigou[1]}}%
+\def\@@iiiheikoukigou[#1]#2{%
+  \Cfor{\strsep{#2}{;}\iiiHk@A\iiiHk@B\edef\iiiHk@P{\empty}}%
+      {\not\equal\iiiHk@A\empty}{\strsep\iiiHk@B{;}\iiiHk@A\iiiHk@B}\do{%
+    \Tenretuiiitoii\iiiHk@A\iiiHk@tmp
+    \ifx\empty\iiiHk@P\edef\iiiHk@P{\iiiHk@tmp}%
+    \else
+      \edefappend\iiiHk@P{;\iiiHk@tmp}%
+    \fi
+  }%
+  \@@heikoukigou[#1]\iiiHk@P
+}%
+%
+% 平面と平面
+\def\pandp#1#2#3#4#5#6{%
+% #1 : 平面1 点 (xi,yi,zi)
+% #2 :       法線ベクトル (ai,bi,ci)
+% #3 : 平面2 点 (xii,yii,zii)
+% #4 :       法線ベクトル (aii,bii,cii)
+% #5 : 交線  点
+% #6 :       方向ベクトル
+%
+  \iiiNormvec{#2}{#4}#6\relax
+  \Naiseki{#1}{#2}\pandp@di
+  \Naiseki{#3}{#4}\pandp@dii
+  \vecXYZ{#2}\pandp@ai\pandp@bi\pandp@ci
+  \vecXYZ{#4}\pandp@aii\pandp@bii\pandp@cii
+  \Detii\pandp@ai\pandp@bi\pandp@aii\pandp@bii\Abs{\Det@ans}\pandp@tmp
+  \ifdim\pandp@tmp pt<0.001pt
+    \Detii\pandp@bi\pandp@ci\pandp@bii\pandp@cii\Abs\Det@ans\pandp@tmp
+    \ifdim\pandp@tmp pt<0.001pt
+      \Detii\pandp@ai\pandp@ci\pandp@aii\pandp@cii
+      \edef\pandp@bunbo{\Det@ans}%
+      \Detii\pandp@di\pandp@ci\pandp@dii\pandp@cii
+      \Div\Det@ans\pandp@bunbo\pandp@x
+      \Detii\pandp@ai\pandp@di\pandp@aii\pandp@dii
+      \Div\Det@ans\pandp@bunbo\pandp@z
+      \edef#5{(\pandp@x,0,\pandp@z)}%
+    \else
+      \edef\pandp@bunbo{\Det@ans}%
+      \Detii\pandp@di\pandp@ci\pandp@dii\pandp@cii
+      \Div\Det@ans\pandp@bunbo\pandp@y
+      \Detii\pandp@bi\pandp@di\pandp@bii\pandp@dii
+      \Div\Det@ans\pandp@bunbo\pandp@z
+      \edef#5{(0,\pandp@y,\pandp@z)}%
+    \fi
+  \else
+    \edef\pandp@bunbo{\Det@ans}%
+    \Detii\pandp@di\pandp@bi\pandp@dii\pandp@bii
+    \Div\Det@ans\pandp@bunbo\pandp@x
+    \Detii\pandp@ai\pandp@di\pandp@aii\pandp@dii
+    \Div\Det@ans\pandp@bunbo\pandp@y
+    \edef#5{(\pandp@x,\pandp@y,0)}%
+  \fi
+}%
+
+\def\PandP#1#2#3#4#5#6#7#8{%
+  \SubVec{#2}{#1}\pandp@u\SubVec{#3}{#1}\pandp@v
+  \iiiNormvec\pandp@u\pandp@v\pandp@ni
+  \SubVec{#5}{#4}\pandp@u\SubVec{#6}{#4}\pandp@v
+  \iiiNormvec\pandp@u\pandp@v\pandp@nii
+  \pandp{#1}\pandp@ni{#4}\pandp@nii#7#8}%
+
+\def\Pandp#1#2#3#4#5#6#7{%
+  \SubVec{#2}{#1}\pandp@u\SubVec{#3}{#1}\pandp@v
+  \iiiNormvec\pandp@u\pandp@v\pandp@ni
+  \pandp{#1}\pandp@ni{#4}{#5}#6#7}%
+%
+% 2つの球面の交線である円について
+% 　　その中心と半径を求める。
+%
+\def\SandS#1#2#3#4#5#6{%
+% #1: 中心1
+% #2: 半径1
+% #3: 中心2
+% #4: 半径2
+% #5: 交線の円の中心
+% #6: 交線の円の半径
+  \vecXYZ{#1}\SS@xi\SS@yi\SS@zi
+  \vecXYZ{#3}\SS@xii\SS@yii\SS@zii
+  \CalcVal{%
+    $ri=#2;
+    $rii=#4;
+    $xi=\SS@xi;$yi=\SS@yi;$zi=\SS@zi;
+    $xii=\SS@xii;$yii=\SS@yii;$zii=\SS@zii;
+    $AB=sqrt(($xi-$xii)**2+($yi-$yii)**2+($zi-$zii)**2);
+    $s=($ri+$rii+$AB)/2;
+    $S=sqrt($s*($s-$ri)*($s-$rii)*($s-$AB));
+    $R=2*$S/$AB;
+    $AH=sqrt($ri**2-$R**2);
+    $BH=sqrt($rii**2-$R**2);
+    $x=($BH*$xi+$AH*$xii)/($AH+$BH);
+    $y=($BH*$yi+$AH*$yii)/($AH+$BH);
+    $z=($BH*$zi+$AH*$zii)/($AH+$BH);
+    printf FHNDL "\EMpercentchar f,{(\EMpercentchar f,\EMpercentchar f,\EMpercentchar f)}\string\n",$R,$x,$y,$z;
+  }\SS@tmp
+  \vecXY{(\SS@tmp)}{#6}{#5}%
+}%
+%
+% 3点からの距離が指定した値となる点を求める。
+%
+\def\SandSandS#1#2#3#4#5#6#7#8{%
+% #1: 点1
+% #2: 点1からの距離
+% #3: 点2
+% #4: 点2からの距離
+% #5: 点3
+% #6: 点3からの距離
+% #7, #8: 結果
+% \SandS\A{1}\B{1}\P\rival
+  \SandS{#1}{#2}{#3}{#4}\SSS@P\SSS@Pr
+%\typeout{P=\SSS@P,Pr=\SSS@Pr}%
+% \SandS\A{1}\C{2}\Q\riival
+  \SandS{#1}{#2}{#5}{#6}\SSS@Q\SSS@Qr
+%\typeout{Q=\SSS@Q,Qr=\SSS@Qr}%
+% \iiiSubvec\B\A\AB
+% \iiiSubvec\A\C\AC
+  \iiiSubvec{#3}{#1}\SSS@AB
+  \iiiSubvec{#5}{#1}\SSS@AC
+% \pandp\P\AB\Q\AC\H\nvec
+  \pandp\SSS@P\SSS@AB\SSS@Q\SSS@AC\SSS@H\SSS@nvec
+% \iiiKyori\C\H\CH
+  \iiiKyori{#5}\SSS@H\SSS@CH
+  \calcval{sqrt((#6)**2-\SSS@CH**2)}\SSS@HZ
+  \iiiMulvec\SSS@HZ\SSS@nvec\SSS@tmp
+  \iiiAddvec\SSS@tmp\SSS@H\SSS@O
+  \iiiSubvec\SSS@H\SSS@tmp\SSS@OO
+  \edef#7{\SSS@O}%
+  \edef#8{\SSS@OO}%
+}%
+%
+\def\TensenDaenko{\Daenko[.5][.5]}%
+\def\ensui{\@ifnextchar<{\@ensui}{\@ensui<1>}}%
+\def\@ensui<#1>#2#3#4{%
+  \def\cbP{(0,0)}%
+  \def\lbP{(-#2,0)}%
+  \def\rbP{(#2,0)}%
+  \def\vP{#4}%
+  \vecXY\vP\v@x\v@y
+  \Sub{1}{#1}\@r
+  \Bunten\lbP\vP{#1}\@r\ltP
+  \Bunten\rbP\vP{#1}\@r\rtP
+  \Bunten\cbP\vP{#1}\@r\ctP
+  \Mul{#2}\@r\@aa
+  \Mul{#3}\@r\@bb
+  \Daenko{#2}{#3}{-180}{0}%
+  \Mul{.9}{#3}\@b
+  \ifdim\v@y pt>\z@
+    \TensenDaenko{#2}{\@b}{0}{180}%
+  \else
+    \Daenko{#2}{\@b}{0}{180}%
+  \fi
+  \ifdim #1 pt<1pt\relax
+    \Put\ctP{\Daenko\@aa\@bb{-180}{0}%
+      \Mul\@bb{.9}\@bbb
+    \ifdim\v@y pt>\z@
+      \Daenko\@aa\@bbb{0}{180}%
+    \else
+      \TensenDaenko\@aa\@bbb{0}{180}%
+    \fi}%
+  \fi
+  \Drawline{\lbP\ltP}%
+  \Drawline{\rbP\rtP}%
+}%
+
+\def\entyuu#1#2#3{%
+  \def\cbP{(0,0)}%
+  \def\lbP{(-#1,0)}%
+  \def\rbP{(#1,0)}%
+  \def\vP{#3}%
+  \Addvec\lbP\vP\ltP
+  \Addvec\rbP\vP\rtP
+  \Addvec\cbP\vP\ctP
+  \put(0,0){\Daenko{#1}{#2}{-180}{0}%
+    \Mul{.9}{#2}\@b
+    \TensenDaenko{#1}{\@b}{0}{180}%
+    \Put\ctP{\Daenko{#1}{#2}{-180}{0}\Daenko{#1}{\@b}{0}{180}}%
+    \Drawline{\lbP\ltP}\Drawline{\rbP\rtP}}%
+}%
+
+%\def\Tensen{\Dashline[40]{.1}}%
+%\def\iiiTensen{\iiiDashline[40]{.1}}%
+\def\Tensen{\Hasen}%
+\def\iiiTensen{\iiiHasen}%
+
+\def\kakusui{\@ifnextchar<{\@kakusui}{\@kakusui<1>}}%
+\def\@kakusui<#1>#2#3#4{%
+%   #2 : 見える頂点列
+%   #3 : 見えない頂点列
+%   #4 : 錐の頂点
+  \Sub{1}{#1}\@rr
+  \edef\@ldP{}%
+  \edef\@V{\csname #4\endcsname}%
+  \expandafter\@tfor\expandafter\@c\expandafter:\expandafter=#2\do{%
+    \edef\@P{\csname \@c\endcsname}%
+    \Bunten\@P\@V{#1}\@rr\@Q
+    \Drawline{\@P\@Q}%
+    \ifx\empty\@ldP\edef\t@pP{\@P}\edef\t@pQ{\@Q}\else
+      \Drawline{\@ldP\@P}\Drawline{\@ldQ\@Q}\fi
+    \edef\@ldP{\@P}\edef\@ldQ{\@Q}}%
+  \ifx\empty #3\else
+    \expandafter\@tfor\expandafter\@c\expandafter:\expandafter=#3\do{%
+      \edef\@P{\csname \@c\endcsname}%
+      \Bunten\@P\@V{#1}\@rr\@Q
+      \Tensen{\@P\@Q}%
+      \ifx\empty\@ldP\edef\t@pP{\@P}\edef\t@pQ{\@Q}\else
+        \Tensen{\@ldP\@P}\Drawline{\@ldQ\@Q}\fi
+      \edef\@ldP{\@P}\edef\@ldQ{\@Q}}%
+  \fi
+  \Tensen{\@ldP\t@pP}%
+  \Drawline{\@ldQ\t@pQ}%
+}%
+
+\def\kakutyuu#1#2#3{%
+%   #1 : 見える頂点列
+%   #2 : 見えない頂点列
+%   #3 : 高さベクトル
+  \edef\@ldP{}%
+  \edef\@V{\csname #3\endcsname}%
+  \expandafter\@tfor\expandafter\@c\expandafter:\expandafter=#1\do{%
+    \edef\@P{\csname \@c\endcsname}%
+    \Addvec\@P\@V\@Q
+    \expandafter\edef\csname \@c\@c\endcsname{\@Q}%
+    \Drawline{\@P\@Q}%
+    \ifx\empty\@ldP\edef\t@pP{\@P}\edef\t@pQ{\@Q}\else
+      \Drawline{\@ldP\@P}\Drawline{\@ldQ\@Q}\fi
+    \edef\@ldP{\@P}\edef\@ldQ{\@Q}}%
+  \ifx\empty #2\else
+    \expandafter\@tfor\expandafter\@c\expandafter:\expandafter=#2\do{%
+      \edef\@P{\csname \@c\endcsname}%
+      \Addvec\@P\@V\@Q
+      \expandafter\edef\csname \@c\@c\endcsname{\@Q}%
+      \Tensen{\@P\@Q}%
+      \ifx\empty\@ldP\edef\t@pP{\@P}\edef\t@pQ{\@Q}\else
+        \Tensen{\@ldP\@P}\Drawline{\@ldQ\@Q}\fi
+      \edef\@ldP{\@P}\edef\@ldQ{\@Q}}%
+  \fi
+  \Tensen{\@ldP\t@pP}%
+  \Drawline{\@ldQ\t@pQ}%
+}%
+
+\def\Kakusui{\@ifnextchar<{\@Kakusui}{\@Kakusui<1>}}%
+\def\@Kakusui<#1>#2#3#4{%
+%   #2 : 見える頂点列
+%   #3 : 見えない頂点列
+%   #4 : 錐の頂点
+  \Sub{1}{#1}\@rr
+  \edef\@ldP{}%
+  \edef\@V{\csname #4\endcsname}%
+  \expandafter\@tfor\expandafter\@c\expandafter:\expandafter=#2\do{%
+    \edef\@P{\csname \@c\endcsname}%
+    \iiiBunten\@P\@V{#1}\@rr\@Q
+    \iiiDrawline{\@P\@Q}%
+    \ifx\empty\@ldP\edef\t@pP{\@P}\edef\t@pQ{\@Q}\else
+      \iiiDrawline{\@ldP\@P}\iiiDrawline{\@ldQ\@Q}\fi
+    \edef\@ldP{\@P}\edef\@ldQ{\@Q}}%
+  \ifx\empty #3\else
+    \expandafter\@tfor\expandafter\@c\expandafter:\expandafter=#3\do{%
+      \edef\@P{\csname \@c\endcsname}%
+      \iiiBunten\@P\@V{#1}\@rr\@Q
+      \iiiHasen{\@P\@Q}%
+      \ifx\empty\@ldP\edef\t@pP{\@P}\edef\t@pQ{\@Q}\else
+        \iiiTensen{\@ldP\@P}\iiiDrawline{\@ldQ\@Q}\fi
+      \edef\@ldP{\@P}\edef\@ldQ{\@Q}}%
+  \fi
+  \iiiTensen{\@ldP\t@pP}%
+  \iiiDrawline{\@ldQ\t@pQ}%
+}%
+\def\Kakutyuu#1#2#3{{%
+%   #1 : 見える頂点列
+%   #2 : 見えない頂点列
+%   #3 : 高さベクトル
+  \edef\@ldP{}%
+  \edef\@V{\csname #3\endcsname}%
+  \expandafter\@tfor\expandafter\@c\expandafter:\expandafter=#1\do{%
+    \edef\@P{\csname \@c\endcsname}%
+    \AddVec\@P\@V\@Q
+    \expandafter\edef\csname \@c\@c\endcsname{\@Q}%
+    \iiiDrawline{\@P\@Q}%
+    \ifx\empty\@ldP\edef\t@pP{\@P}\edef\t@pQ{\@Q}\else
+      \iiiDrawline{\@ldP\@P}\iiiDrawline{\@ldQ\@Q}\fi
+    \edef\@ldP{\@P}\edef\@ldQ{\@Q}}%
+  \ifx\empty #2\else
+    \expandafter\@tfor\expandafter\@c\expandafter:\expandafter=#2\do{%
+      \edef\@P{\csname \@c\endcsname}%
+      \AddVec\@P\@V\@Q
+      \expandafter\edef\csname \@c\@c\endcsname{\@Q}%
+      \iiiTensen{\@P\@Q}%
+      \ifx\empty\@ldP\edef\t@pP{\@P}\edef\t@pQ{\@Q}\else
+        \iiiTensen{\@ldP\@P}%
+        \iiiDrawline{\@ldQ\@Q}%
+      \fi
+      \edef\@ldP{\@P}\edef\@ldQ{\@Q}}%
+  \fi
+  \iiiTensen{\@ldP\t@pP}%
+  \iiiDrawline{\@ldQ\t@pQ}%
+}}%
+
+% 3次元座標 -----> zahyou の座標
+\def\Piiitoii#1#2{\edef\Piiitoii@s{#1}%
+  \expandafter\@Piiitoii\Piiitoii@s{#2}}%
+\def\@Piiitoii(#1,#2,#3)#4{%
+    \def\Piiitoii@x{#1}%
+    \ifx\empty\Ex@Org
+      \def\Piiitoii@y{#2}%
+      \def\Piiitoii@z{#3}%
+    \else
+%        \Sub\Ex@Org{#1}\Piiitoii@b
+%        \Mul{\Ex@R}{#1}\Piiitoii@a
+%        \Sub\Ex@Org\Piiitoii@a\Piiitoii@a
+%        \Div\Piiitoii@a\Piiitoii@b\Piiitoii@r
+%        \Mul{#1}\Piiitoii@r\Piiitoii@x
+%        \Mul{#2}\Piiitoii@r\Piiitoii@y
+%        \Mul{#3}\Piiitoii@r\Piiitoii@z
+%      \vecXYZ\Ex@Org\Ex@Ox\Ex@Oy\Ex@Oz
+      \Sub{#1}\Ex@Org\Ex@tmp
+      \Sub\Xmax\Ex@Org\Ex@tmp@
+      \Div\Ex@tmp\Ex@tmp@\Piiitoii@r
+%      \Mul{#1}\Piiitoii@r\Piiitoii@x
+\edef\Piiitoii@x{#1}%
+      \Mul{#2}\Piiitoii@r\Piiitoii@y
+      \Mul{#3}\Piiitoii@r\Piiitoii@z
+    \fi
+    \Mulvec{\Piiitoii@x}\@@@Ex#4\Mulvec{\Piiitoii@y}\@@@Ey\Piiitoii@v\Addvec\Piiitoii@v#4#4\relax
+    \Mulvec{\Piiitoii@z}\@@@Ez\Piiitoii@v\Addvec\Piiitoii@v#4#4\relax}%
+%
+\def\Piitoiii#1#2{%
+  \vecXY{#1}\@@@X\@@@Y
+  \vecXY\@@@Ey\@@@Eyx\@@@Eyy
+  \vecXY\@@@Ez\@@@Ezx\@@@Ezy%
+  \sEqi{%
+    \@@@Eyx,\@@@Ezx,\@@@X;
+    \@@@Eyy,\@@@Ezy,\@@@Y
+  }\@@@xy
+  \vecXY\@@@xy\@@@x\@@@y
+  \edef#2{(0,\@@@x,\@@@y)}%
+}%
+%
+% xy平面上の点をxyz空間に埋め込む
+%
+\def\xytoiii#1{%
+  \Cfor{\Strsep{#1}{;}\xytoiii@a\xytoiii@b}{\not\equal\xytoiii@a\empty}{%
+      \Strsep{\xytoiii@b}{;}\xytoiii@a\xytoiii@b}\do{%
+    \vecXY{\@nameuse{\xytoiii@a}}\xytoiii@x\xytoiii@y
+    \expandafter\edef\csname\xytoiii@a\endcsname{(\xytoiii@x,\xytoiii@y,0)}%
+  }%
+}%
+%
+% 3次元 \Put
+\def\iiiPut#1{\Piiitoii{#1}\iiiPut@Pii\emathPut\iiiPut@Pii}%
+%
+\def\iiiPutStr{\@ifstar{\iiiPutStr@s}{\iiiPutStr@n}}%
+\def\iiiPutStr@s#1#2to{%
+  \@ifnextchar[{\@iiiPutStr@s{#1}{#2}to}{\@iiiPutStr@s{#1}{#2}to[0]}}%
+\def\@iiiPutStr@s#1#2to[#3]#4{%
+  \Piiitoii{#4}\iiiPS@ep
+  \PutStr*{#1}#2to[#3]{\iiiPS@ep}%
+}%
+\def\iiiPutStr@n#1{\Piiitoii{#1}\iiiPS@op%
+  \@ifnextchar({\iiiPutStr@{\iiiPS@op}}{\@iiiPutStr@{\iiiPS@op}}}%
+\def\@iiiPutStr@#1{\@ifnextchar[{\@iiiPutStr{#1}}{\@iiiPutStr{#1}[e]}}%
+\def\@iiiPutStr#1[#2]#3to{\@ifnextchar[{\@@iiiPutStr{#1}[#2]#3to}{%
+  \@@iiiPutStr{#1}[#2]#3to[0]}}%
+\def\@@iiiPutStr#1[#2]#3to[#4]#5{%\Put{#1}[#2]{#3}%
+  \Piiitoii{#5}\iiiPS@ep
+  \PutStr{#1}[#2]{#3}to[#4]{\iiiPS@ep}}%
+%  \ifthenelse{\equal{#4}{0}}{\ArrowLine{#1}{\iiiPS@ep}}{%
+%  \ArrowArc{#4}{#1}{\iiiPS@ep}}}%
+%% \if 0#4\relax\ArrowLine{#1}{#5}\else\ArrowArc{#4}{#1}{#5}\fi}%
+\def\iiiPutStr@#1(#2,#3){\@ifnextchar[{\iiiPutStr@@{#1}(#2,#3)}{%
+  \iiiPutStr@@{#1}(#2,#3)[l]}}%
+\def\iiiPutStr@@#1(#2,#3)[#4]#5to{%
+  \@ifnextchar[{\iiiPutStr@@@{#1}(#2,#3)[#4]#5to}{%
+  \iiiPutStr@@@{#1}(#2,#3)[#4]#5to[0]}}%
+\def\iiiPutStr@@@#1(#2,#3)[#4]#5to[#6]#7{%
+  \Piiitoii{#7}\iiiPS@ep
+  \PutStr{#1}(#2,#3)[#4]{#5}to[#6]\iiiPS@ep}%
+%  \Put{#1}(#2,#3)[#4]{#5}%
+%  \if 0#6\relax\ArrowLine{#1}{\iiiPS@ep}\else\ArrowArc{#6}{#1}{\iiiPS@ep}\fi}%
+
+% 立方体断面図
+\def\NuriNoudo{.5}%
+\def\DanmenP{\@ifnextchar[{\@DanmenP}{\@DanmenP[.5]}}%
+\def\@DanmenP[#1]#2{\def\NuriNoudo{#1}\edef\Danmen@seq{#2}%
+%\typeout{\Danmen@seq}%
+  \expandafter\danmenP\Danmen@seq}%
+\def\danmen{\@ifnextchar[{\@danmen}{\@danmen[\NuriNoudo]}}%
+\def\@danmen[#1]{\@ifnextchar({\@@danmen[#1]}{\@@danmen[#1](1)}}%
+\def\@@danmen[#1](#2)#3#4#5{%
+  \def\checkinline##1{\edef\isinline{0}%
+    \setlength{\templa}{##1pt}\ifdim\templa<\z@\else\ifdim\templa>1pt
+    \else\edef\isinline{1}\fi\fi
+  }%
+  \Div1{#3}\inv@a
+  \Div1{#4}\inv@b
+  \Div1{#5}\inv@c
+  \edef\@found{0}%
+  \if 0#2\relax
+    \Incr\@found\Piiitoii{(0,0,0)}\@P
+    \expandafter\edef\csname P@\romannumeral\@found\endcsname{\@P}%
+  \else
+    \checkinline{#3}\ifnum\isinline=\@ne\Incr\@found\Piiitoii{(#3,0,0)}\@P
+    \expandafter\edef\csname P@\romannumeral\@found\endcsname{\@P}\fi%
+  \fi
+  \Sub#2\inv@b\dm@tmp\Mul\dm@tmp{#3}\dm@tmp
+  \checkinline\dm@tmp\ifnum\isinline=\@ne\Incr\@found
+  \Piiitoii{(\dm@tmp,1,0)}\@P
+    \expandafter\edef\csname P@\romannumeral\@found\endcsname{\@P}\fi%
+  \Sub#2\inv@c\dm@tmp\Mul\dm@tmp{#3}\dm@tmp
+  \checkinline\dm@tmp\ifnum\isinline=\@ne\Incr\@found
+  \Piiitoii{(\dm@tmp,0,1)}\@P
+    \expandafter\edef\csname P@\romannumeral\@found\endcsname{\@P}\fi%
+  \Sub#2\inv@c\dm@tmp\Sub\dm@tmp\inv@b\dm@tmp\Mul\dm@tmp{#3}\dm@tmp
+  \checkinline\dm@tmp\ifnum\isinline=\@ne\Incr\@found
+  \Piiitoii{(\dm@tmp,1,1)}\@P
+    \expandafter\edef\csname P@\romannumeral\@found\endcsname{\@P}\fi%
+  \if 0#2\else
+  \checkinline{#4}\ifnum\isinline=\@ne\Incr\@found
+  \Piiitoii{(0,#4,0)}\@P
+    \expandafter\edef\csname P@\romannumeral\@found\endcsname{\@P}\fi%
+  \fi
+  \Sub#2\inv@c\dm@tmp\Mul\dm@tmp{#4}\dm@tmp
+  \checkinline\dm@tmp\ifnum\isinline=\@ne\Incr\@found
+  \Piiitoii{(0,\dm@tmp,1)}\@P
+    \expandafter\edef\csname P@\romannumeral\@found\endcsname{\@P}\fi%
+  \Sub#2\inv@a\dm@tmp\Mul\dm@tmp{#4}\dm@tmp
+  \checkinline\dm@tmp\ifnum\isinline=\@ne\Incr\@found
+  \Piiitoii{(1,\dm@tmp,0)}\@P
+    \expandafter\edef\csname P@\romannumeral\@found\endcsname{\@P}\fi%
+  \Sub#2\inv@a\dm@tmp\Sub\dm@tmp\inv@c\dm@tmp\Mul\dm@tmp{#4}\dm@tmp
+  \checkinline\dm@tmp\ifnum\isinline=\@ne\Incr\@found
+  \Piiitoii{(1,\dm@tmp,1)}\@P
+    \expandafter\edef\csname P@\romannumeral\@found\endcsname{\@P}\fi%
+  \if 0#2\else
+  \checkinline{#5}\ifnum\isinline=\@ne\Incr\@found
+  \Piiitoii{(0,0,#5)}\@P
+    \expandafter\edef\csname P@\romannumeral\@found\endcsname{\@P}\fi%
+  \fi
+  \Sub#2\inv@a\dm@tmp\Mul\dm@tmp{#5}\dm@tmp
+  \checkinline\dm@tmp\ifnum\isinline=\@ne\Incr\@found
+  \Piiitoii{(1,0,\dm@tmp)}\@P
+    \expandafter\edef\csname P@\romannumeral\@found\endcsname{\@P}\fi%
+  \Sub#2\inv@b\dm@tmp\Mul\dm@tmp{#5}\dm@tmp
+  \checkinline\dm@tmp\ifnum\isinline=\@ne\Incr\@found
+  \Piiitoii{(0,1,\dm@tmp)}\@P
+    \expandafter\edef\csname P@\romannumeral\@found\endcsname{\@P}\fi%
+  \Sub#2\inv@a\dm@tmp\Sub\dm@tmp\inv@b\dm@tmp\Mul\dm@tmp{#5}\dm@tmp
+  \checkinline\dm@tmp\ifnum\isinline=\@ne\Incr\@found
+  \Piiitoii{(1,1,\dm@tmp)}\@P
+    \expandafter\edef\csname P@\romannumeral\@found\endcsname{\@P}\fi%
+  \ifnum\@found>2\relax\Nuritubusi[#1]{\P@i\P@ii\P@iii\P@i}\fi%
+  \ifnum\@found>3\relax
+    \Nuritubusi[#1]{\P@i\P@iii\P@iv\P@i}%
+    \Nuritubusi[#1]{\P@i\P@ii\P@iv\P@i}%
+    \Nuritubusi[#1]{\P@ii\P@iii\P@iv\P@i}%
+  \fi%
+  \ifnum\@found>4\relax
+    \Nuritubusi[#1]{\P@i\P@ii\P@v\P@i}%
+    \Nuritubusi[#1]{\P@i\P@iii\P@v\P@i}%
+    \Nuritubusi[#1]{\P@i\P@iv\P@v\P@i}%
+    \Nuritubusi[#1]{\P@ii\P@iii\P@v\P@ii}%
+    \Nuritubusi[#1]{\P@ii\P@iv\P@v\P@ii}%
+    \Nuritubusi[#1]{\P@iii\P@iv\P@v\P@iii}%
+  \fi%
+  \ifnum\@found>5\relax
+    \Nuritubusi[#1]{\P@i\P@ii\P@vi\P@i}%
+    \Nuritubusi[#1]{\P@i\P@iii\P@vi\P@i}%
+    \Nuritubusi[#1]{\P@i\P@iv\P@vi\P@i}%
+    \Nuritubusi[#1]{\P@i\P@v\P@vi\P@i}%
+    \Nuritubusi[#1]{\P@ii\P@iii\P@vi\P@ii}%
+    \Nuritubusi[#1]{\P@ii\P@iv\P@vi\P@ii}%
+    \Nuritubusi[#1]{\P@ii\P@v\P@vi\P@ii}%
+    \Nuritubusi[#1]{\P@iii\P@iv\P@vi\P@iii}%
+    \Nuritubusi[#1]{\P@iii\P@v\P@vi\P@iii}%
+    \Nuritubusi[#1]{\P@iv\P@v\P@vi\P@iv}%
+  \fi%
+  \ifnum\@found>6\relax
+    \Nuritubusi[#1]{\P@i\P@ii\P@iii\P@iv\P@v\P@vi\P@vii\P@i}\fi%
+  \ifnum\@found>7\relax
+    \Nuritubusi[#1]{\P@i\P@ii\P@iii\P@iv\P@v\P@vi\P@vii\P@viii\P@i}\fi%
+  \ifnum\@found>8\relax
+    \Nuritubusi[#1]{\P@i\P@ii\P@iii\P@iv\P@v\P@vi\P@vii\P@viii\P@ix\P@i}\fi%
+}%
+
+\def\Eqplane(#1,#2,#3)(#4,#5,#6)(#7,#8,#9){%
+  \Detiii{#1}{#2}{#3}{#4}{#5}{#6}{#7}{#8}{#9}\edef\plane@bunbo{\Det@ans}%
+  \Abs{\Det@ans}\Det@tmp
+  \ifdim\Det@tmp pt<0.005pt\relax%  1次独立 check
+    \edef\uhenti{0}%              1次従属の場合
+    \Detii{#5}{#6}{#8}{#9}\edef\plane@bunbo{\Det@ans}%
+    \Abs{\Det@ans}\Det@tmp
+    \ifdim\Det@tmp pt<0.005pt\relax%  y,z check
+      \Detii{#4}{#5}{#7}{#8}\edef\plane@bunbo{\Det@ans}%
+      \Abs{\Det@ans}\Det@tmp
+      \ifdim\Det@tmp pt<0.005pt\relax%  x,y check
+        \Detii{#4}{#6}{#7}{#9}\edef\plane@bunbo{\Det@ans}%  x,z--->y
+        \Detii{#5}{#6}{#8}{#9}%
+        \Abs{\Det@ans}\Det@tmp
+        \ifdim\Det@tmp pt<0.005pt\relax\edef\xSeppen{1000}\else
+          \Div\plane@bunbo\Det@ans\xSeppen\fi
+        \Detii{#4}{#5}{#7}{#8}%
+        \Abs{\Det@ans}\Det@tmp
+        \ifdim\Det@tmp pt<0.005pt\relax\edef\zSeppen{1000}\else
+          \Div\plane@bunbo\Det@ans\zSeppen\fi
+        \edef\ySeppen{-1}%
+      \else%                            x,y--->z
+        \Detii{#6}{#5}{#9}{#8}%
+        \Abs{\Det@ans}\Det@tmp
+        \ifdim\Det@tmp pt<0.005pt\relax\edef\xSeppen{1000}\else
+          \Div\plane@bunbo\Det@ans\xSeppen\fi
+        \Detii{#4}{#6}{#7}{#9}%
+        \Abs{\Det@ans}\Det@tmp
+        \ifdim\Det@tmp pt<0.005pt\relax\edef\ySeppen{1000}\else
+          \Div\plane@bunbo\Det@ans\ySeppen\fi
+        \edef\zSeppen{-1}%
+      \fi
+    \else%                              y,z--->x
+      \Detii{#4}{#6}{#7}{#9}%
+      \Abs{\Det@ans}\Det@tmp
+      \ifdim\Det@tmp pt<0.005pt\relax\edef\ySeppen{1000}\else
+        \Div\plane@bunbo\Det@ans\ySeppen\fi
+      \Detii{#5}{#4}{#8}{#7}%
+      \Abs{\Det@ans}\Det@tmp
+      \ifdim\Det@tmp pt<0.005pt\relax\edef\zSeppen{1000}\else
+        \Div\plane@bunbo\Det@ans\zSeppen\fi
+      \edef\xSeppen{-1}%
+    \fi
+  \else%                                  1次独立
+    \edef\uhenti{1}%
+    \Detiii{1}{#2}{#3}{1}{#5}{#6}{1}{#8}{#9}%
+    \Abs{\Det@ans}\Det@tmp
+    \ifdim\Det@tmp pt<0.005pt\relax\edef\xSeppen{1000}\else
+      \Div\plane@bunbo\Det@ans\xSeppen\fi
+    \Detiii{#1}{1}{#3}{#4}{1}{#6}{#7}{1}{#9}%
+    \Abs{\Det@ans}\Det@tmp
+    \ifdim\Det@tmp pt<0.005pt\relax\edef\ySeppen{1000}\else
+      \Div\plane@bunbo\Det@ans\ySeppen\fi
+    \Detiii{#1}{#2}{1}{#4}{#5}{1}{#7}{#8}{1}%
+    \Abs{\Det@ans}\Det@tmp
+      \ifdim\Det@tmp pt<0.005pt\relax\edef\zSeppen{1000}\else
+    \Div\plane@bunbo\Det@ans\zSeppen\fi
+  \fi
+}%
+
+\def\danmenP(#1,#2,#3)(#4,#5,#6)(#7,#8,#9){%
+  \Eqplane(#1,#2,#3)(#4,#5,#6)(#7,#8,#9)%
+  \danmen(\uhenti)\xSeppen\ySeppen\zSeppen}%
+
+% 空間ベクトルの成分分解
+%\def\vecXYZ#1#2#3#4{%  点 #1 の空間座標から x,y,z座標を #2,#3,#4 へ抽出
+%    \edef\vecXYZ@tmp{#1}%
+%    \expandafter\@vecXYZ\vecXYZ@tmp#2#3#4}%
+%\def\@vecXYZ(#1,#2,#3)#4#5#6{\edef#4{#1}\edef#5{#2}\edef#6{#3}}%
+% 空間ベクトルの加減，スカラー倍
+\def\AddVec#1#2#3{\vecXYZ{#1}\a@x\a@y\a@z\vecXYZ{#2}\b@x\b@y\b@z
+  \Add\a@x\b@x\a@x\Add\a@y\b@y\a@y\Add\a@z\b@z\a@z\edef#3{(\a@x,\a@y,\a@z)}}%
+\def\SubVec#1#2#3{\vecXYZ{#1}\a@x\a@y\a@z\vecXYZ{#2}\b@x\b@y\b@z
+  \Sub\a@x\b@x\a@x\Sub\a@y\b@y\a@y\Sub\a@z\b@z\a@z\edef#3{(\a@x,\a@y,\a@z)}}%
+\def\MulVec#1#2#3{\vecXYZ{#2}\a@x\a@y\a@z%
+  \Mul{#1}\a@x\a@x\Mul{#1}\a@y\a@y\Mul{#1}\a@z\a@z\edef#3{(\a@x,\a@y,\a@z)}}%
+% 分点
+\def\iiiBunten#1#2#3#4#5{%
+    \ifthenelse{\equal{#4}{*}}{%
+      \edef\BT@m{#3}%
+      \Sub{1}{#3}\BT@n
+    }{%
+      \ifthenelse{\equal{#3}{*}}{%
+        \edef\BT@n{#4}%
+        \Sub{1}{#4}\BT@m
+      }{%
+        \edef\BT@m{#3}%
+        \edef\BT@n{#4}%
+      }%
+    }%
+  \Add{\BT@m}{\BT@n}\Bunten@c
+  \Div{1}\Bunten@c\Bunten@c
+  \MulVec{\BT@n}{#1}\Bunten@u
+  \MulVec{\BT@m}{#2}\Bunten@v
+  \AddVec\Bunten@u\Bunten@v\Bunten@v
+  \MulVec\Bunten@c\Bunten@v#5}%
+%
+\def\iiiperlBunten#1#2#3#4#5{%
+  \vecXYZ{#1}\pB@xi\pB@yi\pB@zi
+  \vecXYZ{#2}\pB@xii\pB@yii\pB@zii
+  \CalcVal{%
+    my $xi=\pB@xi;
+    my $yi=\pB@yi;
+    my $zi=\pB@zi;
+    my $xii=\pB@xii;
+    my $yii=\pB@yii;
+    my $zii=\pB@zii;
+    my $m=#3;
+    my $n=#4;
+    my $mn=$m+$n;
+    my $x=($n*$xi+$m*$xii)/$mn;
+    my $y=($n*$yi+$m*$yii)/$mn;
+    my $z=($n*$zi+$m*$zii)/$mn;
+      printf FHNDL "(\EMpercentchar s,\EMpercentchar s,\EMpercentchar s)",
+        $x,$y,$z;}#5\relax}%
+%
+% 中点
+\def\iiiTyuuten#1#2#3{\iiiBunten{#1}{#2}{1}{1}#3}%
+% 重心
+\def\iiiZyuusin#1#2#3#4{%
+  \iiiAddvec{#1}{#2}\iiiZyuusin@v\iiiAddvec{#3}\iiiZyuusin@v\iiiZyuusin@v
+  \iiiMulvec{0.33333}\iiiZyuusin@v\iiiZyuusin@v\edef#4{\iiiZyuusin@v}}%
+%
+\def\iiiperlZyuusin#1#2#3#4{%
+  \vecXYZ{#1}\pB@xi\pB@yi\pB@zi
+  \vecXYZ{#2}\pB@xii\pB@yii\pB@zii
+  \vecXYZ{#3}\pB@xiii\pB@yiii\pB@ziii
+  \CalcVal{%
+    my $xi=\pB@xi;
+    my $yi=\pB@yi;
+    my $zi=\pB@zi;
+    my $xii=\pB@xii;
+    my $yii=\pB@yii;
+    my $zii=\pB@zii;
+    my $xiii=\pB@xiii;
+    my $yiii=\pB@yiii;
+    my $ziii=\pB@ziii;
+    my $x=($xi+$xii+$xiii)/3;
+    my $y=($yi+$yii+$yiii)/3;
+    my $z=($zi+$zii+$ziii)/3;
+      printf FHNDL "(\EMpercentchar s,\EMpercentchar s,\EMpercentchar s)",
+        $x,$y,$z;}#4\relax}%
+%
+% 折れ線
+\def\iiiDrawline{\@ifnextchar<{\@iiiDrawline}{\@iiiDrawline<\empty>}}%
+\def\@iiiDrawline<#1>#2{\Tenretuiiitoii{#2}\iiiDrawline@a
+  \Drawline<#1>\iiiDrawline@a}%
+%
+\def\iiiTakakkei{\@ifnextchar<{\@iiiTakakkei}{\@iiiTakakkei<\empty>}}%
+\def\@iiiTakakkei<#1>#2{\Tenretuiiitoii{#2}\iiiDrawline@a\Takakkei<#1>\iiiDrawline@a}%
+%
+\def\iiiDrawlines{\@ifnextchar<{\@iiiDrawlines}{\@iiiDrawlines<\empty>}}%
+\def\@iiiDrawlines<#1>#2{%
+  \Cfor{\edef\Drawlines@a{#2}}{\not\equal\Drawlines@a\empty}{%
+    \edef\Drawlines@a{\Drawlines@b}}\do{%
+    \strsep\Drawlines@a{;}\Drawlines@a\Drawlines@b
+    \iiiDrawline<#1>\Drawlines@a}}%
+%
+\def\iiihamidasisenbun#1#2#3#4{%
+  \Piiitoii{#1}\iiihamidasi@A\Piiitoii{#2}\iiihamidasi@B
+  \hamidasisenbun\iiihamidasi@A\iiihamidasi@B{#3}{#4}}%
+\def\iiiHamidasisenbun{\@ifnextchar<{\@iiiHamidasisenbun}{\@iiiHamidasisenbun<\empty>}}%
+\def\@iiiHamidasisenbun<#1>#2#3#4#5{%
+  \Piiitoii{#2}\iiihamidasi@A\Piiitoii{#3}\iiihamidasi@B
+  \Hamidasisenbun<#1>\iiihamidasi@A\iiihamidasi@B{#4}{#5}}%
+\def\iiiTyokusen{\@ifnextchar<{\iiiTyokusen@}{\@iiiTyokusen}}%
+\def\iiiTyokusen@<#1>#2#3{%
+  \Piiitoii{#2}\iiiTyokusen@P\Piiitoii{#3}\iiiTyokusen@Q
+  \Tyokusen<#1>\iiiTyokusen@P\iiiTyokusen@Q
+}%
+\def\@iiiTyokusen#1#2{%
+  \Piiitoii{#1}\iiiTyokusen@P\Piiitoii{#2}\iiiTyokusen@Q
+  \Tyokusen\iiiTyokusen@P\iiiTyokusen@Q
+}%
+\def\Tenretuiiitoii#1#2{%
+  \edef\Tenretu@a{#1}%
+  \edef\Tenretu@b{}%
+  \@Tenretuiiitoii\edef#2{\Tenretu@b}}%
+
+\def\iiiDashline{\@ifnextchar[{\iiiDashline@}{\@iiiDashline}}%
+\def\@iiiDashline#1#2{\Tenretuiiitoii{#2}\iiiDashline@a
+  \Dashline{#1}\iiiDashline@a}%
+\def\iiiDashline@[#1]#2#3{\Tenretuiiitoii{#3}\iiiDashline@a
+  \Dashline[#1]{#2}\iiiDashline@a}%
+\def\@Tenretuiiitoii{\expandafter\@Tenretuiiitoii@sub\Tenretu@a}%
+\def\@Tenretuiiitoii@sub{\@ifnextchar({\@@Tenretuiiitoii@sub}{}}%
+\def\@@Tenretuiiitoii@sub(#1,#2,#3){\Piiitoii{(#1,#2,#3)}\Tenretu@c
+  \edefappend\Tenretu@b{\Tenretu@c}\@Tenretuiiitoii@sub}%
+\def\iiiArrowLine{\@ifnextchar<{\@iiiArrowLine}{\@iiiArrowLine<\empty>}}%
+\def\@iiiArrowLine<#1>{\@ifnextchar[{\@@iiiArrowLine<#1>}{%
+  \@@iiiArrowLine<#1>[1]}}%
+%\def\@iiiArrowLine#1#2{\Piiitoii{#1}\iiiAL@a\Piiitoii{#2}\iiiAL@b
+%  \ArrowLine\iiiAL@a\iiiAL@b}%
+\def\@@iiiArrowLine<#1>[#2]#3#4{\Piiitoii{#3}\iiiAL@a\Piiitoii{#4}\iiiAL@b
+  \ArrowLine<#1>[#2]\iiiAL@a\iiiAL@b}%
+%
+% \iiiyasen[#1]<#2>(#3,#4,#5)
+% \iiiYasen[#1]<#2>#3
+%   #1 : ラベルを置く位置（デフォルト=0.5, 中点）
+%   #2 : ラベル（位置指定を含めて）
+%   (#3,#4,#5) : 終点（始点は \put で指定）
+\def\iiiyasen{\@ifnextchar[{\@iiiyasen}{\@iiiyasen[.5]}}%
+\def\@iiiyasen[#1]{\@ifnextchar<{\@@iiiyasen[#1]}{\@@iiiyasen[#1]<\empty>}}%
+\def\@@iiiyasen[#1]<#2>(#3,#4,#5){%
+  \def\yasen@O{(0,0)}%
+  \Piiitoii{(#3,#4,#5)}\yasen@P
+  \Mulvec{#1}\yasen@P\yasen@M
+  \yasen@toks={\yasen@M#2}%
+  \expandafter\emathPut\the\yasen@toks
+  \ArrowLine\yasen@O\yasen@P
+}%
+\def\iiiYasen{\@ifnextchar[{\@iiiYasen}{\@iiiYasen[.5]}}%
+\def\@iiiYasen[#1]{\@ifnextchar<{\@@iiiYasen[#1]}{\@@iiiYasen[#1]<\empty>}}%
+\def\@@iiiYasen[#1]<#2>#3{\vecXYZ{#3}\iiiYasen@x\iiiYasen@y\iiiYasen@z
+  \yasen[#1]<#2>(\iiiYasen@x,\iiiYasen@y,\iiiYazen@z)}%
+%
+\def\iiiHasen{\begingroup
+  \ifnum\EMps@mode=\@ne\gsave\fi
+  \@ifstar{\iiioHasen}{\iiicHasen}}%
+\def\iiicHasen{\edef\hasen@L{\@hasen@L}\edef\hasen@G{\@hasen@G}%
+  \@ifnextchar[{\iiicHasen@}{\@iiicHasen}}%
+\def\iiicHasen@[#1]{\setkeys{emP@hasen}{#1}\@iiicHasen}%
+\def\@iiicHasen#1{%
+  \Tenretuiiitoii{#1}\iiiHasen@a
+  \@Hasen{\iiiHasen@a}}%
+\def\iiioHasen{\edef\hasen@L{\@hasen@L}\edef\hasen@G{\@hasen@G}%
+  \@ifnextchar[{\iiioHasen@}{\@iiioHasen}}%
+\def\iiioHasen@[#1]{\setkeys{emP@hasen}{#1}\@iiioHasen}%
+\def\@iiioHasen#1{\Tenretuiiitoii{#1}\iiiHasen@a\@oHasen\iiiHasen@a}%
+%
+\def\iiiHasens{\@ifnextchar[{\iiiHasens@}{\@iiiHasens}}%
+\def\@iiiHasens#1{%
+  \Cfor{\edef\Hasens@a{#1}}{\not\equal\Hasens@a\empty}{%
+    \edef\Hasens@a{\Hasens@b}}\do{%
+    \strsep\Hasens@a{;}\Hasens@a\Hasens@b\iiiHasen\Hasens@a}}%
+\def\iiiHasens@[#1]#2{%
+  \Cfor{\edef\Hasens@a{#2}}{\not\equal\Hasens@a\empty}{%
+    \edef\Hasens@a{\Hasens@b}}\do{%
+    \strsep\Hasens@a{;}\Hasens@a\Hasens@b\iiiHasen[#1]\Hasens@a}}%
+%
+\def\iiiDottedline#1#2{%
+  \Tenretuiiitoii{#2}\iiiDottedline@a
+  \Dottedline{#1}{\iiiDottedline@a}}%
+%
+% \iiiHen_ko
+\def\iiiHen_ko{\@ifnextchar[{\iiiHen@ko}{\iiiHen@ko[\empty]}}%
+\def\iiiHen@ko[#1]{\@ifnextchar<{\@iiiHenko[#1]}{\@iiiHenko[#1]<.25>}}%
+\def\@iiiHenko[#1]<#2>#3#4{%
+  \Piiitoii{#3}\iiiHK@i
+  \Piiitoii{#4}\iiiHK@ii
+  \@Henko[#1]<#2>\iiiHK@i\iiiHK@ii}%
+\def\iiiHenKo{\@ifnextchar[{\@iiiHenKo}{\@iiiHenKo[\empty]}}%
+\def\@iiiHenKo[#1]{\@ifnextchar<{\@@iiiHenKo[#1]}{\@@iiiHenKo[#1]<\empty>}}%
+\def\@@iiiHenKo[#1]<#2>#3#4#5{{%
+  \Piiitoii{#3}\iiiHK@i
+  \Piiitoii{#4}\iiiHK@ii
+  \def\henko@dot{$\cdot$}%
+  \@@HenKo[#1]<#2>\iiiHK@i\iiiHK@ii{#5}%
+}}%
+% \iiiKakukigou
+\def\iiiKakukigou{\@ifnextchar[{\@iiiKakukigou}{\@iiiKakukigou[\empty]}}%
+\def\@iiiKakukigou[#1]{\@ifnextchar<{\@@iiiKakukigou[#1]}{%
+  \@@iiiKakukigou[#1]<1>}}%
+\def\@@iiiKakukigou[#1]<#2>#3#4#5{%
+  \Piiitoii{#3}\iiiKaku@a\Piiitoii{#4}\iiiKaku@b\Piiitoii{#5}\iiiKaku@c
+  \Kakukigou[#1]<#2>\iiiKaku@a\iiiKaku@b\iiiKaku@c}%
+%
+% 等辺記号
+%
+\def\iiiTouhenkigou{\@ifnextchar[{\@iiiTouhenkigou}{%
+  \@iiiTouhenkigou[$\scriptscriptstyle |$]}}%
+\def\@iiiTouhenkigou[#1]{\@ifnextchar<{\@@iiiTouhenkigou[#1]}{%
+  \@@iiiTouhenkigou[#1]<\@ne>}}%
+\def\@@iiiTouhenkigou[#1]<#2>{\@ifnextchar<{\@@@iiiTouhenkigou[#1]<#2>}{%
+  \@@@iiiTouhenkigou[#1]<#2><0pt>}}%
+\def\@@@iiiTouhenkigou[#1]<#2><#3>{\@ifnextchar({%
+  \@@@@iiiTouhenkigou[#1]<#2><#3>}{\@@@@iiiTouhenkigou[#1]<#2><#3>(0.5)}}%
+\def\@@@@iiiTouhenkigou[#1]<#2><#3>(#4)#5#6{%
+  \Piiitoii{#5}\iiiTouhenkigou@A
+  \Piiitoii{#6}\iiiTouhenkigou@B
+  \Touhenkigou[#1]<#2><#3>(#4)\iiiTouhenkigou@A\iiiTouhenkigou@B}%
+%
+\def\iiitouhenkigou{\@ifnextchar[{\@iiitouhenkigou}{%
+    \@iiitouhenkigou[$\scriptscriptstyle |$]}}%
+\def\@iiitouhenkigou[#1]{\@ifnextchar<{\@@iiitouhenkigou[#1]}{%
+    \@@iiitouhenkigou[#1]<\@ne>}}%
+\def\@@iiitouhenkigou[#1]<#2>{\@ifnextchar<{\@@@iiitouhenkigou[#1]<#2>}{%
+  \@@@iiitouhenkigou[#1]<#2><0pt>}}%
+\def\@@@iiitouhenkigou[#1]<#2><#3>{\@ifnextchar({%
+  \@@@@iiitouhenkigou[#1]<#2><#3>}{\@@@@iiitouhenkigou[#1]<#2><#3>(0.5)}}%
+\def\@@@@iiitouhenkigou[#1]<#2><#3>(#4)#5{%
+    \def\iiitouhenkigou@sub(##1,##2,##3)(##4,##5,##6){%
+      \edef\iiitouhenkigou@a{(##1,##2,##3)}%
+      \edef\iiitouhenkigou@b{(##4,##5,##6)}}%
+  \Cfor{\edef\touhenkigou@a{#5}}{\not\equal\touhenkigou@a\empty}{%
+    \edef\touhenkigou@a{\touhenkigou@b}}\do{%
+    \strsep\touhenkigou@a{;}\touhenkigou@a\touhenkigou@b
+    \expandafter\iiitouhenkigou@sub\touhenkigou@a
+    \iiiTouhenkigou[#1]<#2><#3>(#4)\iiitouhenkigou@a\iiitouhenkigou@b}}%
+%
+% 黒丸
+%
+\def\iiiKuromaru{\@ifnextchar[{\@iiiKuromaru}{%
+  \@iiiKuromaru[\Kuromaru@Hankei]}}%
+\def\@iiiKuromaru[#1]{\@ifnextchar<{\@@iiiKuromaru[#1]}{\@@iiiKuromaru[#1]<\empty>}}%
+\def\@@iiiKuromaru[#1]<#2>#3{%
+  \Tenretuiiitoii{#3}\iiiKmaru@p\@@Kuromaru[#1]<#2>\iiiKmaru@p}%
+%
+\def\iiiSiromaru{\@ifnextchar[{\@iiiSiromaru}{%
+  \@iiiSiromaru[\Kuromaru@Hankei]}}%
+\def\@iiiSiromaru[#1]#2{\Piiitoii{#2}\iiiKmaru@p\Siromaru[#1]\iiiKmaru@p}%
+
+\def\iiikuromaru{\@ifnextchar[{\@iiikuromaru}{\@iiikuromaru[\Kuromaru@Hankei]}}%
+\def\@iiikuromaru[#1]#2{%
+  \Cfor{\edef\iiikuromaru@a{#2}}{\not\equal{\iiikuromaru@a}{\empty}}{}\do{%
+    \strsep{\iiikuromaru@a}{;}\iiikuromaru@a\iiikuromaru@b%
+    \iiiKuromaru[#1]\iiikuromaru@a
+    \edef\iiikuromaru@a{\iiikuromaru@b}}}%
+
+% 空間
+%
+\def\iiiPaint{\@ifstar{\iiiPaint@}{\@iiiPaint}}%
+\def\@iiiPaint{\@ifnextchar<{\@@iiiPaint}{\@@iiiPaint<\empty>}}%
+\def\@@iiiPaint<#1>#2{%
+  \Tenretuiiitoii{#2}\iiiPaint@tmp
+  \emPaint<#1>{\iiiPaint@tmp}%
+}%
+\def\iiiPaint@{\@ifnextchar<{\iiiPaint@@}{\iiiPaint@@<\empty>}}
+\def\iiiPaint@@<#1>#2{%
+  \Tenretuiiitoii{#2}\iiiPaint@tmp
+  \emPaint*<#1>{\iiiPaint@tmp}%
+}%
+%
+\edef\syanuri@kankaku{.125}%        k の刻み値
+\def\iiinuritubusi{\@ifnextchar[{\@iiinuritubusi}{\@iiinuritubusi[.5]}}%
+\def\@iiinuritubusi[#1]{\special{sh #1}\@@iiinuritubusi}%
+\def\@@iiinuritubusi{\@ifnextchar({\@@@iiinuritubusi}{\special{ip}}}%
+\def\@@@iiinuritubusi(#1,#2,#3){{%
+  \Piiitoii{(#1,#2,#3)}\iiinuri@P\vecXY\iiinuri@P\iiinuri@x\iiinuri@y
+  \iftdir
+    \@tempdima\iiinuri@y\unitlength\@tempdima13.837\@tempdima%
+    \@tempdimb\iiinuri@x\unitlength\@tempdimb13.837\@tempdimb%
+  \else
+    \@tempdima\iiinuri@x\unitlength\@tempdima13.837\@tempdima%
+    \@tempdimb\iiinuri@y\unitlength\@tempdimb-13.837\@tempdimb%
+  \fi
+  \special{pa \@seisuu\@tempdima\space\@seisuu\@tempdimb}}%
+    \@@iiinuritubusi}%
+
+\def\iiiNuritubusi{\@ifstar{\iiiHatchpolygon}{\iiiNuritubusi@}}%
+\def\iiiNuritubusi@{\@ifnextchar[{\@iiiNuritubusi}{\@iiiNuritubusi[.5]}}%
+\def\@iiiNuritubusi[#1]{\@ifnextchar<{\@@iiiNuritubusi[#1]}{%
+  \@@iiiNuritubusi[#1]<\empty>}}%
+\def\@@iiiNuritubusi[#1]<#2>#3{\Tenretuiiitoii{#3}\iiiNuritubusi@a
+  \expandafter\Nuritubusi[#1]<#2>\iiiNuritubusi@a}%
+%
+\def\iiiPaint{\@ifstar{\iiiPaint@}{\@iiiPaint}}%
+\def\iiiPaint@{\@ifnextchar<{\iiiPaint@@}{\iiiPaint@@<\empty>}}%
+\def\iiiPaint@@<#1>#2{\Tenretuiiitoii{#2}\iiiPaint@tmp
+  \expandafter\emPaint@@<#1>\iiiPaint@tmp}%
+\def\@iiiPaint{\@ifnextchar<{\@@iiiPaint}{\@@iiiPaint<\empty>}}%
+\def\@@iiiPaint<#1>#2{\Tenretuiiitoii{#2}\iiiPaint@tmp
+  \expandafter\@@emPaint<#1>\iiiPaint@tmp}%
+%
+% 空間
+\def\iiihatchpolygon{\edef\n@vertex{0}%
+  \edef\k@max{-1000}%
+  \edef\k@min{1000}%
+  \iii@preHP}%
+\def\iii@preHP{\@ifnextchar({\iiipre@HP}{\@hatchpolygon}}%
+\def\iiipre@HP(#1,#2,#3){\IAdd\n@vertex{1}\n@vertex
+  \Piiitoii{(#1,#2,#3)}\iiipre@p\vecXY\iiipre@p\iiipre@x\iiipre@y
+  \expandafter\edef\csname v@x\romannumeral\n@vertex\endcsname{\iiipre@x}%
+  \expandafter\edef\csname v@y\romannumeral\n@vertex\endcsname{\iiipre@y}%
+  \Mul\h@v@x{\iiipre@y}\@k\Mul\h@v@y{\iiipre@x}\@kk\Sub\@k\@kk\@k%
+  \expandafter\edef\csname v@k\romannumeral\n@vertex\endcsname{\@k}%
+  \ifdim\@k pt>\k@max pt\relax\edef\k@max{\@k}\edef\n@max{\n@vertex}\fi
+  \ifdim\@k pt<\k@min pt\relax\edef\k@min{\@k}\edef\n@min{\n@vertex}\fi
+  \iii@preHP}%
+
+\def\iiiHatchpolygon{\@ifnextchar[{\@iiiHatchpolygon}{\@iiiHatchpolygon[45]}}%
+\def\@iiiHatchpolygon[#1]{\@ifnextchar<{\@@iiiHatchpolygon[#1]}{%
+  \@@iiiHatchpolygon[#1]<.125>}}%
+\def\@@iiiHatchpolygon[#1]<#2>#3{{%
+%\edef\h@angle{#1}%    hatch の方向角
+%\edef\syanuri@kankaku{#2}%        k の刻み値
+%\DegRad\h@angle\h@angle
+%\Cos\h@angle\h@v@x%
+%\Sin\h@angle\h@v@y%   (\h@v@x,\h@v@y):hatch の方向ベクトル
+\Tenretuiiitoii{#3}\iiiNuritubusi@a
+\edef\iiiNuritubusi@tmp{[#1]<#2>{\iiiNuritubusi@a}}%
+%\typeout{now!iiiHatchpolygon : \@tmp}%
+\expandafter\Hatchpolygon\iiiNuritubusi@tmp}}%
+
+% \iiibGurafu(#1)(#2)#3#4#5#6
+%   #1 : t の刻み値（デフォルト値は 0.05 ）
+%   #2 : 点線で描画するときの描画する部分の t のレンジ
+%   #3 : x=f(t)
+%   #4 : y=g(t)
+%   #5 : z=h(t)
+%   #6 : t の始め値
+%   #7 :     終り値
+\def\iiibGurafu{\@ifnextchar({\iiib@Gurafu}{\iiib@Gurafu(.05)}}%
+\def\iiib@Gurafu(#1){\@ifnextchar({\@iiib@Gurafu(#1)}{\@iiib@Gurafu(#1)(\empty)}}%
+\def\@iiib@Gurafu(#1)(#2)#3#4#5#6#7{{%
+  \ifx\empty#2\def\@resen{}%
+    \For\@t{#6}{#7}{#1}\Do{#3\@t\@x#4\@t\@y#5\@t\@z
+        \Piiitoii{(\@x,\@y,\@z)}\bG@v\vecXY\bG@v\@x\@y
+        \setlength{\@tempdima}{\@x pt}\setlength{\@tempdimb}{\@y pt}%
+        \ifdim\@tempdima<\xmin pt\relax\else\ifdim\@tempdima>\xmax pt\relax\else
+        \ifdim\@tempdimb<\ymin pt\relax\else\ifdim\@tempdimb>\ymax pt\relax\else
+        \edef\@resen{\@resen(\@x,\@y)}\fi\fi\fi\fi}%
+        #3{#7}\@x#4{#7}\@y#5{#7}\@z
+        \Piiitoii{(\@x,\@y,\@z)}\bG@v\vecXY\bG@v\@x\@y
+        \setlength{\@tempdima}{\@x pt}\setlength{\@tempdimb}{\@y pt}%
+        \ifdim\@tempdima<\xmin pt\relax\else\ifdim\@tempdima>\xmax pt\relax\else
+        \ifdim\@tempdimb<\ymin pt\relax\else\ifdim\@tempdimb>\ymax pt\relax\else
+        \edef\@resen{\@resen(\@x,\@y)}\fi\fi\fi\fi%
+    \Drawline\@resen%
+%   \xdef\oresen{\@resen}%
+    \xdef\iiibGurafuKinziOresen{\@resen}%
+  \else%
+    \For\@t{#6}{#7}{#1}\Do{#3\@t\g@x#4\@t\g@y#5\@t\g@z
+        \Piiitoii{(\g@x,\g@y,\g@z)}\bG@v\vecXY\bG@v\g@x\g@y
+        \setlength{\@tempdima}{\g@x pt}\setlength{\@tempdimb}{\g@y pt}%
+        \ifdim\@tempdima<\xmin pt\relax\else\ifdim\@tempdima>\xmax pt\relax\else
+        \ifdim\@tempdimb<\ymin pt\relax\else\ifdim\@tempdimb>\ymax pt\relax\else
+        \Add\@t{#2}\@@t #3\@@t\@@x #4\@@t\@@y#5\@t\@@z%
+        \Piiitoii{(\@@x,\@@y,\@@z)}\bG@v\vecXY\bG@v\@@x\@@y
+        \drawline(\g@x,\g@y)(\@@x,\@@y)\fi\fi\fi\fi}%
+  \fi}}%
+
+\def\iiiclipdrawline{\@ifnextchar({\@iiiclipdrawline}{\relax}}%
+\def\@iiiclipdrawline(#1,#2,#3)(#4,#5,#6){%
+  \iiiclipDrawline{(#1,#2,#3)(#4,#5,#6)}}%
+\def\iiiclipDrawline{%
+  \@ifnextchar<{\@iiiclipDrawline}{\@iiiclipDrawline<\empty>}}%
+\def\@iiiclipDrawline<#1>#2{%
+  \Tenretuiiitoii{#2}\iiiDrawline@a
+  \clipDrawline<#1>\iiiDrawline@a}%
+%
+\def\iiiParamC{\@ifnextchar<{\@iiiParamC}{\@iiiParamC<\empty>}}%
+\def\@iiiParamC<#1>#2#3#4{\bgroup%
+  \edef\YG@unit{\dt@default}%
+  \def\YG@xl{0}%
+  \def\YG@xr{2*$pi}%
+  \edef\next@opt{\empty}%
+  \ifnum\EMps@mode=\@ne\gsave\fi
+  \ifx\empty #1\else\setkeys{emGurafu}{#1}\fi
+  \t@perl{#2}\x@perl@siki
+  \t@perl{#3}\y@perl@siki
+  \t@perl{#4}\z@perl@siki
+  \check@perlp@ss
+  \ifcase\perlp@ss
+      \@perljob@sub
+      \ifnum\skip@perl=\z@
+        \immediate\write\em@whndl{open(FHNDL,">\perl@datafilename");}%
+\@requirePerlLib
+        \immediate\write\em@whndl{%
+          for($x=\YG@xl;$x<\YG@xr;$x+=\YG@unit)%
+            {printf FHNDL"(\@percent f,\@percent f,\@percent f)",%
+            \x@perl@siki,\y@perl@siki,\z@perl@siki;};$x=\YG@xr;%
+            printf FHNDL"(\@percent f,\@percent f,\@percent f)",%
+            \x@perl@siki,\y@perl@siki,\z@perl@siki;}%
+        \immediate\write\em@whndl{close(FHNDL);}%
+        \immediate\closeout\em@whndl
+        \immediate\EM@system{\Perl@Name\space \perl@scriptfilename}%
+        \IfFileExists{\perl@datafilename}{%
+          \openin\pl@in=\perl@datafilename}{\@warning{do perl}}%
+      \fi
+      \IfFileExists{\perl@datafilename}{%
+        \read\pl@in to\BGurafu@resen
+        \trim\BGurafu@resen\to\@resen
+        \immediate\closein\pl@in
+%        \clipDrawline{\@resen}%
+        \EMedef\next@opt@{<\next@opt>}%
+        \ifnum\EMps@mode=\@ne
+          \begin{clipTakakkei}\zenheimen
+            \put(0,0){\expandafter\iiiclipDrawline\next@opt@{\@resen}}%
+          \end{clipTakakkei}
+        \else
+          \put(0,0){\expandafter\iiiclipDrawline\next@opt@{\@resen}}%
+        \fi
+      }{\@warning{do perl}}%
+  \or
+      \open@perlfile
+      \immediate\write\em@whndl{open(FHNDL,"> \perl@datafilename");}%
+      \immediate\write\em@whndl{%
+        for($x=\YG@xl;$x<\YG@xr;$x+=\YG@unit)%
+          {printf FHNDL"(\@percent f,\@percent f,\@percent f)",\x@perl@siki,\y@perl@siki,\z@perl@siki;}%
+          ;$x=\YG@xr;%
+          printf FHNDL"(\@percent f,\@percent f,\@percent f)",\x@perl@siki,\y@perl@siki,\z@perl@siki;}%
+      \immediate\write\em@whndl{close(FHNDL);}%
+  \or
+      \IfFileExists{\perl@datafilename}{%
+        \openin\pl@in=\perl@datafilename
+        \read\pl@in to\BGurafu@resen
+        \trim\BGurafu@resen\to\@resen
+        \immediate\closein\pl@in
+%        \clipDrawline{\@resen}%
+        \EMedef\next@opt@{<\next@opt>}%
+        \ifnum\EMps@mode=\@ne
+          \begin{clipTakakkei}\zenheimen
+            \put(0,0){\expandafter\iiiclipDrawline\next@opt@{\@resen}}%
+          \end{clipTakakkei}
+        \else
+          \put(0,0){\expandafter\iiiclipDrawline\next@opt@{\@resen}}%
+        \fi
+      }{\@warning{do perl}}%
+  \fi
+  \ifnum\EMps@mode=\@ne\grestore\fi
+\egroup}%
+%
+% \iiiBGurafu(#1)(#2)#3#4#5#6#7
+%   #1 : t の刻み値（デフォルト値は 0.05 ）
+%   #2 : 点線で描画するときの描画する部分の t のレンジ
+%   #3 : x=f(t)
+%   #4 : y=g(t)
+%   #5 : z=h(t)
+%   #6 : t の始め値
+%   #7 :     終り値
+
+%\def\iiiBGurafu{\@ifnextchar({\iiiB@Gurafu}{\iiiB@Gurafu(.05)}}%
+\def\iiiBGurafu{\begingroup
+  \ifnum\EMps@mode=\@ne\gsave\fi
+  \@ifnextchar[{\@iiiBGurafu@}{\@@iiiBGurafu}}%
+\def\@iiiBGurafu@[#1]{\setkeys{emGurafu}{#1}\@@iiiBGurafu}%
+\def\@@iiiBGurafu{\@ifnextchar({\iiiB@Gurafu}{\iiiB@Gurafu(.05)}}%
+\def\iiiB@Gurafu(#1){\@ifnextchar({\@iiiB@Gurafu(#1)}{%
+  \@iiiB@Gurafu(#1)(\empty)}}%
+\def\@iiiB@Gurafu(#1)(#2)#3#4#5#6#7{{%
+  \t@perl{#3}\x@perl@siki
+  \t@perl{#4}\y@perl@siki
+  \t@perl{#5}\z@perl@siki
+  \check@perlp@ss
+  \ifx\empty#2\relax
+    \ifcase\perlp@ss
+      \@perljob@sub
+      \ifnum\skip@perl=\z@
+        \immediate\write\em@whndl{open(FHNDL,">\perl@datafilename");}%
+        \immediate\write\em@whndl{require 'emath.pl';}%
+        \immediate\write\em@whndl{%
+          for($x=#6;$x<#7;$x+=#1){%
+            printf FHNDL"(\@percent f,\@percent f,\@percent f)",%
+              \x@perl@siki,\y@perl@siki,\z@perl@siki;};%
+              $x=#7;printf FHNDL"(\@percent f,\@percent f,\@percent f)",%
+              \x@perl@siki,\y@perl@siki,\z@perl@siki;}%
+        \immediate\write\em@whndl{close(FHNDL);}%
+        \immediate\closeout\em@whndl
+        \immediate\EM@system{\Perl@Name\space \perl@scriptfilename}%
+        \IfFileExists{\perl@datafilename}{%
+          \openin\pl@in=\perl@datafilename}{\@warning{do perl}}%
+      \fi
+      \IfFileExists{\perl@datafilename}{%
+        \read\pl@in to\@resen
+        \immediate\closein\pl@in
+        \iiiclipDrawline{\@resen}%
+      }{\@warning{do perl}}%
+    \or
+      \open@perlfile
+      \immediate\write\em@whndl{open(FHNDL,"> \perl@datafilename");}%
+        \immediate\write\em@whndl{%
+          for($x=#6;$x<#7;$x+=#1){%
+            printf FHNDL"(\@percent f,\@percent f,\@percent f)",%
+              \x@perl@siki,\y@perl@siki,\z@perl@siki;};%
+              $x=#7;printf FHNDL"(\@percent f,\@percent f,\@percent f)",%
+              \x@perl@siki,\y@perl@siki,\z@perl@siki;}%
+        \immediate\write\em@whndl{close(FHNDL);}%
+    \or
+      \IfFileExists{\perl@datafilename}{%
+        \openin\pl@in=\perl@datafilename
+        \read\pl@in to\@resen
+        \immediate\closein\pl@in
+        \iiiclipDrawline{\@resen}%
+      }{\@warning{do perl}}%
+    \fi
+  \else
+    \ifcase\perlp@ss
+      \@perljob@sub
+      \ifnum\skip@perl=\z@
+        \immediate\write\em@whndl{open(FHNDL,">\perl@datafilename");}%
+        \immediate\write\em@whndl{require 'emath.pl';}%
+        \immediate\write\em@whndl{%
+          for($x=#6;$x<#7;$x+=#1){%
+            printf FHNDL"(\@percent f,\@percent f,\@percent f)",%
+              \x@perl@siki,\y@perl@siki,\z@perl@siki;%
+            $x+=#2;%
+            printf FHNDL"(\@percent f,\@percent f,\@percent f)\string\n",%
+              \x@perl@siki,\y@perl@siki,\z@perl@siki;%
+            $x-=#2;}}%
+        \immediate\write\em@whndl{close(FHNDL);}%
+        \immediate\closeout\em@whndl
+        \immediate\EM@system{\Perl@Name\space \perl@scriptfilename}%
+        \IfFileExists{\perl@datafilename}{%
+          \openin\pl@in=\perl@datafilename}{\@warning{do perl}}%
+      \fi
+      \IfFileExists{\perl@datafilename}{%
+        \Cfor{\edef\@wari{0}}{\@wari=0}{}\do{%
+          \ifeof\pl@in\edef\@wari{1}\else
+            \read\pl@in to\@resen
+            \expandafter\iiiclipdrawline\@resen
+          \fi}%
+        \immediate\closein\pl@in
+      }{\@warning{do perl}}%
+    \or
+      \open@perlfile
+      \immediate\write\em@whndl{open(FHNDL,"> \perl@datafilename");}%
+      \immediate\write\em@whndl{%
+          for($x=#6;$x<#7;$x+=#1){%
+            printf FHNDL"(\@percent f,\@percent f,\@percent f)",%
+              \x@perl@siki,\y@perl@siki,\z@perl@siki;%
+            $x+=#2;%
+            printf FHNDL"(\@percent f,\@percent f,\@percent f)\string\n",%
+              \x@perl@siki,\y@perl@siki,\z@perl@siki;%
+            $x-=#2;}}%
+      \immediate\write\em@whndl{close(FHNDL);}%
+    \or
+      \IfFileExists{\perl@datafilename}{%
+        \openin\pl@in=\perl@datafilename
+        \Cfor{\edef\@wari{0}}{\@wari=0}{}\do{%
+          \ifeof\pl@in\edef\@wari{1}\else
+            \read\pl@in to\@resen
+            \iiiclipDrawline{\@resen}%
+          \fi}%
+        \immediate\closein\pl@in
+      }{\@warning{do perl}}%
+    \fi
+  \fi
+}%
+\ifnum\EMps@mode=\@ne\grestore\fi
+\endgroup\ignorespaces
+}%
+%
+\def\iiiParamC{\@ifnextchar<{\@iiiParamC}{\@iiiParamC<\empty>}}%
+\def\@iiiParamC<#1>#2#3#4{%
+  \begingroup
+  \edef\YG@unit{\dx@default}%
+  \def\YG@xl{0}%
+  \def\YG@xr{2*$pi}%
+  \edef\next@opt{\empty}%
+  \ifnum\EMps@mode=\@ne\gsave\fi
+  \ifx\empty #1\else\setkeys{emGurafu}{#1}\fi
+  \t@perl{#2}\x@perl@siki
+  \t@perl{#3}\y@perl@siki
+  \t@perl{#4}\z@perl@siki
+  \check@perlp@ss
+  \ifcase\perlp@ss
+      \@perljob@sub
+      \ifnum\skip@perl=\z@
+        \immediate\write\em@whndl{open(FHNDL,">\perl@datafilename");}%
+        \immediate\write\em@whndl{require 'emath.pl';}%
+        \immediate\write\em@whndl{%
+          for($x=\YG@xl;$x<\YG@xr;$x+=\YG@unit){%
+            printf FHNDL"(\@percent f,\@percent f,\@percent f)",%
+              \x@perl@siki,\y@perl@siki,\z@perl@siki;};%
+              $x=\YG@xr;printf FHNDL"(\@percent f,\@percent f,\@percent f)",%
+              \x@perl@siki,\y@perl@siki,\z@perl@siki;}%
+        \immediate\write\em@whndl{close(FHNDL);}%
+        \immediate\closeout\em@whndl
+        \immediate\EM@system{\Perl@Name\space \perl@scriptfilename}%
+        \IfFileExists{\perl@datafilename}{%
+          \openin\pl@in=\perl@datafilename}{\@warning{do perl}}%
+      \fi
+      \IfFileExists{\perl@datafilename}{%
+        \read\pl@in to\@resen
+        \immediate\closein\pl@in
+%        \iiiclipDrawline{\@resen}%
+        \EMedef\next@opt@{<\next@opt>}%
+        \ifnum\EMps@mode=\@ne
+          \begin{clipTakakkei}\zenheimen
+            \put(0,0){\expandafter\iiiclipDrawline\next@opt@{\@resen}}%
+          \end{clipTakakkei}
+        \else
+          \put(0,0){\expandafter\iiiclipDrawline\next@opt@{\@resen}}%
+        \fi
+      }{\@warning{do perl}}%
+    \or
+      \open@perlfile
+      \immediate\write\em@whndl{open(FHNDL,"> \perl@datafilename");}%
+        \immediate\write\em@whndl{%
+          for($x=\YG@xl;$x<\YG@xr;$x+=\YG@unit){%
+            printf FHNDL"(\@percent f,\@percent f,\@percent f)",%
+              \x@perl@siki,\y@perl@siki,\z@perl@siki;};%
+              $x=\YG@xr;printf FHNDL"(\@percent f,\@percent f,\@percent f)",%
+              \x@perl@siki,\y@perl@siki,\z@perl@siki;}%
+        \immediate\write\em@whndl{close(FHNDL);}%
+    \or
+      \IfFileExists{\perl@datafilename}{%
+        \openin\pl@in=\perl@datafilename
+        \read\pl@in to\@resen
+        \immediate\closein\pl@in
+%        \iiiclipDrawline{\@resen}%
+        \EMedef\next@opt@{<\next@opt>}%
+        \ifnum\EMps@mode=\@ne
+          \begin{clipTakakkei}\zenheimen
+            \put(0,0){\expandafter\clipDrawline\next@opt@{\@resen}}%
+          \end{clipTakakkei}
+        \else
+          \put(0,0){\expandafter\clipDrawline\next@opt@{\@resen}}%
+        \fi
+      }{\@warning{do perl}}%
+    \fi
+  \ifnum\EMps@mode=\@ne\grestore\fi
+  \endgroup\ignorespaces
+}%
+%
+\def\iiiBxminmax#1#2#3#4#5#6#7{%
+  \check@perlp@ss
+  \vecXY\@@@Ex\@@@Exx\@@@Exy
+  \vecXY\@@@Ey\@@@Eyx\@@@Eyy
+  \vecXY\@@@Ez\@@@Ezx\@@@Ezy
+  \t@perl{#1}\x@perl@siki
+  \t@perl{#2}\y@perl@siki
+  \t@perl{#3}\z@perl@siki
+  \CalcVal{%
+    $exx=\@@@Exx;$exy=\@@@Exy;
+    $eyx=\@@@Eyx;$eyy=\@@@Eyy;
+    $ezx=\@@@Ezx;$ezy=\@@@Ezy;
+    $xmax=-100000;
+    $xmin=100000;
+    for($x=#4;$x<=#5;$x+=.01){
+      $xval=\x@perl@siki;
+      $yval=\y@perl@siki;
+      $zvzl=\z@perl@siki;
+      $xx=$xval*$exx+$yval*$eyx+$zval*$ezx;
+      if($xx>$xmax){
+        $xmax=$xx;$tmax=$x;
+      }
+      if($xx<$xmin){
+        $xmin=$xx;$tmin=$x;
+      }
+    }
+    printf FHNDL "\EMpercentchar f,\EMpercentchar f",$tmin,$tmax;
+  }\iiiBx@t
+  \Strsep\iiiBx@t{,}#6#7
+}%
+\def\iiiByminmax#1#2#3#4#5#6#7{%
+  \check@perlp@ss
+  \vecXY\@@@Ex\@@@Exx\@@@Exy
+  \vecXY\@@@Ey\@@@Eyx\@@@Eyy
+  \vecXY\@@@Ez\@@@Ezx\@@@Ezy
+  \t@perl{#1}\x@perl@siki
+  \t@perl{#2}\y@perl@siki
+  \t@perl{#3}\z@perl@siki
+  \CalcVal{%
+    $exx=\@@@Exx;$exy=\@@@Exy;
+    $eyx=\@@@Eyx;$eyy=\@@@Eyy;
+    $ezx=\@@@Ezx;$ezy=\@@@Ezy;
+    $xmax=-100000;
+    $xmin=100000;
+    for($x=#4;$x<=#5;$x+=.01){
+      $xval=\x@perl@siki;
+      $yval=\y@perl@siki;
+      $zvzl=\z@perl@siki;
+      $xx=$xval*$exy+$yval*$eyy+$zval*$ezy;
+      if($xx>$xmax){
+        $xmax=$xx;$tmax=$x;
+      }
+      if($xx<$xmin){
+        $xmin=$xx;$tmin=$x;
+      }
+    }
+    printf FHNDL "\EMpercentchar f,\EMpercentchar f",$tmin,$tmax;
+  }\iiiBx@t
+  \Strsep\iiiBx@t{,}#6#7
+}%
+%
+%
+% 曲線上の点を求める。
+%   #1 : x=f(t)
+%   #2 : y=g(t)
+%   #3 : z=h(t)
+%   #4 : t の値
+%   #5 : 曲線上の点
+
+\def\iiibTen#1#2#3#4#5{%
+  #1{#4}\iiibTen@x#2{#4}\iiibTen@y#3{#4}\iiibTen@z
+  \edef#5{(\iiibTen@x,\iiibTen@y,\iiibTen@z)}}%
+
+\def\iiiBTen#1#2#3#4#5{%
+  \funcval{#1}{#4}\iiiBTen@x
+  \funcval{#2}{#4}\iiiBTen@y
+  \funcval{#3}{#4}\iiiBTen@z
+  \edef#5{(\iiiBTen@x,\iiiBTen@y,\iiiBTen@z)}}%
+%
+\def\@iiitenretu@seppara{%
+  \@ifnextchar[{\@iiitenretu@seppara@}{%
+  \namae@opt={}\@@iiitenretu@seppara}}%
+\def\@iiitenretu@seppara@[#1]{%
+  \namae@opt={[#1]}%
+  \@@iiitenretu@seppara}%
+\def\@@iiitenretu@seppara#1(#2,#3,#4\@nil{%
+  \tenretu@namae={#1}%
+  \edef\tenretu@x{#2}%
+  \edef\tenretu@y{#3}%
+  \edef\tenretu@zn{#4}%
+  \def\tenretu@z{}%
+  \def\tenretu@n{}%
+  \def\tenretu@k{1}%
+  \def\tenretu@kubun{y}%
+  \expandafter\@tfor\expandafter\tenretu@c\expandafter:\expandafter=\tenretu@zn
+  \do{%
+    \if y\tenretu@kubun
+      \if(\tenretu@c\Incr\tenretu@k
+        \edefappend\tenretu@z{\tenretu@c}%
+      \else\if)\tenretu@c\Decr\tenretu@k
+        \ifnum\tenretu@k=\z@\edef\tenretu@kubun{n}%
+        \else\edefappend\tenretu@z{\tenretu@c}\fi
+      \else
+        \edefappend\tenretu@z{\tenretu@c}%
+      \fi\fi
+    \else
+      \edefappend\tenretu@n{\tenretu@c}%
+    \fi
+  }%
+  \ifnum\tenretu@k>\z@\errmessage{iiitenretu : syntax error !}\fi
+  \calcval[s]\tenretu@x\tenretu@x
+  \calcval[s]\tenretu@y\tenretu@y
+  \calcval[s]\tenretu@z\tenretu@z
+}%
+%
+% \iiitenretu#1
+%   #1 は点列を `;' で区切った列
+%     #1は
+%       [##1]##2(##3,##4,##5)##6
+%     の形式で点列を `;' で区切る。
+%       ##1 : オプションで，点の位置に置く文字列
+%             （省略時は，##2 と同じ）
+%       ##2 : \##2 という変数の頂点名
+%       [s] : をつけると相対移動とみなす
+%       (##3,##4,##5) : 頂点の座標
+%       ##6 : 頂点の近傍に置く文字列の配置オプション
+%             [方角] オプションに限り区切子 `[', `]' を省略可能
+%  \edef\##2{(##3,##4,##5)}として，点\##2 が定義され，
+%  \Put に
+%       \Put\##2##6{##1}%
+%  として引き渡される。）
+%
+\def\iiitenretu{\@ifstar{\iiintenretu}{\iiiltenretu}}%
+%
+\def\iiiltenretu{\def\by@perl{\by@perl@}\edef\by@perl@retu{\by@perl@}%
+  \edef\put@kuromaru{0}%
+  \@ifnextchar<{\iiiltenretu@opt}{\@iiiltenretu}}%
+\def\iiiltenretu@opt<#1>{%
+  \setkeys{emP}{#1}%
+  \edef\by@perl@retu{\by@perl}\edef\by@perl{\by@perl@}%
+  \@iiiltenretu}%
+\def\@iiiltenretu#1{%
+% -----------------------------------------------------
+% subroutine
+\def\@iiitenretu@sub{\@ifnextchar[{\@@iiitenretu@sub}{%
+  \@@iiitenretu@sub[\empty]}}%
+\def\@@iiitenretu@sub[##1]##2(##3,##4,##5){%
+  \edef\iiitenretu@kyokuzahyou{0}%
+  \edef\iiitenretu@soutaizahyou{0}%
+  \strsep{##2}{[}\iiitenretu@Vname\iiitenretu@opt
+  \Strchr\iiitenretu@opt{r}\iiitenretu@tmp
+  \ifnum\iiitenretu@tmp>\z@\edef\iiitenretu@kyokuzahyou{1}\fi
+  \Strchr\iiitenretu@opt{s}\iiitenretu@tmp
+  \ifnum\iiitenretu@tmp>\z@\edef\iiitenretu@soutaizahyou{1}\fi
+  \@ifnextchar({\@@iiitenretusub@std[##1]\iiitenretu@Vname(##3,##4,##5)}{%
+  \@ifnextchar[{\@@iiitenretusub@std[##1]\iiitenretu@Vname(##3,##4,##5)}{%
+    \@@iiitenretusub@brev[##1]\iiitenretu@Vname(##3,##4,##5)}}}%
+\def\@@iiitenretusub@brev[##1]##2(##3,##4,##5)##6\@nil{%
+  \ifthenelse{\equal{##6}{}}{%
+  \@@iiitenretusub@std[##1]##2(##3,##4,##5)\@nil}{%
+  \@@iiitenretusub@std[##1]##2(##3,##4,##5)[##6]\@nil}}%
+\def\@@iiitenretusub@std[##1]##2(##3,##4,##5)##6\@nil{%
+  \edef\@OresenV{(##3,##4,##5)}%
+  \ifnum\iiitenretu@soutaizahyou>\z@\Addvec\@OresenV@old\@OresenV\@OresenV\fi
+  \expandafter\edef\csname ##2\endcsname{\@OresenV}%
+  \edef\@iiitenretu@subtmp{{\csname ##2\endcsname}##6}%
+  \ifx\empty##1\edef\iiitenretu@Vname{##2}\else\edef\iiitenretu@Vname{##1}\fi
+  \ifnum\put@kuromaru>\z@\iiiKuromaru{\csname ##2\endcsname}\fi
+  \expandafter\iiiPut\@iiitenretu@subtmp\iiitenretu@Vname}%
+% -----------------------------------------------------
+  \Cfor{\edef\@OresenVs{#1}}{\not\equal\@OresenVs\empty}{}\do{%
+    \strsep\@OresenVs{;}\@OresenV\@OresenVs
+    \ifnum\by@perl@retu=\z@
+    \else
+      \expandafter\@iiitenretu@seppara\@OresenV\@nil
+      \edef\@OresenV{%
+        \the\namae@opt\the\tenretu@namae(\tenretu@x,\tenretu@y,\tenretu@z)\tenretu@n}%
+    \fi
+    \expandafter\@iiitenretu@sub\@OresenV\@nil
+    \edef\@OresenV@old{\@OresenV}}%
+\def\by@perl{\by@perl@}%
+\ignorespaces
+}%
+%
+\def\iiintenretu{\@ifstar{\iiitenNahuda}{\@iiintenretu}}%
+\def\@iiintenretu#1{%
+% -----------------------------------------------------
+% subroutine
+\def\@iiitenretu@sub{\@ifnextchar[{\@@iiitenretu@sub}{%
+  \@@iiitenretu@sub[\empty]}}%
+\def\@@iiitenretu@sub[##1]##2(##3,##4,##5){%
+  \edef\iiitenretu@kyokuzahyou{0}%
+  \edef\iiitenretu@soutaizahyou{0}%
+  \strsep{##2}{[}\iiitenretu@Vname\iiitenretu@opt
+  \Strchr\iiitenretu@opt{r}\iiitenretu@tmp
+  \ifnum\iiitenretu@tmp>\z@\edef\iiitenretu@kyokuzahyou{1}\fi
+  \Strchr\iiitenretu@opt{s}\iiitenretu@tmp
+  \ifnum\iiitenretu@tmp>\z@\edef\iiitenretu@soutaizahyou{1}\fi
+  \@ifnextchar({\@@iiitenretusub@std[##1]\iiitenretu@Vname(##3,##4,##5)}{%
+  \@ifnextchar[{\@@iiitenretusub@std[##1]\iiitenretu@Vname(##3,##4,##5)}{%
+    \@@iiitenretusub@brev[##1]\iiitenretu@Vname(##3,##4,##5)}}}%
+\def\@@iiitenretusub@brev[##1]##2(##3,##4,##5)##6\@nil{%
+  \@@iiitenretusub@std[##1]##2(##3,##4,##5)\@nil}%
+\def\@@iiitenretusub@std[##1]##2(##3,##4,##5)##6\@nil{%
+  \edef\@OresenV{(##3,##4,##5)}%
+  \ifnum\iiitenretu@soutaizahyou>\z@\Addvec\@OresenV@old\@OresenV\@OresenV\fi
+  \expandafter\edef\csname ##2\endcsname{\@OresenV}%
+%  \edef\@iiitenretu@subtmp{{\csname ##2\endcsname}##6}%
+%  \ifx\empty##1\edef\iiitenretu@Vname{##2}\else\edef\iiitenretu@Vname{##1}\fi
+%  \expandafter\iiiPut\@iiitenretu@subtmp\iiitenretu@Vname
+  }%
+% -----------------------------------------------------
+  \Cfor{\edef\@OresenVs{#1}}{\not\equal\@OresenVs\empty}{}\do{%
+    \strsep\@OresenVs{;}\@OresenV\@OresenVs
+    \expandafter\@iiitenretu@sub\@OresenV\@nil
+    \edef\@OresenV@old{\@OresenV}}}%
+%
+% 点に名札
+%
+\def\iiitenNahuda{\edef\put@kuromaru{0}\@ifnextchar<{\iiitenNahuda@}{\@iiitenNahuda}}%
+\def\iiitenNahuda@<#1>{\setkeys{emP}{#1}\@iiitenNahuda}%
+\def\@iiitenNahuda#1{%
+  \let\@nahudaPut\iiiPut
+  \let\@nahudaKuromaru\iiiKuromaru
+  \EMedef\tenNahuda@b{#1}%
+  \Cfor{\Strsep\tenNahuda@b{;}\tenNahuda@a\tenNahuda@b}%
+       {\not\equal\tenNahuda@a\empty}%
+       {\Strsep\tenNahuda@b{;}\tenNahuda@a\tenNahuda@b}%
+    \do{%
+      \expandafter\tenNahuda@sub\tenNahuda@a\@nil
+    }%
+}%
+%
+% 極座標（球座標）
+%
+\def\StoZ#1#2#3#4{%
+% #1 : r
+% #2 : θ（六十分法）OPがz軸となす角
+% #3 : φ（六十分法）xy平面で OP がx軸となす角
+% #4 : 直交座標
+  \DegCos{#2}\sz@z\Mulself\sz@z{#1}% r*cos(θ)
+  \DegSin{#2}\sz@r\Mulself\sz@r{#1}% r*sin(θ)
+  \DegCos{#3}\sz@x\Mulself\sz@x\sz@r
+  \DegSin{#3}\sz@y\Mulself\sz@y\sz@r
+  \edef#4{(\sz@x,\sz@y,\sz@z)}%
+}%
+%
+% 円柱座標
+%
+% \iiictenretu#1
+%   #1 は点列を `;' で区切った列
+%     #1は
+%       [##1]##2(##3,##4,##5)##6
+%     の形式で点列を `;' で区切る。
+%       ##1 : オプションで，点の位置に置く文字列
+%             （省略時は，##2 と同じ）
+%       ##2 : \##2 という変数の頂点名
+%       [s] : をつけると相対移動とみなす
+%       (##3,##4,##5) : 頂点の円柱座標（##4 は六十分法）
+%       ##6 : 頂点の近傍に置く文字列の配置オプション
+%             [方角] オプションに限り区切子 `[', `]' を省略可能
+%  \edef\##2{(##3,##4,##5)}として，点\##2 が定義され，
+%  \Put に
+%       \Put\##2##6{##1}%
+%  として引き渡される。）
+%
+\def\iiictenretu{\@ifstar{\iiinctenretu}{\iiilctenretu}}%
+%
+\def\iiilctenretu#1{%
+% -----------------------------------------------------
+% subroutine
+\def\@iiictenretu@sub{\@ifnextchar[{\@@iiictenretu@sub}{%
+  \@@iiictenretu@sub[\empty]}}%
+\def\@@iiictenretu@sub[##1]##2(##3,##4,##5){%
+  \edef\iiictenretu@kyokuzahyou{0}%
+  \edef\iiictenretu@soutaizahyou{0}%
+  \strsep{##2}{[}\iiictenretu@Vname\iiictenretu@opt
+  \Strchr\iiictenretu@opt{r}\iiictenretu@tmp
+  \ifnum\iiictenretu@tmp>\z@\edef\iiictenretu@kyokuzahyou{1}\fi
+  \Strchr\iiictenretu@opt{s}\iiictenretu@tmp
+  \ifnum\iiictenretu@tmp>\z@\edef\iiictenretu@soutaizahyou{1}\fi
+  \@ifnextchar({\@@iiictenretusub@std[##1]\iiictenretu@Vname(##3,##4,##5)}{%
+  \@ifnextchar[{\@@iiictenretusub@std[##1]\iiictenretu@Vname(##3,##4,##5)}{%
+    \@@iiictenretusub@brev[##1]\iiictenretu@Vname(##3,##4,##5)}}}%
+\def\@@iiictenretusub@brev[##1]##2(##3,##4,##5)##6\@nil{%
+  \ifthenelse{\equal{##6}{}}{%
+  \@@iiictenretusub@std[##1]##2(##3,##4,##5)\@nil}{%
+  \@@iiictenretusub@std[##1]##2(##3,##4,##5)[##6]\@nil}}%
+\def\@@iiictenretusub@std[##1]##2(##3,##4,##5)##6\@nil{%
+  \DegCos{##4}\iiictenretu@x\Mul{##3}\iiictenretu@x\iiictenretu@x
+  \DegSin{##4}\iiictenretu@y\Mul{##3}\iiictenretu@y\iiictenretu@y
+  \edef\@OresenV{(\iiictenretu@x,\iiictenretu@y,##5)}%
+% \edef\@OresenV{(##3,##4,##5)}%
+  \ifnum\iiictenretu@soutaizahyou>\z@\Addvec\@OresenV@old\@OresenV\@OresenV\fi
+  \expandafter\edef\csname ##2\endcsname{\@OresenV}%
+  \edef\@iiictenretu@subtmp{{\csname ##2\endcsname}##6}%
+  \ifx\empty##1\edef\iiictenretu@Vname{##2}\else\edef\iiictenretu@Vname{##1}\fi
+  \expandafter\iiiPut\@iiictenretu@subtmp\iiictenretu@Vname}%
+% -----------------------------------------------------
+  \Cfor{\edef\@OresenVs{#1}}{\not\equal\@OresenVs\empty}{}\do{%
+    \strsep\@OresenVs{;}\@OresenV\@OresenVs
+    \expandafter\@iiictenretu@sub\@OresenV\@nil
+    \edef\@OresenV@old{\@OresenV}}}%
+%
+\def\iiinctenretu#1{%
+% -----------------------------------------------------
+% subroutine
+\def\@iiictenretu@sub{\@ifnextchar[{\@@iiictenretu@sub}{%
+  \@@iiictenretu@sub[\empty]}}%
+\def\@@iiictenretu@sub[##1]##2(##3,##4,##5){%
+  \edef\iiictenretu@kyokuzahyou{0}%
+  \edef\iiictenretu@soutaizahyou{0}%
+  \strsep{##2}{[}\iiictenretu@Vname\iiictenretu@opt
+  \Strchr\iiictenretu@opt{r}\iiictenretu@tmp
+  \ifnum\iiictenretu@tmp>\z@\edef\iiictenretu@kyokuzahyou{1}\fi
+  \Strchr\iiictenretu@opt{s}\iiictenretu@tmp
+  \ifnum\iiictenretu@tmp>\z@\edef\iiictenretu@soutaizahyou{1}\fi
+  \@ifnextchar({\@@iiictenretusub@std[##1]\iiictenretu@Vname(##3,##4,##5)}{%
+  \@ifnextchar[{\@@iiictenretusub@std[##1]\iiictenretu@Vname(##3,##4,##5)}{%
+    \@@iiictenretusub@brev[##1]\iiictenretu@Vname(##3,##4,##5)}}}%
+\def\@@iiictenretusub@brev[##1]##2(##3,##4,##5)\@nil{%
+  \@@iiictenretusub@std[##1]##2(##3,##4,##5)\@nil}%
+\def\@@iiictenretusub@std[##1]##2(##3,##4,##5)\@nil{%
+  \DegCos{##4}\iiictenretu@x\Mul{##3}\iiictenretu@x\iiictenretu@x
+  \DegSin{##4}\iiictenretu@y\Mul{##3}\iiictenretu@y\iiictenretu@y
+  \edef\@OresenV{(\iiictenretu@x,\iiictenretu@y,##5)}%
+% \edef\@OresenV{(##3,##4,##5)}%
+  \ifnum\iiictenretu@soutaizahyou>\z@\Addvec\@OresenV@old\@OresenV\@OresenV\fi
+  \expandafter\edef\csname ##2\endcsname{\@OresenV}%
+%  \edef\@iiictenretu@subtmp{{\csname ##2\endcsname}##6}%
+%  \ifx\empty##1\edef\iiictenretu@Vname{##2}\else\edef\iiictenretu@Vname{##1}\fi
+%  \expandafter\iiiPut\@iiictenretu@subtmp\iiictenretu@Vname
+  }%
+% -----------------------------------------------------
+  \Cfor{\edef\@OresenVs{#1}}{\not\equal\@OresenVs\empty}{}\do{%
+    \strsep\@OresenVs{;}\@OresenV\@OresenVs
+    \expandafter\@iiictenretu@sub\@OresenV\@nil
+    \edef\@OresenV@old{\@OresenV}}}%
+%
+% (3') 空間
+\def\iiibKinziOresen#1#2#3#4#5#6#7{%
+  \def#7{}%
+  \For\iiibKinziOresen@t{#4}{#5}{#6}\Do{%
+    #1\iiibKinziOresen@t\iiibKinziOresen@x
+    #2\iiibKinziOresen@t\iiibKinziOresen@y
+    #3\iiibKinziOresen@t\iiibKinziOresen@z
+    \han@inaitrue
+    \ifdim \iiibKinziOresen@x pt<\Xmin pt\relax\han@inaifalse \else%
+    \ifdim \iiibKinziOresen@x pt>\Xmax pt\relax\han@inaifalse \fi\fi
+    \ifdim \iiibKinziOresen@y pt<\Ymin pt\relax\han@inaifalse \else%
+    \ifdim \iiibKinziOresen@y pt>\Ymax pt\relax\han@inaifalse \fi\fi
+    \ifdim \iiibKinziOresen@z pt<\Zmin pt\relax\han@inaifalse \else%
+    \ifdim \iiibKinziOresen@z pt>\Zmax pt\relax\han@inaifalse \fi\fi
+    \ifhan@inai%
+    \edef#7{#7(\iiibKinziOresen@x,\iiibKinziOresen@y,\iiibKinziOresen@z)}\fi}%
+    #1{#5}\iiibKinziOresen@x
+    #2{#5}\iiibKinziOresen@y
+    #3{#5}\iiibKinziOresen@z
+    \ifdim\iiibKinziOresen@x pt<\Xmin pt\relax\else%
+      \ifdim\iiibKinziOresen@x pt>\Xmax pt\relax\else%
+      \ifdim\iiibKinziOresen@y pt<\Ymin pt\relax\else%
+      \ifdim\iiibKinziOresen@y pt>\Ymax pt\relax\else%
+      \ifdim\iiibKinziOresen@z pt<\Zmin pt\relax\else%
+      \ifdim\iiibKinziOresen@z pt>\Zmax pt\relax\else%
+      \edef#7{#7(\iiibKinziOresen@x,\iiibKinziOresen@y,\iiibKinziOresen@z)}\fi
+      \fi\fi\fi\fi\fi}%
+
+% (4') 空間
+\def\iiibNuri{\@ifnextchar[{\iiib@Nuri}{\iiib@Nuri[.5]}}%
+\def\iiib@Nuri[#1]{\@ifnextchar<{\iiib@@Nuri[#1]}{\iiib@@Nuri[#1]<0.05>}}%
+\def\iiib@@Nuri[#1]<#2>#3#4#5#6#7{%
+  \iiibKinziOresen{#3}{#4}{#5}{#6}{#7}{#2}\@resen
+  #3{#6}\@@x#4{#6}\@@y#5{#6}\@@z
+  \edef\@resen{\@resen(\@@x,\@@y,\@@z)}\iiiNuritubusi[#1]\@resen}%
+%
+\def\iiiParamLC{%
+  \begingroup
+  \ifnum\EMps@mode=\@ne\gsave\fi
+  \def\YG@xl{0}%
+  \def\YG@xr{2*$pi}%
+  \edef\YG@unit{\dt@default}%
+%  \edef\kaiten@kaku{0}%
+%  \edef\tyuusin@{(0,0)}%
+  \@ifnextchar<{\@iiiParamLC}{\@iiiParamLC<\empty>}}%
+\def\@iiiParamLC<#1>#2#3#4#5{%
+  \t@perl{#2}\x@perl@siki
+  \t@perl{#3}\y@perl@siki
+  \t@perl{#4}\z@perl@siki
+  \ifx\empty #1\else\setkeys{emGurafu}{#1}\fi
+  \check@perlp@ss
+  \ifcase\perlp@ss
+    \@perljob@sub
+    \ifnum\skip@perl=\z@
+      \immediate\write\em@whndl{open(FHNDL,">\perl@datafilename");}%
+\@requirePerlLib
+      \ifdim \YG@unit pt>\z@
+        \immediate\write\em@whndl{%
+        for($x=\YG@xl;$x<\YG@xr;$x+=\YG@unit)%
+          {printf FHNDL"(\@percent f,\@percent f,\@percent f)",%
+            \x@perl@siki,\y@perl@siki,\z@perl@siki};%
+          $x=\YG@xr;printf FHNDL"(\@percent f,\@percent f,\@percent f)",%
+            \x@perl@siki,\y@perl@siki,\z@perl@siki;}%
+      \else
+        \immediate\write\em@whndl{%
+        for($x=\YG@xl;$x>\YG@xr;$x+=\YG@unit)%
+          {printf FHNDL"(\@percent f,\@percent f,\@percent f)",%
+            \x@perl@siki,\y@perl@siki,\z@perl@siki};%
+          $x=\YG@xr;printf FHNDL"(\@percent f,\@percent f,\@percent f)",%
+            \x@perl@siki,\y@perl@siki,\z@perl@siki;}%
+      \fi
+      \immediate\write\em@whndl{close(FHNDL);}%
+      \immediate\closeout\em@whndl
+      \immediate\EM@system{\Perl@Name\space \perl@scriptfilename}%
+      \IfFileExists{\perl@datafilename}{%
+        \openin\pl@in=\perl@datafilename}{\@warning{do perl}}%
+    \fi
+    \IfFileExists{\perl@datafilename}{%
+      \read\pl@in to\BKinzi@resen
+      \trim\BKinzi@resen\to#5\relax
+      \immediate\closein\pl@in
+    }{\edef#5{}\@warning{do perl}}%
+  \or
+    \open@perlfile
+    \immediate\write\em@whndl{open(FHNDL,"> \perl@datafilename");}%
+    \ifdim \YG@unit pt>\z@
+      \immediate\write\em@whndl{%
+      for($x=\YG@xl;$x<\YG@xr;$x+=\YG@unit)%
+        {printf FHNDL"(\@percent f,\@percent f,\@percent f)",%
+            \x@perl@siki,\y@perl@siki,\z@perl@siki};%
+        $x=\YG@xr;printf FHNDL"(\@percent f,\@percent f,\@percent f)",%
+        \x@perl@siki,\y@perl@siki,\z@perl@siki;}%
+    \else
+      \immediate\write\em@whndl{%
+      for($x=\YG@xl;$x>\YG@xr;$x+=\YG@unit)%
+        {printf FHNDL"(\@percent f,\@percent f,\@percent f)",%
+          \x@perl@siki,\y@perl@siki,\z@perl@siki};%
+        $x=\YG@xr;printf FHNDL"(\@percent f,\@percent f)",%
+        \x@perl@siki,\y@perl@siki,\z@perl@siki;}%
+    \fi
+    \immediate\write\em@whndl{close(FHNDL);}%
+    \edef#5{}%
+  \or
+    \IfFileExists{\perl@datafilename}{%
+      \openin\pl@in=\perl@datafilename
+      \read\pl@in to\BKinzi@resen
+      \trim\BKinzi@resen\to#5\relax
+      \immediate\closein\pl@in
+    }{\edef#5{}\@warning{do perl}}%
+  \fi
+  \ifnum\EMps@mode=\@ne\grestore\fi
+  \edef\temp@x{\def\noexpand#5{#5}}%
+  \expandafter\endgroup\temp@x
+  \ignorespaces
+}%
+%
+% \iiiBKinziOresen#1#2#3#4#5#6#7
+%   #1 : x=f(t)
+%   #2 : y=g(t)
+%   #3 : z=h(t)
+%   #4 : t の始め値
+%   #5 :     終り値
+%   #6 : t の刻み値（デフォルト値は 0.05 ）
+%   #7 : 戻り値（折れ線）
+%
+\def\iiiBKinziOresen#1#2#3#4#5#6#7{%
+  \t@perl{#1}\x@perl@siki
+  \t@perl{#2}\y@perl@siki
+  \t@perl{#3}\z@perl@siki
+  \check@perlp@ss
+    \ifcase\perlp@ss
+      \@perljob@sub
+      \ifnum\skip@perl=\z@
+        \immediate\write\em@whndl{open(FHNDL,">\perl@datafilename");}%
+        \immediate\write\em@whndl{require 'emath.pl';}%
+        \ifdim #6 pt>\z@
+         \immediate\write\em@whndl{%
+          for($x=#4;$x<#5;$x+=#6){%
+            printf FHNDL"(\@percent f,\@percent f,\@percent f)",%
+              \x@perl@siki,\y@perl@siki,\z@perl@siki;};%
+              $x=#5;printf FHNDL"(\@percent f,\@percent f,\@percent f)",%
+              \x@perl@siki,\y@perl@siki,\z@perl@siki;}%
+        \else
+         \immediate\write\em@whndl{%
+          for($x=#4;$x>#5;$x+=#6){%
+            printf FHNDL"(\@percent f,\@percent f,\@percent f)",%
+              \x@perl@siki,\y@perl@siki,\z@perl@siki;};%
+              $x=#5;printf FHNDL"(\@percent f,\@percent f,\@percent f)",%
+              \x@perl@siki,\y@perl@siki,\z@perl@siki;}%
+        \fi
+        \immediate\write\em@whndl{close(FHNDL);}%
+        \immediate\closeout\em@whndl
+        \immediate\EM@system{\Perl@Name\space \perl@scriptfilename}%
+        \IfFileExists{\perl@datafilename}{%
+          \openin\pl@in=\perl@datafilename}{\@warning{do perl}}%
+      \fi
+      \IfFileExists{\perl@datafilename}{%
+        \read\pl@in to #7\relax
+        \immediate\closein\pl@in
+      }{\edef#7{}\@warning{do perl}}%
+    \or
+      \open@perlfile
+      \immediate\write\em@whndl{open(FHNDL,"> \perl@datafilename");}%
+        \immediate\write\em@whndl{%
+          for($x=#4;$x<#5;$x+=#6){%
+            printf FHNDL"(\@percent f,\@percent f,\@percent f)",%
+              \x@perl@siki,\y@perl@siki,\z@perl@siki;};%
+              $x=#5;printf FHNDL"(\@percent f,\@percent f,\@percent f)",%
+              \x@perl@siki,\y@perl@siki,\z@perl@siki;}%
+        \immediate\write\em@whndl{close(FHNDL);}%
+    \or
+      \IfFileExists{\perl@datafilename}{%
+        \openin\pl@in=\perl@datafilename
+        \read\pl@in to#7\relax
+        \immediate\closein\pl@in
+      }{\edef#7{}\@warning{do perl}}%
+    \fi
+}%
+%
+% 球（緯線・経線つき）中心は \iiiPut で指定
+%
+\def\Kyuu#1{%
+  \Cfor{\edef\keido{-90}}{\keido<100}{\IAddself\keido{10}}\do{%
+    \def\aval{DegRad(\keido)}%
+    \iiiParamC{(#1)*cos(\aval)*cos(T)}{(#1)*sin(\aval)*cos(T)}{(#1)*sin(T)}
+  }%
+  \Cfor{\edef\ido{-80}}{\ido<90}{\IAddself\ido{10}}\do{%
+    \def\zval{(#1)*Degsin(\ido)}%
+    \def\hankei{(#1)*Degcos(\ido)}%
+    \iiiParamC{\hankei*cos(T)}{\hankei*sin(T)}{\zval}
+  }%
+}%
+%
+% 座標軸の周りの回転
+%
+%   #1（デフォルト：原点）を通り，座標軸に平行な直線を回転軸として
+%     #2 を #3度回転した点を#4に返す。
+%
+\def\zRotvec{\@ifnextchar[{\zRotvec@}{\@zRotvec}}%
+\def\zRotvec@[#1]#2#3#4{%
+  \iiiSubvec{#2}{#1}\zRot@u
+  \@zRotvec\zRot@u{#3}\zRot@v
+  \iiiAddvec\zRot@v{#1}#4}%
+\def\@zRotvec#1#2#3{%
+  \vecXYZ{#1}\v@x\v@y\v@z
+  \Rotvec{(\v@x,\v@y)}{#2}\v@xy
+  \vecXY\v@xy\v@@x\v@@y
+  \edef#3{(\v@@x,\v@@y,\v@z)}}%
+\def\yRotvec{\@ifnextchar[{\yRotvec@}{\@yRotvec}}%
+\def\yRotvec@[#1]#2#3#4{%
+  \iiiSubvec{#2}{#1}\yRot@u
+  \@yRotvec\yRot@u{#3}\yRot@v
+  \iiiAddvec\yRot@v{#1}#4}%
+\def\@yRotvec#1#2#3{%
+  \vecXYZ{#1}\v@x\v@y\v@z
+  \Rotvec{(\v@z,\v@x)}{#2}\v@zx
+  \vecXY\v@zx\v@@z\v@@x
+  \edef#3{(\v@@x,\v@y,\v@@z)}}%
+\def\xRotvec{\@ifnextchar[{\xRotvec@}{\@xRotvec}}%
+\def\xRotvec@[#1]#2#3#4{%
+  \iiiSubvec{#2}{#1}\xRot@u
+  \@xRotvec\xRot@u{#3}\xRot@v
+  \iiiAddvec\xRot@v{#1}#4}%
+\def\@xRotvec#1#2#3{%
+  \vecXYZ{#1}\v@x\v@y\v@z
+  \Rotvec{(\v@y,\v@z)}{#2}\v@yz
+  \vecXY\v@yz\v@@y\v@@z
+  \edef#3{(\v@x,\v@@y,\v@@z)}}%
+%
+% 別名
+\let\iiiAddvec\AddVec
+\let\iiiSubvec\SubVec
+\let\iiiMulvec\MulVec
+\let\iiiParamP\iiiBTen
+\endinput

@@ -1,0 +1,426 @@
+\documentclass[a4j,fleqn]{jarticle}
+%
+\usepackage{graphicx,color}
+\usepackage{emathPk}
+\usepackage{emathPg}
+\usepackage{emathPs}
+\usepackage{emathT}
+\usepackage{hako}
+\usepackage{emathMw}
+\usepackage{showexample}
+\useperllib{degsine}
+\useperllib{nCr}
+\useperlpm{POSIX}
+
+\usepackage{type1cm}% PS, PDF を作る場合は必要
+
+\newdimen\mydimena
+\newdimen\mydimenb
+
+\begin{document}
+\title{\textsf{Perl}と連携したグラフ描画\\
+emathPp.sty {\normalsize ver.0.39}}
+\author{tDB}
+\date{2005/11/07}
+
+\maketitle\thispagestyle{empty}
+\begin{abstract}%
+\centering{\textsf{Perl}と連携してグラフを描画する手法を提供します。
+ただし，OS依存です。}
+\end{abstract}
+\pagebreak
+\pagenumbering{roman}%
+
+\tableofcontents
+
+\pagebreak
+\pagenumbering{arabic}
+\section{なぜ \texttt{perl} か}
+\textsf{emathP.sty}で$y=f(x)$のグラフを描画するのに，
+\cmd{yGurafu}というコマンドがあります。
+
+$y=\sin x+\cos x$ のグラフを描いてみましょう。
+
+\begin{showEx}(.5,.44){\cmd{yGurafu}}
+\begin{zahyou}[ul=4mm](-2,8)(-2,2)
+\def\Fx#1#2{%
+  \Sin{#1}\yi
+  \Cos{#1}\yii
+  \Add\yi\yii#2}
+\yGurafu\Fx\xmin\xmax
+\end{zahyou}
+\end{showEx}
+
+関数式の記述が面倒です。
+\verb/sin(x)+cos(x)/と簡潔に記述したいのですが，
+\TeX には計算式を解析する機能がありません。
+それをマクロで実現するのは，所用時間を考えても得策とは思えません。
+
+\noindent
+ということで計算を \texttt{perl} というソフトに
+外注することにしました。その結果，上のリストは
+\begin{minipage}{.5\linewidth}
+\begin{itembox}{\cmd{YGurafu}}
+\begin{verbatim}
+\begin{zahyou}[ul=4mm](-2,8)(-2,2)
+\def\Fx{sin(X)+cos(X)}
+\YGurafu\Fx\xmin\xmax
+\end{zahyou}
+\end{verbatim}
+\end{itembox}
+\end{minipage}\\
+と簡潔に表すことができます。
+
+ただし，実行するにはこれから述べる準備が必要です。
+
+\section{\texttt{perl}とは何か}
+Larry Wall 氏の開発したテキスト処理用の言語で，計算機能ももっています。
+元来は，UNIX 用のツールとして開発されましたが，
+Windows, Macintosh にも移植されています。
+
+\section{\texttt{perl}の入手先}
+UNIX, Mac OS X では，標準配布です。
+
+Windows%, Macintosh (Mac OS 9) 
+の場合は，次のサイトからダウンロードして適当なフォルダにインストールします。
+\texttt{perl.exe}の存在するフォルダに \texttt{PATH} を通して，
+\texttt{perl}単体で動作することを確認しておきます。
+%なお，\textsf{emath}での使用においては，日本語化する必要はありません。
+
+\if0
+（注）perl のバージョンによっては，環境変数`PERLLIB'を設定する必要があります。
+後で，\textsf{ex1.tex}の実行のところで触れます。
+\fi
+
+\subsection{Windows}
+http://www.activestate.com/Products/ActivePerl/
+
+%\subsection{Macintosh (OS 9)}
+%http://world.std.com/~habilis/MacJP5.j.htm
+
+\section{\textsf{emath}で\texttt{perl}を使用する準備}
+\subsection{\textsf{emath.pl}}
+\textsf{emath.pl, degsine.pl, nCr.pl} というファイルを，\texttt{perl}を
+インストールしたフォルダの下にある`lib'フォルダ内に置きます。
+（ Mac OS X では /Library/Perl )
+
+\textsf{emath.pl} などは emath のホームページ，
+\begin{jquote}
+\begin{verbatim}
+    「その他」
+          2. perl と連携するための補助ファイル emath.pl など
+\end{verbatim}
+\end{jquote}
+にあります。
+
+\subsection{\cmd{write18}}
+Windows, Unix系OS では，tex から子プロセスを起動することが出来ます。
+ただし，デフォルトではこの機能は働かないようになっています。
+
+その機能を有効にするためには
+\begin{jquote}
+\begin{verbatim}
+  platex -shell-escape
+\end{verbatim}
+\end{jquote}
+とオプションをつけて \texttt{platex}を起動する必要があります。
+
+【注意】この機能を利用するのは，危険を伴います。信用の出来るソースリストに
+対してのみ，実行してください。
+
+\subsection{ファイル名についての制限}
+\TeX においては，ファイル名に空白を含めることは推奨されません。
+特に \textsf{Perl} との連携機能を使用する場合は，
+ファイル名に空白を入れることは禁止です。
+
+\section{\texttt{perl}を用いたグラフ描画}
+では，先ほどの$y=\sin x+\cos x$のグラフなどを描画してみましょう。
+
+その前にご注意。この方式では補助の作業用ファイルが作られます。
+同名のファイルがあると削除されますからご注意ください。
+そのファイル名は
+\begin{jquote}
+\begin{verbatim}
+temp.pl
+タイプセットしているファイルと同名で拡張子が
+.d1, .d2, .d3, ..... （ perl を呼び出した回数分だけ）
+\end{verbatim}
+\end{jquote}
+\subsection{Windows, UNIX, Mac OS X の場合}
+同梱の \textsf{ex1.tex} をタイプセットしてみましょう。
+\begin{jquote}
+\begin{verbatim}
+DOS プロンプトで ex1.tex が存在しているディレクトリを
+カレントディレクトリにして
+  platex -shell-escape ex1.tex
+\end{verbatim}
+\end{jquote}
+と打ち込みます。
+ただし，次のファイルが作成されます。同名のファイルは削除されますから
+ご注意ください。
+\begin{jquote}
+\begin{verbatim}
+temp.pl
+ex1.d1
+\end{verbatim}
+\end{jquote}
+$y=\sin x+\cos x$のグラフが描画されましたか。
+エラーが起きる場合は，前節までの準備を再確認してください。
+
+\if0
+なお，環境によっては次のエラーが発生することがあります。
+\begin{jquote}
+\begin{verbatim}
+Runaway argument?
+! Paragraph ended before \@trimleading was complete.
+<to be read again> 
+\end{verbatim}
+\end{jquote}
+
+この場合は，DOS プロンプトで ex1.tex が存在しているディレクトリを
+カレントディレクトリにして
+
+\begin{jquote}
+\begin{verbatim}
+perl temp.pl
+\end{verbatim}
+\end{jquote}
+を実行すると
+\begin{jquote}
+\begin{verbatim}
+Can't locate emath.pl in @INC at temp.pl line 2.
+\end{verbatim}
+\end{jquote}
+というメッセージが返ってくるでしょう。
+
+これは，perl のライブラリサーチパスが設定できていないことを示しています。
+対応策は，perl をバージョンアップするか，または環境変数を
+\begin{jquote}
+\begin{verbatim}
+PERLLIB=c:/Perl/lib 
+\end{verbatim}
+\end{jquote}
+などと設定します。右辺値は emath.pl を置いたフォルダ名で，上のは一例です。
+
+これ以外のエラーが出る場合は emath の BBS などでお聞きください。
+\fi
+
+次いで，\textsf{ex2.tex}は $y=\log_2{x}$のグラフを描画します。
+作業用ファイルは次の3個です。
+\begin{jquote}
+\begin{verbatim}
+temp.pl
+ex2.d1, ex2.d2
+\end{verbatim}
+\end{jquote}
+
+こちらもうまくいったでしょうか。
+
+\iffalse
+\subsection{Mac OS 9 の場合}
+\subsubsection{一般的な手順}
+Windows, UNIX, Mac OS X の場合には \TeX から\texttt{perl}を起動することができるのですが，
+Macintosh OS 9 の場合その方法は使えません。
+
+そこで次善の策として次の3ステップに分けて処理をすることになります。
+\begin{enumerate}[手順 1.~]
+  \item \TeX で \texttt{perl} に引き渡すスクリプトファイルを作成する。
+  \item 手順1で作成されたスクリプトファイルを\texttt{perl}で処理する。
+  \item 再び\TeX で手順2で作成された描画データを受け取りグラフをかく。
+\end{enumerate}
+
+\subsubsection{具体例 --- ex1.tex}
+では，$y=\sin x+\cos x$のグラフを描く，
+同梱の \textsf{ex1.tex} を処理してみます。
+
+作業用ファイルとして
+\begin{jquote}
+\begin{verbatim}
+temp.pl
+ex1.d1
+\end{verbatim}
+\end{jquote}
+が作成されます。同名のファイルが存在している場合，削除されてしまいます。
+ご注意ください。
+
+\begin{enumerate}[手順 1.~]
+  \item \textsf{ex1.tex}をタイプセットします。
+    グラフは描画されず，座標軸のみが描かれます。
+  \item 手順1の結果，\textsf{temp.pl}という，\texttt{perl}の
+    スクリプトファイルが作成されます。これを\texttt{perl}で処理します。
+    その結果は\textsf{ex1.d1}なるファイルに書き出され，
+    次の手順で\TeX が利用してグラフを描画します。
+  \item 再度{ex1.tex}をタイプセットします。
+    今度はグラフが描かれるはずです。
+\end{enumerate}
+さていかがでしょうか。うまくいかないときは前節までの準備作業をもう一度
+見直してください。それでも駄目な場合は，emath の BBS などでお尋ねください。
+
+手順1と手順3の違いは
+\begin{jquote}
+\begin{verbatim}
+ex1.d1
+\end{verbatim}
+\end{jquote}
+というファイルが存在しているかいないかで判断されます。
+
+存在していない場合は，手順1の段階であると判断され，グラフ描画は行わず，
+\texttt{perl}用のスクリプトファイルを作成します。
+
+それに対して，存在している場合は手順3の段階であると判断され，
+グラフ描画に進むことになります。
+
+したがって，いったん\textsf{ex1.d1}が作成されると手順1は行われませんから，
+このままではグラフの修正ができません。
+
+例えば，ex1.tex で \verb+\unitlength+を\texttt{10mm}から\texttt{8mm}に
+変更したいという場合，ソースリストを書き換えてタイプセットしても，
+既に作成済みのデータファイル\textsf{ex1.d1}を使ってグラフ描画が行われますから，
+グラフは前のままとなってしまいます。
+
+では，どうするかといえば，\textsf{ex1.d1}を削除した上で，
+手順1, 2, 3を繰り返すということになるのです。
+
+\subsubsection{具体例 --- ex2.tex}
+では，次の例に進みましょう。これは面倒の2乗\verb+(!?)+です。
+
+作業用ファイルは
+\begin{jquote}
+\begin{verbatim}
+temp.pl
+ex2.d1, ex2.d2
+\end{verbatim}
+\end{jquote}
+です。同名のファイルが存在している場合，削除されてしまいます。
+ご注意ください。
+
+では，はじめましょう。
+\begin{enumerate}[手順 1.~]
+  \item \textsf{ex2.tex}をタイプセットします。
+    なんと！ エラー
+\begin{jquote}
+\begin{verbatim}
+! #calcval ---> ex2.d1.
+\end{verbatim}
+\end{jquote}
+が発生します。しかし，\texttt{perl}用のスクリプトファイル\textsf{temp.pl}
+は作成されていますから，
+  \item \textsf{temp.pl}を\texttt{perl}で処理します。
+\end{enumerate}
+エラーが起きた場合は，手順1, 2 をエラーが発生しなくなるまで繰り返します。
+すなわち
+\begin{enumerate}[手順 1$'$.~]
+  \item \textsf{ex2.tex}をタイプセットします。
+    今度はエラーは起きないはずです。
+  \item 再度\textsf{temp.pl}を\texttt{perl}で処理します。
+\end{enumerate}
+やっと最終手順3を実行する段階にたどり着きました。
+\begin{enumerate}[手順 1.~]
+  \item[手順3.~] 再度{ex2.tex}をタイプセットします。
+    今度はグラフが描かれるはずです。
+\end{enumerate}
+
+\textsf{ex2.tex}では，\textsf{ex1.tex}と違って，なぜこんなに面倒になって
+しまったのかを説明します。
+
+\textsf{ex2.tex}では，\texttt{perl}と連携するコマンドが2回呼ばれますが，
+\begin{jquote}
+\begin{verbatim}
+(1) \calcval{1/log(2)}\lgii
+(2) \YGurafu\Fx{0.125}\xmax
+\end{verbatim}
+\end{jquote}
+(1)は\texttt{perl}に$\bunsuu{1}{\log{2}}$の値を計算させて，その結果を
+\cmd{lgii}に受け取ります。ところが手順1の段階ではその計算をするスクリプト
+ファイル--- \textsf{temp.pl} ---を作るだけで計算は行われません。
+つぎの(2)のグラフ描画ではこの計算結果を必要とするので
+スクリプトファイルの作りようがありません。
+そこでエラー終了をさせることにしました。
+
+手順2で計算結果が\textsf{ex2.d1}に記録されます。
+
+手順1$'$では，\textsf{ex2.d1}が存在していますから，(1)のコマンドで計算結果が
+\cmd{lgii}に読み込まれ，(2)のグラフ描画用のスクリプトファイル
+---\textsf{temp.pl} ---を作成することができます。
+
+手順2$'$でグラフ描画用データ \textsf{ex2.d2} が作成され，描画準備が完了し，
+最終の手順3に進むことができる，となるわけです。
+
+おおしんど。
+
+このように，戻り値を必要とするコマンド
+\begin{jquote}
+\begin{verbatim}
+\calcval
+\funcval
+\YTen
+\BTen
+\RTen
+\end{verbatim}
+\end{jquote}
+を使用すると，そこでエラー終了します。
+エラーが出なくなるまで手順1, 2を繰り返し，手順3に進むことになります。
+\fi
+
+\if0
+\section{\cmd{skipCallPerl}}
+この節は，Mac OS 9 をご利用の方には関係ない話題です。
+
+\texttt{perl}が作成したデータファイルは，
+タイプセットしているファイルと同名で拡張子が
+\begin{jquote}
+\begin{verbatim}
+.d1, .d2, .d3, .....
+（perl を呼んだ回数だけ）
+\end{verbatim}
+\end{jquote}
+という名前になります。
+
+デフォルトではせっかく作ったファイルを次のタイプセットでは使いません。
+これを次回以降使用することにすれば，
+\texttt{perl}を呼び出す必要はありませんから，処理時間が半減します。
+それを可能とするコマンドが \cmd{skipCallPerl}です。
+
+ただし，これを宣言すると，ソースリストでグラフ描画部分を変更しても
+旧データファイルを使用しますから，変更は反映されません。
+グラフ描画部分を変更したときは \cmd{skipCallPerl} をコメントアウトして
+タイプセットし，データファイルを更新する必要があります。
+
+恐縮ですが，私の目論見を書かせていただきます。
+
+個々のファイルは\cmd{skipCallPerl}を宣言せずに作成します。
+作成中はグラフ描画部分は何回も書き直しますので。
+
+それらを \cmd{ReadTeXFile}で寄せ集める問題集などでは，
+\cmd{skipCallPerl}を宣言してタイプセット時間を節約します。
+\fi
+\clearpage
+
+\section{コマンドの紹介}
+\if0
+\texttt{perl}との連携ができる環境が整ったら，
+ソースファイル\textsf{sampelPp.tex}の434行目
+\begin{verbatim}
+%\input{Ppsub.tex}
+\end{verbatim}
+の冒頭`\verb+%+'を取り去ってタイプセットしてください。
+\fi
+
+\input{Ppsub.tex}
+
+%\clearpage
+\section{\texttt{perl}の参考文献}
+\texttt{perl}になじみのない方には
+
+\begin{jquote}
+\begin{verbatim}
+R.L.Schwartz E.Olson T.Phoenix 共著の邦訳
+  初めての Perl 第3版
+      発行元 オライリー・ジャパン
+      定価   3,600+税
+      ISBN:4-87311-126-9
+      発行年月：2003.5
+\end{verbatim}
+\end{jquote}
+をお勧めします。
+\end{document}

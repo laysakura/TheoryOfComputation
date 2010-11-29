@@ -1,0 +1,63 @@
+\documentclass{jarticle}
+\usepackage{emathP}
+\usepackage{emathEy}
+\usepackage{emathAe}
+\usepackage{emathUtf}
+\begin{document}
+\openKaiFile
+\openHintFile
+\begin{enumerate}<apnenum={\itemsep=2\baselineskip}>[\protect\expandafter\ajKakkoRoman1]
+\item 問題問題問題
+\kaitou{}
+\hint{\setHintenum{edaenumerate<3>}}
+        \begin{enumerate}[(1)]
+                \item 左左左
+                  \begin{Kaitou}
+                    aaa
+                  \end{Kaitou}
+                  \begin{Hint}
+                    AAA
+                  \end{Hint}
+                \item 中中中
+                  \begin{Kaitou}
+                    bbb
+                  \end{Kaitou}
+                  \begin{Hint}
+                    BBB
+                  \end{Hint}
+                \item 右右右
+                  \begin{Kaitou}
+                    ccc
+                  \end{Kaitou}
+                  \begin{Hint}
+                    CCC
+                  \end{Hint}
+        \end{enumerate}
+\item もんだい\kaitou{\setKaienum{edaenumerate}}\hint{}
+  \begin{edaenumerate}[(1)]
+    \item あああ
+      \begin{Kaitou}
+        xxx
+      \end{Kaitou}
+      \begin{Hint}
+        XXX
+      \end{Hint}
+    \item いいい
+      \begin{Kaitou}
+        yyy
+      \end{Kaitou}
+      \begin{Hint}
+        YYY
+      \end{Hint}
+  \end{edaenumerate}
+\end{enumerate}
+
+\closeKaiFile
+\closeHintFile
+\hrule
+\begin{center}\textbf{【解答】}\end{center}
+\inputKaiFile
+\hrule
+\begin{center}\textbf{【解説】}\end{center}
+\inputHintFile
+\end{document}

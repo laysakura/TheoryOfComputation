@@ -1,0 +1,25 @@
+{\unitlength5mm\small
+\begin{picture}(11,10)(-1,-1)
+\def\takasa{7}%
+\def\A{(0,0)}\def\B{(6,0)}\def\D{(3,2)}%
+\Addvec\B\D\C
+\Bunten\A\C{1}{1}\H
+\Addvec\H{(0,\takasa)}\O
+\Put\O{\makebox(0,0.8){O}}%
+\Put\B{\makebox(0,0)[lt]{ B}}%
+\Put\A{\makebox(0,0)[r]{A }}%
+\Put\D{\makebox(0,0)[rb]{D }}%
+\Put\C{\makebox(0,0)[l]{ C}}%
+\Put\H{\makebox(0,-0.8){H}}%
+%\Tyokkakukigou[.5]\O\H\A%    直角記号塗りつぶし[.5]オプション
+\Tyokkakukigou[.5](10)\O\H\A% (10)はサイズオプション
+\Drawline{\A\C}%
+\Drawline{\B\D}%
+\Drawline{\O\H}%
+\thicklines
+\Drawline{\O\A\B\C\O\B}%
+\Dottedline{0.3}{\A\D\C}%
+\Dottedline{0.3}{\O\D}%
+\thinlines
+\end{picture}%
+}

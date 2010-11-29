@@ -1,0 +1,42 @@
+\documentclass{jarticle}
+\usepackage{emathN}
+
+\begin{document}
+2次方程式の解を求めるアルゴリズム
+
+\noindent
+\begin{caprm}
+\fbox{%
+\begin{nagarezu}(28em,16\baselineskip)%
+  \tansi{始め}%
+  \sitahe%
+  \nyuusyuturyoku{$a$, $b$, $c$ を入力}%
+  \sitahe
+  \syori{$D~\longleftarrow~b^2-4ac$}%
+  \sitahe
+  \begin{handan}{　\strut$D:0$　}%
+    \begin{sitabunki}%
+      \sitahe"""$D=0$"
+   	  \nyuusyuturyoku{\parbox{7zw}{　重解を表示　　　　　　}}%
+	  \sitahe[matome]%
+	  \tansi{終わり}%
+    \end{sitabunki}%
+    \begin{migibunki}%
+    	\migihe<n>(50pt)"$D<0$"%
+    	\sitahe(35pt)
+    	\nyuusyuturyoku{\parbox{7zw}{異なる2つの虚数解を表示}}%
+			\sitahe<n>`matome'%
+			\hidarihe`matome'%
+    \end{migibunki}%
+    \begin{hidaribunki}%
+    	\hidarihe<n>(50pt)"$D>0$"%
+    	\sitahe(35pt)
+    	\nyuusyuturyoku{\parbox{7zw}{異なる2つの実数解を表示}}%
+    	\sitahe<n>`matome'%
+    	\migihe`matome'%
+    \end{hidaribunki}%
+  \end{handan}%
+\end{nagarezu}%
+}%
+\end{caprm}
+\end{document}

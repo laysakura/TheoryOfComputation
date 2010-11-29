@@ -1,0 +1,1718 @@
+% emathBk.sty by tDB(emath@nifty.com)
+
+  \NeedsTeXFormat{LaTeX2e}
+  \ProvidesPackage{emathBk}[2010/04/02 v 0.48α]%
+  \DeclareOption{dviout}{\def\em@grdrv{dviout}}%
+  \DeclareOption{dvips}{\def\em@grdrv{dvips}}%
+  \DeclareOption{dvipdfm}{\def\em@grdrv{dvipdfm}}%
+  \DeclareOption{dvipdfmx}{\def\em@grdrv{dvipdfmx}}%
+  \DeclareOption{Bkps}{\def\Bk@ps{}}%
+  \DeclareOption{EMdvipsk}{\def\em@dvipsk{}}%
+  \DeclareOption{EMdvipdfm}{\def\em@dvipdfm{}}%
+  \DeclareOption{EMdvipdfmx}{\def\em@dvipdfm{x}}%
+  \DeclareOption{onlyBk}{\def\only@Bk{}}%
+  \ProcessOptions\relax
+
+  \@ifundefined{only@Bk}{%
+    \RequirePackage{eclbkbox}
+    \RequirePackage{emathPh}
+%    \RequirePackage{emathLb}
+    \@ifundefined{Bk@ps}{}{%
+      \@ifundefined{em@grdrv}{%
+          \RequirePackage{pict2e}%
+      }{%
+          \RequirePackage[\em@grdrv]{pict2e}%
+      }%
+    }%
+  }{}%
+%
+\@ifundefined{allinethickness}{%
+  \def\allinethickness#1{\@wholewidth #1\relax}%
+}{}%
+%
+  \newdimen\tyuulinesep
+  \edef\frame@color{\empty}%
+  \edef\background@color{\empty}%
+  \edef\MR@numbering{\empty}%
+  \def\MigiRangaiNumbering#1{\ifnum #1=\z@\edef\MR@numbering{\empty}\else
+    \setcounter{marginpar}{#1-1}\edef\MR@numbering{1}\fi}%
+%
+  \define@key{emBk}{sensyu}{\def\bkbox@sensyu{#1}}%
+  \define@key{emBk}{item}{\def\bkbox@item{#1}}%
+  \define@key{emBk}{fboxsep}{\setlength{\fboxsep}{#1}%
+                              \setlength{\tyuulinesep}{#1}}%
+  \define@key{emBk}{linesep}{\setlength{\tyuulinesep}{#1}}%
+  \define@key{emBk}{linepos}{\edef\line@pos{#1}}%
+  \define@key{emBk}{label}{\def\MR@label{#1}}%
+  \define@key{emBk}{tag}{\def\MR@tag{#1}}%
+  \define@key{emBk}{hsep}{\def\h@sep{#1}}%
+  \define@key{emBk}{vsep}{\def\v@sep{#1}}%
+  \define@key{emBk}{fboxruleA}{\edef\fboxrule@A{#1}}%
+  \define@key{emBk}{fboxruleB}{\edef\fboxrule@B{#1}}%
+  \define@key{emBk}{fboxruleG}{\edef\fboxrule@G{#1}}%
+  \define@key{emBk}{allinethickness}{\allinethickness{#1}}%
+  \define@key{emBk}{tatehosei}{\xdef\MR@tatehosei{#1}}%
+  \define@key{emBk}{tateidou}{\@tempdima=#1\@tempdima=-\@tempdima\xdef\MR@tateidou{\the\@tempdima}}%
+  \define@key{emBk}{yokohosei}{{\setlength\@tempdima{#1}\xdef\MR@yokohosei{\the\@tempdima}}}%
+  \define@key{emBk}{headline}[1]{\edef\Bk@headln{#1}}%
+  \define@key{emBk}{parindent}{\def\breakboxparindent{#1}}%
+  \define@key{emBk}{backgroundcolor}{\def\background@color{#1}}%
+  \define@key{emBk}{framecolor}{\def\frame@color{#1}}%
+  \define@key{emBk}{tyuuhaba}{\setlength{\tyuuhaba}{#1}}%
+  \define@key{emBk}{marginparsep}{\marginparsep=#1}%
+  \define@key{emBk}{postline}[1\baselineskip]{\edef\post@line{#1}}%
+%
+% ページをまたぐ dblbox環境
+%
+% \begin{bkdblbox}[#1]
+%   #1: key=val
+%         fboxsep=..（デフォルト値=\fboxsep）
+%         hsep=...（デフォルト値=\fboxsep）
+%         vsep=...（デフォルト値=\fboxsep）
+%         fboxruleA=... 外枠罫線の太さ（デフォルト値=2pt）
+%         fboxruleB=... 内枠罫線の太さ（デフォルト値=\fboxrule）
+%         fboxruleG=... 外枠罫線と内枠罫線の距離（デフォルト値=2pt）
+%
+\def\bkdblbox{\def\bkbox@sensyu{\drawline}%
+  \edef\bkbox@item{\empty}%
+  \def\h@sep{\the\fboxsep}%
+  \def\v@sep{\the\fboxsep}%
+% \edef\fboxrule@A{\the\fboxrule}%
+  \edef\fboxrule@A{2pt}%
+  \edef\fboxrule@B{\the\fboxrule}%
+  \edef\fboxrule@G{2pt}%
+  \@ifnextchar[{\@bkdblbox}{\@@bkdblbox}}
+\def\@bkdblbox[#1]{\setkeys{emBk}{#1}\@@bkdblbox}
+\def\@@bkdblbox{\def\breakboxparindent{1zw}%
+  \vskip\breakboxskip\relax
+  \setbox\bk@bxb\vbox\bgroup
+  \setlength{\linewidth}{\linewidth-\fboxrule@G*2}
+  \setlength{\linewidth}{\linewidth-\fboxrule@A*2}
+  \setlength{\linewidth}{\linewidth-\fboxrule@B*2}
+  \setlength{\linewidth}{\linewidth-\h@sep*2}
+  \hsize\linewidth\@parboxrestore
+\@setminipage%%% added
+  \parindent\breakboxparindent\relax\ignorespaces
+}
+\def\endbkdblbox{%
+  \ifvmode \vskip-\lastskip \fi%%% added
+  \egroup
+  \def\bkdblbox@addfsepht{%
+       \setbox\bk@bxa\vbox{%
+        \vskip\v@sep
+        \vskip\fboxrule@A
+        \vskip\fboxrule@B
+        \vskip\fboxrule@G
+        \box\bk@bxa}}
+  \def\bkdblbox@addfsepdp{%
+     \@tempdima\dp\bk@bxa
+     \advance\@tempdima\fboxrule@A
+     \advance\@tempdima\fboxrule@B
+     \advance\@tempdima\fboxrule@G
+     \advance\@tempdima\v@sep
+     \dp\bk@bxa\@tempdima}
+
+\def\bk@topline{\hbox to \linewidth{%
+    \ifbkcount\smash{\llap{\the\bk@lcnt\ }}\fi
+    {\unitlength=\p@
+    \edef\@lnwd{\strip@pt\linewidth}%
+    \@tempdima\ht\strutbox
+    \ifdim\ht\bk@bxa>\@tempdima\@tempdima=\ht\bk@bxa\fi
+    \edef\@lnht{\strip@pt\@tempdima}%
+    \setlength{\@tempdimb}{\@tempdima-\fboxrule@A-\fboxrule@G}%
+    \edef\top@lnht{\strip@pt\@tempdimb}%
+    \@tempdima\dp\strutbox
+    \ifdim\dp\bk@bxa>\@tempdima\@tempdima=\dp\bk@bxa\fi
+    \edef\@lndp{\strip@pt\@tempdima}%
+    \noindent
+    \begin{picture}(0,0)%
+%                           上罫線
+      \@tempdima\ht\strutbox
+      \ifdim\ht\bk@bxa>\@tempdima\@tempdima=\ht\bk@bxa\fi
+      \edef\@lnht{\strip@pt\@tempdima}%
+      \setlength{\@tempdimb}{\@tempdima-\fboxrule@A}%
+      \edef\@lndp{\strip@pt\@tempdimb}%
+      \Nuritubusi[1]<border=1>{(0,\@lndp)(\@lnwd,\@lndp)(\@lnwd,\@lnht)%
+        (0,\@lnht)(0,\@lnht)}%
+      \allinethickness{\fboxrule@B}%
+      \advance\@tempdimb-\fboxrule@G
+      \edef\bkdblbox@tmp{\strip@pt\@tempdimb}%
+      \setlength{\@tempdima}{\fboxrule@A+\fboxrule@G}%
+      \edef\ln@L{\strip@pt\@tempdima}%
+      \setlength{\@tempdimb}{\linewidth-\@tempdima}%
+      \edef\ln@R{\strip@pt\@tempdimb}%
+      \bkbox@sensyu(\ln@L,\bkdblbox@tmp)(\ln@R,\bkdblbox@tmp)%
+%   \vrule \@width\fboxrule% 左罫線
+      \@tempdima=\fboxrule@A
+      \edef\bkdblbox@tmp{\strip@pt\@tempdima}%
+      \Nuritubusi[1]<border=1>{(0,-\@lndp)(\bkdblbox@tmp,-\@lndp)(\bkdblbox@tmp,\@lnht)%
+        (0,\@lnht)(0,-\@lndp)}%
+      \setlength{\@tempdima}{\fboxrule@A+\fboxrule@G}%
+      \edef\bkdblbox@tmp{\strip@pt\@tempdima}%
+      \allinethickness{\fboxrule@B}%
+      \bkbox@sensyu(\bkdblbox@tmp,-\@lndp)(\bkdblbox@tmp,\top@lnht)%
+    \end{picture}%
+    \setlength{\@tempdima}{\fboxrule@A+\fboxrule@B+\fboxrule@G+\h@sep}%
+    \hskip\@tempdima
+    \box\bk@bxa\hfil\mbox{}%
+%   \vrule \@width\fboxrule% 右罫線
+    \begin{picture}(0,0)%
+      \normalcolor
+      \@tempdima=\fboxrule@A
+      \edef\bkdblbox@tmp{\strip@pt\@tempdima}%
+      \Nuritubusi[1]<border=1>{(0,-\@lndp)(-\bkdblbox@tmp,-\@lndp)%
+        (-\bkdblbox@tmp,\@lnht)(0,\@lnht)(0,-\@lndp)}%
+      \@tempdima=\fboxrule@G
+      \advance\@tempdima\fboxrule@A
+%     \advance\@tempdima\fboxrule@B
+      \edef\bkdblbox@tmp{\strip@pt\@tempdima}%
+      \allinethickness{\fboxrule@B}%
+      \bkbox@sensyu(-\bkdblbox@tmp,-\@lndp)(-\bkdblbox@tmp,\top@lnht)%
+    \end{picture}}%
+}}
+\def\bk@bottomln{\hbox to \linewidth{%
+    \ifbkcount\smash{\llap{\the\bk@lcnt\ }}\fi
+    {\unitlength=\p@
+    \edef\@lnwd{\strip@pt\linewidth}%
+    \@tempdima\ht\strutbox
+    \ifdim\ht\bk@bxa>\@tempdima\@tempdima=\ht\bk@bxa\fi
+    \edef\@lnht{\strip@pt\@tempdima}%
+    \@tempdima\dp\strutbox
+    \ifdim\dp\bk@bxa>\@tempdima\@tempdima=\dp\bk@bxa\fi
+    \edef\@lndp{\strip@pt\@tempdima}%
+    \setlength{\@tempdimb}{\@tempdima-\fboxrule@A-\fboxrule@G}%
+    \edef\bottom@lndp{\strip@pt\@tempdimb}%
+    \noindent
+    \begin{picture}(0,0)%
+%                           下罫線
+      \normalcolor
+      \@tempdima\dp\strutbox
+      \ifdim\dp\bk@bxa>\@tempdima\@tempdima=\dp\bk@bxa\fi
+      \edef\@lndp{\strip@pt\@tempdima}%
+      \setlength{\@tempdimb}{\@tempdima-\fboxrule@A}%
+      \edef\@lnht{\strip@pt\@tempdimb}%
+      \Nuritubusi[1]<border=1>{(0,-\@lndp)(\@lnwd,-\@lndp)(\@lnwd,-\@lnht)%
+        (0,-\@lnht)(0,-\@lnht)}%
+      \allinethickness{\fboxrule@B}%
+      \advance\@tempdimb-\fboxrule@G
+      \edef\bkdblbox@tmp{\strip@pt\@tempdimb}%
+      \setlength{\@tempdima}{\fboxrule@A+\fboxrule@G}%
+      \edef\ln@L{\strip@pt\@tempdima}%
+      \setlength{\@tempdimb}{\linewidth-\@tempdima}%
+      \edef\ln@R{\strip@pt\@tempdimb}%
+      \bkbox@sensyu(\ln@L,-\bkdblbox@tmp)(\ln@R,-\bkdblbox@tmp)%
+%   \vrule \@width\fboxrule% 左罫線
+    \@tempdima\ht\strutbox
+    \ifdim\ht\bk@bxa>\@tempdima\@tempdima=\ht\bk@bxa\fi
+    \edef\@lnht{\strip@pt\@tempdima}%
+    \@tempdima\dp\strutbox
+    \ifdim\dp\bk@bxa>\@tempdima\@tempdima=\dp\bk@bxa\fi
+    \edef\@lndp{\strip@pt\@tempdima}%
+      \@tempdima=\fboxrule@A
+      \edef\bkdblbox@tmp{\strip@pt\@tempdima}%
+      \Nuritubusi[1]<border=1>{(0,-\@lndp)(\bkdblbox@tmp,-\@lndp)(\bkdblbox@tmp,\@lnht)%
+        (0,\@lnht)(0,-\@lndp)}%
+      \setlength{\@tempdima}{\fboxrule@A+\fboxrule@G}%
+      \edef\bkdblbox@tmp{\strip@pt\@tempdima}%
+      \allinethickness{\fboxrule@B}%
+      \bkbox@sensyu(\bkdblbox@tmp,-\bottom@lndp)(\bkdblbox@tmp,\@lnht)%
+    \end{picture}%
+    \setlength{\@tempdima}{\fboxrule@A+\fboxrule@B+\fboxrule@G+\h@sep}%
+    \hskip\@tempdima
+    \box\bk@bxa\hfil\mbox{}%
+%   \vrule \@width\fboxrule% 右罫線
+    \begin{picture}(0,0)%
+      \normalcolor
+      \@tempdima=\fboxrule@A
+      \edef\bkdblbox@tmp{\strip@pt\@tempdima}%
+      \Nuritubusi[1]<border=1>{(0,-\@lndp)(-\bkdblbox@tmp,-\@lndp)%
+        (-\bkdblbox@tmp,\@lnht)(0,\@lnht)(0,-\@lndp)}%
+      \@tempdima=\fboxrule@G
+      \advance\@tempdima\fboxrule@A
+%     \advance\@tempdima\fboxrule@B
+      \edef\bkdblbox@tmp{\strip@pt\@tempdima}%
+      \allinethickness{\fboxrule@B}%
+      \bkbox@sensyu(-\bkdblbox@tmp,-\bottom@lndp)(-\bkdblbox@tmp,\@lnht)%
+    \end{picture}}%
+}}
+\def\bk@line{\hbox to \linewidth{%
+    \ifbkcount\smash{\llap{\the\bk@lcnt\ }}\fi
+    {\unitlength=\p@
+%   \vrule \@width\fboxrule% 左罫線
+    \@tempdima\ht\strutbox
+    \ifdim\ht\bk@bxa>\@tempdima\@tempdima=\ht\bk@bxa\fi
+    \edef\@lnht{\strip@pt\@tempdima}%
+    \@tempdima\dp\strutbox
+    \ifdim\dp\bk@bxa>\@tempdima\@tempdima=\dp\bk@bxa\fi
+    \edef\@lndp{\strip@pt\@tempdima}%
+    \noindent
+    \begin{picture}(0,0)%
+      \normalcolor
+      \@tempdima=\fboxrule@A
+      \edef\bkdblbox@tmp{\strip@pt\@tempdima}%
+      \Nuritubusi[1]<border=1>{(0,-\@lndp)(\bkdblbox@tmp,-\@lndp)(\bkdblbox@tmp,\@lnht)%
+        (0,\@lnht)(0,-\@lndp)}%
+      \setlength{\@tempdima}{\fboxrule@A+\fboxrule@G}%
+      \edef\bkdblbox@tmp{\strip@pt\@tempdima}%
+      \allinethickness{\fboxrule@B}%
+      \bkbox@sensyu(\bkdblbox@tmp,-\@lndp)(\bkdblbox@tmp,\@lnht)%
+    \end{picture}%
+%   \hskip\fboxsep
+\setlength{\@tempdima}{\fboxrule@A+\fboxrule@B+\fboxrule@G+\h@sep}%
+\hskip\@tempdima
+    \box\bk@bxa\hfil\mbox{}%
+%   \hskip\fboxsep
+%   \vrule \@width\fboxrule% 右罫線
+    \begin{picture}(0,0)%
+      \normalcolor
+      \@tempdima=\fboxrule@A
+      \edef\bkdblbox@tmp{\strip@pt\@tempdima}%
+      \Nuritubusi[1]<border=1>{(0,-\@lndp)(-\bkdblbox@tmp,-\@lndp)%
+        (-\bkdblbox@tmp,\@lnht)(0,\@lnht)(0,-\@lndp)}%
+      \@tempdima=\fboxrule@G
+      \advance\@tempdima\fboxrule@A
+      \edef\bkdblbox@tmp{\strip@pt\@tempdima}%
+      \bkbox@sensyu(-\bkdblbox@tmp,-\@lndp)(-\bkdblbox@tmp,\@lnht)%
+    \end{picture}}%
+}}
+\ifhmode\par\fi{\noindent\bk@lcnt\@ne 
+\@bkconttrue\baselineskip\z@\lineskiplimit\z@
+\lineskip\z@\vfuzz\maxdimen
+\bk@split\bkdblbox@addfsepht\bk@addskipdp
+\ifvoid\bk@bxb      % Only one line
+\def\bk@fstln{\bkdblbox@addfsepdp
+\vbox{\hrule\@height\fboxrule\bk@line\hrule\@height\fboxrule}}%
+\else               % More than one line
+\def\bk@fstln{\vbox{%\hrule\@height\fboxrule
+  {\unitlength=\p@\edef\@lnwd{\strip@pt\linewidth}%
+% 上罫線
+  \noindent
+\if0
+  \begin{picture}(0,0)%
+   {% \bkbox@sensyu(0,\@lnht)(\@lnwd,\@lnht)%
+      \normalcolor
+      \@tempdima\ht\strutbox
+      \ifdim\ht\bk@bxa>\@tempdima\@tempdima=\ht\bk@bxa\fi
+      \edef\@lnht{\strip@pt\@tempdima}%
+      \setlength{\@tempdimb}{\@tempdima-\fboxrule@A}%
+      \edef\@lndp{\strip@pt\@tempdimb}%
+      \Nuritubusi[1]<border=1>{(0,\@lndp)(\@lnwd,\@lndp)(\@lnwd,\@lnht)%
+        (0,\@lnht)(0,\@lnht)}%
+      \allinethickness{\fboxrule@B}%
+      \advance\@tempdimb-\fboxrule@G
+      \edef\bkdblbox@tmp{\strip@pt\@tempdimb}%
+      \bkbox@sensyu(0,\bkdblbox@tmp)(\@lnwd,\bkdblbox@tmp)%
+    }%
+    \ifthenelse{\equal\bkbox@item\empty}{}{%
+      \Put{(.5,\@lnht)}(0,0)[lc]{{\fboxsep=0pt\colorbox{white}{\bkbox@item}}}%
+    }%
+  \end{picture}%
+\fi
+  }%
+  \bk@topline}\hfil
+\advance\bk@lcnt\@ne
+\loop 
+ \bk@split\bk@addskipdp\leavevmode
+\ifvoid\bk@bxb      % The last line
+ \@bkcontfalse\bkdblbox@addfsepdp
+ \vtop{\bk@bottomln%\hrule\@height\fboxrule
+\if0
+   {\unitlength=10mm\edef\@lnwd{\strip@pt\linewidth}%
+   \Div\@lnwd{\strip@pt\unitlength}\@lnwd
+   \noindent
+   \begin{picture}(0,0)%
+     \normalcolor
+     \bkbox@sensyu(0,0)(\@lnwd,0)%
+   \end{picture}}%
+\fi
+ }%
+\else               % 2,...,(n-1)
+ \bk@line
+\fi
+ \hfil\advance\bk@lcnt\@ne
+\if@bkcont\repeat}%
+\fi
+\leavevmode\bk@fstln\par
+}%
+\vskip\breakboxskip\relax}
+%
+%
+%
+\def\bkdblovalbox{\def\bkbox@sensyu{\drawline}%
+  \edef\bkbox@item{\empty}%
+  \def\h@sep{1zw}%
+  \def\v@sep{1zh}%
+% \edef\fboxrule@A{\the\fboxrule}%
+  \edef\fboxrule@A{2pt}%
+  \edef\fboxrule@B{\the\fboxrule}%
+  \edef\fboxrule@G{2pt}%
+  \@ifnextchar[{\@bkdblovalbox}{\@@bkdblovalbox}}
+\def\@bkdblovalbox[#1]{\setkeys{emBk}{#1}\@@bkdblovalbox}
+\def\@@bkdblovalbox{\def\breakboxparindent{1zw}%
+  \vskip\breakboxskip\relax
+  \setbox\bk@bxb\vbox\bgroup
+  \setlength{\linewidth}{\linewidth-\fboxrule@G*2}
+  \setlength{\linewidth}{\linewidth-\fboxrule@A*2}
+  \setlength{\linewidth}{\linewidth-\fboxrule@B*2}
+  \setlength{\linewidth}{\linewidth-\h@sep*2}
+  \hsize\linewidth\@parboxrestore
+\@setminipage%%% added
+  \parindent\breakboxparindent\relax\ignorespaces
+}
+\def\endbkdblovalbox{%
+  \ifvmode \vskip-\lastskip \fi%%% added
+  \egroup
+  \def\bkdblovalbox@addfsepht{%
+       \setbox\bk@bxa\vbox{%
+        \vskip\v@sep
+        \vskip\fboxrule@A
+        \vskip\fboxrule@B
+        \vskip\fboxrule@G
+        \box\bk@bxa}}
+  \def\bkdblovalbox@addfsepdp{%
+     \@tempdima\dp\bk@bxa
+     \advance\@tempdima\fboxrule@A
+     \advance\@tempdima\fboxrule@B
+     \advance\@tempdima\fboxrule@G
+     \advance\@tempdima\v@sep
+     \dp\bk@bxa\@tempdima}
+  \setlength{\@tempdima}{\linewidth-\fboxrule@A-\fboxrule@G-\h@sep}%
+      \edef\@Dx{\strip@pt\@tempdima}%
+  \setlength{\@tempdima}{\fboxrule@A+\fboxrule@G+\h@sep}%
+      \edef\@Cx{\strip@pt\@tempdima}%
+  \setlength{\@tempdima}{\h@sep+\fboxrule@G}%
+      \edef\@ra{\strip@pt\@tempdima}%
+  \setlength{\@tempdima}{\v@sep+\fboxrule@G}%
+      \edef\@rb{\strip@pt\@tempdima}%
+  \@tempdima\h@sep\edef\@rra{\strip@pt\@tempdima}%
+  \@tempdima\v@sep\edef\@rrb{\strip@pt\@tempdima}%
+  \setlength{\@tempdima}{\h@sep+\fboxrule@G+\fboxrule@A}%
+      \edef\@Ra{\strip@pt\@tempdima}%
+  \setlength{\@tempdima}{\v@sep+\fboxrule@G+\fboxrule@A}%
+      \edef\@Rb{\strip@pt\@tempdima}%
+%
+\def\bk@ovaltopline{\hbox to \linewidth{%
+    \ifbkcount\smash{\llap{\the\bk@lcnt\ }}\fi
+    {\unitlength=\p@
+    \edef\@lnwd{\strip@pt\linewidth}%
+    \@tempdima\ht\strutbox
+    \ifdim\ht\bk@bxa>\@tempdima\@tempdima=\ht\bk@bxa\fi
+    \edef\@lnht{\strip@pt\@tempdima}%
+    \setlength{\@tempdimb}{\@tempdima-\fboxrule@A-\fboxrule@G}%
+    \edef\top@lnht{\strip@pt\@tempdimb}%
+    \@tempdima\dp\strutbox
+    \ifdim\dp\bk@bxa>\@tempdima\@tempdima=\dp\bk@bxa\fi
+    \edef\@lndp{\strip@pt\@tempdima}%
+    \setlength{\@tempdima}{\@lnht\p@-\fboxrule@A-\fboxrule@G-\v@sep}%
+    \edef\@Cy{\strip@pt\@tempdima}%
+    \noindent
+    \begin{picture}(0,0)%
+%                           上罫線
+      \normalcolor
+      \setlength{\@tempdimb}{\@lnht\p@-\fboxrule@A}%
+      \edef\@@lndp{\strip@pt\@tempdimb}%
+      \allinethickness{\fboxrule@B}%
+      \setlength{\@tempdimb}{\@lnht\p@-\fboxrule@A-\fboxrule@G}%
+      \edef\bkdblovalbox@tmp{\strip@pt\@tempdimb}%
+      \emathPut{(\@Cx,\@Cy)}{\Daenko\@rra\@rrb{90}{180}}%
+      \emathPut{(\@Dx,\@Cy)}{\Daenko\@rra\@rrb{0}{90}}%
+    \BKinziOresen{\@Cx+\@ra*cos(T)}{\@Cy+\@rb*sin(T)}{$pi/2}{$pi}{.02}\@resenl
+    \BKinziOresen{\@Cx+\@Ra*cos(T)}{\@Cy+\@Rb*sin(T)}{$pi}{$pi/2}{-.02}\@resenL
+    \Nuritubusi[1]<border=1>{\@resenl\@resenL}%
+    \BKinziOresen{\@Dx+\@ra*cos(T)}{\@Cy+\@rb*sin(T)}{0}{$pi/2}{.02}\@resenl
+    \BKinziOresen{\@Dx+\@Ra*cos(T)}{\@Cy+\@Rb*sin(T)}{$pi/2}{0}{-.02}\@resenL
+    \Nuritubusi[1]<border=1>{\@resenl\@resenL}%
+      \Nuritubusi[1]<border=1>{(\@Cx,\@@lndp)(\@Dx,\@@lndp)(\@Dx,\@lnht)%
+        (\@Cx,\@lnht)(\@Cx,\@lnht)}%
+      \bkbox@sensyu(\@Cx,\bkdblovalbox@tmp)(\@Dx,\bkdblovalbox@tmp)%
+%   \vrule \@width\fboxrule% 左罫線
+      \@tempdima=\fboxrule@A
+      \edef\bkdblovalbox@tmp{\strip@pt\@tempdima}%
+      \Nuritubusi[1]<border=1>{(0,-\@lndp)(\bkdblovalbox@tmp,-\@lndp)(\bkdblovalbox@tmp,\@Cy)%
+        (0,\@Cy)(0,-\@lndp)}%
+      \setlength{\@tempdima}{\fboxrule@A+\fboxrule@G}%
+      \edef\bkdblovalbox@tmp{\strip@pt\@tempdima}%
+      \allinethickness{\fboxrule@B}%
+      \bkbox@sensyu(\bkdblovalbox@tmp,-\@lndp)(\bkdblovalbox@tmp,\@Cy)%
+    \end{picture}%
+    \setlength{\@tempdima}{\fboxrule@A+\fboxrule@B+\fboxrule@G+\h@sep}%
+    \hskip\@tempdima
+    \box\bk@bxa\hfil\mbox{}%
+%   \vrule \@width\fboxrule% 右罫線
+    \begin{picture}(0,0)%
+      \normalcolor
+      \@tempdima=\fboxrule@A
+      \edef\bkdblovalbox@tmp{\strip@pt\@tempdima}%
+      \Nuritubusi[1]<border=1>{(0,-\@lndp)(-\bkdblovalbox@tmp,-\@lndp)%
+        (-\bkdblovalbox@tmp,\@Cy)(0,\@Cy)(0,-\@lndp)}%
+      \@tempdima=\fboxrule@G
+      \advance\@tempdima\fboxrule@A
+      \edef\bkdblovalbox@tmp{\strip@pt\@tempdima}%
+      \allinethickness{\fboxrule@B}%
+      \bkbox@sensyu(-\bkdblovalbox@tmp,-\@lndp)(-\bkdblovalbox@tmp,\@Cy)%
+    \end{picture}}%
+}}
+\def\bk@ovalbottomln{\hbox to \linewidth{%
+    \ifbkcount\smash{\llap{\the\bk@lcnt\ }}\fi
+    {\unitlength=\p@
+    \edef\@lnwd{\strip@pt\linewidth}%
+    \@tempdima\ht\strutbox
+    \ifdim\ht\bk@bxa>\@tempdima\@tempdima=\ht\bk@bxa\fi
+    \edef\@lnht{\strip@pt\@tempdima}%
+    \@tempdima\dp\strutbox
+    \ifdim\dp\bk@bxa>\@tempdima\@tempdima=\dp\bk@bxa\fi
+    \edef\@lndp{\strip@pt\@tempdima}%
+    \setlength{\@tempdimb}{\@tempdima-\fboxrule@A-\fboxrule@G}%
+    \edef\bottom@lndp{\strip@pt\@tempdimb}%
+    \setlength{\@tempdima}{-\@lndp\p@+\fboxrule@A+\fboxrule@G+\v@sep}%
+    \edef\@Cy{\strip@pt\@tempdima}%
+    \noindent
+    \begin{picture}(0,0)%
+%                           下罫線
+      \normalcolor
+      \@tempdima\dp\strutbox
+      \ifdim\dp\bk@bxa>\@tempdima\@tempdima=\dp\bk@bxa\fi
+      \edef\@lndp{\strip@pt\@tempdima}%
+      \setlength{\@tempdimb}{\@tempdima-\fboxrule@A}%
+      \edef\@@lnht{\strip@pt\@tempdimb}%
+      \Nuritubusi[1]<border=1>{(\@Cx,-\@lndp)(\@Dx,-\@lndp)(\@Dx,-\@@lnht)%
+        (\@Cx,-\@@lnht)(\@Cx,-\@@lnht)}%
+      \allinethickness{\fboxrule@B}%
+      \advance\@tempdimb-\fboxrule@G
+      \edef\bkdblovalbox@tmp{\strip@pt\@tempdimb}%
+      \setlength{\@tempdima}{\fboxrule@A+\fboxrule@G}%
+      \edef\ln@L{\strip@pt\@tempdima}%
+      \setlength{\@tempdimb}{\linewidth-\@tempdima}%
+      \edef\ln@R{\strip@pt\@tempdimb}%
+%
+%      \emathPut{(\@Cx,\@Cy)}{\Daenko\@rra\@rrb{-180}{-90}}%
+%      \emathPut{(\@Dx,\@Cy)}{\Daenko\@rra\@rrb{-90}{0}}%
+%      \bkbox@sensyu(\@Cx,-\bkdblovalbox@tmp)(\@Dx,-\bkdblovalbox@tmp)%
+      \BKinziOresen{\@Cx+\@rra*cos(T)}{\@Cy+\@rrb*sin(T)}{-$pi}{-$pi/2}{.02}\@resenl
+      \BKinziOresen{\@Dx+\@rra*cos(T)}{\@Cy+\@rrb*sin(T)}{-$pi/2}{0}{.02}\@resenr
+      \Drawline{\@resenl\@resenr}%
+%
+    \BKinziOresen{\@Cx+\@ra*cos(T)}{\@Cy+\@rb*sin(T)}{-$pi/2}{-$pi}{-.02}\@resenl
+    \BKinziOresen{\@Cx+\@Ra*cos(T)}{\@Cy+\@Rb*sin(T)}{-$pi}{-$pi/2}{.02}\@resenL
+    \Nuritubusi[1]<border=1>{\@resenl\@resenL}%
+    \BKinziOresen{\@Dx+\@ra*cos(T)}{\@Cy+\@rb*sin(T)}{0}{-$pi/2}{-.02}\@resenl
+    \BKinziOresen{\@Dx+\@Ra*cos(T)}{\@Cy+\@Rb*sin(T)}{-$pi/2}{0}{.02}\@resenL
+    \Nuritubusi[1]<border=1>{\@resenl\@resenL}%
+%   \vrule \@width\fboxrule% 左罫線
+    \@tempdima\ht\strutbox
+    \ifdim\ht\bk@bxa>\@tempdima\@tempdima=\ht\bk@bxa\fi
+    \edef\@lnht{\strip@pt\@tempdima}%
+    \@tempdima\dp\strutbox
+    \ifdim\dp\bk@bxa>\@tempdima\@tempdima=\dp\bk@bxa\fi
+    \edef\@lndp{\strip@pt\@tempdima}%
+      \@tempdima=\fboxrule@A
+      \edef\bkdblovalbox@tmp{\strip@pt\@tempdima}%
+%      \Nuritubusi[1]<border=1>{(0,-\@lndp)(\bkdblovalbox@tmp,-\@lndp)(\bkdblovalbox@tmp,\@lnht)%
+%        (0,\@lnht)(0,-\@lndp)}%
+      \Nuritubusi[1]<border=1>{(0,\@Cy)(\bkdblovalbox@tmp,\@Cy)(\bkdblovalbox@tmp,\@lnht)%
+        (0,\@lnht)(0,\@Cy)}%
+      \setlength{\@tempdima}{\fboxrule@A+\fboxrule@G}%
+      \edef\bkdblovalbox@tmp{\strip@pt\@tempdima}%
+      \allinethickness{\fboxrule@B}%
+      \bkbox@sensyu(\bkdblovalbox@tmp,\@Cy)(\bkdblovalbox@tmp,\@lnht)%
+    \end{picture}%
+    \setlength{\@tempdima}{\fboxrule@A+\fboxrule@B+\fboxrule@G+\h@sep}%
+    \hskip\@tempdima
+    \box\bk@bxa\hfil\mbox{}%
+%   \vrule \@width\fboxrule% 右罫線
+    \begin{picture}(0,0)%
+      \normalcolor
+      \@tempdima=\fboxrule@A
+      \edef\bkdblovalbox@tmp{\strip@pt\@tempdima}%
+      \Nuritubusi[1]<border=1>{(0,\@Cy)(-\bkdblovalbox@tmp,\@Cy)%
+        (-\bkdblovalbox@tmp,\@lnht)(0,\@lnht)(0,\@Cy)}%
+      \@tempdima=\fboxrule@G
+      \advance\@tempdima\fboxrule@A
+%     \advance\@tempdima\fboxrule@B
+      \edef\bkdblovalbox@tmp{\strip@pt\@tempdima}%
+      \allinethickness{\fboxrule@B}%
+      \bkbox@sensyu(-\bkdblovalbox@tmp,\@Cy)(-\bkdblovalbox@tmp,\@lnht)%
+    \end{picture}}%
+}}
+\def\bk@line{\hbox to \linewidth{%
+    \ifbkcount\smash{\llap{\the\bk@lcnt\ }}\fi
+    {\unitlength=\p@
+%   \vrule \@width\fboxrule% 左罫線
+    \@tempdima\ht\strutbox
+    \ifdim\ht\bk@bxa>\@tempdima\@tempdima=\ht\bk@bxa\fi
+    \edef\@lnht{\strip@pt\@tempdima}%
+    \@tempdima\dp\strutbox
+    \ifdim\dp\bk@bxa>\@tempdima\@tempdima=\dp\bk@bxa\fi
+    \edef\@lndp{\strip@pt\@tempdima}%
+    \noindent
+    \begin{picture}(0,0)%
+      \normalcolor
+      \@tempdima=\fboxrule@A
+      \edef\bkdblovalbox@tmp{\strip@pt\@tempdima}%
+      \Nuritubusi[1]<border=1>{(0,-\@lndp)(\bkdblovalbox@tmp,-\@lndp)(\bkdblovalbox@tmp,\@lnht)%
+        (0,\@lnht)(0,-\@lndp)}%
+      \setlength{\@tempdima}{\fboxrule@A+\fboxrule@G}%
+      \edef\bkdblovalbox@tmp{\strip@pt\@tempdima}%
+      \allinethickness{\fboxrule@B}%
+      \bkbox@sensyu(\bkdblovalbox@tmp,-\@lndp)(\bkdblovalbox@tmp,\@lnht)%
+    \end{picture}%
+%   \hskip\fboxsep
+\setlength{\@tempdima}{\fboxrule@A+\fboxrule@B+\fboxrule@G+\h@sep}%
+\hskip\@tempdima
+    \box\bk@bxa\hfil\mbox{}%
+%   \hskip\fboxsep
+%   \vrule \@width\fboxrule% 右罫線
+    \begin{picture}(0,0)%
+      \normalcolor
+      \@tempdima=\fboxrule@A
+      \edef\bkdblovalbox@tmp{\strip@pt\@tempdima}%
+      \Nuritubusi[1]<border=1>{(0,-\@lndp)(-\bkdblovalbox@tmp,-\@lndp)%
+        (-\bkdblovalbox@tmp,\@lnht)(0,\@lnht)(0,-\@lndp)}%
+      \@tempdima=\fboxrule@G
+      \advance\@tempdima\fboxrule@A
+      \edef\bkdblovalbox@tmp{\strip@pt\@tempdima}%
+      \bkbox@sensyu(-\bkdblovalbox@tmp,-\@lndp)(-\bkdblovalbox@tmp,\@lnht)%
+    \end{picture}}%
+}}
+\ifhmode\par\fi{\noindent\bk@lcnt\@ne 
+\@bkconttrue\baselineskip\z@\lineskiplimit\z@
+\lineskip\z@\vfuzz\maxdimen
+\bk@split\bkdblovalbox@addfsepht\bk@addskipdp
+\ifvoid\bk@bxb      % Only one line
+\def\bk@fstln{\bkdblovalbox@addfsepdp
+\vbox{\hrule\@height\fboxrule\bk@line\hrule\@height\fboxrule}}%
+\else               % More than one line
+\def\bk@fstln{\vbox{%\hrule\@height\fboxrule
+  {\unitlength=\p@\edef\@lnwd{\strip@pt\linewidth}%
+% 上罫線
+  \noindent
+\if0
+  \begin{picture}(0,0)%
+   {% \bkbox@sensyu(0,\@lnht)(\@lnwd,\@lnht)%
+      \normalcolor
+      \@tempdima\ht\strutbox
+      \ifdim\ht\bk@bxa>\@tempdima\@tempdima=\ht\bk@bxa\fi
+      \edef\@lnht{\strip@pt\@tempdima}%
+      \setlength{\@tempdimb}{\@tempdima-\fboxrule@A}%
+      \edef\@lndp{\strip@pt\@tempdimb}%
+      \Nuritubusi[1]<border=1>{(0,\@lndp)(\@lnwd,\@lndp)(\@lnwd,\@lnht)%
+        (0,\@lnht)(0,\@lnht)}%
+      \allinethickness{\fboxrule@B}%
+      \advance\@tempdimb-\fboxrule@G
+      \edef\bkdblovalbox@tmp{\strip@pt\@tempdimb}%
+      \bkbox@sensyu(0,\bkdblovalbox@tmp)(\@lnwd,\bkdblovalbox@tmp)%
+    }%
+    \ifthenelse{\equal\bkbox@item\empty}{}{%
+      \Put{(.5,\@lnht)}(0,0)[lc]{{\fboxsep=0pt\colorbox{white}{\bkbox@item}}}%
+    }%
+  \end{picture}%
+\fi
+  }%
+  \bk@ovaltopline}\hfil
+\advance\bk@lcnt\@ne
+\loop 
+ \bk@split\bk@addskipdp\leavevmode
+\ifvoid\bk@bxb      % The last line
+ \@bkcontfalse\bkdblovalbox@addfsepdp
+ \vtop{\bk@ovalbottomln%\hrule\@height\fboxrule
+\if0
+   {\unitlength=10mm\edef\@lnwd{\strip@pt\linewidth}%
+   \Div\@lnwd{\strip@pt\unitlength}\@lnwd
+   \noindent
+   \begin{picture}(0,0)%
+     \normalcolor
+     \bkbox@sensyu(0,0)(\@lnwd,0)%
+   \end{picture}}%
+\fi
+ }%
+\else               % 2,...,(n-1)
+ \bk@line
+\fi
+ \hfil\advance\bk@lcnt\@ne
+\if@bkcont\repeat}%
+\fi
+\leavevmode\bk@fstln\par
+}%
+\vskip\breakboxskip\relax}
+%
+% ページをまたぐ rectbox --- breakDbox 環境
+% \begin{breakDbox}[#1]
+%   #1 :
+%     sensyu=... (default:\dottedline{.1})
+%     fboxsep=.. (default:\fboxsep)
+%     item=..    (default:\empty)
+%
+%\def\breakDbox{\def\bkbox@sensyu{\dottedline{.1}}%
+\def\breakDbox{\def\bkbox@sensyu{\emcdottedline}%
+  \edef\bkbox@item{\empty}%
+  \@ifnextchar[{\@breakDbox}{\@@breakDbox}}
+\def\@breakDbox[#1]{\setkeys{emBk}{#1}\@@breakDbox}
+\def\@@breakDbox{\def\breakboxparindent{1zw}\breakbox}
+\def\endbreakDbox{%
+  \ifvmode \vskip-\lastskip \fi%%% added
+\egroup
+\def\bk@line{%
+    \hbox to \linewidth{\ifbkcount\smash{\llap{\the\bk@lcnt\ }}\fi
+    {\unitlength=10mm\relax
+%    \vrule \@width\fboxrule% 左罫線
+    \@tempdima\ht\strutbox
+    \ifdim\ht\bk@bxa>\@tempdima\@tempdima=\ht\bk@bxa\fi
+    \edef\@lnht{\strip@pt\@tempdima}%
+    \Div\@lnht{\strip@pt\unitlength}\@lnht
+    \@tempdima\dp\strutbox
+    \ifdim\dp\bk@bxa>\@tempdima\@tempdima=\dp\bk@bxa\fi
+    \edef\@lndp{\strip@pt\@tempdima}%
+    \Div\@lndp{\strip@pt\unitlength}\@lndp
+    \noindent
+    \begin{picture}(0,0)%
+      \normalcolor
+      \bkbox@sensyu(0,\@lnht)(0,-\@lndp)%
+    \end{picture}%
+    \hskip\fboxsep
+    \box\bk@bxa\hfil
+    \hskip\fboxsep
+%   \vrule \@width\fboxrule% 右罫線
+    \begin{picture}(0,0)%
+        \normalcolor
+        \bkbox@sensyu(0,-\@lndp)(0,\@lnht)%
+    \end{picture}}%
+    }}
+\ifhmode\par\fi{\noindent\bk@lcnt\@ne 
+\@bkconttrue\baselineskip\z@\lineskiplimit\z@
+\lineskip\z@\vfuzz\maxdimen
+\bk@split\bk@addfsepht\bk@addskipdp
+\ifvoid\bk@bxb      % Only one line
+\def\bk@fstln{\bk@addfsepdp
+\vbox{\hrule\@height\fboxrule\bk@line\hrule\@height\fboxrule}}%
+\else               % More than one line
+\def\bk@fstln{\vbox{%\hrule\@height\fboxrule
+  {\unitlength=10mm\edef\@lnwd{\strip@pt\linewidth}%
+  \Div\@lnwd{\strip@pt\unitlength}\@lnwd
+  \@tempdima\ht\strutbox
+  \ifdim\ht\bk@bxa>\@tempdima\@tempdima=\ht\bk@bxa\fi
+  \edef\@lnht{\strip@pt\@tempdima}%
+  \Div\@lnht{\strip@pt\unitlength}\@lnht
+  \noindent
+  \begin{picture}(0,0)%
+    \normalcolor
+    \bkbox@sensyu(\@lnwd,\@lnht)(0,\@lnht)%
+    \ifthenelse{\equal\bkbox@item\empty}{}{%
+      \Put{(.5,\@lnht)}(0,0)[lc]{{\fboxsep=0pt\colorbox{white}{\bkbox@item}}}%
+    }%
+  \end{picture}}%
+  \bk@line}\hfil
+\advance\bk@lcnt\@ne
+\loop 
+ \bk@split\bk@addskipdp\leavevmode
+\ifvoid\bk@bxb      % The last line
+ \@bkcontfalse\bk@addfsepdp
+ \vtop{\bk@line%\hrule\@height\fboxrule
+   {\unitlength=10mm\edef\@lnwd{\strip@pt\linewidth}%
+   \Div\@lnwd{\strip@pt\unitlength}\@lnwd
+   \noindent
+   \begin{picture}(0,0)%
+     \normalcolor
+     \bkbox@sensyu(0,0)(\@lnwd,0)%
+   \end{picture}}%
+ }%
+\else               % 2,...,(n-1)
+ \bk@line
+\fi
+ \hfil\advance\bk@lcnt\@ne
+\if@bkcont\repeat}%
+\fi
+\leavevmode\bk@fstln\par}\vskip\breakboxskip\relax}
+
+% 左右に罫線（ページをまたぐ）
+%
+% \begin{breakLRline}[#1]
+%   #1 :
+%     sensyu=... (default: \drawline)
+%                           \dottedline{.1}
+%     linesep=.. (default: \fboxsep)
+%     fboxsep=.. (default: 0pt)
+%
+\def\breakLRline{%
+  \def\bkbox@sensyu{\drawline}\relax
+  \tyuulinesep=\fboxsep
+% \fboxsep=\z@
+  \@ifnextchar[{\@breakLRline}{\@@breakLRline}}
+\def\@breakLRline[#1]{%
+  \ifthenelse{\equal{#1}\empty}{}{\setkeys{emBk}{#1}}%
+  \@@breakLRline}
+\def\@@breakLRline{%
+  \def\breakboxparindent{1zw}%
+  \def\bk@addfsepht{%
+%     \setbox\bk@bxa\vbox{\vskip4pt\box\bk@bxa}%
+    \relax
+  }%
+  \def\bk@addfsepdp{\relax}%
+%\breakbox
+  \setbox\bk@bxb\vbox\bgroup
+  \advance\linewidth -2\fboxrule
+  \advance\linewidth -2\tyuulinesep
+  \hsize\linewidth\@parboxrestore
+\@setminipage%%% added
+  \parindent\breakboxparindent\relax\ignorespaces}%
+\def\endbreakLRline{%
+  \ifvmode \vskip-\lastskip \fi%%% added
+\egroup
+\def\bk@line{%
+    \hbox to \linewidth{\ifbkcount\smash{\llap{\the\bk@lcnt\ }}\fi
+    {\unitlength=10mm\relax
+%    \vrule \@width\fboxrule% 左罫線
+%    \@tempdima\ht\strutbox
+%    \ifdim\ht\bk@bxa>\@tempdima\@tempdima=\ht\bk@bxa\fi
+\@tempdima=\ht\bk@bxa
+    \edef\@lnht{\strip@pt\@tempdima}%
+    \Div\@lnht{\strip@pt\unitlength}\@lnht
+%    \@tempdima\dp\strutbox
+%    \ifdim\dp\bk@bxa>\@tempdima\@tempdima=\dp\bk@bxa\fi
+\@tempdima=\dp\bk@bxa
+    \edef\@lndp{\strip@pt\@tempdima}%
+    \Div\@lndp{\strip@pt\unitlength}\@lndp
+    \noindent
+    \begin{picture}(0,0)%
+      \normalcolor
+      \bkbox@sensyu(0,-\@lndp)(0,\@lnht)%
+    \end{picture}%
+    \hskip\tyuulinesep
+    \box\bk@bxa\hfil
+    \hskip\tyuulinesep
+%   \vrule \@width\fboxrule% 右罫線
+    \begin{picture}(0,0)%
+      \normalcolor
+      \bkbox@sensyu(0,-\@lndp)(0,\@lnht)%
+    \end{picture}}%
+    }}
+\ifhmode\par\fi{\noindent\bk@lcnt\@ne 
+\@bkconttrue\baselineskip\z@\lineskiplimit\z@
+\lineskip\z@\vfuzz\maxdimen
+\bk@split\bk@addfsepht\bk@addskipdp
+\ifvoid\bk@bxb      % Only one line
+\def\bk@fstln{\bk@addfsepdp
+%\vbox{\hrule\@height\fboxrule\bk@line\hrule\@height\fboxrule}%
+\vbox{\bk@line}}%
+\else               % More than one line
+\def\bk@fstln{\vbox{%\hrule\@height\fboxrule
+%  {\unitlength=10mm\edef\@lnwd{\strip@pt\linewidth}%
+%  \Div\@lnwd{\strip@pt\unitlength}\@lnwd
+%  \@tempdima\ht\strutbox
+%  \ifdim\ht\bk@bxa>\@tempdima\@tempdima=\ht\bk@bxa\fi
+%  \edef\@lnht{\strip@pt\@tempdima}%
+%  \Div\@lnht{\strip@pt\unitlength}\@lnht
+%  \noindent
+%  \begin{picture}(0,0)%
+%    \bkbox@sensyu(0,\@lnht)(\@lnwd,\@lnht)%
+%  \end{picture}%
+%  }%
+\vskip\parsep\vskip\partopsep
+  \bk@line}\hfil
+\advance\bk@lcnt\@ne
+\loop 
+ \bk@split\bk@addskipdp\leavevmode
+\ifvoid\bk@bxb      % The last line
+ \@bkcontfalse\bk@addfsepdp
+ \vtop{\bk@line%\hrule\@height\fboxrule
+%   {\unitlength=10mm\edef\@lnwd{\strip@pt\linewidth}%
+%   \Div\@lnwd{\strip@pt\unitlength}\@lnwd
+%   \noindent
+%   \begin{picture}(0,0)%
+%     \bkbox@sensyu(0,0)(\@lnwd,0)%
+%   \end{picture}}%
+ }%
+\else               % 2,...,(n-1)
+ \bk@line
+\fi
+ \hfil\advance\bk@lcnt\@ne
+\if@bkcont\repeat}%
+\fi
+\leavevmode\bk@fstln\par}\vskip\breakboxskip\relax
+}
+
+% 右にのみ罫線（ページをまたぐ）
+%
+% \begin{breakRline}[#1]
+%   #1 :
+%     sensyu=... (default:\drawline)
+%     linesep=.. (default: \fboxsep)
+%     fboxsep=.. (default: 0pt)
+%
+\def\breakRline{%
+  \def\bkbox@sensyu{\drawline}\relax
+  \tyuulinesep=\fboxsep
+% \fboxsep=\z@
+  \edef\post@line{0pt}%
+  \@ifnextchar[{\@breakRline}{\@@breakRline}}%
+\def\@breakRline[#1]{%
+  \ifthenelse{\equal{#1}{\empty}}{}{\setkeys{emBk}{#1}}%
+  \@@breakRline}%
+\def\@@breakRline{%
+  \def\breakboxparindent{1zw}%
+  \def\bk@addfsepht{\relax}%
+  \def\bk@addfsepdp{\relax}%
+\setbox\bk@bxb\vbox\bgroup
+  \@setminipage%%% added
+%  \leavevmode%%%%%%%%%%%%%%%%%%% 2007/07/08 ---> 2007/11/11 停止
+  \advance\linewidth -\fboxrule
+  \advance\linewidth -\tyuulinesep
+  \hsize\linewidth\@parboxrestore
+  \parindent\breakboxparindent\relax\ignorespaces}%
+\def\endbreakRline{%
+  \ifvmode \vskip-\lastskip \fi%%% added
+\egroup
+\def\bk@line{%
+    \hbox to \linewidth{\ifbkcount\smash{\llap{\the\bk@lcnt\ }}\fi
+    {\unitlength=10mm\relax
+    \@tempdima\ht\bk@bxa
+    \edef\@lnht{\strip@pt\@tempdima}%
+    \Div\@lnht{\strip@pt\unitlength}\@lnht
+    \@tempdima\dp\bk@bxa
+    \edef\@lndp{\strip@pt\@tempdima}%
+    \Div\@lndp{\strip@pt\unitlength}\@lndp
+    \noindent
+    \box\bk@bxa\hfil
+    \hskip\tyuulinesep
+    \ifmigityuukeisen
+      \begin{picture}(0,0)%
+        \normalcolor
+        \if@bkcont\else\ukansan\post@line\post@line@\Addself\@lndp\post@line@\fi
+        \@ifundefined{Bk@ps}{%
+            \bkbox@sensyu(0,-\@lndp)(0,\@lnht)%
+        }{%
+          \Add\@lndp\@lnht\@lnhd
+          \put(0,-\@lndp){\line(0,1)\@lnhd}%
+        }%
+      \end{picture}%
+    \fi
+    }%
+    }}%
+%\ifhmode\par\fi%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 2007/11/11 停止
+{\noindent\bk@lcnt\@ne 
+\@bkconttrue\baselineskip\z@\lineskiplimit\z@
+\lineskip\z@\vfuzz\maxdimen
+\bk@split\bk@addfsepht\bk@addskipdp
+\ifvoid\bk@bxb      % Only one line
+\def\bk@fstln{\bk@addfsepdp
+%\vbox{\hrule\@height\fboxrule\bk@line\hrule\@height\fboxrule}%
+\vbox{\bk@line}}%
+\else               % More than one line
+\def\bk@fstln{\vbox{%\hrule\@height\fboxrule
+%  {\unitlength=10mm\edef\@lnwd{\strip@pt\linewidth}%
+%  \Div\@lnwd{\strip@pt\unitlength}\@lnwd
+%  \@tempdima\ht\strutbox
+%  \ifdim\ht\bk@bxa>\@tempdima\@tempdima=\ht\bk@bxa\fi
+%  \edef\@lnht{\strip@pt\@tempdima}%
+%  \Div\@lnht{\strip@pt\unitlength}\@lnht
+%  \noindent
+%  \begin{picture}(0,0)%
+%    \bkbox@sensyu(0,\@lnht)(\@lnwd,\@lnht)%
+%  \end{picture}%
+%  }%
+\vskip\parsep\vskip\partopsep
+  \bk@line}\hfil
+\advance\bk@lcnt\@ne
+\loop 
+ \bk@split\bk@addskipdp\leavevmode
+\ifvoid\bk@bxb      % The last line
+ \@bkcontfalse\bk@addfsepdp
+ \vtop{\bk@line%\hrule\@height\fboxrule
+%   {\unitlength=10mm\edef\@lnwd{\strip@pt\linewidth}%
+%   \Div\@lnwd{\strip@pt\unitlength}\@lnwd
+%   \noindent
+%   \begin{picture}(0,0)%
+%     \bkbox@sensyu(0,0)(\@lnwd,0)%
+%   \end{picture}}%
+ }%
+\else               % 2,...,(n-1)
+ \bk@line
+\fi
+ \hfil\advance\bk@lcnt\@ne
+\if@bkcont\repeat}%
+\fi
+\leavevmode\bk@fstln\par}\vskip\breakboxskip\relax
+}
+
+% 左にのみ罫線（ページをまたぐ）
+%
+% \begin{breakLline}[#1]
+%   #1 :
+%     sensyu=...   (default:\drawline)
+%     linesep=..   (default: \fboxsep)
+%     linepos=..   (default: 0pt)
+%     fboxsep=..   (default: 0pt)
+%     parindent=.. (default: 1zw)
+%     headline=..  (default: 0 右辺値を省略した場合 1)
+%
+\def\breakLline{%
+  \let\txtfootnote\footnote
+  \edef\ftnt@txt@i{\empty}%
+  \edef\ftnt@txt@num{0}%
+  \edef\ftnt@txt@save{0}%
+  \def\footnote##1{%
+    \ifnum\ftnt@txt@num=\z@
+      \xdef\ftnt@txt@save{\the\value{footnote}}%
+    \fi
+    \xIncr\ftnt@txt@num
+    \footnotemark
+    \expandafter\gdef\csname ftnt@txt@\romannumeral\ftnt@txt@num\endcsname{##1}%
+    \ignorespaces
+  }%
+  \def\breakboxparindent{1zw}%
+%  \def\bkbox@sensyu{\drawline}\relax
+  \edef\bkbox@sensyu{\empty}\relax
+  \tyuulinesep=\fboxsep
+% \fboxsep=\z@
+  \edef\line@pos{0pt}%
+  \edef\Bk@headln{0}%
+  \@ifnextchar[{\@breakLline}{\@@breakLline}}
+\def\@breakLline[#1]{\setkeys{emBk}{#1}\@@breakLline}
+\def\@@breakLline{%
+  \def\bk@addfsepht{%
+%     \setbox\bk@bxa\vbox{\vskip4pt\box\bk@bxa}%
+    \relax
+  }%
+  \def\bk@addfsepdp{\relax}%
+% \vskip\breakboxskip\relax
+  \setbox\bk@bxb\vbox\bgroup
+  \advance\linewidth -\fboxrule
+  \advance\linewidth -\tyuulinesep
+  \hsize\linewidth\@parboxrestore
+\@setminipage%%% added
+  \parindent\breakboxparindent\relax\ignorespaces}
+\def\endbreakLline{%
+  \ifvmode \vskip-\lastskip \fi%%% added
+\egroup
+\def\bk@line{%
+    \hbox to \linewidth{\ifbkcount\smash{\llap{\the\bk@lcnt\ }}\fi
+    {\unitlength=10mm\relax
+%    \vrule \@width\fboxrule% 左罫線
+%    \@tempdima\ht\strutbox
+%    \ifdim\ht\bk@bxa>\@tempdima\@tempdima=\ht\bk@bxa\fi
+\@tempdima=\ht\bk@bxa
+    \edef\@lnht{\strip@pt\@tempdima}%
+%%    \Div\@lnht{\strip@pt\unitlength}\@lnht
+%    \@tempdima\dp\strutbox
+%    \ifdim\dp\bk@bxa>\@tempdima\@tempdima=\dp\bk@bxa\fi
+\@tempdima\dp\bk@bxa
+    \edef\@lndp{\strip@pt\@tempdima}%
+%    \Div\@lndp{\strip@pt\unitlength}\@lndp
+    \noindent
+\ifnum\bk@lcnt>\Bk@headln
+    \begin{picture}(0,0)%
+      \normalcolor
+      \ukansan\line@pos\line@pos@
+      \ifx\empty\bkbox@sensyu
+        \put(\line@pos@,0){\vrule height \@lnht\p@ depth \@lndp\p@ width \@wholewidth}%
+      \else
+        \ukansan{\@lnht\p@}\@lnht
+        \ukansan{\@lndp\p@}\@lndp
+        \bkbox@sensyu(\line@pos@,-\@lndp)(\line@pos@,\@lnht)%
+      \fi
+    \end{picture}%
+\fi
+    \hskip\tyuulinesep
+    \box\bk@bxa\hfil
+%   \hskip\fboxsep
+%   \vrule \@width\fboxrule% 右罫線
+%    \begin{picture}(0,0)%
+%      \bkbox@sensyu(0,-\@lndp)(0,\@lnht)%
+%    \end{picture}
+    }}}
+\ifhmode \par\fi{\noindent\bk@lcnt\@ne 
+\@bkconttrue\baselineskip\z@\lineskiplimit\z@
+\lineskip\z@\vfuzz\maxdimen
+\bk@split\bk@addfsepht\bk@addskipdp
+\ifvoid\bk@bxb      % Only one line
+\def\bk@fstln{%\bk@addfsepdp
+%\vbox{\hrule\@height\fboxrule\bk@line\hrule\@height\fboxrule}%
+\vbox{\bk@line}}%
+\else               % More than one line
+\def\bk@fstln{\vbox{%\hrule\@height\fboxrule
+%  {\unitlength=10mm\edef\@lnwd{\strip@pt\linewidth}%
+%  \Div\@lnwd{\strip@pt\unitlength}\@lnwd
+%  \@tempdima\ht\strutbox
+%  \ifdim\ht\bk@bxa>\@tempdima\@tempdima=\ht\bk@bxa\fi
+%  \edef\@lnht{\strip@pt\@tempdima}%
+%  \Div\@lnht{\strip@pt\unitlength}\@lnht
+%  \noindent
+%  \begin{picture}(0,0)%
+%    \bkbox@sensyu(0,\@lnht)(\@lnwd,\@lnht)%
+%  \end{picture}%
+%  }%
+\vskip\parsep\vskip\partopsep
+  \bk@line}\hfil
+\advance\bk@lcnt\@ne
+\loop 
+ \bk@split\bk@addskipdp\leavevmode
+\ifvoid\bk@bxb      % The last line
+ \@bkcontfalse\bk@addfsepdp
+ \vtop{\bk@line%\hrule\@height\fboxrule
+%   {\unitlength=10mm\edef\@lnwd{\strip@pt\linewidth}%
+%   \Div\@lnwd{\strip@pt\unitlength}\@lnwd
+%   \noindent
+%   \begin{picture}(0,0)%
+%     \bkbox@sensyu(0,0)(\@lnwd,0)%
+%   \end{picture}}%
+  }%
+\else               % 2,...,(n-1)
+ \bk@line
+\fi
+ \hfil\advance\bk@lcnt\@ne
+\if@bkcont\repeat}%
+\fi
+\leavevmode\bk@fstln\par}\vskip\breakboxskip\relax
+\ifx\empty\ftnt@txt\else
+  \setcounter{footnote}{\ftnt@txt@save}%
+%  \refstepcounter{footnote}%
+  \Cfor{\edef\ftnt@i{0}}{\ftnt@i<\ftnt@txt@num}{}\do{%
+    \xIncr\ftnt@i
+    \refstepcounter{footnote}%
+    \footnotetext{\csname ftnt@txt@\romannumeral\ftnt@i\endcsname}%
+  }%
+\fi
+}
+%
+% ページをまたぐ shadebox --- bkshadebox 環境
+% \begin{bkshadebox}[#1]
+%   #1 :
+%     sensyu=... (default:\dottedline{.1})
+%     fboxsep=.. (default:\fboxsep)
+%     item=..    (default:\empty)
+%
+\def\bkshadebox{\def\bkbox@sensyu{\drawline}%
+  \edef\bkbox@item{\empty}%
+  \@ifnextchar[{\@bkshadebox}{\@@bkshadebox}}
+\def\@bkshadebox[#1]{\setkeys{emBk}{#1}\@@bkshadebox}
+\def\@@bkshadebox{\def\breakboxparindent{1zw}
+  \vskip\breakboxskip\relax
+  \setbox\bk@bxb\vbox\bgroup
+  \advance\linewidth -2\fboxrule
+  \advance\linewidth -2\fboxsep
+  \advance\linewidth -5pt\relax
+  \hsize\linewidth\@parboxrestore
+\@setminipage%%% added
+  \parindent\breakboxparindent\relax\ignorespaces}
+\def\endbkshadebox{%
+  \ifvmode \vskip-\lastskip \fi%%% added
+\egroup
+\def\bk@line{%
+    \hbox to \linewidth{\ifbkcount\smash{\llap{\the\bk@lcnt\ }}\fi
+    {\unitlength=10pt\relax
+%    \vrule \@width\fboxrule% 左罫線
+    \@tempdima\ht\strutbox
+    \ifdim\ht\bk@bxa>\@tempdima\@tempdima=\ht\bk@bxa\fi
+    \edef\@lnht{\strip@pt\@tempdima}%
+    \Div\@lnht{\strip@pt\unitlength}\@lnht
+    \@tempdima\dp\strutbox
+    \ifdim\dp\bk@bxa>\@tempdima\@tempdima=\dp\bk@bxa\fi
+    \edef\@lndp{\strip@pt\@tempdima}%
+    \Div\@lndp{\strip@pt\unitlength}\@lndp
+    \noindent
+    \begin{picture}(0,0)%
+        \normalcolor
+        \bkbox@sensyu(0,-\@lndp)(0,\@lnht)%
+    \end{picture}%
+    \hskip\fboxsep
+    \box\bk@bxa\hfil
+    \hskip\fboxsep
+%   \vrule \@width\fboxrule% 右罫線
+    \begin{picture}(0,0)%
+      \normalcolor
+      \ifnum\bk@lcnt=\@ne
+%       \Add\@lnht{-\@lndp}\@lnmd\Div\@lnmd{2}\@lnmd
+        \Sub\@lnht{.5}\@lnmd
+        \nuritubusi[1](0,-\@lndp)(0,\@lnmd)(-.5,\@lnmd)(-.5,-\@lndp)(0,-\@lndp)
+        \drawline(-.5,\@lnht)(-.5,\@lnmd)\relax
+      \else
+        \nuritubusi[1](0,-\@lndp)(0,\@lnht)(-.5,\@lnht)(-.5,-\@lndp)(0,-\@lndp)
+      \fi
+    \end{picture}}%
+    }}
+\ifhmode\par\fi{\noindent\bk@lcnt\@ne 
+\@bkconttrue\baselineskip\z@\lineskiplimit\z@
+\lineskip\z@\vfuzz\maxdimen
+\bk@split\bk@addfsepht\bk@addskipdp
+\ifvoid\bk@bxb      % Only one line
+\def\bk@fstln{\bk@addfsepdp
+\vbox{\hrule\@height\fboxrule\bk@line\hrule\@height\fboxrule}}%
+\else               % More than one line
+\def\bk@fstln{\vbox{%\hrule\@height\fboxrule
+  {\unitlength=10pt\edef\@lnwd{\strip@pt\linewidth}%
+  \Div\@lnwd{\strip@pt\unitlength}\@lnwd
+\Sub\@lnwd{.5}\@lnwd
+  \@tempdima\ht\strutbox
+  \ifdim\ht\bk@bxa>\@tempdima\@tempdima=\ht\bk@bxa\fi
+  \edef\@lnht{\strip@pt\@tempdima}%
+  \Div\@lnht{\strip@pt\unitlength}\@lnht
+  \noindent
+  \begin{picture}(0,0)%
+    \normalcolor
+    \bkbox@sensyu(0,\@lnht)(\@lnwd,\@lnht)%
+    \ifthenelse{\equal\bkbox@item\empty}{}{%
+      \Put{(.5,\@lnht)}(0,0)[lc]{{\fboxsep=0pt\colorbox{white}{\bkbox@item}}}%
+    }%
+  \end{picture}}%
+  \bk@line}\hfil
+\advance\bk@lcnt\@ne
+\loop 
+ \bk@split\bk@addskipdp\leavevmode
+\ifvoid\bk@bxb      % The last line
+ \@bkcontfalse\bk@addfsepdp
+ \vtop{\bk@line%\hrule\@height\fboxrule
+   {\unitlength=10pt\edef\@lnwd{\strip@pt\linewidth}%
+   \Div\@lnwd{\strip@pt\unitlength}\@lnwd
+   \noindent
+   \begin{picture}(0,0)%
+     \normalcolor
+     \bkbox@sensyu(0,0)(.5,0)%
+    \nuritubusi[1](.5,0)(\@lnwd,0)(\@lnwd,-.5)(.5,-.5)(.5,0)\relax
+   \end{picture}}%
+ }%
+\else               % 2,...,(n-1)
+ \bk@line
+\fi
+ \hfil\advance\bk@lcnt\@ne
+\if@bkcont\repeat}%
+\fi
+\noindent\bk@fstln\par}\vskip\breakboxskip\vskip5pt\relax}
+%
+% 右欄外に注釈
+%
+\def\Rangai{%
+  \ifthenelse{\boolean{@twoside}}{%
+    \ifthenelse{\isodd{\the\c@page}}{\MigiRangai}{\HidariRangai}%
+  }{%
+    \MigiRangai
+  }%
+}%
+%\def\Rangai{%
+%%   \ifodd\c@page\relax\MigiRangai\else\HidariRangai\fi
+%  \ifthenelse{\isodd{\value{page}}}{\MigiRangai}{\HidariRangai}%
+%}%
+%
+\newlength\MigiRangaiHaba
+\MigiRangaiHaba=\marginparwidth
+\def\MigiRangaiMozisize{\footnotesize}%
+\def\MigiRangai{\MigiRangaiHaba=\marginparwidth
+  \@ifnextchar<{\@MigiRangai}{\@MigiRangai<\z@>}}%
+\def\@MigiRangai<#1>#2{%
+%
+  \define@key{emBk}{mark}{\def\MR@mark{##1}}%
+%
+  \edef\MR@mark{\empty}%
+\@ifundefined{gather}{%
+    \@@MigiRangai<#1>{#2}%
+}{%
+  \ifmmode
+    \if@display
+      \dpmath@MigiRangai<#1>{#2}%
+    \else
+      \@@MigiRangai<#1>{#2}%
+    \fi
+  \else
+    \@@MigiRangai<#1>{#2}%
+  \fi
+}%
+  \ignorespaces
+%\vspace{\p@}%  \item の先頭行に対しての補正
+}
+\def\dpmath@MigiRangai<#1>#2{%
+  \xdef\MR@tatehosei{\z@}%
+  \xdef\MR@yokohosei{\z@}%
+  \edef\MR@label{\empty}%
+  \edef\MR@tag{\empty}%
+  \Strchr{#1}{=}\MRgai@tmp
+  \ifnum\MRgai@tmp>\z@\setkeys{emBk}{#1}\else
+    \xdef\MR@tatehosei{#1}%
+  \fi
+%
+  \@ifundefined{EMminipages@n}{}{%
+    \Cfor{\edef\MR@i{\EMminipages@i}\setlength{\@tempdima}{\MR@yokohosei}}{\MR@i<\EMminipages@n}{}\do{%
+      \Incr\MR@i
+      \setlength{\@tempdima}{\@tempdima+\EMminipages@sep+\csname EMminipages@w@\romannumeral\MR@i\endcsname}%
+    }%
+    \edef\MR@yokohosei{\the\@tempdima}%
+  }%
+  \xdef\MR@@@tmp{\MR@yokohosei}%
+%
+  \ifst@rred\@eqnswfalse\fi
+  \xdef\tyuu@tag{\empty}%
+  \ifthenelse{\equal\MR@tag{notag}}{%
+    \@eqnswfalse
+  }{%
+    \ifthenelse{\equal\MR@tag{atag}}{%
+      \@eqnswtrue
+    }{%
+      \ifthenelse{\equal\MR@tag\empty}{}{%
+        \xdef\tyuu@tag{\MR@tag}%
+      }%
+    }%
+  }%
+  \if@eqnsw
+    \ifx\empty\tyuu@tag\refstepcounter{equation}\fi
+    \tag*{%
+      \ifx\empty\tyuu@tag
+%        \refstepcounter{equation}%
+        \@eqnnum
+      \else
+        \tyuu@tag
+      \fi
+      \smash{\lower\MR@tatehosei\hbox{%
+        \makebox[0pt][l]{%
+          \hspace*{\marginparsep}\hspace{\MR@@@tmp}%\kern\tyuulinesep
+          \ifnum\EMWR@tyuu>\z@
+            \kern\EMWR@zuhaba\kern2\@mawarikomisep
+          \fi
+          \parbox[t]{\MigiRangaiHaba}{\MigiRangaiMozisize #2}}}}%
+    }%
+    \ifthenelse{\equal\MR@label\empty}{}{%
+%      \immediate\write\@auxout{\string\newlabel{\MR@label}{{\theequation}{\thepage}}}%
+      \writeLabel{\MR@label}{\number\c@equation}%
+    }%
+  \else
+    \tag*{%
+      \tyuu@tag
+      \smash{\lower\MR@tatehosei\hbox{\makebox[0pt][l]{%
+        \hspace*{\marginparsep}\hspace*{\MR@@@tmp}%\kern\tyuulinesep
+        \ifnum\EMWR@tyuu>\z@
+          \kern\EMWR@zuhaba\kern2\@mawarikomisep
+        \fi
+        \parbox[t]{\MigiRangaiHaba}{\MigiRangaiMozisize #2}}}}%
+    }%
+  \fi
+  \ignorespaces
+}%
+\def\tyuutatehosei{-\p@}%
+\def\@@MigiRangai<#1>#2{{%\hspace{-.2em}%
+  \xdef\MR@tatehosei{\z@}%
+  \xdef\MR@yokohosei{\z@}%
+  \Strchr{#1}{=}\MRgai@tmp
+  \ifnum\MRgai@tmp>\z@\setkeys{emBk}{#1}\else
+    \xdef\MR@tatehosei{#1}%
+  \fi
+%
+  \@ifundefined{EMminipages@n}{}{%
+%\typeout{now in EMminipages i=\EMminipages@i}%
+    \Cfor{\edef\MR@i{\EMminipages@i}\setlength{\@tempdima}{\MR@yokohosei}}{\MR@i<\EMminipages@n}{}\do{%
+      \Incr\MR@i
+      \setlength{\@tempdima}{\@tempdima+\EMminipages@sep+\csname EMminipages@w@\romannumeral\MR@i\endcsname}%
+    }%
+    \edef\MR@yokohosei{\the\@tempdima}%
+%\typeout{yokohosei=\MR@yokohosei}%
+  }%
+%
+  \leavevmode
+  \ifx\empty\MR@mark
+    \ifx\empty\MR@numbering\else
+      \refstepcounter{marginpar}\unskip
+      \hbox{${}^{\themarginpar}$~}%
+    \fi
+  \else
+    \unskip\hbox{${}^{\MR@mark}$}%
+  \fi
+  \vadjust{\kern\tyuutatehosei\smash{\vbox{%
+  \noindent\hspace*{\linewidth}\hspace*{\@totalleftmargin}%\hspace*{\tyuulinesep}%
+  \hspace{\MR@yokohosei}%
+  \@ifundefined{h@sep}{}{\hspace*{\h@sep}}%
+  \@tempdima=-.5\p@\advance\@tempdima\MR@tatehosei\relax
+    \leavevmode\kern\marginparsep\lower\@tempdima\hbox{\makebox[0pt][l]{%
+    \setlength{\@tempdimb}{\MigiRangaiHaba}%
+    \ifx\empty\MR@mark
+      \ifx\empty\MR@numbering\else
+        \setbox0=\hbox{${}^{\themarginpar}$~}\advance\@tempdimb-\wd0\box0\relax
+      \fi
+    \else
+      \setbox0=\hbox{${}^{\MR@mark}$~}\advance\@tempdimb-\wd0\box0\relax
+    \fi
+    \parbox[t]{\@tempdimb}{\MigiRangaiMozisize #2}}}%
+  }}}}}%
+
+% 左欄外に注釈
+\newlength\HidariRangaiHaba
+\HidariRangaiHaba=\marginparwidth
+\def\HidariRangaiMozisize{\footnotesize}
+\def\HidariRangai{%
+  \HidariRangaiHaba=\marginparwidth
+  \@ifnextchar<{\@HidariRangai}{\@HidariRangai<\z@>}}
+\def\@HidariRangai<#1>#2{\leavevmode\vadjust{\smash{\vbox{%
+% \hspace*{\linewidth}%
+\noindent
+  \ifdim #1=\z@
+    \makebox[0pt][r]{%
+    \parbox[t]{\HidariRangaiHaba}{\HidariRangaiMozisize #2}%
+    %\hspace{\fboxsep}%
+    \hspace*{\marginparsep}%
+    }%
+  \else
+    \lower #1\hbox{\makebox[0pt][r]{%
+    \parbox[t]{\HidariRangaiHaba}{\HidariRangaiMozisize #2}%
+    \hspace{\fboxsep}\hspace*{\marginparsep}%
+    }}%
+  \fi
+}}}}
+
+% 行頭にマークなどを置く。
+\def\gyoutou{\@ifnextchar<{\@gyoutou}{\@@gyoutou<-2pt>}}
+\def\@gyoutou<#1>{\@tempdima=#1\advance-2\p@\@@gyoutou<\@tempdima>}
+\def\@@gyoutou<#1>#2{\leavevmode\vadjust{\smash{\vbox{\noindent
+  \lower #1\hbox{\makebox[0pt][r]{%
+    #2\hspace{\fboxsep}\hspace*{\marginparsep}}%
+  }%
+}}}}
+
+% 解答記述部を擬似二段組とし，右に注釈をつける
+%
+\newif\iftyuukeisen\tyuukeisentrue
+\newif\ifhidarityuukeisen\hidarityuukeisenfalse
+\newif\ifmigityuukeisen\migityuukeisentrue
+\newdimen\tyuuhaba
+\tyuuhaba=0.3\textwidth%
+\edef\EMWR@tyuu{0}%
+\def\tyuumark#1{%
+  \def\tyuu@mark{#1}%
+  \setbox0=\hbox{{#1}}\edef\tyuu@markhaba{\the\wd0}\ignorespaces}%
+\def\Phtyuumark{\mbox{%
+  \begin{zahyou*}[ul=1.6em](0,1)(-.14,0)\relax
+    \Drawline<yazirusi=a>{(1,0)(0,0)}%
+  \end{zahyou*}~}}%
+\tyuumark{$\longleftarrow$~}%
+%
+\def\tyuukai{%\vskip-\lastskip
+  \edef\v@sep{\the\topsep}\edef\h@sep{0pt}\@ifnextchar<{\tyuuk@i}{\@tyuukai}}%
+\def\tyuuk@i<#1>{\setkeys{emBk}{#1}\@tyuukai}%
+\def\@tyuukai{\@ifnextchar[{\@@tyuukai}{\@@tyuukai[\empty]}}%
+\def\@@tyuukai[#1]{%
+%  \vskip-\lastskip%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+  \def\tyuu{\@ifstar{\xdef\EMWR@tyuu{1}\tyuu@}{\xdef\EMWR@tyuu{0}\tyuu@}}%
+  \def\tyuu@{\@ifnextchar<{\@tyuu}{\@tyuu<\z@>}}%
+  \def\@tyuu<##1>{\@ifnextchar[{\@@tyuu<##1>}{\@@tyuu<##1>[\tyuu@mark]}}%
+  \def\@@tyuu<##1>[##2]##3{{%
+      \xdef\MR@tateidou{0pt}%
+      \Strsep{##2}{=}\tyuu@tmpa\tyuu@tmpb
+      \ifx\empty\tyuu@tmpb\else\setkeys{emBk}{##2}\fi
+%\typeout{\the\MigiRangaiHaba,\tyuu@markhaba}%
+      \ifdim\MR@tateidou=\z@
+        \setbox0=\hbox{{##2}}%
+        \setlength{\@tempdima}{\MigiRangaiHaba-\wd0}%
+        \xdef\tyuu@tmp@w{\the\@tempdima}%
+        \MigiRangai<##1>{\makebox[\z@][l]{\normalcolor%
+          {##2}\parbox[t]{\tyuu@tmp@w}{##3}}}%
+      \else
+        \Strsep{##1}{=}\tyuu@tmpa\tyuu@tmpb%%%%%%%%%%%%%%% 2007/12/11
+        \ifx\empty\tyuu@tmpb
+          \setlength{\@tempdima}{##1+\MR@tateidou}%
+        \else
+          \setlength{\@tempdima}{\MR@tateidou}%
+        \fi
+\setlength{\@tempdima}{\MigiRangaiHaba-\tyuu@markhaba}%
+\xdef\tyuu@tmp@w@{\the\@tempdima}%%%%%%%%%%%%%%%%%%%%%%% 2009/09/09
+        \MigiRangai<##1>{\makebox[\z@][l]{\normalcolor%
+          {%
+            \begin{zahyou*}[ul=1.6em](0,1)(-.14,0)\relax
+              \ukansan{\MR@tateidou}\tyuu@y
+              \Drawline<yazirusi=a>{%
+                (1,\tyuu@y)(.6,\tyuu@y)(.6,0)(0,0)}%
+            \end{zahyou*}~%
+          }%
+          \raisebox{\MR@tateidou}{%
+%            \parbox[t]{\MigiRangaiHaba-\tyuu@markhaba}{##3}%
+            \parbox[t]{\tyuu@tmp@w@}{##3}%
+          }%
+        }}%
+      \fi
+    }%
+    \ignorespaces
+  }%
+  \def\atagtyuu{\@eqnswtrue\tyuu}%
+%
+\vskip\v@sep%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begingroup
+  \MigiRangaiHaba=\tyuuhaba
+  \@tempdima=\tyuuhaba
+  \advance\@tempdima\marginparsep
+  \edef\tyuukai@w{\the\@tempdima}%
+\@setminipage%%% added %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \jquote(\z@)(\tyuukai@w)\relax
+\leavevmode
+  \iftyuukeisen
+    \ifhidarityuukeisen
+      \breakLRline[#1]%
+    \else
+      \breakRline[#1]%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 2007/11/13
+    \fi
+  \else
+    \ifhidarityuukeisen
+      \breakLline[#1]%
+    \fi
+  \fi
+}
+%
+\def\endtyuukai{%\endbreakRline
+  \iftyuukeisen
+    \ifhidarityuukeisen
+      \endbreakLRline
+    \else
+      \endbreakRline
+    \fi
+  \else
+    \ifhidarityuukeisen
+      \endbreakLline
+    \fi
+  \fi
+  \endjquote
+\endgroup
+\ifvmode \vskip-\lastskip \fi%%% added
+\vskip-\parsep
+\vskip\v@sep
+}
+%
+\let\hidarityuu\HidariRangai
+%
+\def\breakbox{%
+   \vskip\breakboxskip\relax
+   \setbox\bk@bxb\vbox\bgroup
+      \advance\linewidth -2\fboxrule
+      \advance\linewidth -2\fboxsep
+      \hsize\linewidth\@parboxrestore
+      \@setminipage%%% added
+      \parindent\breakboxparindent\relax\ignorespaces}
+\def\endbreakbox{%
+      \ifvmode \vskip-\lastskip \fi%%% added
+      \egroup
+   \ifhmode\par\fi
+  {\noindent\bk@lcnt\@ne
+   \@bkconttrue\baselineskip\z@\lineskiplimit\z@
+   \lineskip\z@\vfuzz\maxdimen
+   \bk@split\bk@addfsepht\bk@addskipdp
+   \ifvoid\bk@bxb      % Only one line
+      \def\bk@fstln{%
+         \bk@addfsepdp
+         \vbox{\hrule\@height\fboxrule\bk@line\hrule\@height\fboxrule}}%
+   \else               % More than one line
+      \def\bk@fstln{\vbox{\hrule\@height\fboxrule\bk@line}\hfil
+         \advance\bk@lcnt\@ne
+         \loop
+            \bk@split\bk@addskipdp\leavevmode
+            \ifvoid\bk@bxb      % The last line
+               \@bkcontfalse\bk@addfsepdp
+               \vtop{\bk@line\hrule\@height\fboxrule}%
+            \else               % 2,...,(n-1)
+               \bk@line
+            \fi
+            \hfil\advance\bk@lcnt\@ne
+         \if@bkcont\repeat}%
+   \fi
+   \leavevmode\bk@fstln
+   \par}%
+   \vskip\breakboxskip\relax}
+\def\EMbreakbox{%
+  \def\breakboxparindent{1zw}%
+  \edef\h@sep{\the\fboxsep}%
+  \edef\v@sep{\the\fboxsep}%
+  \edef\background@color{\empty}%
+  \edef\frame@color{\empty}%
+  \@ifnextchar<{\EMbreakbox@}{\@EMbreakbox}}
+\def\EMbreakbox@<#1>{\setkeys{emBk}{#1}\@EMbreakbox}
+\def\@EMbreakbox{%
+   \vskip\breakboxskip\relax
+   \setbox\bk@bxb\vbox\bgroup
+%      \advance\linewidth -2\fboxrule
+%      \advance\linewidth -2\fboxsep
+      \setlength{\linewidth}{\linewidth-\h@sep*2-2\fboxrule}
+      \hsize\linewidth\@parboxrestore
+      \@setminipage%%% added
+      \parindent\breakboxparindent\relax\ignorespaces}
+\def\endEMbreakbox{%
+      \ifvmode \vskip-\lastskip \fi%%% added
+      \egroup
+\def\bk@addfsepht{%
+     \setbox\bk@bxa\vbox{\vskip\v@sep\box\bk@bxa}}
+\def\bk@addfsepdp{%
+     \@tempdima\dp\bk@bxa
+     \advance\@tempdima\v@sep
+     \dp\bk@bxa\@tempdima}
+\def\bk@line{%
+    \hbox to \linewidth{\ifbkcount\smash{\llap{\the\bk@lcnt\ }}\fi
+    \ifthenelse{\equal\frame@color\empty}{\vrule \@width\fboxrule}{%
+      {\color{\frame@color}\vrule \@width\fboxrule}%
+    }%
+    \ifthenelse{\equal\background@color\empty}{%
+%     \hskip\fboxsep
+      \hskip\h@sep
+      \box\bk@bxa\hfil
+    }{{\edef\fboxsep@save{\the\fboxsep}%
+      \fboxsep=\z@
+%      \headchar\background@color\bg@h\bg@dmy
+%      \ifthenelse{\equal\bg@h\lbrack}{%
+%        \expandafter\colorbox\background@color{%
+%          \hskip\h@sep\box\bk@bxa\hfil\hskip\h@sep}%
+%      }{%
+        \colorbox{\background@color}{\hskip\h@sep\box\bk@bxa\hfil\hskip\h@sep}%
+%      }%
+      \fboxsep=\fboxsep@save}%
+    }%
+    \ifthenelse{\equal\frame@color\empty}{\vrule \@width\fboxrule}{%
+      {\color{\frame@color}\vrule \@width\fboxrule}%
+    }%
+}}%
+   \ifhmode\par\fi
+  {\noindent\bk@lcnt\@ne
+   \@bkconttrue\baselineskip\z@\lineskiplimit\z@
+   \lineskip\z@\vfuzz\maxdimen
+   \bk@split\bk@addfsepht\bk@addskipdp
+   \ifvoid\bk@bxb      % Only one line
+      \def\bk@fstln{%
+         \bk@addfsepdp
+         \vbox{\hrule\@height\fboxrule\bk@line\hrule\@height\fboxrule}}%
+   \else               % More than one line
+      \def\bk@fstln{\vbox{%
+          \ifthenelse{\equal\frame@color\empty}{%
+            \hrule\@height\fboxrule
+          }{%
+            {\color{\frame@color}\hrule\@height\fboxrule}%
+          }%
+          \bk@line}\hfil
+         \advance\bk@lcnt\@ne
+         \loop
+            \bk@split\bk@addskipdp\leavevmode
+            \ifvoid\bk@bxb      % The last line
+               \@bkcontfalse\bk@addfsepdp
+               \vtop{%
+                  \bk@line%\hrule\@height\fboxrule
+                  \ifthenelse{\equal\frame@color\empty}{%
+                    \hrule\@height\fboxrule
+                  }{%
+                    {\color{\frame@color}\hrule\@height\fboxrule}%
+                  }%
+               }%
+            \else               % 2,...,(n-1)
+               \bk@line
+            \fi
+            \hfil\advance\bk@lcnt\@ne
+         \if@bkcont\repeat}%
+   \fi
+   \leavevmode\bk@fstln
+   \par}%
+   \vskip\breakboxskip\relax}
+%
+  \let\linesep\tyuulinesep
+%
+\endinput
+
+v 0.00α 2002/08/22
+v 0.01α 2002/09/17
+           左右罫線のみの場合は
+               \fboxsep=0pt とし，左右罫線と本文との間隔を \tyuulinesep で定める。
+           1行のみの場合に対応
+v 0.02α 2002/10/02
+           \atagtyuu : \atag + \tyuu
+v 0.03α 2003/02/19
+           breakDbox 環境のオプションキーに
+              item=
+           を附加し，枠に item をつけられるようにする。
+v 0.04α 2003/02/2
+          tyuukai環境：右罫線を引く，引かないを \ifmigityuukeisen で制御する。
+v 0.05α 2003/04/08
+          tyuukai環境の調整
+v 0.06α 2003/05/16
+          \tyuu(\dpmath@MigiRangai)
+              別行立て数式環境において，
+                  \tyuu をつけた行にもラベルを付けられるように
+              <label=..> オプションを可能とする。
+v 0.07α 2003/08/10
+          bkshadebox環境：ページをまたぐ shadebox
+v 0.08α 2003/11/28
+         \writeLabel を emathLb.sty に移管したことに対応。
+v 0.09α 2004/02/13
+         bkdblbox環境：ページをまたぐ dblbox環境
+v 0.10α 2004/02/14
+         bkdblovalbox環境：四隅を丸くした bkdblbox環境
+v 0.11α 2004/02/23
+         bkdbl(oval)box環境で，外枠が切れることがある，
+         とのことで，\Nuritubusi を<border=1>オプション付とする。
+v 0.12α 2004/02/28
+          breakLRbox : \tyuulinesep を反映させる。
+v 0.13α 2004/03/20
+          tyuu : 局所的に tyuumark を変更するオプション [#2] をつける。
+v 0.14α 2004/03/25
+          ロードオプション：Bkps, dvips, dviout, dvipdfm
+          Bkps オプションをつけたときは，
+            breakRline の罫線を pict2e.sty を用いて引く
+
+v 0.15α 2004/04/23
+          allinethickness=... を key に追加
+v 0.16α 2004/06/13
+          \MigiRangai : 数式モード時における左アキを，テキストモード時と揃える
+v 0.17α 2004/06/14
+          \MigiRangai : 数式番号を付与する場合（不十分）
+              <tatehosei=..,yokohosei=..> オプション
+v 0.18α 2004/07/26
+          QandA における，しっぽ愛好家さんの #24810 を取り入れる。
+v 0.19α 2004/09/12
+          breakLline環境に
+              headline=..
+              parindent=..
+            オプションを附加
+v 0.20α 2004/09/18
+          breakL(R,LR)line : \fboxsep=0pt を外す
+v 0.21α 2005/01/13
+          EMbreakbox環境 : <backgroundcolor=..,framecolor=..,hsep=..,vsep=..>
+v 0.22α 2005/02/02
+          \frame@color 初期化
+v 0.23α 2005/09/19
+          ロードオプション [dvipdfmx]
+v 0.24α 2005/10/30
+          \breakDbox : \emcdottedline を使用
+v 0.25α 2006/05/06
+          breakLline環境に [linepos=..]オプション：左罫線の位置を変更するオプション
+                           \footnote を有効に
+                           \vrule 使用
+                           ロードオプション : onlyBk
+v 0.26α 2006/05/07
+          onlyBk 使用時にも allinethickness=.. を有効に
+          \vrule --> \drawline 切り替えは [sensyu=\drawline] を用いる
+v 0.27α 2006/08/30
+           breakLline, breakRline, breakLRline :
+             罫線の天地カット
+v 0.28α 2006/11/23
+          \MigiRangai : gather* 等の1行目対策 (BBS #5354)
+v 0.29α 2006/11/23
+          \MigiRangai : <..> が横にも動くバグフィックス (BBS #5356)
+v 0.30α 2007/01/17
+          tyuukai環境 : 前段との行間調整
+v 0.31α 2007/01/20
+v 0.32α 2007/01/20
+          tyuukai環境 : <vsep=..> オプション（デフォルトは \topsep）
+v 0.33α 2007/06/18
+          \tyuutatehosei
+v 0.34α 2007/07/10
+          \normalcolor を補う
+          \tyuukai : 冒頭の空白除去
+v 0.35α 2007/10/13
+          \tyuu : [tateidou=..]オプション
+v 0.36α 2007/11/11
+          \breakRline, tyuu環境：\leavevmode の一部停止
+v 0.37α 2007/12/11
+          \tyuu : <#1> [#2] 併用時
+v 0.38α 2008/01/09
+          \MigiRangai : EMminipages環境内でも使用可とする。
+v 0.39α 2008/01/31
+          \MigiRangai: \underfull対策(BBS #7045)
+v 0.40α 2008/02/10
+          \breakRline: [postline=..] 右罫線を下方に延長
+v 0.41α 2008/03/29
+          \MigiRangai: 傍注記号，ナンバリング
+v 0.42α 2008/05/07
+          \MigiRangaiNumbering: 初期値を設定可能とする。
+v 0.43α 2009/01/10
+          amsmath をロードしていない場合
+v 0.44α 2009/03/11
+          \Rangai: 修正
+v 0.45α 2009/06/10
+          \tyuukai: 右欄外幅の指定にバグ (BBS #8186)
+v 0.46α 2009/09/09
+          \tyuu: [tateidou=..] オプションを付した場合, \parbox の幅指定
+v 0.48α 2010/04/02
+          hyperref 関連 (saloon #796)

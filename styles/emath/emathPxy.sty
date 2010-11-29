@@ -1,0 +1,1117 @@
+% emathPxy.sty by tDB(CQB00260@nifty.ne.jp)
+
+\NeedsTeXFormat{LaTeX2e}%
+\ProvidesPackage{emathPxy}[2009/07/18 v 0.48]%
+\RequirePackage{emathPh}%
+
+\newdimen\xunitlength \xunitlength =1pt
+\newdimen\yunitlength \yunitlength =1pt
+\def\@xscale{1}%
+\def\@yscale{1}%
+
+%% Redefine \@dashline
+\long\def\@dashline[#1]#2[#3](#4,#5)(#6,#7){{%
+\x@diff=#6\xunitlength \advance\x@diff by -#4\xunitlength
+\y@diff=#7\yunitlength \advance\y@diff by -#5\yunitlength
+%% correction to get actual width since the dash-length as taken in arguement
+%% is the center-to-center of the end-points.
+\@tempdima=#2\relax \advance\@tempdima -\@wholewidth
+\sqrtandstuff{\x@diff}{\y@diff}{\@tempdima}%
+\ifnum\num@segments <3 \num@segments=3\fi% min number of dashes I can plot
+% is 2, 1 at either end, thus min num@segments is 3 (including 'empty dash').
+\@tempdima=\x@diff \@tempdimb=\y@diff
+\divide\@tempdimb by\num@segments
+\divide\@tempdima by\num@segments
+%% ugly if-then-else. If optional dotgap specified, then use it otherwise
+%% make a solid dash.
+{\ifx#3\@empty \relax
+    \ifdim\@tempdima < 0pt \x@diff=-\@tempdima\else\x@diff=\@tempdima\fi
+    \ifdim\@tempdimb < 0pt \y@diff=-\@tempdimb\else\y@diff=\@tempdimb\fi
+    \global\setbox\@dotbox\hbox{%
+                \@absspdrawline(0pt,0pt)(\@tempdima,\@tempdimb)}%
+    \else\global\setbox\@dotbox\hbox{%
+        \@spdottedline{#3\unitlength}(0pt,0pt)(\@tempdima,\@tempdimb)}%
+    \fi}%
+\advance\x@diff by -\@tempdima % both have same sign
+\advance\y@diff by -\@tempdimb
+%
+%%here we correct the number of dashes to be put by reducing them
+%%appropriately. (num@segments*\@wholewidth) is in some way the slack we
+%%have,and division by dash-length gives the reduction. reduction =
+%%(2*num@segments*\@wholewidth)/dash-length
+%% (num@segments includes empty ones)
+\@tempdima=\num@segments\@wholewidth \@tempdima=2\@tempdima
+\@tempcnta\@tempdima\relax \@tempdima=#2\relax \@tempdimb=0.5\@tempdima
+\@tempcntb\@tempdimb\relax \advance\@tempcnta by \@tempcntb % round-off error
+\divide\@tempcnta by\@tempdima \advance\num@segments by -\@tempcnta
+%
+\ifnum #1=0 \relax\else\ifnum #1 < -100
+  \typeout{***dashline: reduction > -100 percent implies blankness!***}%
+\else\num@segmentsi=#1 \advance\num@segmentsi by 100
+     \multiply\num@segments by\num@segmentsi \divide\num@segments by 100
+\fi\fi
+%
+\divide\num@segments by 2 % earlier num@segments included 'empty dashes' too.
+\ifnum\num@segments >0 % if =0 then don't divide => \x@diff & \y@diff
+ \divide\x@diff by\num@segments%   remain same.
+ \divide\y@diff by\num@segments
+ \advance\num@segments by\@ne %for the last segment for which I subtracted
+           %\@tempdima & \@tempdimb from \x@diff & \y@diff
+ \else\num@segments=2 % one at each end.
+\fi
+%%\typeout{num@segments finally = \the\num@segments}%
+%% equiv to \multiput(#4,#5)(\x@diff,\y@diff){\num@segments}{\copy\@dotbox}%
+%% with arguements in absolute dimensions.
+\@xdim=#4\xunitlength \@ydim=#5\yunitlength
+\@killglue
+\loop \ifnum\num@segments > 0
+\unskip\raise\@ydim\hbox to\z@{\hskip\@xdim \copy\@dotbox\hss}%
+\advance\num@segments \m@ne\advance\@xdim\x@diff\advance\@ydim\y@diff%
+\repeat}%
+\ignorespaces}%
+
+\def\@spdrawline(#1,#2)(#3,#4){%
+   \@absspdrawline(#1\xunitlength,#2\yunitlength)(#3\xunitlength,#4\yunitlength)
+   \ignorespaces
+}%
+
+\def\@iispdottedline#1(#2,#3)(#4,#5){\@spdottedline{#1\unitlength}%
+(#2\xunitlength,#3\yunitlength)(#4\xunitlength,#5\yunitlength)%
+\@ispdottedline{#1}(#4,#5)}%
+
+\long\gdef\put(#1,#2)#3{%\edef\local@origin{(#1,#2)}%
+  \setlength{\@tempdima}{#1\unitlength}\ukansan\@tempdima\tmp@i
+  \setlength{\@tempdima}{#2\unitlength}\ukansan\@tempdima\tmp@ii
+  \edef\old@localorigin{\local@origin}%
+  \Addvec{(\tmp@i,\tmp@ii)}\old@localorigin\local@origin
+  \@killglue\raise#2\yunitlength
+  \hb@xt@\z@{\kern#1\xunitlength #3\hss}%
+  \edef\local@origin{\old@localorigin}%
+  \ignorespaces}%
+\gdef\multiput(#1,#2)#3{%
+\edef\old@localorigin{\local@origin}%
+\Addvec{(#1,#2)}\old@localorigin\local@origin
+  \@xdim #1\xunitlength
+  \@ydim #2\yunitlength
+   \@multiput(}%
+\long\gdef\@multiput(#1,#2)#3#4{%
+  \@killglue\@multicnt #3\relax
+  \@whilenum \@multicnt >\z@\do
+    {\raise\@ydim\hb@xt@\z@{\kern\@xdim #4\hss}%
+     \advance\@multicnt\m@ne
+     \advance\@xdim#1\xunitlength\advance\@ydim#2\yunitlength
+\Addvec{(#1,#2)}\local@origin\local@origin
+    }%
+\edef\local@origin{\old@localorigin}%
+  \ignorespaces}%
+%
+\def\setunitlength#1{\edef\unit@length{#1}%
+  \setlength{\unitlength}{#1}%
+  \setlength{\xunitlength}{#1}%
+  \setlength{\yunitlength}{#1}%
+}%
+\define@key{emP}{xscale}{\def\@xscale{#1}}%
+\define@key{emP}{yscale}{\def\@yscale{#1}}%
+\define@key{emP}{xul}{\ukansan{#1}\@xscale}%
+\define@key{emP}{yul}{\ukansan{#1}\@yscale}%
+\define@key{emP}{Ueyohaku}{\templa=#1\relax
+  \Div{\strip@pt\templa}{\strip@pt\unitlength}\ue@yohaku
+  \Div\ue@yohaku\@yscale\ue@yohaku}%
+\define@key{emP}{Sitayohaku}{\templa=#1\relax
+  \Div{\strip@pt\templa}{\strip@pt\unitlength}\sita@yohaku
+  \Div\sita@yohaku\@yscale\sita@yohaku}%
+\define@key{emP}{Migiyohaku}{\templa=#1\relax
+  \Div{\strip@pt\templa}{\strip@pt\unitlength}\migi@yohaku
+  \Div\migi@yohaku\@xscale\migi@yohaku}%
+\define@key{emP}{Hidariyohaku}{\templa=#1\relax
+  \Div{\strip@pt\templa}{\strip@pt\unitlength}\hidari@yohaku
+  \Div\hidari@yohaku\@xscale\hidari@yohaku}%
+\define@key{emP}{Yohaku}{\templa=#1\relax
+  \Div{\strip@pt\templa}{\strip@pt\unitlength}\@yohaku
+  \Div\@yohaku\@yscale\ue@yohaku
+  \edef\sita@yohaku{\ue@yohaku}%
+  \Div\@yohaku\@xscale\hidari@yohaku
+  \edef\migi@yohaku{\hidari@yohaku}%
+  }%
+\define@key{emP}{migiyohaku}{\ukansan{#1}\migi@yohaku\Divself\migi@yohaku\@xscale}%
+\define@key{emP}{hidariyohaku}{\ukansan{#1}\hidari@yohaku\Divself\hidari@yohaku\@xscale}%
+\define@key{emP}{ueyohaku}{\ukansan{#1}\ue@yohaku\Divself\ue@yohaku\@yscale}%
+\define@key{emP}{sitayohaku}{\ukansan{#1}\sita@yohaku\Divself\sita@yohaku\@yscale}%
+\define@key{emP}{yohaku}{\ukansan{#1}\yohaku@tmp
+    \Div\yohaku@tmp\@xscale\hidari@yohaku\edef\migi@yohaku{\hidari@yohaku}%
+    \Div\yohaku@tmp\@yscale\ue@yohaku\edef\sita@yohaku{\ue@yohaku}%
+}%
+%
+\def\xyhenkan#1#2{\edef\xy@retu{}\@xyhenkan{#1}\relax\edef#2{\xy@retu}}%
+\def\@xyhenkan#1{\edef\tmp{#1}\expandafter\@xyhenkan@\tmp}%
+\def\@xyhenkan@{\@ifnextchar({\@@xyhenkan}{\relax}}%
+\def\@@xyhenkan(#1,#2){\Mul\@xscale{#1}\xyhenkan@x\Mul\@yscale{#2}\xyhenkan@y
+  \edefappend\xy@retu{(\xyhenkan@x,\xyhenkan@y)}\@xyhenkan}%
+%
+\def\@@@nuritubusi(#1,#2){{%
+  \iftdir
+    \@tempdima#2\yunitlength\@tempdima13.837\@tempdima%
+    \@tempdimb#1\xunitlength\@tempdimb13.837\@tempdimb%
+  \else
+    \@tempdima#1\xunitlength\@tempdima13.837\@tempdima%
+    \@tempdimb#2\yunitlength\@tempdimb-13.837\@tempdimb%
+  \fi
+  \special{pa \@seisuu\@tempdima\space\@seisuu\@tempdimb}}%
+    \@@nuritubusi}%
+
+\def\picture{\edef\xmin{0}\edef\ymin{0}\@ifnextchar[{\@Pxypicture}{\@Pxypicture[\empty]}}%
+\def\@Pxypicture[#1](#2,#3){%
+  \Strchr{#1}{=}\zahyou@tmp
+  \ifnum\zahyou@tmp>\z@\setkeys{emP}{#1}\fi
+  \xunitlength\@xscale\unitlength
+  \yunitlength\@yscale\unitlength
+  \Mul{#2}\@xscale\Pxy@x
+  \Mul{#3}\@yscale\Pxy@y
+  \def\O{(0,0)}%
+  \def\O@@{(0,0)}%
+  \changeArrowHeadSize{1}\ltxpicture(\Pxy@x,\Pxy@y)}%
+
+\def\@@@@@zahyou[#1][#2]<#3><#4><#5>(#6,#7)(#8,#9){\@ifundefined{everyzahyou}{}{\everyzahyou}%
+  \Strchr{#1}{=}\zahyou@tmp
+  \ifnum\zahyou@tmp>\z@
+    \setkeys{emP}{#1}%
+  \else
+    \ifthenelse{\equal{#1}\empty}{}{\edef\yokozikukigou{#1}}%
+    \ifthenelse{\equal{#2}\empty}{}{\edef\tatezikukigou{#2}}%
+    \ifthenelse{\equal{#3}\empty}{}{\edef\yokozikuhaiti{#3}}%
+    \ifthenelse{\equal{#4}\empty}{}{\edef\tatezikuhaiti{#4}}%
+    \ifthenelse{\equal{#5}\empty}{}{\edef\gentenhaiti{#5}}%
+  \fi
+  \edef\xmin{#6}\edef\xmax{#7}%
+  \edef\ymin{#8}\edef\ymax{#9}%
+  \xunitlength\@xscale\unitlength
+  \yunitlength\@yscale\unitlength
+%
+%   emathPs.sty の \borderwidth への対応
+\edef\truexmin{\xmin}%
+\edef\trueymin{\ymin}%
+\edef\truexmax{\xmax}%
+\edef\trueymax{\ymax}%
+ \@ifundefined{border@width}{}{%
+\ifdim\border@width>\z@
+  \@tempdima\border@width\Div{\strip@pt\@tempdima}{\strip@pt\xunitlength}\x@bd
+  \Sub\xmin\x@bd\xmin\Add\xmax\x@bd\xmax
+  \@tempdima\border@width\Div{\strip@pt\@tempdima}{\strip@pt\yunitlength}\y@bd
+  \Sub\ymin\y@bd\ymin\Add\ymax\y@bd\ymax
+\fi
+ }%
+%
+% picture 環境の設定
+  \xdef\zM@xo{0}%
+  \xdef\zM@yo{0}%
+  \xdef\zM@dx{1}%
+  \xdef\zM@dy{1}%
+  \Mul\@yscale\ymin\yymin
+  \Mul\@yscale\ymax\yymax
+  \Mul\@xscale\xmin\xxmin
+  \Mul\@xscale\xmax\xxmax
+  \Sub\xmax\xmin\xwd
+  \Add\xwd\migi@yohaku\xwd\Add\xwd\hidari@yohaku\xwd
+  \Mul\@xscale\xwd\xwd
+  \Sub\xmin\hidari@yohaku\xmin@
+  \Mul\@xscale\xmin@\xxmin@
+  \Sub\ymax\ymin\ywd
+  \Add\ywd\ue@yohaku\ywd\Add\ywd\sita@yohaku\ywd
+  \Mul\@yscale\ywd\ywd
+  \Sub\ymin\sita@yohaku\ymin@
+  \Mul\@yscale\ymin@\yymin@
+  \if t\zahyou@haiti
+   \@tempdima \ywd\unitlength
+  \else\if x\zahyou@haiti
+    \@tempdima \ymin@\unitlength
+    \@tempdima=-\@tempdima
+  \else\if c\zahyou@haiti
+    \@tempdima \ywd\unitlength
+    \divide \@tempdima \tw@
+    \advance\@tempdima -0.5ex\relax
+  \else\if o\zahyou@haiti
+    \@tempdima \ymin@\unitlength
+    \@tempdima=-\@tempdima
+  \else
+    \@tempdima\z@
+  \fi\fi\fi\fi
+  \ifthenelse{\equal\zahyou@haiti@hosei\empty}{}{%
+      \@tempdimb\zahyou@haiti@hosei
+      \advance\@tempdima-\@tempdimb}%
+\if o\zahyou@haiti
+  \@tempdimb\xmin\xunitlength
+%  \leavevmode\hskip\@tempdimb\lower\@tempdima\hbox to -\@tempdimb\bgroup
+  \leavevmode\hskip\@tempdimb\lower\@tempdima\hbox\bgroup
+\else
+  \leavevmode\lower\@tempdima\hbox\bgroup
+\fi
+  \changeArrowHeadSize{\arrow@headsize}%
+  \ltxpicture(\xwd,\ywd)(\xxmin@,\yymin@)%
+  \def\O{(0,0)}%
+  \def\O@@{(0,0)}%
+  \def\XMAX{(\xmax,0)}%
+  \def\XMIN{(\xmin,0)}%
+  \def\YMAX{(0,\ymax)}%
+  \def\YMIN{(0,\ymin)}%
+  \def\LT{(\xmin,\ymax)}%
+  \def\LB{(\xmin,\ymin)}%
+  \def\RT{(\xmax,\ymax)}%
+  \def\RB{(\xmax,\ymin)}%
+  \def\trueXMAX{(\truexmax,0)}%
+  \def\trueXMIN{(\truexmin,0)}%
+  \def\trueYMAX{(0,\trueymax)}%
+  \def\trueYMIN{(0,\trueymin)}%
+  \def\trueLT{(\truexmin,\trueymax)}%
+  \def\trueLB{(\truexmin,\trueymin)}%
+  \def\trueRT{(\truexmax,\trueymax)}%
+  \def\trueRB{(\truexmax,\trueymin)}%
+  \def\zenheimen{\trueLT\trueLB\trueRB\trueRT}%
+  \Add\xmax\migi@yohaku\xmaxY
+  \Sub\xmin\hidari@yohaku\xminY
+  \Add\ymax\ue@yohaku\ymaxY
+  \Sub\ymin\sita@yohaku\yminY
+  \def\zenheimenY{%
+    (\xmaxY,\yminY)(\xmaxY,\ymaxY)(\xminY,\ymaxY)(\xminY,\yminY)}%
+  }%
+\def\endzahyou{%
+  \ifdrawaxis%
+    \drawXYaxis
+%    \put(0,0){\zikusensyu(\xmin,0)(\xmax,0)}%
+%    \put(0,0){\zikusensyu(0,\ymin)(0,\ymax)}%
+%    \edef\zahyou@tmp{{(\xmax,0)}\yokozikuhaiti{\yokozikukigou}}%
+%    \expandafter\emathPut\zahyou@tmp
+%    \edef\zahyou@tmp{{(0,\ymax)}\tatezikuhaiti{\tatezikukigou}}%
+%    \expandafter\emathPut\zahyou@tmp
+%    \edef\zahyou@tmp{{(0,0)}\gentenhaiti{\gentenkigou}}%
+%    \expandafter\emathPut\zahyou@tmp
+  \fi
+  \endltxpicture
+  \egroup
+  \@ignoretrue
+}%
+%
+% dashbox の修正
+%
+\gdef\dashbox#1(#2,#3){\leavevmode\hb@xt@\z@{\baselineskip \z@skip
+\lineskip \z@skip
+\@dashdim #2\xunitlength
+\@dashcnt \@dashdim \advance\@dashcnt 200
+\@dashdim #1\unitlength\divide\@dashcnt \@dashdim
+\ifodd\@dashcnt\@dashdim \z@
+\advance\@dashcnt \@ne \divide\@dashcnt \tw@
+\else \divide\@dashdim \tw@ \divide\@dashcnt \tw@
+\advance\@dashcnt \m@ne
+\setbox\@dashbox \hbox{\vrule \@height \@halfwidth \@depth \@halfwidth
+\@width \@dashdim}\put(0,0){\copy\@dashbox}%
+\put(0,#3){\copy\@dashbox}%
+\put(#2,0){\hskip-\@dashdim\copy\@dashbox}%
+\put(#2,#3){\hskip-\@dashdim\box\@dashbox}%
+\multiply\@dashdim \thr@@
+\fi
+\setbox\@dashbox \hbox{\vrule \@height \@halfwidth \@depth \@halfwidth
+\@width #1\unitlength\hskip #1\unitlength}\@tempcnta\z@
+\put(0,0){\hskip\@dashdim \@whilenum \@tempcnta <\@dashcnt
+\do{\copy\@dashbox\advance\@tempcnta \@ne }}\@tempcnta\z@
+\put(0,#3){\hskip\@dashdim \@whilenum \@tempcnta <\@dashcnt
+\do{\copy\@dashbox\advance\@tempcnta \@ne }}%
+\@dashdim #3\yunitlength
+\@dashcnt \@dashdim \advance\@dashcnt 200
+\@dashdim #1\unitlength\divide\@dashcnt \@dashdim
+\ifodd\@dashcnt \@dashdim \z@
+\advance\@dashcnt \@ne \divide\@dashcnt \tw@
+\else
+\divide\@dashdim \tw@ \divide\@dashcnt \tw@
+\advance\@dashcnt \m@ne
+\setbox\@dashbox\hbox{\hskip -\@halfwidth
+\vrule \@width \@wholewidth
+\@height \@dashdim}\put(0,0){\copy\@dashbox}%
+\put(#2,0){\copy\@dashbox}%
+\put(0,#3){\lower\@dashdim\copy\@dashbox}%
+\put(#2,#3){\lower\@dashdim\copy\@dashbox}%
+\multiply\@dashdim \thr@@
+\fi
+\setbox\@dashbox\hbox{\vrule \@width \@wholewidth
+\@height #1\unitlength}\@tempcnta\z@
+\put(0,0){\hskip -\@halfwidth \vbox{\@whilenum \@tempcnta <\@dashcnt
+\do{\vskip #1\unitlength\copy\@dashbox\advance\@tempcnta \@ne }%
+\vskip\@dashdim}}\@tempcnta\z@
+\put(#2,0){\hskip -\@halfwidth \vbox{\@whilenum \@tempcnta<\@dashcnt
+\do{\vskip #1\unitlength\copy\@dashbox\advance\@tempcnta \@ne }%
+\vskip\@dashdim}}}\@makepicbox(#2,#3)}%
+%
+% 座標軸に目盛を打つ．
+% \zahyouMemori[#1][#2]<#3>
+%   #1 : g : グリッド
+%        + : 格子点に +マーク
+%        o : 格子点に黒丸
+%        z : 座標軸上の格子点に +マーク（デフォルト）
+%        n : なし
+%   #2 : n : 目盛り数値なし
+%   #3 : 刻み
+%         dx= xの刻み値
+%         dy= yの刻み値
+%         xo= xの基準値
+%         yo= yの基準値
+%         sensyu=...
+%         allinethickness=...
+%         memorinagasa=...
+%
+\def\zahyouMemori{\@ifnextchar[{\@zahyouMemori}{\@zahyouMemori[z]}}%
+\def\@zahyouMemori[#1]{\@ifnextchar[{\@@zahyouMemori[#1]}{%
+  \@@zahyouMemori[#1][m]}}%
+\def\@@zahyouMemori[#1][#2]{\@ifnextchar<{\@@@zahyouMemori[#1][#2]}{%
+  \@@@zahyouMemori[#1][#2]<1>}}%
+\def\@@@zahyouMemori[#1][#2]<#3>{{%
+  \edef\by@perl{0}%
+  \ifnum\EMps@mode=\@ne\gsave\fi
+  \xdef\zM@xo{0}%
+  \xdef\zM@yo{0}%
+  \xdef\zM@dx{1}%
+  \xdef\zM@dy{1}%
+  \def\zM@sensyu{\hasen}%
+  \def\zM@linethickness{.1pt}%
+  \Strchr{#3}{=}\zM@tmp
+  \edef\x@memoriiti{[s]}%
+  \edef\y@memoriiti{[w]}%
+  \let\zMx@func\relax
+  \let\zMy@func\relax
+  \Strsep{\def@memori@nagasa}{,}\memori@nagasai\memori@nagasaii
+  \uxkansan\memori@nagasai\memori@nagasaxi
+  \uykansan\memori@nagasai\memori@nagasayi
+  \ifx\empty\memori@nagasaii
+    \let\memori@nagasaxii\memori@nagasaxi
+    \let\memori@nagasayii\memori@nagasayi
+    \edef\memori@nagasaxi{-\memori@nagasaxii}%
+    \edef\memori@nagasayi{-\memori@nagasayii}%
+  \else
+    \uxkansan\memori@nagasaii\memori@nagasaxii
+    \uykansan\memori@nagasaii\memori@nagasayii
+  \fi
+  \ifnum\zM@tmp>\z@
+    \define@key{emPzM}{xo}{%
+      \ifnum\by@perl>\z@
+        \calcval{##1}\zM@xo
+        \xdef\zM@xo{\zM@xo}%
+      \else
+        \xdef\zM@xo{##1}%
+      \fi
+    }%
+    \define@key{emPzM}{yo}{\xdef\zM@yo{##1}}%
+    \define@key{emPzM}{dx}{%
+      \ifnum\by@perl>\z@
+        \calcval{##1}\zM@dx
+        \xdef\zM@dx{\zM@dx}%
+      \else
+        \xdef\zM@dx{##1}%
+      \fi
+    }%
+    \define@key{emPzM}{dy}{\xdef\zM@dy{##1}}%
+    \define@key{emPzM}{memorinagasa}{%
+      \Strsep{##1}{,}\memori@nagasai\memori@nagasaii
+      \uxkansan\memori@nagasai\memori@nagasaxi
+      \uykansan\memori@nagasai\memori@nagasayi
+      \ifx\empty\memori@nagasaii
+        \let\memori@nagasaxii\memori@nagasaxi
+        \let\memori@nagasayii\memori@nagasayi
+        \edef\memori@nagasaxi{-\memori@nagasaxii}%
+        \edef\memori@nagasayi{-\memori@nagasayii}%
+      \else
+        \uxkansan\memori@nagasaii\memori@nagasaxii
+        \uykansan\memori@nagasaii\memori@nagasayii
+      \fi
+    }%
+    \define@key{emPzM}{xmemoriiti}{\edef\x@memoriiti{##1}}%
+    \define@key{emPzM}{ymemoriiti}{\edef\y@memoriiti{##1}}%
+    \define@key{emPzM}{allinethickness}{\xdef\zM@linethickness{##1}}%
+    \define@key{emPzM}{linethickness}{\xdef\zM@linethickness{##1}}%
+    \define@key{emPzM}{sensyu}{\def\zM@sensyu{##1}}%
+    \define@key{emPzM}{xfunc}{\def\zMx@func{##1}}%
+    \define@key{emPzM}{yfunc}{\def\zMy@func{##1}}%
+    \setkeys{emPzM}{#3}%
+  \else
+    \def\zM@dx{#3}%
+    \def\zM@dy{#3}%
+  \fi
+    \Sub\truexmax\zM@xo\zM@a\Sub\zM@a{.001}\zM@a
+    \Div\zM@a\zM@dx\zM@a
+    \Seisuububun\zM@a\zM@xn
+    \Sub\zM@xo\truexmin\zM@a\Sub\zM@a{.001}\zM@a
+    \Div\zM@a\zM@dx\zM@a
+    \Seisuububun\zM@a\zM@a
+    \IAdd\zM@xn\zM@a\zM@xn\Incr\zM@xn
+    \Mul\zM@a\zM@dx\zM@a
+    \Sub\zM@xo\zM@a\zM@x
+    \Sub\trueymax\zM@yo\zM@a\Sub\zM@a{.001}\zM@a
+    \Div\zM@a\zM@dy\zM@a
+    \Seisuububun\zM@a\zM@yn
+    \Sub\zM@yo\trueymin\zM@a\Sub\zM@a{.001}\zM@a
+    \Div\zM@a\zM@dy\zM@a
+    \Seisuububun\zM@a\zM@a
+    \IAdd\zM@yn\zM@a\zM@yn\Incr\zM@yn
+    \Mul\zM@a\zM@dy\zM@a
+    \Sub\zM@yo\zM@a\zM@y
+  \if g#1\relax{\@ifundefined{allinethickness}{}{%
+%
+        \xdef\zMx{\zM@xo}%
+        \Add\zM@xo\zM@dx\zM@x@
+        \Cfor{\edef\i@num{1}}{\lengthtest{\zM@x@\p@<\truexmax\p@}}{%
+              \Addself\zM@x@\zM@dx\Incr\i@num}\do{%
+          \expandafter\xdef\csname zMx\romannumeral\i@num\endcsname{\zM@x@}}%
+        \Sub\zM@xo\zM@dx\zM@x@
+        \Cfor{\edef\i@num{1}}{\lengthtest{\zM@x@\p@>\truexmin\p@}}{%
+              \Subself\zM@x@\zM@dx\Incr\i@num}\do{%
+          \expandafter\xdef\csname zMxm\romannumeral\i@num\endcsname{\zM@x@}}%
+%
+        \xdef\zMy{\zM@yo}%
+        \Add\zM@yo\zM@dy\zM@y@
+        \Cfor{\edef\i@num{1}}{\lengthtest{\zM@y@\p@<\trueymax\p@}}{%
+              \Addself\zM@y@\zM@dy\Incr\i@num}\do{%
+          \expandafter\xdef\csname zMy\romannumeral\i@num\endcsname{\zM@y@}}%
+        \Sub\zM@yo\zM@dy\zM@y@
+        \Cfor{\edef\i@num{1}}{\lengthtest{\zM@y@\p@>\trueymin\p@}}{%
+              \Subself\zM@y@\zM@dy\Incr\i@num}\do{%
+          \expandafter\xdef\csname zMym\romannumeral\i@num\endcsname{\zM@y@}}%
+%
+    \allinethickness{\zM@linethickness}}%
+    \setbox0=\hbox{\zM@sensyu(0,\trueymax)(0,\trueymin)}%
+    \For\@x{\zM@x}{\truexmax}{\zM@dx}\Do{\put(\@x,0){\copy0}}%
+    \setbox0=\hbox{\zM@sensyu(\truexmax,0)(\truexmin,0)}%
+    \For\@x{\zM@y}{\trueymax}{\zM@dy}\Do{\put(0,\@x){\copy0}}%
+%   \multiput(\zM@x,0)(\zM@dx,0){\zM@xn}{\zM@sensyu(0,\trueymin)(0,\trueymax)}%
+%   \multiput(0,\zM@y)(0,\zM@dy){\zM@yn}{\zM@sensyu(\truexmin,0)(\truexmax,0)}%
+  }%
+  \else\if +#1\relax
+    \Cfor{}{\lengthtest{\zM@x pt<\truexmax pt}}{\Addself\zM@x\zM@dx}\do{%
+      \Cfor{\edef\zM@Y{\zM@y}}{\lengthtest{\zM@Y pt<\trueymax pt}}{\Addself\zM@Y\zM@dy}\do{%
+        \put(\zM@x,\zM@Y){\drawline(\memori@nagasaxi,0)(\memori@nagasaxii,0)}%
+        \put(\zM@x,\zM@Y){\drawline(0,\memori@nagasayi)(0,\memori@nagasayii)}%
+      }%
+    }%
+%    \multiput(\zM@x,\zM@y)(0,\zM@dy){\zM@yn}{%
+%      \multiput(0,0)(\zM@dx,0){\zM@xn}{%
+%        \drawline(0,\memori@nagasayi)(0,\memori@nagasayii)%
+%        \drawline(\memori@nagasaxi,0)(\memori@nagasaxii,0)}}%
+  \else\if o#1\relax
+    \Cfor{}{\lengthtest{\zM@x pt<\truexmax pt}}{\Addself\zM@x\zM@dx}\do{%
+      \Cfor{\edef\zM@Y{\zM@y}}{\lengthtest{\zM@Y pt<\trueymax pt}}{\Addself\zM@Y\zM@dy}\do{\Kuromaru[0.5pt]{(\zM@x,\zM@Y)}}%
+    }%
+%    \multiput(\zM@x,\zM@y)(0,\zM@dy){\zM@yn}{%
+%      \multiput(0,0)(\zM@dx,0){\zM@xn}{%
+%        \Kuromaru[.5pt]\O@@}}%
+  \else\if z#1\relax
+    \Cfor{}{\lengthtest{\zM@x pt<\truexmax pt}}{\Addself\zM@x\zM@dx}\do{%
+      \put(\zM@x,0){\drawline(0,\memori@nagasayi)(0,\memori@nagasayii)}}%
+    \Cfor{}{\lengthtest{\zM@y pt<\trueymax pt}}{\Addself\zM@y\zM@dy}\do{%
+      \put(0,\zM@y){\drawline(\memori@nagasaxi,0)(\memori@nagasaxii,0)}}%
+%    \multiput(\zM@x,0)(\zM@dx,0)\zM@xn{%
+%        \drawline(0,\memori@nagasayi)(0,\memori@nagasayii)}%
+%    \multiput(0,\zM@y)(0,\zM@dy)\zM@yn{%
+%        \drawline(\memori@nagasaxi,0)(\memori@nagasaxii,0)}%
+  \fi\fi\fi\fi
+  \if m#2\relax
+    \Strchr\zM@xo{.}\zM@tmpa
+    \Strchr\zM@dx{.}\zM@tmpb
+    \ifthenelse{\zM@tmpa=0 \and \zM@tmpb=0}{%
+      \Cfor{\def\zM@x{\zM@xo}}{\lengthtest{\zM@x pt<\truexmax pt}}{%
+      \IAdd\zM@dx\zM@x\zM@x}\do{%
+        \ifnum\zM@x=\z@\else
+          \edef\zM@tmp{{(\zM@x,0)}\x@memoriiti}%
+          \expandafter\emathPut\zM@tmp{$\zMx@func{\zM@x}$}%
+        \fi}%
+      \Cfor{\def\zM@x{\zM@xo}\ISub\zM@x\zM@dx\zM@x}{%
+        \lengthtest{\zM@x pt>\truexmin pt}}{\ISub\zM@x\zM@dx\zM@x}\do{%
+          \edef\zM@tmp{{(\zM@x,0)}\x@memoriiti}%
+          \expandafter\emathPut\zM@tmp{$\zMx@func{\zM@x}$}}%
+    }{%
+      \strsep\zM@dx{.}\zM@dmya\zM@dmyb
+      \Strlen\zM@dmyb\zM@syousuubu
+      \Cfor{\def\zM@x{\zM@xo}}{\lengthtest{\zM@x pt<\truexmax pt}}{%
+      \Add\zM@dx\zM@x\zM@x}\do{%
+        \ifdim\zM@x pt=\z@\else
+          \EMround\zM@x\zM@syousuubu\zM@x
+          \edef\zM@tmp{{(\zM@x,0)}\x@memoriiti}%
+          \expandafter\emathPut\zM@tmp{$\zMx@func{\zM@x}$}%
+        \fi
+      }%
+      \Cfor{\def\zM@x{\zM@xo}\Sub\zM@x\zM@dx\zM@x}{%
+      \lengthtest{\zM@x pt>\truexmin pt}}{\Sub\zM@x\zM@dx\zM@x}\do{%
+        \ifdim\zM@x pt=\z@\else
+          \EMround\zM@x\zM@syousuubu\zM@x
+          \edef\zM@tmp{{(\zM@x,0)}\x@memoriiti}%
+          \expandafter\emathPut\zM@tmp{$\zMx@func{\zM@x}$}%
+        \fi
+      }%
+    }%
+    \Strchr\zM@yo{.}\zM@tmpa
+    \Strchr\zM@dy{.}\zM@tmpb
+    \ifthenelse{\zM@tmpa=0 \and \zM@tmpb=0}{%
+      \Cfor{\def\zM@y{\zM@yo}\ISub\zM@y\zM@dy\zM@y}{%
+      \lengthtest{\zM@y pt>\trueymin pt}}{\ISub\zM@y\zM@dy\zM@y}\do{%
+        \edef\zM@tmp{{(0,\zM@y)}\y@memoriiti}%
+        \expandafter\emathPut\zM@tmp{$\zMy@func{\zM@y}$}%
+      }%
+      \Cfor{\edef\zM@y{\zM@yo}}{\lengthtest{\zM@y pt<\trueymax pt}}{%
+      \IAdd\zM@dy\zM@y\zM@y}\do{%
+        \ifnum\zM@y=\z@\else
+          \edef\zM@tmp{{(0,\zM@y)}\y@memoriiti}%
+          \expandafter\emathPut\zM@tmp{$\zMy@func{\zM@y}$}%
+        \fi%
+      }%
+    }{%
+      \strsep\zM@dy{.}\zM@dmya\zM@dmyb
+      \Strlen\zM@dmyb\zM@syousuubu
+      \Cfor{\def\zM@y{\zM@yo}\Sub\zM@y\zM@dy\zM@y}{%
+      \lengthtest{\zM@y pt>\trueymin pt}}{\Sub\zM@y\zM@dy\zM@y}\do{%
+        \ifdim\zM@y pt=\z@\else
+          \EMround\zM@y\zM@syousuubu\zM@y
+          \EMround\zM@y\zM@syousuubu\zM@y
+          \edef\zM@tmp{{(0,\zM@y)}\y@memoriiti}%
+          \expandafter\emathPut\zM@tmp{$\zMy@func{\zM@y}$}%
+        \fi
+      }%
+      \Cfor{\edef\zM@y{\zM@yo}}{\lengthtest{\zM@y pt<\trueymax pt}}{%
+      \Add\zM@dy\zM@y\zM@y}\do{%
+        \ifdim\zM@y pt=\z@\else
+          \EMround\zM@y\zM@syousuubu\zM@y
+          \edef\zM@tmp{{(0,\zM@y)}\y@memoriiti}%
+          \expandafter\emathPut\zM@tmp{$\zMy@func\zM@y$}%
+        \fi
+      }%
+    }%
+  \fi
+  \ifnum\EMps@mode=\@ne\grestore\fi
+}\ignorespaces}%
+%
+% 座標軸上任意位置に目盛
+% \xMemori[#1]<#2>(#3)#4
+% \yMemori[#1]<#2>(#3)#4
+%   #1 : t = 座標軸の下に目盛（デフォルト）
+%        b =         上
+%   #2 : 目盛の文字
+%        （省略すれば，#4 に指定したものが代用されます．）
+%   #3 : 単位の長さ（デフォルト値=\zahyouMemoriで指定したdx）
+%   #4 : 単位の長さの#4倍の位置に目盛を打つ
+%
+\define@key{emPzM}{perl}[1]{\def\by@perl{#1}}%
+\define@key{emPzM}{dumy}[1]{\def\by@perl{#1}}%
+\define@key{emPzM}{new}[1]{\def\by@perl{#1}}%
+%
+\def\xmemoriiti#1{\edef\x@memoriiti{#1}}%
+\def\ymemoriiti#1{\edef\y@memoriiti{#1}}%
+\def\x@memoriiti{[s]}%
+\def\y@memoriiti{[w]}%
+%
+\def\xMemori{\@ifnextchar[{\x@Memori}{\x@Memori[t]}}%
+\def\x@Memori[#1]{\@ifnextchar<{\x@@Memori[#1]}{\x@@Memori[#1]<\empty>}}%
+\def\x@@Memori[#1]<#2>{%
+  \Strsep{#2}{=}\xMemori@a\xMemori@b
+  \ifthenelse{\equal{\xMemori@b}{\empty}}{\@x@@Memori[#1]<#2>}{\@xMemori<#2>}}%
+\def\@x@@Memori[#1]<#2>{%
+  \@ifnextchar({\x@@@Memori[#1]<#2>}{%
+    \x@@@Memori[#1]<#2>(\zM@dx)}}%
+\def\x@@@Memori[#1]<#2>(#3)#4{%
+  \ifx\empty#2\def\Memori@lbl{$#4$}\else\def\Memori@lbl{$#2$}\fi%
+  \Div{1}{\strip@pt\unitlength}\Memori@u@pt%
+  \Div\Memori@u@pt\@yscale\Memori@u@pty
+    \Mul{#4}{#3}\xMemori@x\Add\xMemori@x\zM@xo\xMemori@x
+    \put(0,0){\drawline(\xMemori@x,-\Memori@u@pty)(\xMemori@x,\Memori@u@pty)}%
+    \ifx#1t\relax
+      \emathPut{(\xMemori@x,-\Memori@u@pty)}(0,-2pt)[t]\Memori@lbl
+    \else\ifx#1b\relax
+      \emathPut{(\xMemori@x,\Memori@u@pty)}(0,2pt)[b]\Memori@lbl
+    \else
+      \edef\xmemori@str{{(\xMemori@x,0)}#1}%
+      \expandafter\emathPut\xmemori@str\Memori@lbl
+    \fi\fi
+}%
+%
+\def\@xMemori<#1>#2{{%
+  \define@key{emPzM}{label}{\def\xM@lbl{##1}}%
+  \define@key{emPzM}{memoriiti}{\edef\x@memoriiti{##1}}%
+  \define@key{emPzM}{memorinagasa}{%
+    \Strsep{##1}{,}\memori@nagasai\memori@nagasaii
+    \uykansan\memori@nagasai\memori@nagasayi
+    \ifx\empty\memori@nagasaii
+          \let\memori@nagasayii\memori@nagasayi
+          \edef\memori@nagasayi{-\memori@nagasayii}%
+    \else
+          \uykansan\memori@nagasaii\memori@nagasayii
+    \fi
+  }%
+%
+  \edef\xM@lbl{#2}%
+  \Strsep{\def@xmemori@nagasa}{,}\memori@nagasai\memori@nagasaii
+  \uykansan\memori@nagasai\memori@nagasayi
+  \ifx\empty\memori@nagasaii
+        \let\memori@nagasayii\memori@nagasayi
+        \edef\memori@nagasayi{-\memori@nagasayii}%
+  \else
+        \uykansan\memori@nagasaii\memori@nagasayii
+  \fi
+  \setkeys{emPzM}{#1}%
+  \@ifundefined{by@perl}{\edef\xM@x{#2}}{\calcval{#2}\xM@x}%
+  \edef\xM@tmp{{(\xM@x,0)}\x@memoriiti}%
+  \expandafter\emathPut\xM@tmp{\ensuremath{\xM@lbl}}%
+  \put(\xM@x,0){\drawline(0,\memori@nagasayi)(0,\memori@nagasayii)}%
+}}%
+%
+\def\yMemori{\@ifnextchar[{\y@Memori}{\y@Memori[r]}}%
+\def\y@Memori[#1]{\@ifnextchar<{\y@@Memori[#1]}{\y@@Memori[#1]<\empty>}}%
+\def\y@@Memori[#1]<#2>{%
+  \Strsep{#2}{=}\yMemori@a\yMemori@b
+  \ifthenelse{\equal{\yMemori@b}{\empty}}{\@y@@Memori[#1]<#2>}{\@yMemori<#2>}}%
+\def\@y@@Memori[#1]<#2>{\@ifnextchar({\y@@@Memori[#1]<#2>}{%
+  \y@@@Memori[#1]<#2>(\zM@dy)}}%
+\def\y@@@Memori[#1]<#2>(#3)#4{%
+    \ifx\empty#2\def\Memori@lbl{$#4$}\else\def\Memori@lbl{$#2$}\fi%
+  \Div{1}{\strip@pt\unitlength}\Memori@u@pt%
+  \Div\Memori@u@pt\@xscale\Memori@u@ptx
+    \Mul{#4}{#3}\yMemori@y\Add\yMemori@y\zM@yo\yMemori@y
+    \put(0,0){\drawline(-\Memori@u@ptx,\yMemori@y)(\Memori@u@ptx,\yMemori@y)}%
+    \ifx #1r\relax
+      \emathPut{(-\Memori@u@ptx,\yMemori@y)}(-2pt,0)[r]\Memori@lbl
+    \else\ifx #1l\relax
+      \emathPut{(\Memori@u@ptx,\yMemori@y)}(2pt,0)[l]\Memori@lbl
+    \else
+      \edef\ymemori@str{{(0,\yMemori@y)}#1}%
+      \expandafter\emathPut\ymemori@str\Memori@lbl
+    \fi\fi
+}%
+%
+\def\@yMemori<#1>#2{{%
+  \define@key{emPzM}{label}{\def\yM@lbl{##1}}%
+  \define@key{emPzM}{memoriiti}{\edef\y@memoriiti{##1}}%
+  \define@key{emPzM}{memorinagasa}{%
+    \Strsep{##1}{,}\memori@nagasai\memori@nagasaii
+    \uxkansan\memori@nagasai\memori@nagasaxi
+    \ifx\empty\memori@nagasaii
+          \let\memori@nagasaxii\memori@nagasaxi
+          \edef\memori@nagasaxi{-\memori@nagasaxii}%
+    \else
+          \uxkansan\memori@nagasaii\memori@nagasaxii
+    \fi
+  }%
+%
+  \edef\yM@lbl{#2}%
+  \Strsep{\def@ymemori@nagasa}{,}\memori@nagasai\memori@nagasaii
+  \uxkansan\memori@nagasai\memori@nagasaxi
+  \ifx\empty\memori@nagasaii
+        \let\memori@nagasaxii\memori@nagasaxi
+        \edef\memori@nagasaxi{-\memori@nagasaxii}%
+  \else
+        \uxkansan\memori@nagasaii\memori@nagasaxii
+  \fi
+  \setkeys{emPzM}{#1}%
+  \@ifundefined{by@perl}{\edef\yM@y{#2}}{\calcval{#2}\yM@y}%
+  \edef\yM@tmp{{(0,\yM@y)}\y@memoriiti}%
+  \expandafter\emathPut\yM@tmp{\ensuremath{\yM@lbl}}%
+  \put(0,\yM@y){\drawline(\memori@nagasaxi,0)(\memori@nagasaxii,0)}%
+}}%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\def\xMemori{\@ifnextchar<{\@xMemori}{\@xMemori<\empty>}}%
+%\def\@xMemori<#1>#2{{%
+%  \define@key{emPzM}{label}{\def\xM@lbl{##1}}%
+%  \define@key{emPzM}{memoriiti}{\edef\x@memoriiti{##1}}%
+%  \define@key{emPzM}{memorinagasa}{%
+%    \Strsep{##1}{,}\memori@nagasai\memori@nagasaii
+%    \uykansan\memori@nagasai\memori@nagasayi
+%    \ifx\empty\memori@nagasaii
+%          \let\memori@nagasayii\memori@nagasayi
+%          \edef\memori@nagasayi{-\memori@nagasayii}%
+%    \else
+%          \uykansan\memori@nagasaii\memori@nagasayii
+%    \fi
+%  }%
+%%
+%  \edef\xM@lbl{#2}%
+%  \Strsep{\def@xmemori@nagasa}{,}\memori@nagasai\memori@nagasaii
+%  \uykansan\memori@nagasai\memori@nagasayi
+%  \ifx\empty\memori@nagasaii
+%        \let\memori@nagasayii\memori@nagasayi
+%        \edef\memori@nagasayi{-\memori@nagasayii}%
+%  \else
+%        \uykansan\memori@nagasaii\memori@nagasayii
+%  \fi
+%  \ifx\empty #1\else\setkeys{emPzM}{#1}\fi
+%  \@ifundefined{by@perl}{\edef\xM@x{#2}}{\calcval{#2}\xM@x}%
+%  \edef\xM@tmp{{(\xM@x,0)}\x@memoriiti}%
+%  \expandafter\emathPut\xM@tmp{\ensuremath{\xM@lbl}}%
+%  \put(\xM@x,0){\drawline(0,\memori@nagasayi)(0,\memori@nagasayii)}%
+%}}%
+%
+%\def\yMemori{\@ifnextchar<{\@yMemori}{\@yMemori<\empty>}}%
+%\def\@yMemori<#1>#2{{%
+%  \define@key{emPzM}{label}{\def\yM@lbl{##1}}%
+%  \define@key{emPzM}{memoriiti}{\edef\y@memoriiti{##1}}%
+%  \define@key{emPzM}{memorinagasa}{%
+%    \Strsep{##1}{,}\memori@nagasai\memori@nagasaii
+%    \uxkansan\memori@nagasai\memori@nagasaxi
+%    \ifx\empty\memori@nagasaii
+%          \let\memori@nagasaxii\memori@nagasaxi
+%          \edef\memori@nagasaxi{-\memori@nagasaxii}%
+%    \else
+%          \uxkansan\memori@nagasaii\memori@nagasaxii
+%    \fi
+%  }%
+%%
+%  \edef\yM@lbl{#2}%
+%  \Strsep{\def@ymemori@nagasa}{,}\memori@nagasai\memori@nagasaii
+%  \uxkansan\memori@nagasai\memori@nagasaxi
+%  \ifx\empty\memori@nagasaii
+%        \let\memori@nagasaxii\memori@nagasaxi
+%        \edef\memori@nagasaxi{-\memori@nagasaxii}%
+%  \else
+%        \uxkansan\memori@nagasaii\memori@nagasaxii
+%  \fi
+%  \ifx\empty #1\else\setkeys{emPzM}{#1}\fi
+%  \@ifundefined{by@perl}{\edef\yM@y{#2}}{\calcval{#2}\yM@y}%
+%  \edef\yM@tmp{{(0,\yM@y)}\y@memoriiti}%
+%  \expandafter\emathPut\yM@tmp{\ensuremath{\yM@lbl}}%
+%  \put(0,\yM@y){\drawline(\memori@nagasaxi,0)(\memori@nagasaxii,0)}%
+%}}%
+%
+%
+\def\MulS#1#2{%
+  \vecXY{#1}\MulS@x\MulS@y
+  \Mul\MulS@x\@xscale\MulS@x
+  \Mul\MulS@y\@yscale\MulS@y
+  \edef#2{(\MulS@x,\MulS@y)}}%
+\def\DivS#1#2{%
+  \vecXY{#1}\DivS@x\DivS@y
+  \Div\DivS@x\@xscale\DivS@x
+  \Div\DivS@y\@yscale\DivS@y
+  \edef#2{(\DivS@x,\DivS@y)}}%
+%
+%\def\@yaziri[#1]#2{%
+%%  \ifx r#1\Mulvec{-1}{#2}\@houkou\else\edef\@houkou{#2}\fi
+%\MulS{#2}\@@houkou%     2002/09/28
+%\ifx r#1\Mulvec{-1}{\@@houkou}\@houkou\else\edef\@houkou{\@@houkou}\fi
+%  \Argvec\@houkou\houkou@kaku
+%  \Add\houkou@kaku{180}\houkou@kaku
+%  \Add\houkou@kaku\ArrowHeadAngle\kaku@s
+%  \Sub\houkou@kaku\ArrowHeadAngle\kaku@e
+%  \Rdef(\Arr@wHeadSize,\kaku@s)\@P
+%  \Rdef(\Arr@wHeadSize,\kaku@e)\@Q
+%  \DivS\@P\@P
+%  \DivS\@Q\@Q
+%  {\thinlines
+%    \if f\ArrowHeadType
+%      \Drawline{(0,0)\@P\@Q(0,0)}%
+%      \Nuritubusi[\Nurizen]{(0,0)\@P\@Q(0,0)}%
+%    \else
+%      \Drawline{\@P(0,0)\@Q}%
+%    \fi
+%  }%
+%}%
+%
+\def\@@emathPut#1(#2,#3)[#4]#5{{%
+  \uxkansan{#2}\emathPut@u@pt
+  \uykansan{#3}\v@pt
+%    \ifx #20\@tempdima=\z@\else\setlength{\@tempdima}{#2}\fi
+%      \Div{\strip@pt\@tempdima}{\strip@pt\unitlength}\emathPut@u@pt%
+%      \Div\emathPut@u@pt\@xscale\emathPut@u@pt
+%    \ifx #30\@tempdimb=\z@\else\setlength{\@tempdimb}{#3}\fi%        1999.4.28
+%      \Div{\strip@pt\@tempdimb}{\strip@pt\unitlength}\v@pt%
+%      \Div\v@pt\@yscale\v@pt
+    \Addvec{#1}{(\emathPut@u@pt,\v@pt)}\@v
+    \ifthenelse{\equal{\bg@white}{1}}{%
+      \edef\kaiten@@kaku{\kaiten@kaku}\wPut\@v<\kaiten@@kaku>[#4]{#5}%
+    }{%
+      \ifdim\kaiten@kaku pt=\z@
+        \@@@emathPut\@v{\makebox(0,0)[#4]{\ifnum\Put@math>\z@\ensuremath{#5}\else#5\fi}}%
+      \else\edef\kaiten@@kaku{\kaiten@kaku}\@@@emathPut\@v{%
+        \rotatebox{\kaiten@@kaku}{\makebox(0,0)[#4]{\ifnum\Put@math>\z@\ensuremath{#5}\else#5\fi}}}%
+      \fi
+    }%
+}}%
+
+\def\@@wPut#1<#2>[#3]#4{{\@em@thPut{#1}{%
+  \unitlength1pt%
+  \xunitlength1pt%
+  \yunitlength1pt%
+  \def\@xscale{1}%
+  \def\@yscale{1}%
+  \begin{picture}(0,0)%
+  \setbox0=\hbox{{#4}}%
+  \@tempdima\wd0\divide\@tempdima2\relax
+  \@tempdimb\ht0\advance\@tempdimb\dp0\divide\@tempdimb 2\relax
+  \advance\@tempdima\fboxsep
+  \advance\@tempdimb\fboxsep
+  \tenretu*{%
+    wP@A(-\strip@pt\@tempdima,-\strip@pt\@tempdimb);
+    wP@B(\strip@pt\@tempdima,-\strip@pt\@tempdimb);
+    wP@C(\strip@pt\@tempdima,\strip@pt\@tempdimb);
+    wP@D(-\strip@pt\@tempdima,\strip@pt\@tempdimb)}%
+  \edef\wP@P{(0,0)}\edef\wP@@P{(0,0)}%
+  \expandafter\@tfor\expandafter\wP@@c\expandafter:\expandafter=#3\do{%
+    \if l\wP@@c\Rdef(\strip@pt\@tempdima,#2)\wP@P%    l
+    \else\if r\wP@@c\Rdef(-\strip@pt\@tempdima,#2)\wP@P%    r
+    \else\if b\wP@@c\Add{90}{#2}\wP@vy
+      \Rdef(\strip@pt\@tempdimb,\wP@vy)\wP@@P% b
+    \else\if t\wP@@c\Add{90}{#2}\wP@vy
+      \Rdef(-\strip@pt\@tempdimb,\wP@vy)\wP@@P% t
+    \fi\fi\fi\fi}%
+  \Addvec\wP@P\wP@@P\wP@P
+%  \ifthenelse{\equal{#2}{0}}{}{%
+%    \Rotvec\wP@A{#2}\wP@A
+%    \Rotvec\wP@B{#2}\wP@B
+%    \Rotvec\wP@C{#2}\wP@C
+%    \Rotvec\wP@D{#2}\wP@D}%
+%  \emathPut\wP@P{\Nuritubusi[0]{\wP@A\wP@B\wP@C\wP@D\wP@A}}%
+  \ifthenelse{\equal{#2}{0}}{\emathPut\wP@P(0,0)[c]{\colorbox{white}{\box0}}}{%
+    \emathPut\wP@P(0,0)[c]{\rotatebox{#2}{\colorbox{white}{\box0}}}}%
+  \end{picture}}%
+}}%
+%
+% hen_ko のサブルーティン
+%
+\def\@@@@hen_ko[#1]<#2>(#3,#4)(#5,#6)[#7]<#8>#9{%
+  \ifnum\EMps@mode=\@ne\gsave\fi
+    \def\henko@hi{1}%
+      \define@key{emP}{henkohi}{\edef\henko@hi{##1}}%
+      \define@key{emP}{henkosep}{\edef\henko@sep{##1}}%
+      \define@key{emP}{henkomozikaiten}{\edef\henko@mozikaiten{##1}}%
+%   \def\@syukusyo{#2}%
+    \def\@syukusyo{.25}%
+    \Strchr{#2}{=}\henko@tmp
+    \ifnum\henko@tmp>\z@\setkeys{emP}{#2}\else\def\@syukusyo{#2}\fi
+    \Mul\henko@hi\@syukusyo\@syukusyo
+    \Add{#3}{#5}\henko@x\Div\henko@x{2}\henko@x%
+    \Add{#4}{#6}\henko@y\Div\henko@y{2}\henko@y%
+    \Sub{#6}{#4}\henko@@x\Sub{#3}{#5}\henko@@y%
+    \Unitvec{(\henko@@x,\henko@@y)}\henko@@xy
+    \vecXY\henko@@xy\henko@@x\henko@@y
+      \Div{40}{\strip@pt\unitlength}\u@pt%
+      \Mul\u@pt\henko@@x\henko@@x\Mul\u@pt\henko@@y\henko@@y%
+    \Mul\@syukusyo\henko@@x\henko@@x\Add\henko@x\henko@@x\henko@xx%
+    \Mul\@syukusyo\henko@@y\henko@@y\Add\henko@y\henko@@y\henko@yy%
+% ---- 修正部 ---------------- ↓
+    \Sub{#5}{#3}\henko@endx\Mul\@xscale\henko@endx\henko@endx
+      \Add{#3}\henko@endx\henko@endx
+    \Sub{#6}{#4}\henko@endy\Mul\@yscale\henko@endy\henko@endy
+      \Add{#4}\henko@endy\henko@endy
+    \Sub{\henko@xx}{#3}\henko@midx\Mul\@xscale\henko@midx\henko@midx
+      \Add{#3}\henko@midx\henko@midx
+    \Sub{\henko@yy}{#4}\henko@midy\Mul\@yscale\henko@midy\henko@midy
+      \Add{#4}\henko@midy\henko@midy
+% ----------------------------- ↑
+    \ifx\empty #1%
+        \qbezier(#3,#4)(\henko@midx,\henko@midy)(\henko@endx,\henko@endy)%
+    \else\ifx 0#1\else
+        \qbezier[#1](#3,#4)(\henko@midx,\henko@midy)(\henko@endx,\henko@endy)%
+    \fi\fi%
+    \edef\put@opt{}%
+    \edef\henko@sep{1pt}%
+    \def\henko@mozikaiten{0}%
+    \edef\yazirusi@opt{\empty}%
+    \Strchr{#8}{=}\Henko@tmp
+    \ifnum\Henko@tmp>\z@
+      \setkeys{emP}{#8}\def\Henko@keisuu{\ifsironuki.5\else.8\fi}\else
+      \ifx\empty #8\def\Henko@keisuu{\ifsironuki.5\else.8\fi}\else
+      \def\Henko@keisuu{#8}\fi\fi
+\ifthenelse{\equal{\yazirusi@opt}{a}\or\equal{\yazirusi@opt}{b}}{%
+  \Subvec{(#5,#6)}{(\henko@xx,\henko@yy)}\henko@tmp
+% \emathPut{(#5,#6)}{\yaziri\henko@tmp}%
+  \Yaziri{(#5,#6)}{\henko@tmp}%
+}{}%
+\ifthenelse{\equal{\yazirusi@opt}{r}\or\equal{\yazirusi@opt}{b}}{%
+  \Subvec{(#3,#4)}{(\henko@xx,\henko@yy)}\henko@tmp
+%  \emathPut{(#3,#4)}{\yaziri\henko@tmp}%
+  \Yaziri{(#3,#4)}{\henko@tmp}%
+}{}%
+    \ifnum\henko@mozikaiten=\z@
+      \edef\henko@mozikaitenkaku{0}%
+    \else
+      \Subvec{(#3,#4)}{(#5,#6)}\henko@v\Argvec\henko@v\henko@mozikaitenkaku
+    \fi
+    \ifdim \henko@mozikaitenkaku pt>90pt
+      \Sub\henko@mozikaitenkaku{180}\henko@mozikaitenkaku\else
+    \ifdim \henko@mozikaitenkaku pt<-90pt
+      \Add\henko@mozikaitenkaku{180}\henko@mozikaitenkaku\fi\fi
+    \ifnum\henko@mozikaiten<\z@
+      \ifdim \henko@mozikaitenkaku pt>\z@
+        \Sub\henko@mozikaitenkaku{180}\henko@mozikaitenkaku
+      \else
+        \Add\henko@mozikaitenkaku{180}\henko@mozikaitenkaku
+      \fi
+    \fi
+    \Mul\Henko@keisuu\henko@@x\henko@@x
+    \Mul\Henko@keisuu\henko@@y\henko@@y%
+    \Add\henko@x\henko@@x\henko@xx\Add\henko@y\henko@@y\henko@yy%
+    \IFempty{#9}{}{%
+      \ifx\put@opt\empty
+        \ifnum\henko@mozikaiten=\z@%
+          \put(\henko@xx,\henko@yy){%
+          \ifsironuki{\fboxsep\henko@sep
+            \makebox(0,0)[#7]{\colorbox{white}{#9}}}%
+          \else\makebox(0,0)[#7]{#9}\fi}%
+        \else
+          \ifsironuki{\fboxsep\henko@sep
+               \emathPut[background=white,kaiten=\henko@mozikaitenkaku]{%
+               (\henko@xx,\henko@yy)}(0,0)[#7]{#9}}%
+          \else\put(\henko@xx,\henko@yy){\makebox(0,0)[#7]{%
+              \rotatebox{\henko@mozikaitenkaku}{#9}}}\fi%
+        \fi
+      \else
+        \edef\Henko@tmp{{(\henko@xx,\henko@yy)}\put@opt}%
+        \expandafter\emathPut\Henko@tmp{%
+        \ifsironuki{\fboxsep\henko@sep\rotatebox{\henko@mozikaitenkaku}{\colorbox{white}{#9}}}%
+        \else\rotatebox{\henko@mozikaitenkaku}{#9}\fi}%
+      \fi}%
+  \ifnum\EMps@mode=\@ne\grestore\fi
+  }%
+%
+\def\Unitvec#1#2{%
+  \Absvec{#1}\uv@a
+  \ifdim\uv@a\p@=\z@\relax
+    \edef#2{#1}%
+  \else
+    \vecXY{#1}\uv@x\uv@y
+    \Div\uv@x\uv@a\uv@x
+    \Div\uv@y\uv@a\uv@y
+    \edef#2{(\uv@x,\uv@y)}%
+  \fi
+}%
+\def\Absvec#1#2{%
+  \vecXY{#1}\Absvec@x\Absvec@y
+  \Mul\Absvec@x\@xscale\Absvec@x
+  \Mul\Absvec@y\@yscale\Absvec@y
+  \PhAbsvec{(\Absvec@x,\Absvec@y)}#2}%
+%%\def\Absvec#1#2{%
+%%  \vecXY{#1}\abs@vx\abs@vy
+%%  \Mul\abs@vx\abs@vx\abs@vx
+%%  \Mul\abs@vx\@xscale\abs@vx
+%%  \Mul\abs@vx\@xscale\abs@vx
+%%  \Mul\abs@vy\abs@vy\abs@vy
+%%  \Mul\abs@vy\@yscale\abs@vy
+%%  \Mul\abs@vy\@yscale\abs@vy
+%%  \Add\abs@vx\abs@vy\abs@vx
+%%  \Heihoukon\abs@vx\abs@vx
+%%  \edef#2{\abs@vx}}%
+%%
+\def\zituAbsvec#1#2{%
+  \vecXY{#1}\abs@vx\abs@vy
+  \Mul\abs@vx\@xscale\abs@vx
+  \Mul\abs@vy\@yscale\abs@vy
+  \Abs\abs@vx\abs@vx
+  \Abs\abs@vy\abs@vy
+  \ifdim\abs@vx\p@<\abs@vy\p@
+    \edef\abs@max{\abs@vy}\edef\abs@min{\abs@vx}%
+  \else
+    \edef\abs@max{\abs@vx}\edef\abs@min{\abs@vy}%
+  \fi
+  \ifdim\abs@max pt<0.001pt\relax
+    \edef#2{0}%
+  \else
+    \Div\abs@min\abs@max\abs@a
+    \Mul\abs@a\abs@a\abs@a
+    \Add\abs@a{1}\abs@a
+    \Sqroot\abs@a\abs@a
+    \Mul\abs@a\abs@max#2\relax
+  \fi}%
+\def\zituKyori#1#2#3{\Subvec{#2}{#1}\zituKyori@a\zituAbsvec\zituKyori@a#3}%
+%
+% Qbezier
+%
+\def\Qbezier{\@ifnextchar[{\@Qbezier}{\@Qbezier[0]}}%
+\def\@Qbezier[#1]#2#3#4{%
+    \Subvec{#4}{#2}\Qbez@ve
+    \vecXY\Qbez@ve\Qbez@vex\Qbez@vey
+    \Mulself\Qbez@vex\@xscale
+    \Mulself\Qbez@vey\@yscale
+    \Addvec{#2}{(\Qbez@vex,\Qbez@vey)}\Qbez@ve
+    \Subvec{#3}{#2}\Qbez@vm
+    \vecXY\Qbez@vm\Qbez@vmx\Qbez@vmy
+    \Mulself\Qbez@vmx\@xscale
+    \Mulself\Qbez@vmy\@yscale
+    \Addvec{#2}{(\Qbez@vmx,\Qbez@vmy)}\Qbez@vm
+    \edef\Qbezier@tmp{[#1]#2\Qbez@vm\Qbez@ve}%
+    \expandafter\qbezier\Qbezier@tmp}%
+%
+\endinput
+% v 0.00 2001/11/03
+% v 0.01 2001/11/08-22
+%     picture 環境にも yscale=.. を有効とする。
+%     emathPh における zahyou 環境の修正(v 0.93)に対応
+% v 0.02 2001/12/29
+%     \put の再定義に \edef\local@origin{(#1,#2)} を追加
+% v 0.03 2002/02/24
+%     余白付のzahyou環境における
+%         \xmaxY, \truexminY, \ymaxY, \yminY
+% v 0.04 2002/09/06
+%         \xMemori ラベル定義を \edef ---> \def
+% v 0.05 2002/09/27
+%     座標目盛り線の太さを変更する allinethickness=...
+%     \@yaziri : 修正
+% v 0.06 2002/11/03
+%     emathAe.sty の maskAns... オプションとの調整
+% v 0.07 2002/12/15
+%     zahyou環境における座標軸描画を\end{zahyou}で行う。
+% v 0.08 2002/12/19
+%     矢印を調整
+% v 0.09 2003/01/14
+%     picture環境でも原点\Oを定義
+% v 0.10 2003/01/30
+%     \put \local@origin の調整
+% v 0.11 2003/02/09
+%     emathPs.sty の \borderwidth に対応
+% v 0.12 2003/02/12
+%     \borderwidth>0pt の場合のみ修正とする。
+% v 0.13 2003/03/09
+%     zahyou環境 haiti=t12pt などと補正量を指定可能とする。
+%     \zahyouMemori : 目盛りが整数値でないときの丸め処理
+%                     （ fp-snap.sty を用いる）
+% v 0.14 2003/03/16
+%     zahyou環境の縦位置補正を b/c オプションでも有効とする。
+% v 0.15 2003/03/25
+%     Ueyohaku 等にバグ
+% v 0.16 2003/05/28
+%     \zahyouMemori 目盛り位置を指定するオプション
+%           <xmemoriiti=..,ymemoriiti=..> を新設
+% v 0.17 2003/06/18
+%     \O@@ : 原点
+% v 0.18 2003/06/29
+%     \Absvec : 保留（emathPh のままとする）
+%     \@@wPut : \@xscale, \@yscale を 1に戻す
+%     \zituKyori, \zituAbsvec : xscale, yscale を考慮した距離
+%     \Hen_ko のサブルーティン \@@@@hen_ko を emathPxy 対応とする。
+% v 0.19 2003/07/11
+%     \dashbox の修正
+% v 0.20 2003/07/27
+%     \Hen_ko<#2> に <linewidth=,dash=,henkohi=> オプション
+% v 0.21 2003/07/31
+%     \multiput 修正
+% v 0.22 2003/08/08
+%     Zahyou環境で，Migiyohaku=..などが有効となるための修正
+% v 0.23 2003/11/04
+%     zahyou環境 : tatezikukigou= の右辺値に，
+%         フォント変更コマンドなどを記述可能
+% v 0.24 2003/11/17
+%     pszahyou 環境で新設した \truexmax などに対応
+% v 0.25 2003/11/29
+%     \xMemori : [#1] オプションの扱いに不十分な点があったのを修正
+% v 0.26 2004/01/07
+%     \Absvec ---> \PhAbsvec として
+%     \Absvec を xscale, yscale を考慮したものとする。
+% v 0.28  \def@memori@nagasa 導入
+% v 0.29  zahyou環境に関する [haiti=..] オプションの修正
+% v 0.30 \trueLT など
+% v 0.31 2005/06/27 \endzahyou : 空白の混入回避
+% v 0.32 2005/12/05 xul=, yul= : x,y軸の単位長指定
+% v 0.33 2006/02/26 (ps)zahyou環境内で \maskAns を利用する場合への対応
+% v 0.34 2006/04/16 \xyhenkan 点列に \@xscale, \@yscale をかけた結果を得る
+% v 0.35 2006/05/14 \put : wallpaper.sty との共存
+% v 0.36 2006/06/26 picture環境：\xmin, \ymin を定義
+% v 0.37 2006/10/27 \zahyouMemori : memorinagasa=(xi,)xii=(yi,)yii
+%                   \xMemori : <perl,label=..,memoriiti=..>
+% v 0.38 2006/12/17 \zahyou : \everyzahyou が未定義の場合に対応
+% v 0.39 2006/12/28 \FPround ---> \EMround
+% v 0.40 2007/06/05 Yohaku=.. オプションを有効
+%                   \trueXMAX など
+% v 0.42 2007/11/30 \zahyouMemori : 配置文字列を修飾する xfunc=.., yfunc=.. オプション
+% v 0.43 2008/04/12 \Qbezier
+% v 0.44 2008/09/14 空白の混入対策
+% v 0.45 2008/11/24 \zahyouMemori: emathPha.sty 対応
+% v 0.46 2009/06/19 \setunitlength: Pxy では，\x(y)unitlength もセット
+% v 0.47 2009/06/21 \henkan: 意味不明のバグ
+% v 0.48 2009/07/18 \wPut: \colorbox{white}{...} を呼び出す

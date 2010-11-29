@@ -1,0 +1,53 @@
+\documentclass{jarticle}
+\usepackage{emath}
+\usepackage{emathEy}
+\usepackage{emathThm}
+\usepackage{emathAe}
+
+\theorembodyfont{\normalfont}
+\newtheorem{toi}{問}
+\newtheorem{mondai}{問題}
+
+\begin{document}
+\begin{edaenumerate}<edafirstindent=5zw>[(1)]
+\item 1111111111111
+\item 2222222222
+\end{edaenumerate}
+\openKaiFile
+abc
+\begin{toi}
+def
+\begin{Kaitou}
+\def\Kaienumerate{edaenumerate}
+\def\Kaienumopt{<edafirstindent=1zw,edatopsep=-.15\baselineskip>}
+\end{Kaitou}
+\begin{enumerate}[(1)]
+  \item 111
+    \begin{Kaitou}
+    222
+    \end{Kaitou}
+  \item 333
+    \begin{Kaitou}
+    444
+    \end{Kaitou}
+\end{enumerate}
+\end{toi}
+ghi
+\begin{mondai}
+bbb
+\begin{Kaitou}
+BBB
+\end{Kaitou}
+\end{mondai}
+\begin{toi}
+ccc
+\begin{Kaitou}
+ＣＣＣ
+\end{Kaitou}
+\end{toi}
+\closeKaiFile
+
+\hrule
+
+\inputKaiFile
+\end{document}

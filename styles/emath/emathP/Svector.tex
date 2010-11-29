@@ -1,0 +1,69 @@
+\section{ベクトル}
+\subsection{ベクトル演算}
+点の座標を位置ベクトルの成分と見て，ベクトル演算をするコマンドを
+用意しました．
+
+\begin{boxnote}
+\begin{list}{}{\leftmargin7zw\labelwidth7zw}
+\item[和：]\cmd{Addvec}\verb+#1#2#3+：
+    2つのベクトル\verb+#1, #2+の和ベクトルを\verb+#3+に与えます．
+
+\item[差：]\cmd{Subvec}\verb+#1#2#3+：
+    2つのベクトル\verb+#1, #2+の差ベクトルを\verb+#3+に与えます．
+
+\item[スカラー倍：]\cmd{Mulvec}\verb+#1#2#3+：
+    ベクトル\verb+#2+ のスカラー\verb+#1+倍を\verb+#3+に与えます．
+
+\item[大きさ：] \cmd{Absvec}\verb+#1#2+:
+    ベクトル\verb+#1+ の大きさを \verb+#2+ に与えます．
+
+\item[方向角：] \cmd{Argvec}\verb+#1#2+:
+    ベクトルが x軸の正の向きとなす角を \verb+#2+ に与えます．
+
+\item[法線ベクトル：]\cmd{Nvec}\verb+#1#2+:
+    ベクトル \verb+#1+ に垂直な単位ベクトルを \verb+#2+ に与えます．
+
+\item[回転：] \cmd{Rotvec}\verb+[#1]<#2>#3#4#5+:
+    ベクトル \verb+#3+ を 角 \verb+#4+ だけ回転したベクトルを \verb+#5+に
+    与えます．\verb+[#1]+ を指定した場合は，長さを指定した値にします．
+    また，\verb+<#2>+ を指定した場合は，長さを元のベクトルの \verb+#2+ 倍
+    にします．
+
+\item[成分：] \cmd{vecXY}\verb+#1#2#3+:
+    ベクトル \verb+#1+ のx成分を \verb+#2+ へ，y成分を \verb+#3+ へ抽出します．
+\end{list}
+\end{boxnote}
+\cindex{Addvec}\cindex{Subvec}\cindex{Mulvec}\cindex{Absvec}
+\cindex{Argvec}\cindex{Nvec}\cindex{Rotvec}\cindex{vecXY}
+
+\subsection{平行四辺形}
+A(2,3), B(1,1), C(4,1) を頂点とする平行四辺形 ABCD を作図するには
+3点の座標 \cmd{A}, \cmd{B}, \cmd{C} を位置ベクトルと見て
+\begin{quote}
+    $\mbox{\cmd{A}}+\mbox{\cmd{C}}-\mbox{\cmd{B}}$
+\end{quote}
+として \cmd{D} を求めます．
+
+\showexample[平行四辺形](0.6)(0.55){example/sikakkei}
+
+\subsection{回転}
+ベクトルを回転させるコマンド \cmd{Rotvec} を用いて
+回転を行うことができます．ここではさらに一般化した
+\cmd{Kaiten} を用いて，
+指定した2点 A, B を結ぶ線分を一辺とする正三角形を作図します．
+\cindex{Kaiten}
+
+\showexample[回転](0.55)(0.35){example/kaiten01}
+
+\cmd{Kaiten} コマンドの書式です．
+\begin{boxnote}
+\begin{verbatim}
+   \Kaiten[#1]<#2>#3#4#5#6
+      #1 : 長さ指定
+      #2 : 長さの倍率指定
+      #3 : 回転の中心
+      #4 : 回転させる点
+      #5 : 回転角
+      #6 : 結果の座標を受け取るコントロールシーケンス
+\end{verbatim}
+\end{boxnote}

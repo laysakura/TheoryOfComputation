@@ -1,0 +1,87 @@
+% csvsasikomi.sty by tDB(emath@nifty.com)
+%
+% \OpenDataFile{１レコード当たりの項目数}{差し込みデータファイル名}
+%   として，
+%       読み込む差し込みデータファイル（csv 形式）と
+%       １レコード当たりの項目数
+%   を指定した後，
+% \Sasikimo{書式ファイル名}
+%   として，
+%       使用する書式を記述した TeX ファイルを指定します．
+%
+% なお，書式ファイルにおいて，読み込んだ差し込みデータは
+%   \koumokui, \koumokuii, \koumokuiii, \koumokuiv, ....
+% の変数名で参照することが出来ます．
+
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{csvsasikomi}[2010/03/27 v0.04β]%
+
+\RequirePackage{emath}%
+
+\newread\h@ndle
+\newcount\@kmkcnt
+\def\csvkakomimozi{\empty}%
+
+% 均等割付
+%
+\def\capita#1#2{{%
+    \setbox0\hbox{{#2}}%
+    \@tempdima#1\advance\@tempdima-\wd0\relax
+    \@tempcnta\z@
+    \expandafter\@tfor\expandafter\@@c\expandafter:\expandafter=#2\do{%
+    \advance\@tempcnta\@ne}%
+    \advance\@tempcnta\m@ne
+    \divide\@tempdima\@tempcnta
+    \expandafter\@tfor\expandafter\@@c\expandafter:\expandafter=#2\do{%
+    \@@c\hspace{\@tempdima}}%
+}}%
+
+% 均一に文字間を空ける
+% \addspc#1#2
+%   #1 : 間隔
+%   #2 : 文字列
+%
+\def\addspc#1#2{%
+\expandafter\@tfor\expandafter\@@c\expandafter:\expandafter=#2\do{%
+\@@c\hspace{#1}}}
+
+\def\checkExistFile#1{%
+        \IfFileExists{#1}{}{%
+        \errmessage{Error : File = #1 not found!}}}%
+\def\OpenDataFile{\@ifnextchar<{\@OpenDataFile}{\@OpenDataFile<\empty>}}%
+\def\@OpenDataFile<#1>#2#3{\def\csvkakomimozi{#1}%
+  \checkExistFile{#3}\edef\Nd@ta{#2}\openin\h@ndle=#3\relax}%
+\def\cutln#1{\@kmkcnt\z@%
+  \ifthenelse{\equal{#1}{\par }}{}{\expandafter\@cutln#1,\relax\@nil}}%
+\def\@cutln#1,#2\@nil{\advance\@kmkcnt\@ne
+  \expandafter\EMedef\csname koumoku\romannumeral\@kmkcnt\endcsname{#1}%
+  \if\empty\csvkakomimozi\relax\else%
+  \kakomizyokyo{#1}\@tmp
+  \expandafter\EMedef\csname koumoku\romannumeral\@kmkcnt\endcsname{\@tmp}\fi%
+  \ifthenelse{\equal{#2}{\relax}}{}{\@cutln#2\@nil}}%
+%%\def\kakomizyokyo#1#2{\xdef#2{#1}}%
+\def\kakomizyokyo#1#2{{\@tempcnta\z@\edef\@midstr{}%
+  \expandafter\@tfor\expandafter\@@c\expandafter:\expandafter=#1\do{%
+    \edef\l@stchar{\@@c}%
+    \edef\@ldmidstr{\@midstr}%
+    \ifnum\@tempcnta>\z@\edef\@midstr{\@midstr\@@c}\else
+      \xdef\@topchar{\@@c}\fi
+    \advance\@tempcnta\@ne}%
+  \xdef#2{#1}%
+  \if\csvkakomimozi\@topchar\if\csvkakomimozi\l@stchar
+    \xdef#2{\@ldmidstr}\fi\fi}}%
+\def\Sasikomi#1{\@Sasikomi{\input{#1}}}%
+\def\@Sasikomi#1{%
+  \def\@@Sasikomi{\read\h@ndle to \buf\cutln\buf
+  \ifnum\@kmkcnt=\Nd@ta#1\leavevmode\par\fi
+  \ifeof\h@ndle\else\@@Sasikomi\fi}%
+  \@@Sasikomi}%
+\endinput
+%
+ver.0.02β  1999/11/27
+  "..." で囲まれる形式に対応
+ver.0.03β  2006/01/20
+  \edef ---> \EMedef
+v 0.04β 2010/03/27
+  各件の終りに \mbox{}\par

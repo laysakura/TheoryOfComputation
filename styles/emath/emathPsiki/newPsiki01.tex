@@ -1,0 +1,60 @@
+\documentclass[a4j]{jarticle}
+\usepackage{graphicx,color}
+\usepackage{emathPsiki}
+\usepackage{showexample}
+
+\begin{document}
+\section{\textsf{emathPsiki.sty v 0.01α}}
+\textsf{Sikipicture}環境が複数の数式行を対象としていたのに対し，
+複数のテキスト行を対象とする\textsf{Bunpicture}環境を付加しました。
+
+\subsection{\textsf{Bunpicture}環境}
+複数行の文章に\textsf{picture}環境を併置するための環境を\textsf{Bunpicture}環境と称します。
+\textsf{Sikipicture}環境が\textsf{array}環境を使用しているのに対し，
+\textsf{Bunpicture}環境は\textsf{tabular}環境を使用します。
+
+\begin{showEx}{\textsf{Bunpicture}環境}
+\quad
+\begin{Bunpicture}{ex-b1}{%
+    repeat until $k>n$;%
+    $E_k\leftarrow 0$;%
+    $k\leftarrow k+1$;%
+    endrepeat}%
+  \HenKo<yazirusi=r,%
+    henkotype=bracket,%
+    Agezokov={(-2pt,.5ex)}%
+    >\Li\Liv{}
+  \HenKo<yazirusi=a,%
+    henkotype=bracket,%
+    Agezokov={(2pt,.5ex)}%
+    >\Riv\Ri{}
+\end{Bunpicture}
+\end{showEx}
+
+書式は
+
+\begin{boxnote}
+\begin{jquote}
+\begin{verbatim}
+\begin{Bunpicture}#1#2
+  #1 : 当該環境の識別名
+  #2 : 複数行のテキスト文を`;'で区切って並べる
+併置されたpicture環境において
+　　テキスト文の1行目，2行目，3行目,....
+の左端，ベースライン上の点が
+　　\Li, \Lii, \Liii, ....
+に得られる。また，右端は
+　　\Ri, \Rii, \Riii, ....
+\end{verbatim}
+\end{jquote}
+\end{boxnote}
+
+\begin{enumerate}[注1.~]
+\item \verb+当該環境の識別名(#1)+で指定した"識別名.tex"なるファイルが作られます。
+  同名のファイルが存在する場合は，無条件に上書きします。
+\item 上の例で，\cmd{HenKo}のオプション引数におけるキー\verb+Agezokov+は，
+  \textsf{emathPh.sty v 2.49}で新設されたもので，\verb+Agezokovi, Agezokovii+の
+  双方に同一の値を設定します。
+\end{enumerate}
+\clearpage
+\end{document}

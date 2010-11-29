@@ -1,0 +1,76 @@
+% 年度 1999
+% 出題 0016 筑波大学
+% 検索キーワード  極座標 極方程式
+% 科目 数Ｃ
+
+\documentclass[fleqn]{jarticle}
+\usepackage{emath}
+\usepackage{emathMw}
+\usepackage{emathP}
+%\usepackage[debug]{emathA}
+\pagestyle{empty}
+
+\begin{document}
+\begin{mawarikomi}{50mm}{\vspace{.5ex}\par
+\unitlength1cm\small%
+\begin{zahyou}(-.5,4)(-1.5,2)%
+\def\O{(0,0)}%
+\def\A{(2,0)}%
+\def\kaku{36}%
+\kyokuTyoku(1,\kaku)\Q%
+\Addvec\A\Q\Q%
+\Kaiten\Q\A{90}\R%
+\Suisen\O\Q\R\P%
+\Put\A(0,2pt)[rb]{A}%
+\Put\A(0,-2pt)[t]{2}%
+\Put{(1,0)}(0,-2pt)[rt]{1 }%
+\Put\Q(0,0)[lb]{Q}%
+\Put\P(0,0)[l]{ P}%
+\Put{(2,-1)}(0,2pt)[b]{$C$}%
+\Tyokkaku\P\O
+\Tyokkaku\Q\A
+\KAKUkigou[a]{(3,0)}\A\Q{\makebox(0,0)[l]{$\theta$}}%
+\Drawline{\A\Q}%
+\Tyokusen\O\P\xmin[y]\ymax
+\Tyokusen\P\Q[y]\ymax\xmax
+\En\A{1}%
+\end{zahyou}}%
+$xy$平面上において，点A(2，0)を中心とする半径1の円を$C$とする．
+$C$上の点Qにおける$C$の接線に原点O(0，0)から下した垂線の足をPとする．
+図のように$x$軸と線分AQのなす角を$\theta$とする．
+ただし，$\theta$は$-\pi<\theta\leqq \pi$を動くものとする．
+\begin{enumerate}[(1)]
+  \item 点P$(x，y)$の座標$(x，y)$を$\theta$を用いて表せ．
+  \item 点P$(x，y)$の$x$座標が最小となるとき，Pの座標$(x，y)$を求めよ．
+  \item 直線$x=k$が点Pの軌跡と相異なる4点で交わるとき，
+    $k$のとりうる値の範囲を求めよ．
+\end{enumerate}
+\end{mawarikomi}
+
+【解】\par
+{\unitlength1cm\small%
+\begin{zahyou}(-.5,4)(-2,2)%
+\def\O{(0,0)}%
+\def\A{(2,0)}%
+\def\kaku{36}%
+\kyokuTyoku(1,\kaku)\Q%
+\Addvec\A\Q\Q%
+\Kaiten\Q\A{90}\R%
+\Suisen\O\Q\R\P%
+\Put\A(0,2pt)[rb]{A}%
+\Put\A(0,-2pt)[t]{2}%
+\Put{(1,0)}(0,-2pt)[rt]{1 }%
+\Put\Q(0,0)[lb]{Q}%
+\Put\P(0,0)[l]{ P}%
+\Put{(2,-1)}(0,2pt)[b]{$C$}%
+\Tyokkaku\P\O
+\Tyokkaku\Q\A
+\KAKUkigou[a]{(3,0)}\A\Q{\makebox(0,0)[l]{$\theta$}}%
+\Drawline{\A\Q}%
+\Tyokusen\O\P\xmin[y]\ymax
+\Tyokusen\P\Q[y]\ymax\xmax
+\En\A{1}%
+\def\Fnr#1#2{\Cos{#1}\r\Mul{2}\r\r\Add{1}\r\r\edef#2{\r}}%
+{\thicklines\rGurafu\Fnr0\Pii}%
+\end{zahyou}}%
+\end{document}

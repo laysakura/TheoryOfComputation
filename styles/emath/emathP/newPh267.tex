@@ -1,0 +1,355 @@
+\documentclass[a4j]{jarticle}
+\usepackage{graphicx,color}
+\usepackage{emathPh}
+\usepackage{emathPs}
+\usepackage{showexample}
+
+\begin{document}
+\tableofcontents
+\bigskip
+
+\section{\cmd{KinziEnko}}
+ベン図で，集合$A \cap \conj B$を斜線塗りすることを考えます。
+下図は，\textsf{emath}のサイトで公開している\texttt{Acap(cB)s.tex}です。
+すなわち，円$A$の内部を斜線塗りし，円$B$の内部を白塗りしています。
+
+\begin{showEx}(.56,.38){$A\cap\conj B$}
+\begin{zahyou*}[ul=4.5mm](0,10)(0,8)
+\fboxsep=1pt
+\def\Ax{3}\def\Ay{4}
+\def\Bx{6.5}\def\By{4}
+\def\hankeiA{2}
+\def\hankeiB{3}
+\tenretu*{A(\Ax,\Ay);B(\Bx,\By)}
+\def\waku{%
+  (\xmin,\ymin)(\xmax,\ymin)(\xmax,\ymax)%
+  (\xmin,\ymax)(\xmin,\ymin)}%
+\Drawline\waku
+\kyokuTyoku[\A](\hankeiA,135)\AA
+\kyokuTyoku[\B](\hankeiB,45)\BB
+\En**<.2>\A\hankeiA
+\En*[0]\B\hankeiB
+\En\A\hankeiA
+\Put\AA(0,0){\colorbox{white}{$A$}}
+\Put\BB(0,0){\colorbox{white}{$B$}}
+\end{zahyou*}
+\end{showEx}
+\clearpage
+
+その別法として，\cmd{KinziEnko}を用いて，境界線を折れ線で近似することで，
+白塗りをしないで済まそうということを考えてみます。
+
+\begin{showpEx}(.56,.38){\cmd{KinziEnko}}
+!\begin{zahyou*}[ul=4.5mm](0,10)(0,8)
+!\fboxsep=1pt
+!\def\Ax{3}\def\Ay{4}
+!\def\Bx{6.5}\def\By{4}
+!\def\hankeiA{2}
+!\def\hankeiB{3}
+!\tenretu*{A(\Ax,\Ay);B(\Bx,\By)}
+!\def\waku{%
+!  (\xmin,\ymin)(\xmax,\ymin)(\xmax,\ymax)%
+!  (\xmin,\ymax)(\xmin,\ymin)}%
+!\Drawline\waku
+!\kyokuTyoku[\A](\hankeiA,135)\AA
+!\kyokuTyoku[\B](\hankeiB,45)\BB
+\CandC\A\hankeiA\B\hankeiB\P\Q
+\Put\P[s]{P}\Put\Q[n]{Q}
+\KinziEnko\A\hankeiA%
+  {hazimeten=\Q}{owariten=\P}\oresenA
+\KinziEnko\B\hankeiB%
+  {hazimeten=\Q}{owariten=\P}\oresenB
+!\En\A\hankeiA
+!\En\B\hankeiB
+\Thicklines\changeArrowHeadSize{2}%
+\put(0,0){\color{red}%
+\Drawline\oresenA\Yaziri{(1,4)}{(0,-1)}
+}%
+\put(0,0){\color{green}%
+\Drawline\oresenB\Yaziri{(3.5,4)}{(0,-1)}
+}%
+!\Put\AA(0,0){\colorbox{white}{$A$}}
+!\Put\BB(0,0){\colorbox{white}{$B$}}
+!\end{zahyou*}
+\end{showpEx}
+
+\cmd{KinziEnko}を用いて得られた2つの円弧\cmd{oresenA}（赤い円弧）と
+\cmd{oresenB}（緑の円弧）を繋げて\cmd{Nuritubusi*}をかけてみましょう。
+
+\begin{showpEx}(.56,.38){折れ線の結合}
+!\begin{zahyou*}[ul=4.5mm](0,10)(0,8)
+!\fboxsep=1pt
+!\def\Ax{3}\def\Ay{4}
+!\def\Bx{6.5}\def\By{4}
+!\def\hankeiA{2}
+!\def\hankeiB{3}
+!\tenretu*{A(\Ax,\Ay);B(\Bx,\By)}
+!\def\waku{%
+!  (\xmin,\ymin)(\xmax,\ymin)(\xmax,\ymax)%
+!  (\xmin,\ymax)(\xmin,\ymin)}%
+!\Drawline\waku
+!\kyokuTyoku[\A](\hankeiA,135)\AA
+!\kyokuTyoku[\B](\hankeiB,45)\BB
+!\CandC\A\hankeiA\B\hankeiB\P\Q
+!\Put\P[s]{P}\Put\Q[n]{Q}
+!\KinziEnko\A\hankeiA%
+! {hazimeten=\Q}{owariten=\P}\oresenA
+!\KinziEnko\B\hankeiB%
+! {hazimeten=\Q}{owariten=\P}\oresenB
+!\En\A\hankeiA
+!\En\B\hankeiB
+\Nuritubusi*[-80]{\oresenA\oresenB}%
+!\Thicklines\changeArrowHeadSize{2}%
+!\put(0,0){\color{red}%
+!\Drawline\oresenA\Yaziri{(1,4)}{(0,-1)}
+!}%
+!\put(0,0){\color{green}%
+!\Drawline\oresenB\Yaziri{(3.5,4)}{(0,-1)}
+!}%
+!\Put\AA(0,0){\colorbox{white}{$A$}}
+!\Put\BB(0,0){\colorbox{white}{$B$}}
+!\end{zahyou*}
+\end{showpEx}
+
+あれ！おかしいですね。
+\cmd{KinziEnko}で得られた折れ線の始点と終点は
+\begin{jquote}
+赤の円弧：始点はQ, 終点はP\\
+緑の円弧：始点はQ, 終点はP
+\end{jquote}
+ですから，\cmd{oresenA}と\cmd{oresenB}の間に線分PQが付加されてしまいます
+（最後にも線分PQが付加されます)。
+
+赤と緑，どちらかの始点と終点を入れ替えなければなりません。
+以下，緑を入れ替えることを試みます。
+\clearpage
+
+\begin{showpEx}(.56,.38){緑の始点と終点を入れ替え}
+!\begin{zahyou*}[ul=4.5mm](0,10)(0,8)
+!\fboxsep=1pt
+!\def\Ax{3}\def\Ay{4}
+!\def\Bx{6.5}\def\By{4}
+!\def\hankeiA{2}
+!\def\hankeiB{3}
+!\tenretu*{A(\Ax,\Ay);B(\Bx,\By)}
+!\def\waku{%
+!  (\xmin,\ymin)(\xmax,\ymin)(\xmax,\ymax)%
+!  (\xmin,\ymax)(\xmin,\ymin)}%
+!\Drawline\waku
+!\kyokuTyoku[\A](\hankeiA,135)\AA
+!\kyokuTyoku[\B](\hankeiB,45)\BB
+!\CandC\A\hankeiA\B\hankeiB\P\Q
+!\Put\P[s]{P}\Put\Q[n]{Q}
+!\KinziEnko\A\hankeiA%
+! {hazimeten=\Q}{owariten=\P}\oresenA
+\KinziEnko\B\hankeiB%
+  {hazimeten=\P}{owariten=\Q}\oresenB
+!\En\A\hankeiA
+!\En\B\hankeiB
+!\Nuritubusi*[-80]{\oresenA\oresenB}%
+!\Thicklines\changeArrowHeadSize{2}%
+!\put(0,0){\color{red}%
+!\Drawline\oresenA\Yaziri{(1,4)}{(0,-1)}
+!}%
+!\put(0,0){\color{green}%
+!\Drawline\oresenB\Yaziri{(9.5,4)}{(0,1)}
+!}%
+!\Put\AA(0,0){\colorbox{white}{$A$}}
+!\Put\BB(0,0){\colorbox{white}{$B$}}
+!\end{zahyou*}
+\end{showpEx}
+
+あらら，またも失敗です。
+
+\cmd{KinziEnko}が作る円弧は，始点から終点に正の向きに回転するように作られます。
+これを逆回転させるには，\cmd{KinziEnko<刻み値>}の刻み値オプションに負の値を指定します。
+
+\begin{showpEx}(.56,.38){刻み値を負に}
+!\begin{zahyou*}[ul=4.5mm](0,10)(0,8)
+!\fboxsep=1pt
+!\def\Ax{3}\def\Ay{4}
+!\def\Bx{6.5}\def\By{4}
+!\def\hankeiA{2}
+!\def\hankeiB{3}
+!\tenretu*{A(\Ax,\Ay);B(\Bx,\By)}
+!\def\waku{%
+!  (\xmin,\ymin)(\xmax,\ymin)(\xmax,\ymax)%
+!  (\xmin,\ymax)(\xmin,\ymin)}%
+!\Drawline\waku
+!\kyokuTyoku[\A](\hankeiA,135)\AA
+!\kyokuTyoku[\B](\hankeiB,45)\BB
+!\CandC\A\hankeiA\B\hankeiB\P\Q
+!\Put\P[s]{P}\Put\Q[n]{Q}
+!\KinziEnko\A\hankeiA%
+! {hazimeten=\Q}{owariten=\P}\oresenA
+\KinziEnko<-.025>\B\hankeiB%
+  {hazimeten=\P}{owariten=\Q}\oresenB
+!\En\A\hankeiA
+!\En\B\hankeiB
+!\Nuritubusi*{\oresenA\oresenB}%
+!\Thicklines\changeArrowHeadSize{2}%
+!\put(0,0){\color{red}%
+!\Drawline\oresenA\Yaziri{(1,4)}{(0,-1)}
+!}%
+!\put(0,0){\color{green}%
+!\Drawline\oresenB\Yaziri{(3.5,4)}{(0,1)}
+!}%
+!\Put\AA(0,0){\colorbox{white}{$A$}}
+!\Put\BB(0,0){\colorbox{white}{$B$}}
+!\end{zahyou*}
+\end{showpEx}
+
+ただし，刻み値オプションに負の値を指定した場合，\textsf{emathPh.sty}には
+バグがあってうまく動作しませんでした。今回の改定で対応したことなります。\verb+(^^ゞ+
+
+なお，刻み値オプションのデフォルト値は\verb+0.025+です。
+
+ソースリストを部分しか示しませんでしたから，最後に全リストを示します。
+\clearpage
+
+\begin{showEx}(.56,.38){$A \cap \conj B$の別法}
+\begin{zahyou*}[ul=4.5mm](0,10)(0,8)
+\fboxsep=1pt
+\def\Ax{3}\def\Ay{4}
+\def\Bx{6.5}\def\By{4}
+\def\hankeiA{2}
+\def\hankeiB{3}
+\tenretu*{A(\Ax,\Ay);B(\Bx,\By)}
+\def\waku{%
+  (\xmin,\ymin)(\xmax,\ymin)(\xmax,\ymax)%
+  (\xmin,\ymax)(\xmin,\ymin)}%
+\Drawline\waku
+\kyokuTyoku[\A](\hankeiA,135)\AA
+\kyokuTyoku[\B](\hankeiB,45)\BB
+\CandC\A\hankeiA\B\hankeiB\P\Q
+\Put\P[s]{P}\Put\Q[n]{Q}
+\KinziEnko\A\hankeiA%
+  {hazimeten=\Q}{owariten=\P}\oresenA
+\KinziEnko<-.025>\B\hankeiB%
+  {hazimeten=\P}{owariten=\Q}\oresenB
+\En\A\hankeiA
+\En\B\hankeiB
+\Nuritubusi*{\oresenA\oresenB}%
+\Thicklines\changeArrowHeadSize{2}%
+\put(0,0){\color{red}%
+\Drawline\oresenA\Yaziri{(1,4)}{(0,-1)}
+}%
+\put(0,0){\color{green}%
+\Drawline\oresenB\Yaziri{(3.5,4)}{(0,1)}
+}%
+\Put\AA(0,0){\colorbox{white}{$A$}}
+\Put\BB(0,0){\colorbox{white}{$B$}}
+\end{zahyou*}
+\end{showEx}
+
+ただし，凸でない領域に対する斜線塗りは制約が多いですから，
+お勧めはいたしません。
+\clearpage
+
+\section{\cmd{gyakutenretu}}
+掲示板で，飯島さんが「点列を逆転させるマクロ」を提案されています。
+\texttt{(No.4880)}
+
+そのアイデアを頂いて，\cmd{gyakutenretu}を新設しました。
+
+\begin{showEx}(.5,.44){\cmd{gyakutenretu}}
+\def\aval{3.14159}
+\def\bval{2.71828}
+\tenretu*{A(1,2);B(3,4);%
+  C(\aval,\bval);D(5,6)}
+\def\E{\A\B\C\D}
+\gyakutenretu\E\F
+\noindent
+\E\\
+\verb+--->+
+\\
+\F
+\end{showEx}
+
+これを用いて，前節の処理をすることも可能です。
+
+\begin{showpEx}(.56,.38){緑折れ線の逆転}
+!\begin{zahyou*}[ul=4.5mm](0,10)(0,8)
+!\fboxsep=1pt
+!\def\Ax{3}\def\Ay{4}
+!\def\Bx{6.5}\def\By{4}
+!\def\hankeiA{2}
+!\def\hankeiB{3}
+!\tenretu*{A(\Ax,\Ay);B(\Bx,\By)}
+!\def\waku{%
+!  (\xmin,\ymin)(\xmax,\ymin)(\xmax,\ymax)%
+!  (\xmin,\ymax)(\xmin,\ymin)}%
+!\Drawline\waku
+!\kyokuTyoku[\A](\hankeiA,135)\AA
+!\kyokuTyoku[\B](\hankeiB,45)\BB
+!\CandC\A\hankeiA\B\hankeiB\P\Q
+!\Put\P[s]{P}\Put\Q[n]{Q}
+!\KinziEnko\A\hankeiA%
+! {hazimeten=\Q}{owariten=\P}\oresenA
+!\KinziEnko\B\hankeiB%
+! {hazimeten=\Q}{owariten=\P}\oresenB
+!\En\A\hankeiA
+!\En\B\hankeiB
+\gyakutenretu\oresenB\oresenBB
+\Nuritubusi*{\oresenA\oresenBB}%
+!\Thicklines\changeArrowHeadSize{2}%
+!\put(0,0){\color{red}%
+!\Drawline\oresenA\Yaziri{(1,4)}{(0,-1)}
+!}%
+!\put(0,0){\color{green}%
+!\Drawline\oresenBB\Yaziri{(3.5,4)}{(0,1)}
+!}%
+!\Put\AA(0,0){\colorbox{white}{$A$}}
+!\Put\BB(0,0){\colorbox{white}{$B$}}
+!\end{zahyou*}
+\end{showpEx}
+
+\clearpage
+
+\section{\cmd{Tyokkakukigou}の\texttt{[...]}オプション}
+\cmd{Tyokkakukigou}について，機能増強をしました。
+
+\begin{boxnote}
+\begin{verbatim}
+\Tyokkakukigou[#1](#2)#3#4#5
+   #1    : 補正角 90, 180, 270 など
+         : 0〜1 のときは塗りつぶしの濃さ
+           （上記2つの値を加算した値も指定可能）
+   #2    : 直角記号のサイズ
+   #3#4#5  : 直角(#4が頂点)
+\end{verbatim}
+\end{boxnote}
+
+普通は，指定した角の内部に直角記号を描画します。
+
+\begin{showEx}(.6,.34){\cmd{Tyokkakukigou}}
+\begin{zahyou*}[ul=6mm](-3,3)(-3,3)
+  \tenretu{A(2,1)n;B(-1,2)n;O(0,0)s}
+  \Drawline{\A\O\B}
+  \Tyokkakukigou\A\O\B
+\end{zahyou*}
+\end{showEx}
+
+辺を延長してできる角に直角記号を配置するオプションが
+\verb+[90], [180], [270]+です。
+
+\begin{showEx}(.6,.34){記号の位置}
+\begin{zahyou*}[ul=6mm](-3,3)(-3,3)
+  \tenretu{A(2,1)n;B(-1,2)n;O(0,0)s}
+  \Tyokusen\O\A{}{}
+  \Tyokusen\O\B{}{}
+  \Tyokkakukigou[90]\A\O\B
+\end{zahyou*}
+\end{showEx}
+
+角の内部を塗りつぶすオプションと併用する例です：
+
+\begin{showEx}(.6,.34){塗りつぶしと併用}
+\begin{zahyou*}[ul=6mm](-3,3)(-3,3)
+  \tenretu{A(2,1)n;B(-1,2)n;O(0,0)s}
+  \Tyokusen\O\A{}{}
+  \Tyokusen\O\B{}{}
+  \Tyokkakukigou[270.8](10)\A\O\B
+\end{zahyou*}
+\end{showEx}
+\end{document}

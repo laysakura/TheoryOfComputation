@@ -1,0 +1,33 @@
+% eclclass.sty by Hideki Isozaki  1992.9.10
+
+\newbox\cls@box
+\newbox\cls@boxi
+
+\def\classify#1{%
+   \leavevmode\hbox\bgroup\vtop\bgroup
+   \offinterlineskip
+   \gdef\cls@dp{0pt}%
+   \hbox{#1}\vtop\bgroup\hbox\bgroup\hskip\cls@hshift\vrule
+   \vtop\bgroup\setbox\cls@box\hbox{}\ignorespaces}
+
+\def\endclassify{%
+\dp\cls@box-\cls@vshift\box\cls@box
+\egroup\egroup\egroup
+\hrule\@depth\cls@dp\@height\z@\@width\z@
+\egroup\egroup\ignorespaces}
+
+\def\class#1{\box\cls@box
+\setbox\cls@box\hbox{\cls@rule#1\vrule
+\@height\normalbaselineskip\@width\z@\@depth\z@}%
+\@tempdima\dp\cls@box\advance\@tempdima\cls@vshift
+\xdef\cls@dp{\the\@tempdima}%
+\ignorespaces}
+
+\def\classf#1{\class{\fbox{#1}}}
+
+\def\cls@rule{\rule[\cls@vshift]{1cm}{0.4pt}}
+
+% Parameters for Horizontal Lines
+\def\cls@vshift{0.5ex}
+\def\cls@hshift{1em}
+

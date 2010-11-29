@@ -1,0 +1,53 @@
+% EMendnotes.sty by tDB (emath@nifty.com)
+%
+\NeedsTeXFormat{LaTeX2e}%
+\ProvidesPackage{EMendnotes}[2009/12/30 v0.02β]%
+%
+\RequirePackage{emath}
+\RequirePackage{keyval}
+%
+\newcounter{EMendnote}
+%
+\define@key{EMen}{pre}{\EMedef\pre@EMendnote{#1}}%
+\define@key{EMen}{strut}{\def\strut@EMendnote{#1}}%
+%
+\def\pre@EMendnote{}%
+\def\EMendnote@mark{\dagger}%
+\edef\strut@EMendnote{\empty}%
+\def\preEMendnote#1{\def\pre@EMendnote{#1}}%
+%
+\long\def\EMendnote{\begingroup\@ifnextchar<{\EMendnote@}{\@EMendnote}}%
+\def\EMendnote@<#1>{\setkeys{EMen}{#1}\@EMendnote}%
+\def\@EMendnote#1{%
+  \refstepcounter{EMendnote}%
+  \ifmmode
+    \ifx\empty \strut@EMendnote
+      {}^{\pre@EMendnote\EMendnote@mark\theEMendnote}%
+    \else
+      {\strut@EMendnote}^{\pre@EMendnote\EMendnote@mark\theEMendnote}%
+    \fi
+  \else
+    \ifx\empty \strut@EMendnote
+      \mbox{$^{\pre@EMendnote\EMendnote@mark\theEMendnote}$}%
+    \else
+      \mbox{{\strut@EMendnote}^{\pre@EMendnote\EMendnote@mark\theEMendnote}}%
+    \fi
+  \fi
+  \expandafter\EMxdef\csname EMendnote@\romannumeral\theEMendnote
+    \endcsname{#1}%
+  \endgroup
+}%
+\def\prEMendnotes{\@ifnextchar'{\@prEMendnotes}{%
+  \@prEMendnotes'$^{\EMendnote@mark\getcurrentenum}$\,'}}
+\def\@prEMendnotes'#1'{%
+  \begin{enumerate}'#1'
+    \Ifor*\EMendnote@n{1}{\theEMendnote}\Do{%
+      \item \csname EMendnote@\romannumeral\EMendnote@n\endcsname
+    }%
+  \end{enumerate}
+}%
+\endinput
+%
+2008/10/03 v 0.00α (BBS #7573〜参照)
+           v 0.01α pre=, strut=
+2009/12/30 v 0.02β エラー ! Double superscript. の回避

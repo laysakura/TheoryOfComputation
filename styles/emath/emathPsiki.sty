@@ -1,0 +1,218 @@
+% emathPsiki.sty by tDB(emath@nifty.com)
+%
+  \NeedsTeXFormat{LaTeX2e}
+  \ProvidesPackage{emathPsiki}[2008/02/17 v 0.03α]%
+%
+      \RequirePackage{emathT}
+      \RequirePackage{emathLb}%
+      \RequirePackage{verbatim}%
+%
+% 式各項のセンターのx座標 (\sikixposi, \skixposii, \sikixposiii，...)
+% 式全体の高さ(\sikiyh)，深さを求める(\sikiyd)。
+%
+\def\sikipicture#1{\bgroup
+  \def\skxyp@s{}%
+  \def\skxyp@i{0}%
+  \expandafter\@for\expandafter\skxyp@c\expandafter:\expandafter=#1\do{%
+    \Incr\skxyp@i
+    \EMedefappend\skxyp@s{\skxyp@c}%
+    \if@display
+      \setbox0=\hbox{$\displaystyle\skxyp@c$}%
+      \setbox1=\hbox{$\displaystyle\skxyp@s$}%
+    \else
+      \setbox0=\hbox{$\skxyp@c$}%
+      \setbox1=\hbox{$\skxyp@s$}%
+    \fi
+    \@tempdima\wd0
+    \@tempdimb\wd1
+    \expandafter\edef\csname sikixrpos\romannumeral\skxyp@i\endcsname{\strip@pt\@tempdimb}%
+    \advance\@tempdimb-\@tempdima
+    \expandafter\edef\csname sikixlpos\romannumeral\skxyp@i\endcsname{\strip@pt\@tempdimb}%
+    \@tempdima=.5\@tempdima
+    \advance\@tempdimb\@tempdima
+    \expandafter\edef\csname sikixpos\romannumeral\skxyp@i\endcsname{\strip@pt\@tempdimb}%
+    \expandafter\edef\csname sikiyhpos\romannumeral\skxyp@i\endcsname{\strip@pt\ht0}%
+    \@tempdima-\dp0%%%%%%%%%%%% 2006/11/17
+    \expandafter\edef\csname sikiydpos\romannumeral\skxyp@i\endcsname{\strip@pt\@tempdima}%
+    \expandafter\edef\csname sikiB\romannumeral\skxyp@i\endcsname{(\strip@pt\@tempdimb,-\strip@pt\dp0)}%
+    \expandafter\edef\csname sikiT\romannumeral\skxyp@i\endcsname{(\strip@pt\@tempdimb,\strip@pt\ht0)}%
+  }%
+  \edef\sikiyh{\strip@pt\ht1}%
+  \edef\sikiyd{\strip@pt\dp1}%
+  \edef\sikixyp@w{\strip@pt\wd1}%
+\begin{zahyou*}[ul=1pt,haiti=x](0,\sikixyp@w)(-\sikiyd,\sikiyh)\ignorespaces
+}
+\def\endsikipicture{%
+  \if@display
+    \put(0,0){$\displaystyle \skxyp@s$}\relax
+  \else
+    \put(0,0){$\skxyp@s$}\relax
+  \fi
+  \end{zahyou*}\egroup\@ignoretrue
+}%
+\let\sikixypos\sikipicture
+\let\endsikixypos\endsikipicture
+%
+\def\bunpicture#1{\bgroup
+  \def\bnxyp@s{}%
+  \def\bnxyp@i{0}%
+  \expandafter\@for\expandafter\bnxyp@c\expandafter:\expandafter=#1\do{%
+    \Incr\bnxyp@i
+    \EMedefappend\bnxyp@s{\bnxyp@c}%
+    \setbox0=\hbox{\bnxyp@c}%
+    \setbox1=\hbox{\bnxyp@s}%
+    \@tempdima\wd0
+    \@tempdimb\wd1
+    \expandafter\edef\csname bunxrpos\romannumeral\bnxyp@i\endcsname{\strip@pt\@tempdimb}%
+    \advance\@tempdimb-\@tempdima
+    \expandafter\edef\csname bunxlpos\romannumeral\bnxyp@i\endcsname{\strip@pt\@tempdimb}%
+    \@tempdima=.5\@tempdima
+    \advance\@tempdimb\@tempdima
+    \expandafter\edef\csname bunxpos\romannumeral\bnxyp@i\endcsname{\strip@pt\@tempdimb}%
+    \expandafter\edef\csname bunyhpos\romannumeral\bnxyp@i\endcsname{\strip@pt\ht0}%
+    \expandafter\edef\csname bunydpos\romannumeral\bnxyp@i\endcsname{\strip@pt\dp0}%
+    \expandafter\edef\csname bunB\romannumeral\bnxyp@i\endcsname{(\strip@pt\@tempdimb,-\strip@pt\dp0)}%
+    \expandafter\edef\csname bunT\romannumeral\bnxyp@i\endcsname{(\strip@pt\@tempdimb,\strip@pt\ht0)}%
+  }%
+  \edef\bunyh{\strip@pt\ht1}%
+  \edef\bunyd{\strip@pt\dp1}%
+  \edef\bunxyp@w{\strip@pt\wd1}%
+\begin{zahyou*}[ul=1pt,haiti=x](0,\bunxyp@w)(-\bunyd,\bunyh)\ignorespaces
+}
+\def\endbunpicture{%
+  \put(0,0){\bnxyp@s}\relax
+  \end{zahyou*}\egroup\@ignoretrue
+}%
+%
+%
+\newwrite\Sikipic@hndl
+\def\Sikipicture#1#2{%
+%
+  \edef\Sikipic@lbl{#1}%
+  \def\Sikipic@xmax{0}%
+%
+  \Cfor{\edef\Sikipic@n{0}\Strsep{#2}{;}\Sikipic@a\Sikipic@b}{\not\equal\Sikipic@a\empty}{%
+      \Strsep\Sikipic@b{;}\Sikipic@a\Sikipic@b}\do{%
+    \Incr\Sikipic@n
+    \expandafter\EMedef\csname #1\romannumeral\Sikipic@n\endcsname{\Sikipic@a}%
+    \dimenref*{W\Sikipic@lbl\romannumeral\Sikipic@n}\Sikipic@tmpp
+      \ifdim\Sikipic@tmpp\p@>\Sikipic@xmax\p@\edef\Sikipic@xmax{\Sikipic@tmpp}\fi
+  }%
+%
+    \bgroup\immediate\openout\Sikipic@hndl=\Sikipic@lbl.tex\relax
+    \@bsphack\let\do\@makeother\dospecials
+    \catcode`\^^M\active
+    \def\verbatim@processline{%
+        \immediate\write\Sikipic@hndl{\the\verbatim@line}}%
+    \verbatim@start
+}
+\def\endSikipicture{\@esphack\immediate\closeout\Sikipic@hndl\egroup
+  \unitlength\p@
+  \expandafter\edef\csname \Sikipic@lbl yi\endcsname{0}%
+  \Cfor{\edef\Sikipic@i{1}}{\Sikipic@i<\Sikipic@n}{\Incr\Sikipic@i}\do{%
+    \IAdd\Sikipic@i{1}\Sikipic@j
+    \dimenref*[10]{D\Sikipic@lbl\romannumeral\Sikipic@i}\Sikipic@tmp
+      \Addself\Sikipic@tmp{\csname \Sikipic@lbl y\romannumeral\Sikipic@i\endcsname}%
+    \dimenref*[10]{H\Sikipic@lbl\romannumeral\Sikipic@j}\Sikipic@tmpp
+      \Addself\Sikipic@tmp\Sikipic@tmpp
+    \expandafter\edef\csname \Sikipic@lbl y\romannumeral\Sikipic@j\endcsname{\Sikipic@tmp}%
+  }%
+  \def\Li{(\xmin,0)}%
+  \def\Ri{(\xmax,0)}%
+  \Cfor{\edef\Sikipic@i{1}}{\Sikipic@i<\Sikipic@n}{}\do{%
+    \Incr\Sikipic@i
+    \expandafter\edef\csname \Sikipic@lbl y\romannumeral\Sikipic@i\endcsname{%
+      -\csname\Sikipic@lbl y\romannumeral\Sikipic@i\endcsname}%
+  }%
+\ensuremath{%
+  \arraycolsep=\z@
+  \begin{array}{@{}l}
+    \EMcell[label=\Sikipic@lbl i]<%
+      \Addself\Sikipic@xmax\xmin
+      \Cfor{\edef\Sikipic@i{0}}{\Sikipic@i<\Sikipic@n}{}\do{%
+        \Incr\Sikipic@i
+        \expandafter\edef\csname L\romannumeral\Sikipic@i\endcsname{%
+          (\xmin,\csname \Sikipic@lbl y\romannumeral\Sikipic@i\endcsname)}%
+        \expandafter\EMedef\csname R\romannumeral\Sikipic@i\endcsname{%
+          (\Sikipic@xmax,\csname \Sikipic@lbl y\romannumeral\Sikipic@i\endcsname)}%
+      }%
+      \input{\Sikipic@lbl.tex}>{l}{\csname \Sikipic@lbl i\endcsname}%
+      \\[\arrayrulewidth]\relax
+    \Cfor{\xdef\Sikipic@i{1}}{\Sikipic@i<\Sikipic@n}{}\do{%
+      \xIncr\Sikipic@i
+      \EMcell[label=\Sikipic@lbl\romannumeral\Sikipic@i]{l}{\csname \Sikipic@lbl\romannumeral\Sikipic@i\endcsname}%
+      \\[\arrayrulewidth]\relax
+    }%
+  \end{array}%
+}%\vskip-\baselineskip
+}
+%
+%\newwrite\Bunpic@hndl
+\def\Bunpicture#1#2{\leavevmode%
+%
+  \edef\Bunpic@lbl{#1}%
+  \def\xmin{0}%
+  \def\Bunpic@xmax{0}%
+%
+  \Cfor{\EMedef\Bunpic@n{0}\Strsep{#2}{;}\Bunpic@a\Bunpic@b}{\not\equal\Bunpic@a\empty}{%
+      \Strsep\Bunpic@b{;}\Bunpic@a\Bunpic@b}\do{%
+    \Incr\Bunpic@n
+    \expandafter\EMedef\csname #1\romannumeral\Bunpic@n\endcsname{\Bunpic@a}%
+    \dimenref*{W\Bunpic@lbl\romannumeral\Bunpic@n}\Bunpic@tmpp
+      \ifdim\Bunpic@tmpp\p@>\Bunpic@xmax\p@\edef\Bunpic@xmax{\Bunpic@tmpp}\fi
+  }%
+%
+    \bgroup\immediate\openout\Sikipic@hndl=\Bunpic@lbl.tex\relax
+    \@bsphack\let\do\@makeother\dospecials
+    \catcode`\^^M\active
+    \def\verbatim@processline{%
+        \immediate\write\Sikipic@hndl{\the\verbatim@line}}%
+    \verbatim@start
+}
+\def\endBunpicture{\@esphack\immediate\closeout\Sikipic@hndl\egroup
+  \unitlength\p@
+  \expandafter\EMedef\csname \Bunpic@lbl yi\endcsname{0}%
+  \Cfor{\EMedef\Bunpic@i{1}}{\Bunpic@i<\Bunpic@n}{\Incr\Bunpic@i}\do{%
+    \IAdd\Bunpic@i{1}\Bunpic@j
+    \dimenref*[10]{D\Bunpic@lbl\romannumeral\Bunpic@i}\Bunpic@tmp
+      \Addself\Bunpic@tmp{\csname \Bunpic@lbl y\romannumeral\Bunpic@i\endcsname}%
+    \dimenref*[10]{H\Bunpic@lbl\romannumeral\Bunpic@j}\Bunpic@tmpp
+      \Addself\Bunpic@tmp\Bunpic@tmpp
+    \expandafter\EMedef\csname \Bunpic@lbl y\romannumeral\Bunpic@j\endcsname{\Bunpic@tmp}%
+  }%
+  \def\Li{(\xmin,0)}%
+  \def\Ri{(\Bunpic@xmax,0)}%
+  \Cfor{\EMedef\Bunpic@i{1}}{\Bunpic@i<\Bunpic@n}{}\do{%
+    \Incr\Bunpic@i
+    \expandafter\EMedef\csname \Bunpic@lbl y\romannumeral\Bunpic@i\endcsname{%
+      -\csname\Bunpic@lbl y\romannumeral\Bunpic@i\endcsname}%
+  }%
+  \tabcolsep=\z@
+  \begin{tabular}{@{}l@{}}
+    \EMcell[label=\Bunpic@lbl i]<%
+      \Addself\Bunpic@xmax\xmin
+      \Cfor{\EMedef\Bunpic@i{0}}{\Bunpic@i<\Bunpic@n}{}\do{%
+        \Incr\Bunpic@i
+        \expandafter\EMedef\csname L\romannumeral\Bunpic@i\endcsname{%
+          (\xmin,\csname \Bunpic@lbl y\romannumeral\Bunpic@i\endcsname)}%
+        \expandafter\EMedef\csname R\romannumeral\Bunpic@i\endcsname{%
+          (\Bunpic@xmax,\csname \Bunpic@lbl y\romannumeral\Bunpic@i\endcsname)}%
+      }%
+      \input{\Bunpic@lbl.tex}>{l}{\mbox{\csname \Bunpic@lbl i\endcsname}}%
+      \\[\arrayrulewidth]\relax
+    \Cfor{\xdef\Bunpic@i{1}}{\Bunpic@i<\Bunpic@n}{}\do{%
+      \xIncr\Bunpic@i
+      \EMcell[label=\Bunpic@lbl\romannumeral\Bunpic@i]{l}{\mbox{\csname \Bunpic@lbl\romannumeral\Bunpic@i\endcsname}}%
+      \\[\arrayrulewidth]\relax
+    }%
+  \end{tabular}\vspace{-\baselineskip}%
+}
+%
+\endinput
+%
+v 0.01 2005/12/24
+         Bunpicture環境：新設
+v 0.02 2006/11/17
+        \sikiyposdi,... : 符号
+v 0.03 2008/02/17
+        \displaystyle か否かを判定

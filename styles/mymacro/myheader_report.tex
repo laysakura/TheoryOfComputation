@@ -1,0 +1,64 @@
+\documentclass[report,a4j]{jsbook}
+
+% === Packages ===
+\usepackage{amsmath}
+\usepackage{txfonts}
+\usepackage{ascmac}
+\usepackage{fancybox}
+
+% necessary for 'leftbar' env.
+\usepackage{framed}
+
+% necessary for 'breakrectbox' env.
+\usepackage{emathPbb}
+\usepackage{emathPb}
+
+% necessary for 'breakitembox' env.
+\usepackage{eclbkbox}
+\usepackage{itembbox}
+\usepackage{itembkbx}
+\usepackage{jquote}
+\usepackage{emathC}
+
+% necessary for tree env.
+% Usage:
+% See: ~/lecture/jikken/theory_of_computation/03context_free_grammar.tex
+\usepackage{epic,eepic,eclarith,treeprint}
+
+% Used to use URL in bibtex
+\usepackage{url}
+
+% Used to display jpg,png image
+% Used like:
+% \myfigure{hoge.jpg}{this is a caption}
+\usepackage[dvipdfmx]{graphicx}
+
+% Used to display jpg images
+% without '$ ebb *.jpg'
+% Usage:
+% \includegraphics[autoebb]{hoge.jpg}
+% NOTE: this cannot be used for png,gif
+\usepackage{mediabb}
+
+% Uses color
+% Color samples are in
+% /usr/local/teTeX/share/texmf-dist/doc/latex/xcolor/xcolor.dvi
+\usepackage[svgnames,dvipdfm]{xcolor}
+
+% Bueatiful source code style.
+% Used like:
+% \lstinputlisting[label=src:Point.h, caption=Point.h]{../Point.h}
+\usepackage{listings,jlisting}
+
+% Self-defined macros.
+% See: /usr/local/teTeX/share/texmf/ptex/platex/mymacro/mymacro.sty
+\usepackage{mymacro}
+
+
+% === Document Class Setings ===
+\renewcommand{\figurename}{図}
+\renewcommand{\tablename}{表}
+\renewcommand{\refname}{参考}
+\renewcommand{\bibname}{参考}
+
+\begin{document}

@@ -1,0 +1,18 @@
+{$y=x$, $y=\bunsuu{1}{x}$ は点線で，
+$y=x+\bunsuu{1}{x}$ は実線で描画する．\bigskip
+
+\unitlength1cm
+\begin{zahyou}(-.5,5)(-.5,5)
+\def\Fx#1#2{\edef#2{#1}}%               F(x)=x
+\def\Gx#1#2{\Div{1}{#1}\y\edef#2{\y}}%  G(x)=1/x
+\def\Hx#1#2{\Div{1}{#1}\y\Add{#1}\y\y\edef#2{\y}}%
+%                                       H(x)=x+1/x
+\yGurafu(0.2)(0.08)\Fx{0.2}\xmax
+%\yGurafu(0.2)(0.08)\Gx{0.2}\xmax%
+%    これでは直角双曲線の区間 (0,1) がうまく描けない．
+%    区間 (1,\xmax) は y=1/x で
+\yGurafu(0.2)(0.08)\Gx{1}\xmax%
+%    区間 (0,1) は媒介変数表示 x=1/t, y=t
+\bGurafu(0.2)(0.08)\Gx\Fx{1}\ymax%
+\yGurafu\Hx{0.21}\xmax
+\end{zahyou}}%

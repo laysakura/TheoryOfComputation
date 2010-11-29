@@ -1,0 +1,59 @@
+\documentclass[a4j,fleqn]{jarticle}
+\usepackage[mbb]{emathFx}
+\usepackage{showexample}
+\begin{document}
+\section{\texttt{[mbb]ロードオプション}}
+\subsection{\cmd{mathmbb}}
+\textsf{amsmath}パッケージに，
+ブラックボードボールドを出力するコマンド
+\cmd{mathbb}があります。
+
+\begin{showEx}{\cmd{mathbb}}
+$\mathbb{ABCXYZ}$
+\end{showEx}
+
+ただし，小文字・数字はサポートされていません。
+
+\begin{showEx}{小文字はダメ}
+$\mathbb{abc012}$
+\end{showEx}
+
+小文字・数字のブラックボードボールドが用意されているフォントも
+いくつかありますが、そのひとつに
+\textsf{mbboard}パッケージがあります。
+ただし，\textsf{mbboard.sty}では，\textsf{amsmath}パッケージと
+同一コマンド\cmd{mathbb}を用いていますから，
+二者択一となってしまいます。
+
+そこで \textsf{emathFx.sty} \texttt{v 0.33}において
+ロードオプション\texttt{[mbb]}を付加することにより，\\
+\cmd{mathmbb}コマンドで\textsf{mbboard}パッケージの
+ブラックボードボールドを利用できるようにしました。
+
+\begin{showEx}(.54,.4){\cmd{mathmbb}}
+\begin{gather*}
+\mathmbb{ABCXYZ}\\
+\mathmbb{abc012}\\
+\intertext{\cmd{mathbb}との併用確認}
+\mathbb{ABCXYZ}
+\end{gather*}
+\end{showEx}
+
+\subsection{問題番号に利用する例}
+数字のブラックボードボールドを，問題番号に用いる例をご覧ください。
+
+\begin{showEx}(.6,.34){使用例}
+\begin{enumerate}[%
+\Large$\expandafter\mathmbb 1$.~]
+	\item あああ
+	\item いいい
+	\item ううう
+	\item えええ
+\end{enumerate}
+\end{showEx}
+
+\subsection{参考---ブラックボールドボールド出力一覧}
+ブラックボードボールドを出力できるパッケージの出力一覧
+\texttt{blackboard.pdf}を同梱しました。
+興味のある方はご覧ください。
+\end{document}

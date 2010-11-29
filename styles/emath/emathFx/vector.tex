@@ -1,0 +1,243 @@
+\documentclass[a4j]{jarticle}
+\usepackage{emathP}
+\usepackage{showexample}
+
+\makeatletter
+  \DeclareSymbolFont{txsymbols}{OMS}{txsy}{m}{n}%
+  \DeclareSymbolFont{EMmatha}{U}{matha}{m}{n}
+%
+  \DeclareMathSymbol{\txrelbar}{\mathbin}{txsymbols}{"00}%
+  \DeclareMathSymbol{\txrightarrow}{\mathrel}{txsymbols}{"21}%
+  \DeclareSymbolFont{txletters}{OML}{txmi}{m}{it}%
+%
+  \DeclareSymbolFont{ceosymbols}{OMS}{ceo}{m}{n}
+  \DeclareMathSymbol{\ceorightarrow}{\mathrel}{ceosymbols}{"21}
+%
+  \DeclareMathSymbol{\abxrelbar}{3}{EMmatha}{"DD}
+  \DeclareMathSymbol{\abxrightarrow}{3}{EMmatha}{"D1}
+%
+  \DeclareSymbolFont{ceoletters}{OML}{ceo}{m}{it}
+  \DeclareMathAccent{\ceovectorsymbol}{\mathord}{ceoletters}{"7E}
+  \DeclareMathSymbol{\ceominus}{\mathbin}{ceosymbols}{"A1}
+%
+  \DeclareSymbolFont{EulerExtension}{U}{euex}{m}{n}
+  \DeclareMathSymbol\eurightarrow\mathrel{EulerExtension}{"21}
+%
+%\newcommand{\bekutoru@overrightarrow}{%
+\def\bekutoru@overrightarrow{%
+  \mathpalette{\overarrow@\bekutoru@rightarrowfill@}}
+\def\bekutoru@rightarrowfill@{%
+  \arrowfill@\bekutoru@relbar\bekutoru@relbar\bekutoru@rightarrow}
+\def\bekutoru@t#1{\ensuremath{\displaystyle
+  \bekutoru@overrightarrow{\text{#1}\bekutoru@sityuu}}}%
+\def\bekutoru@m#1{\ensuremath{\displaystyle%
+  \bekutoru@overrightarrow{#1\bekutoru@sityuu}}}%
+\let\cmbekutoru\bekutoru
+%
+  \def\ceovec#1{\ceovectorsymbol{\vphantom{h}{#1}}}
+  \def\ceooverrightarrow#1{\vbox{\m@th\ialign{##\crcr
+      \ceorightarrowfill\crcr\noalign{\kern-\p@\nointerlineskip}
+      $\hfil\displaystyle{#1}\hfil$\crcr}}}
+  \def\ceorightarrowfill{$\m@th\smash\ceominus\mkern-7mu%
+    \cleaders\hbox{$\mkern-2mu\smash\ceominus\mkern-2mu$}\hfill
+    \mkern-7mu\mathord\ceorightarrow$}
+  \def\ceobekutoru{\@ifstar{\ceobekutoru@m}{\ceobekutoru@t}}
+  \def\ceobekutoru@m#1{\ensuremath{\ceooverrightarrow{#1\bekutoru@sityuu}}}%
+  \def\ceobekutoru@t#1{\ensuremath{\ceooverrightarrow{\text{#1}\bekutoru@sityuu}}}%
+%
+\def\preparexy{%
+  \DeclareSymbolFont{Xyatip}{OMS}{atip}{m}{n}
+  \DeclareSymbolFont{Xybtip}{OMS}{btip}{m}{n}
+  \DeclareMathSymbol\Xyrightarrowi\mathrel{Xyatip}{"2F}% 上
+  \DeclareMathSymbol\Xyrightarrow\mathrel{Xybtip}{"2F}% 下
+%  \DeclareMathSymbol\Xyrightarrowi\mathrel{Xyatip}{"2E}% 上
+%  \DeclareMathSymbol\Xyrightarrow\mathrel{Xybtip}{"30}%  下
+  \DeclareFontFamily{OMS}{atip}{}
+  \DeclareFontShape{OMS}{atip}{m}{n}{
+     <-> [.8409] xyatip10%
+  }{}
+  \DeclareFontFamily{OMS}{btip}{}
+  \DeclareFontShape{OMS}{btip}{m}{n}{
+     <-> [.8409] xybtip10%
+  }{}
+  \def\xybekutoru{\@ifstar{\xybekutoru@m}{\xybekutoru@t}}%
+  \def\xybekutoru@t##1{{%
+    \setbox0=\hbox{\ensuremath{\m@th\displaystyle\text{##1}\bekutoru@sityuu}}%
+    \ifdim\wd0<1em\relax
+      \beku{\ensuremath{\m@th\displaystyle\text{##1}\bekutoru@sityuu}}%
+    \else
+%%     \@tempdima=\ht0\advance\@tempdima .3ex\advance\@tempdima.17pt\relax
+%%     \ensuremath{\overline{\box0}\raisebox\@tempdima{%
+%%        $\Xyrightarrow\Xyrightarrowi$}}%
+      \setbox1=\hbox{$\overline{\copy0}$}\relax
+      \unitlength\p@
+      \edef\xybekutoru@x{\strip@pt\wd1}%
+      \edef\xybekutoru@y{\strip@pt\ht1}%
+      \begin{picture}(0,0)\relax
+        \allinethickness{0.12ex}%
+        \put(0,\xybekutoru@y){\drawline(0,0)(\xybekutoru@x,0)}%
+        \Add\xybekutoru@y{-.1}\xybekutoru@yy
+        \put(\xybekutoru@x,\xybekutoru@yy){$\Xyrightarrow$}%
+        \Add\xybekutoru@y{.1}\xybekutoru@yy
+        \put(\xybekutoru@x,\xybekutoru@yy){$\Xyrightarrowi$}%
+      \end{picture}%
+      \box0\relax
+    \fi
+  }}
+  \def\xybekutoru@m##1{{%
+    \setbox0=\hbox{\ensuremath{\m@th\displaystyle##1\bekutoru@sityuu}}%
+    \ifdim\wd0<1em\relax
+      \beku{\ensuremath{\m@th\displaystyle##1\bekutoru@sityuu}}%
+    \else
+%      \@tempdima=\ht0\advance\@tempdima .333ex\relax
+%      \ensuremath{\overline{\box0}\raisebox\@tempdima{%
+%        $\Xyrightarrow\Xyrightarrowi$}}%
+      \setbox1=\hbox{$\overline{\copy0}$}\relax
+      \unitlength\p@
+      \edef\xybekutoru@x{\strip@pt\wd1}%
+      \edef\xybekutoru@y{\strip@pt\ht1}%
+      \begin{picture}(0,0)\relax
+        \allinethickness{0.12ex}%
+        \put(0,\xybekutoru@y){\drawline(0,0)(\xybekutoru@x,0)}%
+        \Add\xybekutoru@y{-.1}\xybekutoru@yy
+        \put(\xybekutoru@x,\xybekutoru@yy){$\Xyrightarrow$}%
+        \Add\xybekutoru@y{.1}\xybekutoru@yy
+        \put(\xybekutoru@x,\xybekutoru@yy){$\Xyrightarrowi$}%
+      \end{picture}%
+      \box0\relax
+    \fi
+  }}%
+}
+\preparexy
+%
+\let\mybekutoru\relax
+\def\bekutorukata{\@ifnextchar<{\@bekutorukata}{\@bekutorukata<\ArrowHeadPit>}}%
+\def\@bekutorukata<#1>{\edef\bekutoru@kubomi{#1}\@@bekutorukata}%
+\def\@@bekutorukata#1{%
+  \ifthenelse{\equal{#1}{cm}}%
+  {\bekutorusityuu{\vrule height .9zh width \z@}%
+    \let\bekutoru@relbar\relbar\let\bekutoru@rightarrow\rightarrow
+    \let\bekutoru\cmbekutoru}%
+  {%
+    \ifthenelse{\equal{#1}{eu}}%
+    {\bekutorusityuu{\vrule height .85zh width \z@}%
+      \let\bekutoru@relbar\relbar\let\bekutoru@rightarrow\eurightarrow
+      \let\bekutoru\cmbekutoru}%
+    {%
+      \ifthenelse{\equal{#1}{tx}}%
+      {\bekutorusityuu{\vrule height .75zh width \z@}%
+        \let\bekutoru@relbar\txrelbar\let\bekutoru@rightarrow\txrightarrow
+        \let\bekutoru\cmbekutoru}%
+      {%
+        \ifthenelse{\equal{#1}{xy}}%
+        {%
+          \@ifundefined{xybekutoru}{}{%
+%           \let\bekutoru@relbar\relbar\let\bekutoru@rightarrow\xyrightarrow
+            \bekutorusityuu{\vrule height .9zh width \z@}%
+            \let\bekutoru\xybekutoru
+          }%
+        }%
+        {%
+          \ifthenelse{\equal{#1}{px}}%
+          {%
+            \bekutorusityuu{\vrule height .75zh width \z@}%
+            \let\bekutoru@relbar\pxrelbar\let\bekutoru@rightarrow\pxrightarrow
+            \let\bekutoru\cmbekutoru
+          }%
+          {%
+            \ifthenelse{\equal{#1}{abx}}%
+            {%
+              \bekutorusityuu{\vrule height .75zh width \z@}%
+              \let\bekutoru@relbar\abxrelbar
+              \let\bekutoru@rightarrow\abxrightarrow
+              \let\bekutoru\cmbekutoru
+            }%
+            {%
+              \ifthenelse{\equal{#1}{fill}}%
+              {%
+                \bekutorusityuu{\vrule height .9zh width \z@}%
+                \def\bekutoru@t##1{{%
+                  \@tempdima=1zh\relax
+                  \edef\BK@hi{\strip@pt\@tempdima}%
+                  \Div\BK@hi{9.16443}\BK@hi
+                  \Mul{0.5}\BK@hi\BK@thickness
+                  \changeArrowHeadSize\BK@hi
+                  \setbox0=\hbox{\bekutoru@sityuu}%
+                  \ukansan{\the\ht0}\bekutoru@h
+                  \setbox0=\hbox{##1}%
+                  \ukansan{\the\wd0}\bekutoru@w
+                  \begin{picture}(0,0)\relax
+                    \edef\O@@{(0,0)}%
+                    \edef\ArrowHeadPit{\bekutoru@kubomi}%
+                    \DegSin\ArrowHeadAngle\bekutoru@s
+                    \Mul\Arr@wHeadSize\bekutoru@s\bekutoru@s
+                    \Addself\bekutoru@h\bekutoru@s
+                    \allinethickness{\BK@thickness pt}%
+\mybekutoru
+                    \put(0,\bekutoru@h){\ArrowLine{(0,0)}{(\bekutoru@w,0)}}%
+                    \Addself\bekutoru@h\bekutoru@s
+                    \xdef\bekutoru@H{\bekutoru@h}%
+                  \end{picture}%
+                  \vrule width \z@ height \bekutoru@H \p@\box0
+                }}%
+                \def\bekutoru@m##1{{%
+                  \@tempdima=1zh\relax
+                  \edef\BK@hi{\strip@pt\@tempdima}%
+                  \Div\BK@hi{9.16443}\BK@hi
+                  \Mul{0.5}\BK@hi\BK@thickness
+                  \changeArrowHeadSize\BK@hi
+                  \setbox0=\hbox{\bekutoru@sityuu}%
+                  \ukansan{\the\ht0}\bekutoru@h
+                  \setbox0=\hbox{\ensuremath{\displaystyle ##1}}%
+                  \ukansan{\the\wd0}\bekutoru@w
+                  \begin{picture}(0,0)\relax
+                    \edef\ArrowHeadPit{\bekutoru@kubomi}%
+                    \DegSin\ArrowHeadAngle\bekutoru@s
+                    \Mul\Arr@wHeadSize\bekutoru@s\bekutoru@s
+                    \Addself\bekutoru@h\bekutoru@s
+                    \allinethickness{\BK@thickness pt}%
+\mybekutoru
+                    \put(0,\bekutoru@h){\ArrowLine{(0,0)}{(\bekutoru@w,0)}}%
+                    \Addself\bekutoru@h\bekutoru@s
+                    \xdef\bekutoru@H{\bekutoru@h}%
+                  \end{picture}%
+                  \vrule width \z@ height \bekutoru@H \p@\box0
+                }}%
+              }%
+              {%
+                \ifthenelse{\equal{#1}{ceo}}{%
+                  \bekutorusityuu{\vphantom{h}}%
+                  \let\bekutoru\ceobekutoru
+                  \let\vec\ceovec
+                }{%
+                  \relax
+                }%
+              }%
+            }%
+          }%
+        }%
+      }%
+    }%
+  }%
+}
+\bekutorukata{cm}%
+%
+\begin{document}
+
+\verb+\bekutoru+ の矢印の鏃の形
+
+\begin{showpEx}(.95,.9){\cmd{bekutorukata}}
+\begin{tabular}{ll}
+cm & \bekutoru{OA}=\beku{a}=\bekutoru*a\\
+eu & \bekutorukata{eu}\bekutoru{OA}=\beku{a}=\bekutoru*a\\
+tx & \bekutorukata{tx}\bekutoru{OA}=\beku{a}=\bekutoru*a \\
+abx & \bekutorukata{abx}\bekutoru{OA}=\beku{a}=\bekutoru*a \\
+xy & \bekutorukata{xy}\bekutoru{OA}=\beku{a}=\bekutoru{$a$} \\
+ceo & \bekutorukata{ceo}\bekutoru{OA}=\beku{a}=\bekutoru*a \\\hline
+\makebox[0pt][l]{ここまではフォントですが，下は tpic-specials による描画}\\
+fill & \bekutorukata{fill}\bekutoru{OA}=\beku{a}=\bekutoru*a \\
+fill.25 & \bekutorukata<.25>{fill}\bekutoru{OA}=\beku{a}=\bekutoru*a \\
+\end{tabular}
+\end{showpEx}
+
+\end{document}

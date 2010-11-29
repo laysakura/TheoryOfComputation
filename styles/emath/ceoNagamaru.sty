@@ -1,0 +1,27 @@
+% ceoNagamaru.sty by tDB (emath@nifty.com)
+%
+\NeedsTeXFormat{LaTeX2e}%
+\ProvidesPackage{ceoNagamaru}[2010/03/22 v0.00]%
+%
+\let\nagamaru\@undefined
+\gdef\ceoNagamaru#1{%
+  \count255=0#1\relax\edef\ceo@tmp{\the\count255}%
+  \ifnum\ceo@tmp>9\errmessage{ceoNagamaru:counter too large:#1}\fi
+  \mbox{%
+    \ifnum\ceo@tmp=0 \edef\ceo@tmp{58}%
+    \else \IAddself\ceo@tmp{48}%
+    \fi
+    \fontencoding{U}\fontfamily{nmaru}\fontseries{m}\fontshape{n}\selectfont\char\ceo@tmp}}%
+\let\nagamaru\ceoNagamaru
+\gdef\ceobNagamaru#1{%
+  \count255=0#1\relax\edef\ceo@tmp{\the\count255}%
+  \ifnum\ceo@tmp>9\errmessage{ceoNagamaru:counter too large:#1}\fi
+  \mbox{%
+    \ifnum\ceo@tmp=0 \edef\ceo@tmp{42}%
+    \else \IAddself\ceo@tmp{32}%
+    \fi
+    \fontencoding{U}\fontfamily{nmaru}\fontseries{m}\fontshape{n}\selectfont\char\ceo@tmp}}%
+\let\bnagamaru\ceobNagamaru
+\endinput
+%
+v 0.00 2010/03/22 縦長丸付き数字

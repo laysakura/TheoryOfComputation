@@ -1,0 +1,211 @@
+% EMpict2e.sty by tDB (emath@nifty.ne.jp)
+%
+\NeedsTeXFormat{LaTeX2e}[1999/12/01]
+\ProvidesPackage{EMpict2e}[2010/07/24 v0.02α]
+\DeclareOption{dvips}{\def\@EMpict@opt{dvips}}
+\DeclareOption{dvipdfm}{\def\@EMpict@opt{dvipdfm}}
+\DeclareOption{dvipdfmx}{\def\pdfmx@{}\def\@EMpict@opt{dvipdfm}}
+\DeclareOption{tpic}{\def\EMpict@tpic{}}%
+\ProcessOptions\relax
+%
+\@ifundefined{@EMpict@opt}{%
+  \errmessage{EMpict2e はロードオプションが必須です}}{}%
+\@ifpackageloaded{pict2e}{}{\RequirePackage[\@EMpict@opt]{pict2e}[2008/07/22]}%
+%
+\RequirePackage{emathC}%
+  \ifthenelse{\equal{\@EMpict@opt}{dvipdfm}}{%
+    \def\pdfliteral#1{\special{pdf: content #1}}%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%    \def\pdfliteral#1{\special{PDF: #1}}%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  }{}%
+%
+\edef\fbox@dash{}%
+%
+\ifcase\pIIe@mode
+\or
+  \RequirePackage[dvips]{graphicx,color}%
+\or
+  \@ifundefined{pdfmx@}{%
+    \RequirePackage[dvipdfmx]{graphicx,color}%
+  }{%
+    \RequirePackage[dvipdfmx]{graphicx,color}%
+  }%
+\fi
+%
+\ifnum\pIIe@mode>\z@
+  \ifcase\pIIe@mode\relax
+  \or
+    \newcommand*\pIIe@setdash@op{setdash}
+  \or
+    \newcommand*\pIIe@setdash@op{d}
+  \fi
+  \renewcommand*\pIIe@drawGraph{%
+      \edef\x{\pIIe@debug@comment\space
+              \pIIe@scale@PTtoBP}%
+      \if@tempswa
+        \edef\y{\pIIe@fill@op}%
+      \else
+        \edef\x{\x\space\strip@pt\@wholewidth
+          \space\pIIe@setlinewidth@op
+          \fbox@dash
+          }%
+        \edef\y{\pIIe@stroke@op}%
+      \fi
+      \expandafter\pIIe@code\expandafter{%
+        \expandafter\x\the\pIIe@GRAPH\space\y}%
+      \global\pIIe@GRAPH{}\xdef\pIIe@CPx{}\xdef\pIIe@CPy{}%
+    \endgroup}
+  \def\oval{\@ifstar{\edef\oval@fill{1}\em@oval}{\edef\oval@fill{0}\em@oval}}%
+  \newcommand*\em@oval[1][\maxovalrad]{%
+    \begingroup \pIIe@defaultUL\pIIe@maxovalrad{#1}%
+      \ifdim\pIIe@maxovalrad<\z@ \pIIe@badcircarg \fi
+      \pIIe@oldoval}
+  \def\@oval(#1,#2)[#3]{%
+    \@ovxx#1\unitlength \divide\@ovxx\tw@
+    \@ovyy#2\unitlength \divide\@ovyy\tw@
+    \@tempdimc \ifdim\@ovyy>\@ovxx \@ovxx \else \@ovyy \fi
+    \ifdim\pIIe@maxovalrad<\@tempdimc \@tempdimc\pIIe@maxovalrad\relax \fi
+    \@xdim\@ovxx \advance\@xdim-\@tempdimc
+    \@ydim\@ovyy \advance\@ydim-\@tempdimc
+    \pIIe@get@quadrants{#3}%
+    \ifnum15=\@tempcnta \buttcap \fi
+    \@tempswatrue
+    \ifnum9=\@tempcnta
+      \pIIe@qoval\z@{-\@ovyy}{\@xdim}{-\@ovyy}\thr@@\@tempdimc\@ovxx\z@
+      \@tempcnta\@ne
+    \fi
+    \pIIe@qoval\@ovxx\z@\@ovxx\@ydim\z@\@tempdimc\z@\@ovyy
+    \pIIe@qoval\z@\@ovyy{-\@xdim}\@ovyy\@ne\@tempdimc{-\@ovxx}\z@
+    \pIIe@qoval{-\@ovxx}\z@{-\@ovxx}{-\@ydim}\tw@\@tempdimc\z@{-\@ovyy}%
+    \pIIe@qoval\z@{-\@ovyy}{\@xdim}{-\@ovyy}\thr@@\@tempdimc\@ovxx\z@
+    \ifnum\oval@fill=\z@
+      \pIIe@strokeGraph
+    \else
+      \pIIe@closepath\pIIe@fillGraph
+    \fi
+    \endgroup}
+\fi
+%
+%\Gin@codes
+%\let\Gin@codes\relax
+%
+\@ifundefined{EMpict@tpic}{%
+  \@ifpackageloaded{emathPh}{}{\RequirePackage[onlyP]{emathPh}}%
+%  \@ifpackageloaded{emathPh}{}{\RequirePackage[notpic]{emathPh}}%
+}{%
+  \@ifpackageloaded{emathPh}{}{\RequirePackage[notpic]{emathPh}}%
+  \let\pIIeoval\oval
+  \let\pIIe@oval\@oval
+  \RequirePackage{epic,eepic}
+  \let\tpicoval\oval
+  \let\tpic@oval\@oval
+  \let\tpic@circle\circle
+  \let\tpic@@circle\@circle
+  \let\tpic@arc\arc
+  \let\tpic@@arc\@arc
+  \let\oval\pIIeoval
+  \let\@oval\pIIe@oval
+  \let\eepicdrawline\drawline
+    \renewcommand*\OriginalPictureCmds{%
+      \let\@sline\pIIe@old@sline
+      \let\line\pIIe@oldline
+      \let\vector\pIIe@oldvector
+      \let\@circle\pIIe@old@circle
+      \let\@dot\pIIe@old@dot
+      \let\@bezier\pIIe@old@bezier
+      \let\@cbezier\pIIe@old@cbezier
+%      \renewcommand*\oval[1][]{\pIIe@oldoval}%
+      \let\oval\tpicoval
+      \let\@oval\tpic@oval
+      \let\circle\tpic@circle
+      \let\@circle\tpic@@circle
+      \let\arc\tpic@arc
+      \let\@arc\tpic@@arc
+      \let\drawline\eepicdrawline
+    }
+}%
+\def\pIIeDrawline#1{%
+  \edef\dl@tmp{#1}%
+  \expandafter\polyline\dl@tmp
+}%
+%
+\def\pIIeTakakkei#1{%
+    \edef\dl@tmp{#1}%
+    \expandafter\polygon\dl@tmp
+}%
+%
+\def\pIIeArrowLine{\begingroup
+  \@ifnextchar<{\@pIIeArrowLine}{\@pIIeArrowLine<\empty>}}%
+\def\@pIIeArrowLine<#1>#2#3{%
+  \ifx\empty #1\else\setkeys{emP}{#1}\fi
+  \ifx\empty\iro@\else\color{\iro@}\fi
+  \Subvec{#3}{#2}\AL@v
+  \vecXY\AL@v\AL@x\AL@y
+  \@xdim=\AL@x\xunitlength
+  \@ydim=\AL@y\yunitlength
+  \edef\AL@x{\strip@pt\@xdim}%
+  \edef\AL@y{\strip@pt\@ydim}%
+  \Absvec{(\AL@x,\AL@y)}\AL@l
+  \Divself\AL@x\AL@l
+  \Divself\AL@y\AL@l
+  \@xdim=\AL@x\p@
+  \@ydim=\AL@y\p@
+  \@linelen=\AL@l\p@
+  \Put{#2}{%
+    \pIIe@concat\@xdim\@ydim{-\@ydim}\@xdim\z@\z@
+    \pIIe@vector
+    \pIIe@fillGraph
+  }%
+  \endgroup
+}%
+%
+\def\EMpIIesetdash#1{%
+                \Strsep{#1}{,}\LG@a\LG@b
+                \uptkansan{\LG@a}\LG@a
+                \uptkansan{\LG@b}\LG@b
+                \edef\fbox@dash{%
+                  \space[\LG@a\space\LG@b]\space0\space\pIIe@setdash@op}%
+}%
+%
+\@ifundefined{ltxlinethickness}{\let\ltxlinethickness\linethickness}{}%
+\define@key{EMpIIe}{dash}{\EMpIIesetdash{#1}}%
+\define@key{EMpIIe}{iro}{\edef\iro@{#1}}%
+\define@key{EMpIIe}{linethickness}{\ltxlinethickness{#1}}%
+%
+\def\pIIeDaen{\@ifnextchar<{\@pIIeDaen}{\@pIIeDaen<\empty>}}%
+\def\@pIIeDaen<#1>#2#3#4{\begingroup
+  \edef\iro@{\empty}%
+  \ifx\empty #1\else\setkeys{EMpIIe}{#1}\fi
+  \calcval{4*(sqrt(2)-1)/3}\r@val
+  \edef\a@val{#3}%
+  \edef\b@val{#4}%
+  \calcval[s]{\r@val*\a@val}\aa@val
+  \calcval[s]{\r@val*\b@val}\bb@val
+  \vecXY{#2}\x@val\y@val
+  \put(\x@val,\y@val){%
+    \ifx\empty\iro@\else\color{\iro@}\fi
+    \cbezier(\a@val,0)(\a@val,\bb@val)(\aa@val,\b@val)(0,\b@val)
+    \cbezier(0,\b@val)(-\aa@val,\b@val)(-\a@val,\bb@val)(-\a@val,0)
+    \cbezier(-\a@val,0)(-\a@val,-\bb@val)(-\aa@val,-\b@val)(0,-\b@val)
+    \cbezier(0,-\b@val)(\aa@val,-\b@val)(\a@val,-\bb@val)(\a@val,0)
+  }%
+\endgroup}%
+%
+\endinput
+%%
+%%
+%%
+%%
+\def\ltops#1#2{%
+  \@tempdima #1\unitlength
+  \@tempdima 10\@tempdima
+  \edef#2{\strip@pt\@tempdima}%
+% \Add{#2}{0.5}#2\Seisuububun{#2}#2
+}%
+%
+%%
+%%
+%% End of file `pict2e.sty'.
+%
+2009/07/10 v0.00α
+2010/07/01 v0.01α \pIIeArrowLine
+2010/07/24 v0.02α \EMpIIesetdash

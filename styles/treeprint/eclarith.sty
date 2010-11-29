@@ -1,0 +1,481 @@
+% eclarith.sty by Hideki Isozaki
+
+\edef\orig@colon{\the\catcode`\!}
+
+\typeout{eclarith.sty 1.1 --- July 1, 1992}
+
+\catcode`\!=11
+\newdimen\ari!A
+\newdimen\ari!B
+\newcount\ari!C
+\newcount\ari!D
+
+{\catcode`\p=12\catcode`\t=12\gdef\!!Eval#1pt{#1}}
+\def\!Eval#1#2{\edef#2{\expandafter\!!Eval\the#1}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%            + - * /
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\def\Add#1#2#3{% #3=#1+#2
+	\ari!A=#1\p@ \advance\ari!A by #2\p@ \!Eval\ari!A{#3}}
+
+\def\Sub#1#2#3{% #3=#1-#2
+	\ari!A=#1\p@ \advance\ari!A by -#2\p@ \!Eval\ari!A{#3}}
+
+\def\Mul#1#2#3{% #3=#1*#2
+	\ari!A=#1\p@ \ari!A=#2\ari!A \!Eval\ari!A{#3}}
+
+\def\MinMax#1#2#3#4{% #3=min(#1,#2), #4=max(#1,#2)
+	\ifdim#1\p@>#2\p@
+		\edef#3{#2}\edef#4{#1}%
+	\else
+		\edef#3{#1}\edef#4{#2}%
+	\fi}
+
+\def\DivMod#1#2#3#4{% #3=#1 div #2, #4=#1 mod #2, #1,#2>0
+	\ari!C=#1\ari!D=#1\divide\ari!C by #2\relax
+	\edef#3{\the\ari!C}\multiply\ari!C by #2\relax
+	\advance\ari!D by -\ari!C \edef#4{\the\ari!D}}
+
+\def\!Floor#1#2#3#4{% #3=floor(#1/#2), #4=#1-floor(#1/#2)*#2, #1,#2>0
+	\ifdim#2\p@>\z@\else
+		\@latexerr{Invalid arg! DivMod{#1}{#2}{#3}{#4}}\@ehd\fi
+	\ari!A=#1\p@\ari!B=#2\p@\divide\ari!A by \ari!B\relax
+	\ari!B=\ari!A \multiply\ari!B by \p@ \!Eval\ari!B{#3}%
+	\ari!B=#2\p@\multiply\ari!A by \ari!B
+	\ari!B=#1\p@\advance\ari!B by -\ari!A \!Eval\ari!B{#4}}
+
+\def\!Ceil#1#2#3#4{%  #3=ceil(#1/#2), #4=-#1-ceil(#1/#2)*#2, #1,#2>0
+	\Floor{#1}{#2}\ari!cq\ari!cr
+	\ari!A=\ari!cq\p@ \ari!B=\ari!cr\p@
+	\ifdim\ari!B=\z@\else
+		\advance\ari!A by \p@ \advance\ari!B by -#2\p@
+	\fi\!Eval\ari!A{#3}\!Eval\ari!B{#4}}
+
+\def\Floor#1#2#3#4{%
+	\ifdim#1\p@<\z@
+		\!Ceil{-#1}{#2}\ari!fq\ari!fr \edef#3{-\ari!fq}%
+		\ari!A=-\ari!fr\p@ \!Eval\ari!A{#4}%
+	\else
+		\!Floor{#1}{#2}{#3}{#4}%
+	\fi}
+
+\def\Ceil#1#2#3#4{%
+	\ifdim#1\p@<\z@
+		\!Floor{-#1}{#2}\ari!fq\ari!fr \edef#3{-\ari!fq}%
+		\ari!A=-\ari!fr\p@ \!Eval\ari!A{#4}%
+	\else
+		\!Ceil{#1}{#2}{#3}{#4}%
+	\fi}
+
+% Ca=abs(#1); Cs=sign(#1); Da=abs(#2); Ds=sign(#2);
+% CDs=Cs*Ds;
+% Cx=(int)Ca*65536; Dx=(int)Da*65536;
+% Qx=Cx div Dx; Rx=Cx mod Dx;
+% if(CDs<0) sprintf(#3,'-');
+% sprintf(#3,'%s%d.',#3,Qx); Cx=Rx*10; /* 1 */
+% Qx=Cx div Dx; Rx=Cx mod Dx;
+% sprintf(#3,'%s%d',#3,Qx); Cx=Rx*10;  /* 0.1 */
+% Qx=Cx div Dx; Rx=Cx mod Dx;
+% sprintf(#3,'%s%d',#3,Qx); Cx=Rx*10;  /* 0.01 */
+% ...
+
+\def\Div#1#2#3{% #3=#1/#2
+	\AbsSign{#1}{\ari!Ca}{\ari!Cs}% 
+	\AbsSign{#2}{\ari!Da}{\ari!Ds}%
+	\AbsSign{\ari!Cs\ari!Ds1}{\ari!CDa}{\ari!CDs}% sign(#1*#2)
+	\ari!A=\ari!Ca\p@ \ari!B=\ari!Da\p@ \ari!C=\ari!A \ari!D=\ari!B
+	\edef\ari!Cx{\the\ari!C}\edef\ari!Dx{\the\ari!D}%
+	\DivMod\ari!Cx\ari!Dx\ari!Qx\ari!Rx \edef\ari!fr{\ari!CDs\ari!Qx.}%
+	\dv!deci\dv!deci\dv!deci\dv!deci\dv!deci\dv!deci\let#3=\ari!fr}
+
+\def\dv!deci{\ifnum\ari!Rx=\z@\else
+	\ari!C=\ari!Rx\multiply\ari!C by 10\edef\ari!Cx{\the\ari!C}%
+	\DivMod\ari!Cx\ari!Dx\ari!Qx\ari!Rx\edef\ari!fr{\ari!fr\ari!Qx}\fi}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%          Square Root
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%  Newton x_{n+1} = 1/2 * (x_n + a/x_n)
+%  A=#1; 
+%  Sx = #1 / 2 + 1; /* x_0=a/2+1 >= sqrt(a) */
+%  while(Ax>0.0001){
+%     Vx = (Sx + #1/Sx)/2; 
+%     Ax = Sx - Vx; /* error Ax>=0 */
+%     Sx = Vx;}
+%  #2 = Sx;
+
+\def\Sqroot#1#2{% SQRT(#1)=#2 
+	\edef\ari!Ax{#1}%
+	\ifdim\ari!Ax\p@<\z@\@latexerr{Sqroot(\string#1<0)!}\@ehd\fi
+	\Div{#1}{2}\ari!Tx \Add\ari!Tx{1}\ari!Sx
+	\let\ari!Tx=\relax
+	\@whiledim\ari!Ax\p@>0.0001\p@\do{%
+		\Div{#1}\ari!Sx\ari!Tx \Add\ari!Sx\ari!Tx\ari!Ux
+		\Div\ari!Ux{2}\ari!Vx \Sub\ari!Sx\ari!Vx\ari!Ax
+		\let\ari!Sx=\ari!Vx}%
+	\let#2=\ari!Sx}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%        Absolute Value and Sign
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\def\AbsSign#1#2#3{% #2=abs(#1), #3=sign(#1)
+	\ari!A=#1\p@
+	\ifdim\ari!A<\z@\relax
+		\ari!A=-\ari!A\def#3{-}%
+	\else
+		\let#3=\@empty
+	\fi \!Eval\ari!A{#2}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%        Normalize Vector
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% (#1,#2)/||(#1,#2)||=(#3,#4)
+%  Ax=abs(#1); As=sign(#1); Bx=abs(#2); Bs=sign(#2);
+%  Mx=max(Ax,Bx); Nx=min(Ax,Bx);
+%  Cx=Nx/Mx; /* Cx < 1 */
+%  Fx=sqrt(Cx^2+1);  /* Fx = sqrt(Mx^2+Nx^2)/Mx */
+%  Mu=1/Fx; Nu=Cx/Fx; /* Mu = Mx/||(#1,#2)||, Nu = Nx/||(#1,#2)|| */
+%  if(Ax>Bx){
+%     #3=As*Mu; #4=Bs*Nu;
+%  }
+%  else {
+%     #3=As*Nu; #4=Bs*Mu;
+%  }
+
+\def\Unit(#1,#2)(#3,#4){%
+	\AbsSign{#1}\vec!Ax\vec!As \AbsSign{#2}\vec!Bx\vec!Bs
+	\MinMax\vec!Ax\vec!Bx\vec!Nx\vec!Mx
+	\Div\vec!Nx\vec!Mx\vec!Cx \Mul\vec!Cx\vec!Cx\vec!Dx
+	\Add{1}\vec!Dx\vec!Ex \Sqroot\vec!Ex\vec!Fx
+	\Div{1}\vec!Fx\vec!Mu \Div{\vec!Cx}\vec!Fx\vec!Nu
+	\ifdim\vec!Ax\p@>\vec!Bx\p@
+		\Mul{\vec!As1}\vec!Mu{#3}%
+		\Mul{\vec!Bs1}\vec!Nu{#4}%
+	\else
+		\Mul{\vec!As1}\vec!Nu{#3}%
+		\Mul{\vec!Bs1}\vec!Mu{#4}%
+	\fi}
+
+% ||(#1,#2)-(#3,#4)||=#5
+
+\def\Distance(#1,#2)(#3,#4)#5{%
+        \Sub{#3}{#1}\vec!Dx \Sub{#4}{#2}\vec!Ex
+	\AbsSign\vec!Dx\vec!Ax\vec!As \AbsSign\vec!Ex\vec!Bx\vec!Bs
+	\MinMax\vec!Ax\vec!Bx\vec!Nx\vec!Mx
+	\Div\vec!Nx\vec!Mx\vec!Cx \Mul\vec!Cx\vec!Cx\vec!Dx
+	\Add{1}\vec!Dx\vec!Ex \Sqroot\vec!Ex\vec!Fx
+        \Mul\vec!Mx\vec!Fx{#5}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%           Arrow
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%             (\arr!Lx,\arr!Ly)
+%                /
+% (#1,#2)-------->(#3,#4)
+%               /
+%             (\arr!Rx,\arr!Ry)
+%
+%  7^2 + 24^2 = 25^2;  \cos\theta = -24/25, \sin\theta = 7/25
+%  (Ux,Uy) = norm((#3,#4)-(#1,#2));
+%  (Sx,Sy) = ArrowHeadSize * (Ux,Uy);
+%  (Hx,Hy)^T = R(\theta) (Sx,Sy)^T;
+%  (Lx,Ly) = (#3,#4) + (Hx,Hy);
+
+\def\ArrowHead(#1,#2)(#3,#4){\@killglue
+	\Sub{#3}{#1}\arr!Dx \Sub{#4}{#2}\arr!Dy
+	\Unit(\arr!Dx,\arr!Dy)(\arr!Ux,\arr!Uy)%
+	\Mul\arr!Ux\ArrowHeadSize\arr!Sx \Mul\arr!Uy\ArrowHeadSize\arr!Sy
+	\Mul\arr!Sx{-0.96}\arr!Tx \Mul\arr!Sy{-0.28}\arr!Vx
+	\Mul\arr!Sx{0.28}\arr!Ty \Mul\arr!Sy{-0.96}\arr!Vy
+	\Add\arr!Tx\arr!Vx\arr!Hx \Add\arr!Ty\arr!Vy\arr!Hy
+	\Add\arr!Hx{#3}\arr!Lx \Add\arr!Hy{#4}\arr!Ly
+	\Sub\arr!Tx\arr!Vx\arr!Hx \Sub\arr!Vy\arr!Ty\arr!Hy
+	\Add\arr!Hx{#3}\arr!Rx \Add\arr!Hy{#4}\arr!Ry
+	\headpen(\arr!Lx,\arr!Ly)(#3,#4)(\arr!Rx,\arr!Ry)\ignorespaces}
+
+\let\headpen=\path
+
+% \arrow#1(#2,#3)(#4,#5)
+% \revarrow#1(#2,#3)(#4,#5)
+
+\def\arrow#1(#2,#3)(#4,#5){\@killglue
+	#1(#2,#3)(#4,#5)\relax\ArrowHead(#2,#3)(#4,#5)\ignorespaces}
+
+\def\revarrow#1(#2,#3)(#4,#5){\@killglue
+	#1(#4,#5)(#2,#3)\relax\ArrowHead(#4,#5)(#2,#3)\ignorespaces}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%               Shading
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% 45 deg Shading
+%  \hatch(x1,y1)(x2,y2) where  x1<x2, y1<y2
+%  z1 = y1 - x1; floor(z1/d) = q1..b1; 
+%  z2 = y2 - x2; floor(z2/d) = q2..b2;
+%  w  = x2 - x1          ; h  = y2 - y1          ;
+% 
+%  for(xs=x1+b1;xs<x2;xs+=d){
+%   l = min(h,x2-xs);
+%   drawline(xs,y1)(xs+l,y1+l)
+%  }
+%  for(ys=y1+d-b1;ys=<y2;ys+=d){
+%   l = min(w,y2-ys);
+%   drawline(x1,ys)(x1+l,ys+l)
+%  }
+
+\def\hatchpattern#1#2{\@killglue\edef\sh!d{#1}\def\sh!pen{#2}\ignorespaces}
+
+\def\hatch{\@ifnextchar[{\sh!hatch}{\sh!hatch[]}}
+
+\def\sh!hatch[#1](#2,#3)(#4,#5){\@killglue
+	\@tfor\sh!oparg:=#1\do{%
+		\if\sh!oparg L\drawline(#2,#3)(#2,#5)\fi
+		\if\sh!oparg R\drawline(#4,#3)(#4,#5)\fi
+		\if\sh!oparg T\drawline(#2,#5)(#4,#5)\fi
+		\if\sh!oparg B\drawline(#2,#3)(#4,#3)\fi}%
+	\sh!!hatch(#2,#3)(#4,#5)\ignorespaces}
+
+\def\sh!!hatch(#1,#2)(#3,#4){%
+	\edef\sh!xi{#1}\edef\sh!yi{#2}\edef\sh!xii{#3}\edef\sh!yii{#4}%
+	\sh!setup\sh!dispx\sh!dispy}
+
+\def\sh!setup{%
+	\Sub\sh!yi\sh!xi\sh!zi \Floor\sh!zi\sh!d\sh!qi\sh!bi
+	\Sub\sh!yii\sh!xii\sh!zii \Floor\sh!zii\sh!d\sh!qii\sh!bii
+	\Sub\sh!xii\sh!xi\sh!w \Sub\sh!yii\sh!yi\sh!h}
+
+\def\sh!dispx{\Add\sh!xi\sh!bi\sh!xs
+	\@whiledim\sh!xs\p@<\sh!xii\p@\do{%
+		\Sub\sh!xii\sh!xs\sh!l
+		\ifdim\sh!l\p@>\sh!h\p@ \let\sh!l=\sh!h\fi
+		\Add\sh!xs\sh!l\sh!xsl \Add\sh!yi\sh!l\sh!yil
+		\sh!pen(\sh!xs,\sh!yi)(\sh!xsl,\sh!yil)\relax
+		\Add\sh!xs\sh!d\sh!xs}}%
+
+\def\sh!dispy{\Add\sh!yi\sh!d\sh!yid \Sub\sh!yid\sh!bi\sh!ys
+	\@whiledim\sh!ys\p@<\sh!yii\p@\do{%
+		\Sub\sh!yii\sh!ys\sh!l
+		\ifdim\sh!l\p@>\sh!w\p@ \let\sh!l=\sh!w\fi
+		\Add\sh!ys\sh!l\sh!ysl \Add\sh!xi\sh!l\sh!xil
+		\sh!pen(\sh!xi,\sh!ys)(\sh!xil,\sh!ysl)\relax
+		\Add\sh!ys\sh!d\sh!ys}}%
+
+% -45 deg shading \hatchr(x1,y1)(x2,y2)
+% lines ! {x + y = n*d}
+% w  = x2 - x1          ; h  = y2 - y1          ;
+% ceil(x1+y1/d) = q1..b1; ceil(x2+y1/d) = q2..b2;
+% for(xs=x1-b1;xs<x2;xs+=d){ % (x1+y1-b1)-y1
+%  l = min(h,xs-x1);
+%  drawline(xs,y1)(xs-l,y1+l);
+% }
+% for(ys=y1-b2;ys<y2;ys+=d)){ % (x2+y1-b2)-x2
+%  l = min(w,y2-ys);
+%  drawline(x2,ys)(x2-l,ys+l);
+% }
+
+\def\hatchrpattern#1#2{\@killglue\edef\sr!d{#1}\def\sr!pen{#2}\ignorespaces}
+
+\def\hatchr{\@ifnextchar[{\sr!hatchr}{\sr!hatchr[]}}
+
+\def\sr!hatchr[#1](#2,#3)(#4,#5){\@killglue
+	\@tfor\sh!oparg:=#1\do{%
+		\if\sh!oparg L\drawline(#2,#3)(#2,#5)\fi
+		\if\sh!oparg R\drawline(#4,#3)(#4,#5)\fi
+		\if\sh!oparg T\drawline(#2,#5)(#4,#5)\fi
+		\if\sh!oparg B\drawline(#2,#3)(#4,#3)\fi}%
+	\sr!!hatchr(#2,#3)(#4,#5)\ignorespaces}
+
+\def\sr!!hatchr(#1,#2)(#3,#4){%
+	\def\sr!xi{#1}\def\sr!yi{#2}\def\sr!xii{#3}\def\sr!yii{#4}%
+	\Sub\sr!xii\sr!xi\sr!w \Sub\sr!yii\sr!yi\sr!h
+	\Add\sr!xi\sr!yi\sr!z 
+	\Add\sr!z\sr!d\sr!z \Ceil\sr!z\sr!d\sr!nop\sr!bi
+	\Add\sr!xii\sr!yi\sr!z \Ceil\sr!z\sr!d\sr!nop\sr!bii
+	\sr!dispx \sr!dispy}
+
+\def\sr!dispx{\Sub\sr!xi\sr!bi\sr!xs
+	\@whiledim\sr!xs\p@<\sr!xii\p@\do{%
+		\Sub\sr!xs\sr!xi\sr!xsd \MinMax\sr!h\sr!xsd\sr!l\sr!nop
+		\Sub\sr!xs\sr!l\sr!xsl \Add\sr!yi\sr!l\sr!yil
+		\sr!pen(\sr!xs,\sr!yi)(\sr!xsl,\sr!yil)%
+		\Add\sr!xs\sr!d\sr!xs}}
+
+\def\sr!dispy{\Sub\sr!yi\sr!bii\sr!ys
+	\@whiledim\sr!ys\p@<\sr!yii\p@\do{%
+		\Sub\sr!yii\sr!ys\sr!ysd \MinMax\sr!w\sr!ysd\sr!l\sr!nop
+		\Sub\sr!xii\sr!l\sr!xiil \Add\sr!ys\sr!l\sr!ysl
+		\sr!pen(\sr!xii,\sr!ys)(\sr!xiil,\sr!ysl)%
+		\Add\sr!ys\sr!d\sr!ys}}
+
+\def\fillblack(#1,#2)(#3,#4){% #1<#3, #2<#4
+	\@killglue
+	\Sub{#3}{#1}\fl!w \Sub{#4}{#2}\fl!h
+	\put(#1,#2){\vrule\@depth\z@\@width
+		\fl!w\unitlength\@height\fl!h\unitlength}\ignorespaces}
+	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%        Sin and Cos
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% sin(x): Taylor Series: x - x^3/3! + x^5/5! - x^7/7! + ..
+%
+% Taylor series good for #1: tiny
+%     sin(0.1) = 0.0998334166..
+% 0.1-0.1^3/3! = 0.0998333333..
+
+\def\SinTiny#1#2{% #2 = #1 - #1^3/3! 
+	\Mul{#1}{#1}\sn!a \Mul\sn!a{0.1666666667}\sn!b
+	\Sub{1}\sn!b\sn!c \Mul{#1}\sn!c{#2}}
+
+
+% sin(3x) = 3 sin(x) - 4 sin^3(x)
+% Factorized sin(x)*(3 - 4 sin^2(x)) etc are faster but not precise
+% because of cancellation.
+\def\SinThrice#1#2{% #2 = 3*#1 - 4*#1^3
+	\Mul{#1}{3}\sn!a \Mul{#1}{#1}\sn!b \Mul\sn!b{#1}\sn!c
+	\Mul{4}\sn!c\sn!d \Sub\sn!a\sn!d{#2}}
+
+% sin(x) -> sin(x/3) -> sin(x/9)
+% Good for 0<#1=<pi/4   
+%   a = (pi/4)/9 = 0.08726646..
+%   b = a-a^3/3! -> thrice(thrice(b)) = 0.70710651..
+%                           sin(pi/4) = 0.70710678..
+
+\def\SinSmall#1#2{%
+	\ifdim#1\p@<0.12\p@\SinTiny{#1}{#2}\else
+	\Mul{#1}{0.111111111111}\sn!d \SinTiny\sn!d\sn!e
+	\SinThrice\sn!e\sn!f \SinThrice\sn!f{#2}\fi}
+
+
+% cos(x) = 2cos^2(x/2) - 1
+% cos(x) -> cos(x/2) -> cos(x/4) -> cos(x/8)
+
+\def\CosTwice#1#2{% #2 = 2*#1^2 - 1 = 1 - 4*(1-#1) + 2*(1-#1)^2
+	\Mul{#1}{#1}\cs!a \Mul\cs!a{2}\cs!b \Sub\cs!b{1}{#2}}
+
+%\def\CosTwice#1#2{% #2 = 2*#1^2 - 1 = 1 - 4*(1-#1) + 2*(1-#1)^2
+%	\Sub{1}{#1}\cs!a \Mul{4}\cs!a\cs!b \Sub{1}\cs!b\cs!c
+%	\Mul\cs!a\cs!a\cs!d \Mul\cs!d{2}\cs!e \Add\cs!c\cs!e{#2}}
+
+% Good for 0=<#1=<0.12
+% 1 - (0.1)^2/2! + (0.1)^4/4! = 0.995004166..
+%                    cos(0.1) = 0.995004165..
+
+\def\CosTiny#1#2{%
+	\Mul{#1}{#1}\cs!g \Mul\cs!g\cs!g\cs!h 
+	\Mul\cs!g{0.5}\cs!i \Mul\cs!h{0.041666667}\cs!j
+	\Sub{1}\cs!i\cs!k \Add\cs!k\cs!j{#2}}
+
+% Good for 0=<#1=<pi/4
+%   a = (pi/4)/8 = 0.09817477..
+%   b = 1 - a^2/2! + a^4/4! -> twice(twice(twice(b))) = 0.70710685..
+%                                           cos(pi/4) = 0.70710678..
+
+\def\CosSmall#1#2{%
+	\ifdim#1\p@<0.1\p@\CosTiny{#1}{#2}\else
+	\Mul{#1}{0.125}\cs!c \CosTiny\cs!c\cs!d
+	\CosTwice\cs!d\cs!e \CosTwice\cs!e\cs!f \CosTwice\cs!f{#2}\fi}
+
+% \sn!pii = #1 mod (2pi);
+% if(\sn!pii>pi) \sn!pi=2pi-\sn!pii; else \sn!pi=\sn!pii;
+% if(\sn!pi>pi/2) \sn!pih=pi-\sn!pi; else \sn!pih=\sn!pi;
+% if(\sn!pih>pi/4) {
+% 	\sn!piq=pi/2-\sn!pi;
+%	\sn!r=cossmall(\sn!piq);
+% }
+% else {
+%	\sn!r=sinsmall(\sn!pih);
+% }
+% if(\sn!pii>pi) #2 = -\sn!r else #2 = \sn!r;
+\def\Sin#1#2{%	
+	\Floor{#1}\Pii\sn!nop\sn!pii
+	\ifdim\sn!pii\p@>\Pie\p@ \Sub\Pii\sn!pii\sn!pi
+	\else \let\sn!pi=\sn!pii \fi
+	\ifdim\sn!pi\p@>\Pih\p@ \Sub\Pie\sn!pi\sn!pih
+	\else \let\sn!pih=\sn!pi \fi
+	\ifdim\sn!pih\p@>\Piq\p@
+		\Sub\Pih\sn!pi\sn!piq \CosSmall\sn!piq\sn!r
+	\else
+		\SinSmall\sn!pih\sn!r
+	\fi
+	\ifdim\sn!pii\p@>\Pie\p@\edef#2{-\sn!r}\else\let#2=\sn!r\fi}
+
+\def\Cos#1#2{% cos(#1)=sin(#1+pi/2)
+	\Add\Pih{#1}\cs!z \Sin\cs!z{#2}}
+
+% \Pi is a greek letter.
+\def\Piq{0.78539816}
+\def\Pih{1.57079633}
+\def\Pie{3.14159265}
+\def\Pii{6.28318531}
+
+\def\DegRad#1#2{% #1 deg = #2 rad
+	\Div{#1}{45}\dr!x \Mul\dr!x\Piq{#2}}
+
+\def\RadDeg#1#2{% #1 rad = #2 deg
+	\Mul{#1}{57.2957795}{#2}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%          for(#1=#2;#1<#3;#1+=#4){#5}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\def\For#1#2#3#4\Do#5{\@killglue\edef#1{#2}\def\fr!tmp{#4}%
+	\ifx\@empty\fr!tmp\@latexerr{!! Missing Argument!
+		For\string#1\string#2\string#3?Do}\@ehd\fi
+	\ifdim#4\p@>\z@\def\fr!cnd{\@whiledim#1\p@<#3\p@\do}%
+	\else\def\fr!cnd{\@whiledim#1\p@>#3\p@\do}\fi
+	\fr!cnd{#5\Add{#1}{#4}{#1}}\ignorespaces}
+
+% (#1,#2): location
+% #3: node name
+% #4: 
+\def\node(#1,#2)#3#4{\@killglue\@namedef{N?#3}{(#1,#2)}%
+	\put(#1,#2){#4}\ignorespaces}
+
+\def\throughbrush#1{\@killglue\def\edge@brush{#1}\ignorespaces}
+
+\def\through#1{\@killglue \let\edge@ends=\empty
+	\@tfor\curr@node:=#1\do{%
+	  \@ifundefined{N?\curr@node}%
+		{\typeout{Unknown node \@nameuse{N?\curr@node}}\stop}{}%
+	  \edef\edge@ends{\edge@ends\@nameuse{N?\curr@node}}}%
+	\let\edge@@brush=\relax 
+	\edef\edge@ends{\edge@@brush\edge@ends}%
+	\let\edge@@brush=\edge@brush
+	\edge@ends\ignorespaces}
+
+\throughbrush{\drawline}
+
+
+\def\obbase(#1,#2)(#3,#4){\@killglue
+  \def\@Exx{#1}\def\@Exy{#2}\def\@Eyx{#3}\def\@Eyy{#4}\ignorespaces}
+\def\obcalc(#1,#2)(#3,#4){\@killglue
+  \Mul{#1}\@Exx\@ExxAx \Mul{#2}\@Eyx\@EyxAy 
+  \Add\@ExxAx\@EyxAy{#3}%
+  \Mul{#1}\@Exy\@ExyAx \Mul{#2}\@Eyy\@EyyAy 
+  \Add\@ExyAx\@EyyAy{#4}\ignorespaces}
+\def\obput(#1,#2)#3{\obcalc(#1,#2)(\@Ax,\@Ay)\put(\@Ax,\@Ay){#3}}
+\def\oblique#1(#2,#3)(#4,#5){\def\ob@func{#1}%
+  \obcalc(#2,#3)(\@Ax,\@Ay)
+  \obcalc(#4,#5)(\@Bx,\@By)
+  \edef\ob@list{(\@Ax,\@Ay)(\@Bx,\@By)}%
+  \@ifnextchar({\ob@add}{\expandafter\ob@func\ob@list}}
+
+\def\ob@add(#1,#2){%
+  \obcalc(#1,#2)(\@Ax,\@Ay)\edef\ob@list{\ob@list(\@Ax,\@Ay)}%
+  \@ifnextchar({\ob@add}{\expandafter\ob@func\ob@list}}
+
+
+\catcode`\!=\orig@colon
+

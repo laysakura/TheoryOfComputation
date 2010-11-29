@@ -1,0 +1,243 @@
+% emathLb.sty by tDB(CQB00260@nifty.ne.jp)
+%
+  \NeedsTeXFormat{LaTeX2e}
+  \ProvidesPackage{emathLb}[2010/04/02 v 0.17]%
+%
+  \DeclareOption{onlyLb}{\def\only@Lb{}}%
+  \DeclareOption{dplabel}{\def\dp@label{}}%
+  \ProcessOptions\relax
+%
+  \@ifundefined{only@Lb}{\RequirePackage{emath}}{}%
+%
+% 相互参照形式ラベル書き出し
+% \writeLabel#1#2
+%   #1 : ラベル名
+%   #2 : 書き出す内容
+\def\writeLabel#1#2{%
+\@ifundefined{wL@#1}{%\expandafter\xdef\csname wL@#1\endcsname{}%
+\@ifundefined{Fld@menulength}{%
+  \@bsphack%
+  \protected@write\@auxout{}%
+         {\string\newlabel{#1}{{#2}{\thepage}}}%
+  \@esphack
+}{% (hyperref.sty 形式 --- 応急手当版)
+  \@bsphack%
+  \protected@write\@auxout{}%
+    {\string\newlabel{#1}{{#2}{\thepage}{\string\relax\space}{}{}}}%
+  \@esphack
+}\ignorespaces}{}}%
+%
+% hyperref.sty 対策
+% LaTeX の \ref を \ltxref として，このファイルではこちらを用いる。
+\def\ltx@setref#1#2#3{%
+  \ifx#1\relax
+   \protect\G@refundefinedtrue
+   \nfss@text{\reset@font\bfseries ??}%
+   \@latex@warning{Reference `#3' on page \thepage \space
+             undefined}%
+  \else
+   \expandafter#2#1\null
+  \fi}
+\@ifundefined{Fld@menulength}{%
+  \def\ltxref#1{\expandafter\ltx@setref\csname r@#1\endcsname\@firstoftwo{#1}}%
+}{%
+  \def\ltxref#1{\expandafter\ltx@setref\csname r@#1\endcsname\@firstoffive{#1}}%
+}%
+%
+% 単位付数値を受け取る （未定義時 [#1:default=0pt]）
+%   \dimenref : 戻り値は pt つき
+%   \dimenref*: 戻り値は無名数
+\def\dimenref{\@ifstar{\@dimenref@}{\@dimenref}}
+\def\@dimenref{\@ifnextchar[{\@@dimenref}{\@@dimenref[0pt]}}
+\def\@@dimenref[#1]#2#3{%
+  \edef\dimenref@label{#2\prelabel}%
+  \@ifundefined{r@\dimenref@label}{\edef#3{#1}}{%
+    \@tempdima=\ltxref{\dimenref@label}\edef#3{\the\@tempdima}}%
+}%
+\def\@dimenref@{\@ifnextchar[{\@@dimenref@}{\@@dimenref@[0]}}
+\def\@@dimenref@[#1]#2#3{%
+  \edef\dimenref@label{#2\prelabel}%
+  \@ifundefined{r@\dimenref@label}{\edef#3{#1}}{%
+    \@tempdima=\ltxref{\dimenref@label}\edef#3{\strip@pt\@tempdima}}%
+}%
+%
+% ベクトルを受け取る （未定義時 (0,0)）
+\def\vec@ref#1{\@ifundefined{r@#1}{\edef\vec@refX{0}\edef\vec@refY{0}}{%
+  \def\vecXY@r(##1,##2){\edef\vec@refX{##1}\edef\vec@refY{##2}}%
+  \edef\Nlabel@xy{\ltxref{#1}}\expandafter\vecXY@r\Nlabel@xy}}%
+\def\vecref#1#2{\vec@ref{#1}\edef#2{(\vec@refX,\vec@refY)}}
+
+% \getWHD#1#2
+% \getWHD*#1#2
+% #2 のサイズを ラベル #1 に書き出す。
+%   W#1 : width
+%   H#1 : height
+%   D#1 : depth
+%   T#1 : totalheight
+% 参照は \dimenref による。
+% *付は，#2を実行しない。
+
+\def\getWHD{\@ifstar{\getWHD@}{\@getWHD}}
+\def\@getWHD#1#2{{%
+  \ifmmode
+    \ifinner
+      \setbox0=\hbox{\ensuremath{#2}}%
+    \else
+      \setbox0=\hbox{\ensuremath{\displaystyle #2}}%
+    \fi
+  \else
+    \setbox0=\hbox{{#2}}%\relax
+  \fi
+  \edef\getWHD@label{#1\prelabel}%
+  \leavevmode
+  \writeLabel{W\getWHD@label}{\the\wd0}%
+  \writeLabel{H\getWHD@label}{\the\ht0}%
+  \writeLabel{D\getWHD@label}{\the\dp0}%
+  \@tempdima=\ht0\advance\@tempdima\dp0\relax
+  \writeLabel{T\getWHD@label}{\the\@tempdima}%
+  \box0
+}}
+\def\getWHD@#1#2{{\setbox0=\hbox{{#2}}%\relax
+  \edef\getWHD@label{#1\prelabel}%
+  \writeLabel{W\getWHD@label}{\the\wd0}%
+  \writeLabel{H\getWHD@label}{\the\ht0}%
+  \writeLabel{D\getWHD@label}{\the\dp0}%
+  \@tempdima=\ht0\advance\@tempdima\dp0
+  \writeLabel{T\getWHD@label}{\the\@tempdima}%
+  \@ifpackageloaded{hyperref}{}{\ignorespaces}%
+}}
+%
+\edef\prelabel{\empty}%
+\def\EMlabel#1{%
+  \label{\prelabel #1}%
+}%
+%
+\AtBeginDocument{%
+  \hairetusyokika{eqrefL@List}%
+  \hairetusyokika{eqrefR@List}%
+}%
+%
+\let\LB@eqref\eqref
+\def\eqref#1{\leavevmode%
+      \expandafter\ref@chk\csname r@#1@ref\endcsname
+%      \if 1\@miteigi
+        \srchhairetu{eqrefL@List}{#1}\eqref@tmp
+        \ifnum\eqref@tmp>\z@
+          \hairetukakunin{eqrefR@List}{#1}\dummy@
+        \fi
+%      \fi
+      \LB@eqref{#1}%
+}%
+\AtEndDocument{%
+%\typeout{eqrefL@Listn=\eqrefL@ListN}%
+  \ifnum\eqrefR@ListN>\z@
+    \Ifor*\i@val{1}{\eqrefR@ListN}\Do{%
+      \edef\tmp@{\hairetu{eqrefR@List}{\i@val}}%
+        \edefappend\tmp@{@ref}%
+        \immediate\write\@auxout{\string\newlabel{\tmp@}{{}{\thepage}}}%
+    }%
+  \fi
+}%
+%
+%\edef\EMeqlabel@o{}%
+\def\EMeqlabel#1{%
+%  \edef\EMeqlabel@o{#1}%
+  \eqlabel{\prelabel #1}%
+}%
+\def\EMenumlabel#1{%
+  \enumlabel{\prelabel #1}%
+}%
+\def\EMref#1{\leavevmode
+  {\ref{\prelabel #1}}%
+}%
+\def\EMeqref#1{\leavevmode
+  {\eqref{\prelabel #1}}%
+}%
+\def\EMenumref#1{\leavevmode
+  {\enumref{\prelabel #1}}%
+}%
+\def\EMdashtag{\@ifnextchar({\@EMdashtag}{\@EMdashtag(1)}}%
+\def\@EMdashtag(#1)#2{%
+  \dashtag(#1){\prelabel #2}%
+}%
+\def\EMdashref{\@ifnextchar({\@EMdashref}{\@EMdashref(1)}}%
+\def\@EMdashref(#1)#2{%
+  \dashref(#1){\prelabel #2}%
+}%
+%
+%
+%
+% 参照された式のみに番号を振る
+%   Q&A #44211 は amsmath のバージョン依存なので，別コマンド
+%
+\let\@latexeqref\eqref
+\def\Jobname{\jobname}%
+\def\eqlabel#1{%
+  \hairetukakunin{eqrefL@List}{#1}\eqlabel@tmp
+  \expandafter\ref@chk\csname r@#1@ref\endcsname
+  \@ifundefined{dp@label}{}{\hbox to 0pt {\color{red}$\quad{}^{\text{#1}}$}}%
+  \if 1\@miteigi
+    \notag
+  \else
+    \if@eqnsw\else
+      \ifnum\atag@ed=\z@
+        \atag
+      \fi
+    \fi
+    \label{#1}%
+  \fi
+  \edef\atag@ed{0}%
+}%
+%  \@ifundefined{r@#1@ref}{\notag}{\label{#1}}}%
+%\def\eqref#1{\leavevmode%
+%%\typeout{Lb:eqref:arg1=#1}%
+%           \@ifundefined{r@@#1@@ref}{%
+%                \writeLabel{#1@ref}{}%
+%                \expandafter\gdef\csname r@@#1@@ref\endcsname{}%
+%           }{}%
+%           \@latexeqref{#1}%
+%}%
+%%
+\endinput
+
+v 0.00 2003/11/28
+v 0.01 2003/11/29-12/01
+        getWHD* サイズのみを書き出す
+v 0.02 2003/12/05
+        \dimenref : ラベル未定義のとき返す値を[#1]オプションで指定可能
+        \dimenref*: `pt'をつけない，無名数を返す。
+v 0.03 2004/07/15
+        hyperref.sty 対策
+          LaTeX 本来の \ref を \ltxref として，このファイルではこちらを用いる
+v 0.04 2004/09/27
+        \getWHD : 数式モード内か否かで分類
+v 0.05 2006/08/10
+        \eqlabel : 参照された式のみに番号を付与する
+v 0.05a 2006/12/15
+        v0.05 の変更を修正 (----> BBS #5409)
+v 0.06 2007/01/18
+        \writeLabel : \ignorespaces
+v 0.07 2007/07/11
+        \getWHD : \leavevmode
+v 0.08 2008/01/10
+        \ltxref : hyperref に対応 (\@firstoffive) (saloon #528)
+v 0.09 2008/01/26
+        \eqref の修正確認
+v 0.10 2008/02/14
+        \RequirePackage{emath} を付加
+v 0.11 2008/03/09
+        \eqref: \leavevmode を付加
+v 0.12 2009/06/08
+        \getWHD: \hyperref 対策 (BBS #8174)
+        ロードオプション: onlyLb
+v 0.13 2009/11/20
+        \EMlabel, \EMref: label の重複対策
+v 0.14 2010/02/05
+        \EMenumlabel
+v 0.15 2010/03/02
+        \EMdashdag, EMdashref
+v 0.16 2010/03/11
+        \EMeqlabel
+        \getWHD, \dimenref: \jobname を付加
+v 0.17 2010/04/02
+        hyperref 対応

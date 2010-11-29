@@ -1,0 +1,39 @@
+\documentclass[landscape,b4paper,twocolumn]{jarticle}
+\usepackage[papersize]{emath}
+%%% 版面の指定です．
+\setlength{\oddsidemargin}{-.5cm}
+\setlength{\evensidemargin}{-.5cm}
+\setlength{\topmargin}{-24mm}
+\setlength{\headheight}{15pt}
+\setlength{\headsep}{15pt}
+\setlength{\textwidth}{33cm}
+\setlength{\textheight}{23cm}
+
+%%% 問題番号の出力形式です．
+\renewcommand{\labelenumi}{\framebox[2em][c]{\Large{\arabic{enumi}}}~}% 大問
+\renewcommand{\labelenumii}{\arabic{enumii})}%                          小問
+
+%２つの段の間の罫線の太さ
+\setlength{\columnseprule}{0.4pt}%
+
+\pagestyle{empty}
+
+\begin{document}
+\twocolumn[{\Large \gt 第2学期中間考査} \hfill
+$\Bigl(\kern2zw\Bigr) 組\Bigl(\kern3zw\Bigr)番\kern1zw
+氏名\Bigl(\kern14zw\Bigr)$ 得点 $\Bigl(\kern4zw\Bigr)$ ]\medskip
+\begin{enumerate}\itemindent.5zw
+	\item 第1問です．
+	\vfill
+	\item 第2問
+	\vfill
+\newpage
+	\item 第3問
+	\begin{enumerate}
+		\item 小問１
+		\vfill
+		\item 小問２
+		\vfill\vfill
+	\end{enumerate}
+\end{enumerate}
+\end{document}

@@ -1,0 +1,38 @@
+\documentclass[a4j]{jarticle}
+\usepackage{emathPa}
+\usepackage{emathCap}
+
+\makeatletter
+\def\sankakumou#1{%
+  \Cfor{\def\skkm@i{0}}{\skkm@i<#1}{}\do{%
+    \Incr\skkm@i
+    \azDrawline{(\skkm@i,0)(0,\skkm@i)}%
+  }%
+  \Cfor{\def\skkm@i{0}\def\skkm@ii{#1}}{\skkm@i<#1}{%
+          \Incr\skkm@i\Decr\skkm@ii}\do{%
+    \azDrawline{(0,\skkm@i)(\skkm@ii,\skkm@i)}%
+  }
+  \Cfor{\def\skkm@i{0}\def\skkm@ii{#1}}{\skkm@i<#1}{%
+          \Incr\skkm@i\Decr\skkm@ii}\do{%
+    \azDrawline{(\skkm@i,0)(\skkm@i,\skkm@ii)}%
+  }
+}
+\makeatother
+
+\begin{document}
+\Cfor{\def\num{0}}{\num<5}{}\do{%
+\Incr\num
+\begin{center}
+\begin{zahyou*}[ul=10mm](0,\num)(0,\num)
+\rtenretu*{E(1,0);F(1,60)}
+\Put\O{\begin{azahyou}\E\F
+  \azPut\O{\sankakumou{\num}}
+\end{azahyou}
+}
+\end{zahyou*}
+\fgcaption{$n=\num$}
+\end{center}
+}
+
+
+\end{document}
