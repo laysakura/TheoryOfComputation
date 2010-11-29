@@ -20,17 +20,17 @@ styles/mymacro/*		Macros I defined to make my TeX life more comfortable :-D
 1.	Move 'styles' directory to which your TeX has a path.
     In my case,
 
-          $ sudo mv styles/* /usr/local/teTeX/share/texmf/ptex/platex/
+		$ sudo mv styles/* /usr/local/teTeX/share/texmf/ptex/platex/
 
 2. Execute 'mktexlsr' to add styles/* to TeX system.
 
-           $ sudo mktexlsr
+		$ sudo mktexlsr
 
 3. Compile the main file. Note that you may have to compile it a few times to resolve some dependencies
     (ex: 'label' and 'ref', files and files)
 
-         $ platex main.tex
+		$ platex main.tex
 
 4. Now, you get 'main.dvi'. If you want PDF formated file, execute dvipdfmx command.
 
-        $ dvipdfmx main.dvi
+		$ dvipdfmx main.dvi
