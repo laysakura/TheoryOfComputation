@@ -29,7 +29,7 @@ styles/mymacro/*		Macros I defined to make my TeX life more comfortable :-D
 3. Compile the main file. Note that you may have to compile it a few times to resolve some dependencies
     (ex: 'label' and 'ref', files and files)
 
-         $ latex main.tex
+         $ platex main.tex
 
 4. Now, you get 'main.dvi'. If you want PDF formated file, execute dvipdfmx command.
 
