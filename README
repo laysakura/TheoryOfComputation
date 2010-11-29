@@ -1,0 +1,36 @@
+This is a memo of a lecture on Theory of Computation in the University of Tokyo.
+This memo is written in Japanese.
+
+[Files]
+main.pdf	Lecture memo.
+
+*.tex			TeX files.
+
+report.bib	BibTeX file.
+
+img/*			Images used in *.tex
+
+styles			TeX macros and style files. Necessary to compile *.tex files.
+					Read [Compilation] section to learn where to put this directory.
+                    
+styles/mymacro/*		Macros I defined to make my TeX life more comfortable :-D
+
+
+[Compilation]
+1.	Move 'styles' directory to which your TeX has a path.
+    In my case,
+
+          $ sudo mv styles/* /usr/local/teTeX/share/texmf/ptex/platex/
+
+2. Execute 'mktexlsr' to add styles/* to TeX system.
+
+           $ sudo mktexlsr
+
+3. Compile the main file. Note that you may have to compile it a few times to resolve some dependencies
+    (ex: 'label' and 'ref', files and files)
+
+         $ latex main.tex
+
+4. Now, you get 'main.dvi'. If you want PDF formated file, execute dvipdfmx command.
+
+        $ dvipdfmx main.dvi

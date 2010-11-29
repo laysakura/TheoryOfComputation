@@ -1,0 +1,37 @@
+\tree{Expr}
+  \subtree{Term}
+    \subtree{Term}
+      \subtree{Term}
+        \subtree{Fact}
+          \leaf{(}
+
+          \subtree{Expr}
+            \subtree{Expr}
+              \subtree{Term}
+                \subtree{Fact}
+                  \leaf{$x$}
+                \endsubtree
+              \endsubtree
+            \endsubtree
+
+            \leaf{+}
+
+            \subtree{Term}
+              \subtree{Fact}
+                \leaf{$x$}
+              \endsubtree
+            \endsubtree
+          \endsubtree
+
+          \leaf{)}
+        \endsubtree
+      \endsubtree
+    \endsubtree
+
+    \leaf{$\times$}
+
+    \subtree{Fact}
+      \leaf{$x$}
+    \endsubtree
+  \endsubtree
+\endtree

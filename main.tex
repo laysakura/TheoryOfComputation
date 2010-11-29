@@ -1,0 +1,41 @@
+\input{myheader_report}
+
+\mytitle[2010年10月-2011年2月]{2010年度 計算論講義ノート (近山先生)}
+
+\def \N {\mathbb{N}}
+\def \R {\mathbb{R}}
+
+\def\since{%
+\setlength{\unitlength}{1pt}%
+\thinlines %
+\begin{picture}(12,12)%
+\put(2 ,6){.}
+\put(5 , 0){.}
+\put(8,6){.}
+\end{picture}%
+}%
+
+\def\therefore{%
+\setlength{\unitlength}{1pt}%
+\thinlines %
+\begin{picture}(12,12)%
+\put(2, 0){.}
+\put(5, 6){.}
+\put(8,0){.}
+\end{picture}%
+}%
+
+\setcounter{tocdepth}{2}
+\tableofcontents
+
+\input{00introduction}
+
+\input{01computation_language_regex}
+\input{02fa_nfa}
+\input{03context_free_grammar}
+\input{04pda}
+\input{05turing_machine}
+\input{06recursive_function}
+\input{07computability}
+
+\input{myfooter_report}

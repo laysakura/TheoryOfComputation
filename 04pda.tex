@@ -1,0 +1,368 @@
+%#!platex main.tex
+
+\section{プッシュダウンオートマトン(Push-down automaton, PDA)}
+前節で，CFGはFAやNFAの扱えない言語も扱えることが分かった．ここでは，CFG
+の生成する言語を受理することのできるオートマトン，\mystrong{プッシュダウ
+ンオートマトン}(以下，\mystrong{PDA})について説明する．
+
+\subsection{PDAの機構の概略}
+
+\myfigure{img/04PDAimage.eps}{PDAの概略図}
+
+図\ref{fig:img/04PDAimage.eps}に，PDAの概略図を示した．図の説明を簡単
+にしていく．
+
+\begin{description}
+ \item[\mystrong{有限制御部(Finite control)}] \mbox{} \\
+            NFAで構成できる． \footnote{後の\ref{sec:04dpda}で説明するよ
+            うに，FAで構成することも可能．その場
+            合，特にそのPDAをDPDA(Deterministic push-down automaton)とい
+            う．これと対比して，有限制御部をNFAで構成するPDAを
+            NPDA(Non-deterministic push-down automaton)と呼ぶこともある．}
+            当然，有限制御部の持つ状態数は有限になる
+            ので，この機構だけでは無限に長い入力列を処理できない．
+ \item[\mystrong{プッシュダウンスタック(Push-down stack)}] \mbox{} \\
+            いわゆるスタックの一種．有限制御部が入力を読み取ると，スタッ
+            クポインタが指す要素をポップする．また，読み取った入力に応じ，適当な記号列をプッシュして
+            いく．このプッシュダウンスタックが\mystrong{無限に伸ばせる}
+            ということが，PDAにCFGと同等の表現力を持たせている．
+ \item[スタックポインタ(Stack pointer)] \mbox{} \\
+            プッシュダウンスタックの先頭を常に指している．PDAは，プッシュ
+            ダウンスタックの要素すべてを常に把握するのではなく，スタック
+            ポインタが指す要素だけを把握していればよい．この制約によ
+            り，PDAは有限の記述で定式化される．
+\end{description}
+
+\subsection{PDAの定式化}
+PDAは，以下のように定式化される．
+\[
+ M = (Q, \Sigma, \Gamma, \delta, q_0, Z_0, F)
+\]
+\begin{description}
+ \item[\mystrong{$Q$}] 状態の有限集合．
+ \item[\mystrong{$\Sigma$}] 入力アルファベット．
+ \item[\mystrong{$\Gamma$}] スタックアルファベット．つまり，スタックにプッ
+            シュすることのできる記号集合．
+ \item[\mystrong{$\delta$}] 遷移関数．数式的には，
+            \[
+             \delta : Q \times \Sigma \times \Gamma \rightarrow 2^{Q
+            \times \Gamma}
+            \]
+            と表せる．この表記は，NFAとの類似性を思わせる．解釈する
+            と，「状態・入力記号・スタックトップによって，次状態と新たな
+            スタックトップが非決定的に定まる」といったところか．
+ \item[\mystrong{$q_0$}] 初期状態．
+ \item[\mystrong{$Z_0$}] 初期記号．スタックの底にある記号($\in \Gamma$)
+ \item[\mystrong{$F$}] 最終状態の集合．
+\end{description}
+
+\subsection{PDAの動作}
+PDA $M$の遷移関数が具体的に
+\[
+ \delta (q, a, z) = \{(p_1, \gamma_1), (p_2, \gamma_2), \cdots , (p_n, \gamma_n)\}
+\]
+と与えられたときの動作を詳細に見てみる．
+
+状態$q$にあるPDA $M$は，スタックトップに記号$z$がある時に入力記号$a$を読
+むと，状態$p_i \hspace{2ex} (1 \leq i \leq n)$に移る(\mystrong{非決定
+性})．このとき，スタックトップの$z$はポップし，スタック記号列$\gamma_i$
+をプッシュする．
+
+\subsection{PDAの受理言語}
+PDA $M$が受理する言語$L(M)$は，以下の2種類である．
+\begin{description}
+ \item [最終状態で受理する言語] \mbox{} \\
+             \begin{eqnarray*}
+              L_f (M) = \{w | \hspace{2ex} &初&期状態q_o, スタック空から始めて， \\
+              &入&力終了時に最終状態Fの1つに到達する可能性があるような入力w\}
+             \end{eqnarray*}
+ \item[空スタックで受理する言語] \mbox{}\\
+            \begin{eqnarray*}
+             L_e (M) = \{w | \hspace{2ex} &初&期状態q_o, スタック空から始めて， \\
+             &入&力終了時にスタックが空になる可能性があるような入力w\}
+            \end{eqnarray*}
+\end{description}
+前者はNFAの受理言語と同じようなものなので分かるだろうが，後者は真新しく
+思えるだろう．しかし，実は次のような定理があり，$L_f, L_e$は同等であると
+言える．
+
+\begin{mytheorem}
+ $L = L_f(M_1)$であれば，$L = L_e(M_2)$となるようなPDA $M_2$を構成
+       できる．
+\end{mytheorem}
+
+\begin{mytheorem}
+ $L = L_e(M_2)$であれば，$L = L_f(M_1)$となるようなPDA $M_1$を構成
+       できる．
+\end{mytheorem}
+この証明は授業で取り扱わなかったので，ここでも取り扱わない．
+\footnote{\cite{波雄1972}のp.153辺りに証明があります．}
+
+\subsection{PDAとCFGの等価性} \label{sec:04pda_eq_cfg}
+正規表現とFAが，「正規表現の生成する言語と，FAの受理言語は一致する」とい
+う点で等価だったのと同様に，CFGとPDAも，「CFGの生成する言語と，PDAの受理
+言語は一致する」という点において等価である．より具体的には，以下の定理が
+成り立つ．
+
+\begin{mytheorem} \label{04cfg_to_pda}
+ どんなCFGに対しても，その生成言語を受理するPDAを構成できる．
+\end{mytheorem}
+
+\begin{mytheorem} \label{04pda_to_cfg}
+ どんなPDAに対しても，その受理言語を生成するPDAを構成できる．
+\end{mytheorem}
+
+\begin{myproof}{定理\ref{04cfg_to_pda}の証明} \label{proof:04cfg_to_pda}
+\footnotemark
+まず，CFGとしてはGreibach標準形のものを仮定する(定理
+ \ref{03greibach_standard_theorem}にあるとおり，どのようなCFGでも
+ Greibach標準形にできる)．
+
+CFG $G = (V, T, P, S)$に対して，ただ1つの内部状態を持つ
+$\Sigma$上のPDA $M = (Q, \Sigma, \Gamma, \delta, q_0, Z_0, F)$を，次のよ
+ うに定義する．
+
+\begin{enumerate}
+ \item $M$の内部状態はただ1つなので，
+       \[
+       Q = F = \{q_0\}
+       \]
+ \item $M$が受け取る記号の集合$\Sigma$は，$G$の用いる終端記号の集合$T$と
+       一致させ，
+       \[
+        \Sigma = T
+       \]
+ \item $M$のスタックに入れる記号の集合$\Gamma$は，$G$の用いる非終端記号
+       の集合$V$と一致させ，
+       \[
+        \Gamma = V
+       \]
+ \item $M$のスタックの初期の底は，$G$の開始記号$S$と一致させ，
+       \[
+        Z_0 = S
+       \]
+\end{enumerate}
+更に，$M$の遷移関数$\delta$は次のように定める．
+
+$G$の生成規則$P$が
+ \begin{eqnarray*}
+  A \rightarrow &a_1& \gamma_{11} \, | \, a_1 \gamma_{12} \, | \, \cdots
+ \, | \, a_1 \gamma_{1m_1} \\
+  &a_2& \gamma_{21} \, | \, a_2 \gamma_{22} \, | \, \cdots
+ \, | \, a_2 \gamma_{2m_2} \\
+  &\cdots& \\
+ \end{eqnarray*}
+ と与えられたとき，遷移関数を
+ \begin{eqnarray*}
+  \delta (q_0, a_1, A) &=& \{(q_0, \gamma_{11}), (q_0, \gamma_{12}), \cdots ,
+ (q_0, \gamma_{1m_1})\} \\
+  \delta (q_0, a_2, A) &=& \{(q_0, \gamma_{21}), (q_0, \gamma_{22}), \cdots ,
+ (q_0, \gamma_{2m_2})\} \\
+  \cdots
+ \end{eqnarray*}
+ の様に定める．この意味を解釈すると，「PDA $M$の状態が(1状態だけなので当
+ 然だが)$q_0$で，スタックポインタは$A$を指しているときに，入力$a_i$を読
+ み取る．すると，次状態は変わらず$q_0$だが，スタックからは$A$をポップ
+ し，その後で$\gamma_{ij}$のいずれかをプッシュすることになる．」といった
+ ところか．ここで，スタックから$A$をポップしたのは，入力を読み取るときの
+ PDAの共通動作である．
+
+ 以上のように構成されたPDA $M$は，元のCFG $G$の生成言語と同じ受理言語を
+ 持つ． \footnotemark
+\end{myproof}
+\setcounter{myfootnote}{\value{footnote}}
+\addtocounter{myfootnote}{-1}
+\footnotetext{基本授業通りです
+ が，前提条件らへんで\cite{一松_浦198301}を参考にしました．}
+\addtocounter{myfootnote}{1}
+\footnotetext{ここに飛躍があるが，それを埋めたければ\cite{一松_浦
+ 198301}をどうぞ．特に気にならなければ，下の例で勘弁し
+ てください．}
+
+\myfigure{img/04cfg_to_pda.eps}{CFGの生成記号列をPDAが受理する様子}
+
+\begin{myexample}{与えられたCFGから等価なPDAを構成する}
+ \myexamplelabel{ex:04cfg_to_pda}
+ 次のようなGreibachの標準形のCFG $G$
+ \begin{itemize}
+  \item $V = \{A, B, C, D, X\}$
+  \item $T = \{a, b, c, d, x\}$
+  \item $S = A$
+  \item $A \rightarrow aBC \, | \, aD$
+  \item $B \rightarrow b$
+  \item $C \rightarrow c$
+  \item $D \rightarrow dX$
+  \item $X \rightarrow x$
+ \end{itemize}
+ が与えられたとして，これと等価なPDAを構成する．証明
+ \ref{proof:04cfg_to_pda}によると，そのようなPDA $M$は，以下のように構成でき
+ る．
+ 
+ \begin{itemize}
+  \item $Q = F = {q_0}$
+  \item $\Sigma = T = \{a, b, c, d, x\}$
+  \item $\Gamma = V = \{A, B, C, D, X\}$
+  \item $Z_0 = S = A$
+  \item $\delta :$
+       \begin{eqnarray*}
+        \delta(q_0, a, A) &=& \{(q_0, BC), (q_0, D)\} \\
+        \delta(q_0, b, B) &=& \{(q_0, \epsilon)\} \\
+        \delta(q_0, c, C) &=& \{(q_0, \epsilon)\} \\
+        \delta(q_0, d, D) &=& \{(q_0, X)\} \\
+        \delta(q_0, x, X) &=& \{(q_0, \epsilon)\} \\
+       \end{eqnarray*}
+ \end{itemize}
+
+ 実際，このPDA $M$が，CFG $G$の生成する記号列を正しく受理し，$G$が生成し
+ ない記号列を受理しないことを確かめる．
+
+ まず，$G$の生成する記号列，'abc'を$M$が受理する過程を，図
+ \ref{fig:img/04cfg_to_pda.eps}で見ていく．ただし，$M$は状態を一つしか持たな
+ いので，図中のPDAは簡略化してスタックと入力列のみの関係を描いている．
+
+\begin{enumerate}
+ \item スタックの底には$A$が積まれた状態でスタート．入力の先頭$a$を読む．こ
+       のとき，適応可能な遷移関数は，$\delta(q_0, a, A) = \{(q_0, BC),
+       (q_0, D)\}$．また，スタックポインタの指していた$A$はポップされる．
+ \item 遷移関数から，$(q_0, a, A) \rightarrow (q_0, D)$という規則を適応
+       したとする．すると，スタックには$D$がプッシュされる．しかし，次の
+       入力は$b$であり，$\delta(q_0, b, D)$という遷移関数は存在しないた
+       め，ここで(このpathでは)受理失敗となる．
+ \item 気を取り直して，1の状態から規則$(q_0, a, A) \rightarrow (q_0,
+       BC)$を適応したとする．すると，スタックには$B, C$が\mystrong{この
+       順番で} \footnotemark 積まれる．入力の先頭$b$を読み，$B$はポップ
+       される．そして，唯一適応可能な規則$\delta(q_0, b, B) \rightarrow (q_0, \epsilon)$を適応する．
+ \item 3で適応した規則によると，ポップされる記号はないので，スタックには
+       $C$だけが残る．この状態で，規則$\delta(q_0, c, C) \rightarrow (q_0,
+       \epsilon)$を適応し，$c$を読んで$C$はポップされる．
+ \item スタック空で入力記号列を読み終えたので，'abc'は受理された．
+\end{enumerate}
+
+次に，$G$が生成しない記号列，'abx'を$M$が弾く過程を考える．それは，上記
+ のプロセス1-3までは全く同じで，4で$(q_0, x, C)$に対して適応可能な関数が
+ なくなり，ここで完全に受理を失敗するという過程になる．
+\end{myexample}
+\footnotetext{この資料中は，この順番でスタックを積めという規則は明記して
+いないのだが，そう言うものだと覚えておいてください．}
+
+\begin{myproof}{定理\ref{04pda_to_cfg}の証明}
+ \footnotemark
+ CFGの非終端記号の集合を$V$として，全て$q,p \in Q$と$A \in \Gamma$の組
+ $[q,A,p]$に対応するものを用意する．
+
+ 各$q \in Q$に対して，$S \rightarrow [q_0, Z_0, q]$という生成規則を作る．
+
+ $\delta (q, a, A)$が$(q_1 , B_1 B_2 \cdots B_m)$を含むとき，任意の$q_1
+ , q_2, \cdots , q_{m+1} \in Q$に対して，
+ \[
+ [q_1 , A, q_{m+1}] \rightarrow a[q_1, B_1, q_2][q_2, b_2 , q_3] \cdots
+ \]
+ という生成規則を設けるとOK．
+\end{myproof}
+\footnotetext{この証明は理解できてないので，板書の丸写しです．おかしな所
+ があったり，こう解釈するんだよってのがあったら，掲示板にでも書き込んで
+ くれると助かります．}
+
+\subsection{PDAの能力}
+PDAはCFGと等価であることは，\ref{sec:04pda_eq_cfg}で述べた．この説で
+は，FA/NFAや正規表現では受理・生成できない\footnote{受理・生成する言語が
+無限長を持つと，どうしても無理になる．}が，PDAや
+CFGでは受理・生成可能な「奇数文字の回文\footnote{偶数文字の回文だ
+と，$\epsilon$も回文となってしまい，それを例外的に扱うのが面倒なだけ．}」
+を例に取り，PDAの能力を示す．
+
+\begin{myexample}{2文字から成る奇数文字の回文} \myexamplelabel{ex:04kaibun}
+ まずは，アルファベット$\{a,b\}$から成る奇数文字の回文を生成するCFGを作り，次にそれをPDAに翻訳するとい
+ う手順を取る．そのCFGは，以下のように考えて構成できる．
+
+ \begin{enumerate}
+  \item 開始記号$S$がそのまま回文全体を表すことにする．
+  \item $a,b$1文字も回文なので，$S \rightarrow a \, | \, b$
+  \item $S$は回文なのだから，$a$で始まる回文は，$aSa$で全て尽くせる．
+  \item 同様に，$S \rightarrow bSb$
+ \end{enumerate}
+ これより，以下のようにCFG $G$を定義できる．
+ \[
+  G = (\{S\}, \{a, b\}, P, S)
+ \]
+ 生成規則$P$は，次のとおり．
+ \[
+  S \rightarrow a \, | \, b \, | \, aSa \, | \, bSb
+ \]
+
+ 例\myexampleref{ex:04cfg_to_pda}で見たのと全く同じ手順で$G$から等価な
+ PDAを構成するために，まず$G$をGreibachの標準形に変換する．変換後のCFG
+ $G'$は，以下のようになる．
+
+ \[
+  G' = (\{S, A, B\}, \{a, b\}, P, S)
+ \]
+ ただし，$P$は下記の生成規則．
+ \begin{eqnarray*}
+  &S& \rightarrow a \, | \, b \, | \, aSA \, | \, bSB \\
+  &A& \rightarrow a \\
+  &B& \rightarrow b 
+ \end{eqnarray*}
+
+ 後は本当に例\myexampleref{ex:04cfg_to_pda}と同じ手順でPDAを構成するだけ
+ である．結果のPDA $M$は，
+ \[
+  M = (\{q_0\}, \{a, b\}, \{S, A, B\} , \delta , q_0 , S, F)
+ \]
+ ただし，遷移関数$\delta$は，以下のものである．
+ \begin{eqnarray*}
+  \delta (q_0, a, A) &=& \{(q_0, \epsilon)\} \\
+  \delta (q_0, b, B) &=& \{(q_0, \epsilon)\} \\
+  \delta (q_0, a, S) &=& \{(q_0, \epsilon), (q_0, SA )\} \\
+  \delta (q_0, b, S) &=& \{(q_0, \epsilon), (q_0, SB)\}
+ \end{eqnarray*}
+
+ 実際に，この$M$が，記号列$aba$を空スタックで受理するpathを示す．(もちろん受理できな
+ いpathもあるが，それは各自探してみてください．)
+
+ \begin{enumerate}
+  \item まず，開始状態$q_0$，スタックの底$S$から始まる．なお，状態は
+        $q_0$の1通りであるから，今後はスタックについてのみ言及する．
+  \item $aba$の先頭$a$を取り，遷移関数
+        \[
+        (q_0, a, S) \rightarrow (q_0, SA)
+        \]
+        に従い遷移．$S$がポップされた後に$SA$がプッシュされる．
+  \item $ba$の先頭$b$を取り，遷移関数
+        \[
+        (q_0, a, S) \rightarrow (q_0, \epsilon)
+        \]
+        に従い遷移．スタック$SA$から$S$がポップされるので，$A$が残る．
+  \item 残りの$a$を取り，
+        \[
+         (q_0, a, A) \rightarrow (q_0, \epsilon)
+        \]
+        に従い遷移．$A$がポップされ，スタックは空になり，$aba$は受理され
+        た．
+ \end{enumerate}
+\end{myexample}
+
+\section{決定性プッシュダウンオートマトン(Deterministic push-down
+ automaton, DPDA)} \label{sec:04dpda}
+遷移関数の集合要素が高々1個であるようなPDAは，特に\mystrong{決定性
+PDA(Deterministic push-down automaton, DPDA)}と呼ばれる．
+
+例えば，先の例\myexampleref{ex:04kaibun}で，
+ \begin{eqnarray*}
+  \delta (q_0, a, A) &=& \{(q_0, \epsilon)\} \\
+  \delta (q_0, b, B) &=& \{(q_0, \epsilon)\} \\
+  \delta (q_0, a, S) &=& \{(q_0, \epsilon), (q_0, SA )\} \\
+  \delta (q_0, b, S) &=& \{(q_0, \epsilon), (q_0, SB)\}
+ \end{eqnarray*}
+という遷移関数があったが，この上2つの遷移関数のみを持てばそれはDPDAであ
+り，下2つのどちらかを持てばそれは(非決定性)PDAである．
+
+DPDAは全てのCFGを扱うことはできない\footnote{FAはNFAと等価であったことと
+は対照的である．}
+(例えば回文は無理)が，プログラミング
+言語の文法などには決定性PDAで扱える文法を用いることが多い． \footnote{後
+期実験でプログラミング言語を取っている人は覚えがあると思います．もしDPDA
+で扱えないような文法を田浦先生サイドが提供していたら，構文解析器は
+backtrack(あるいは並列処理:-D)の機構を持っている必要があったはずです．実
+際にはそんなことはなく，「'if'トークンで始まる構文は'if-statement'しかな
+い」と断言してコーディングできますね．}

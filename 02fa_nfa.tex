@@ -1,0 +1,308 @@
+%#!platex main.tex
+
+\section{有限オートマトン(Finite automaton, FA)}
+\mystrong{有限オートマトン}  \footnote{有限状態オート
+ マトン(finite state automaton)と呼ぶこともある} (以下，\mystrong{FA})とは，有限の記憶を持つ計
+算機構の一種である．より具体的には，ある入力列を走査し，その入力列を受理
+するかを判定するものと言える．
+
+\myfigure[width=60truemm]{img/01FA.jpg}{FAを表す遷移図}
+
+\begin{myexample}{簡単なFA}
+ \figurename \ref{fig:img/01FA.jpg}は，FAを表す一つの例である．このよう
+ に，FAは\mystrong{状態遷移図}で表せる．まずは，このFAの動作の概略を説
+ 明する．
+\begin{enumerate}
+ \item FAは，開始状態(initial state)で開始する．今回の開始状態は$S_1$．
+ \item 入力の1ビット目により，次に遷移する状態が変わる．0だったら
+       $S_3$に，1だったら$S_2$に移る．
+ \item 同様に2ビット目，$\cdots$と入力列を読んでいき，読み終わった時点の
+       状態，すなわち最終状態(final state)が$S_3$であれば，このFAは入力
+       列を\mystrong{受理(accept)}したといい，$S_3$でなければ受理しなかったとい
+       う．
+\end{enumerate}
+
+ ここで，実際に入力列$0100$を入れたときの動作を追ってみる．
+\begin{enumerate}
+ \item 開始状態$S_0$へ．
+ \item 0を受け取り，$S_3$へ．
+ \item 1を受け取り，$S_3$へ．
+ \item 0を受け取り，$S_2$へ．
+ \item 0を受け取り，$S_2$へ．
+ \item 入力列を読み終わったが，$S_3$でなく$S_2$にいるので，入力列$0100$
+       は受理しない．
+\end{enumerate}
+\end{myexample}
+
+ここで一度，\ref{sec:計算の能力}の記述を確認し，(FAに限らず)オートマトン
+の重要性を確認して欲しい．
+
+\subsection{FAの定式化} \label{FAの定式化}
+FAの能力，動作などを真面目に議論しようとすると，どうしても定式化する必要
+が出てくる．以下のように定式化されることが多い．
+
+\begin{description}
+ \item[$M = (Q, \Sigma, \delta, q_0, F)$] \mbox{} \\
+            あるFAを表す式．
+            
+ \item[$Q$] \mbox{} \\
+            状態の有限集合．上の例で言うと，$S_1, S_2, S_3$
+ \item[$\Sigma$] \mbox{} \\
+            入力記号の有限集合．上の例で言うと，$0, 1$
+ \item[$q_0$] \mbox{} \\
+            初期状態 $\in Q$．上の例で言うと，$S_0$
+ \item[$F$] \mbox{} \\
+            最終状態の集合 $\subset Q$．ここで，最終状態は1つでなくとも
+            良いことに注意．上の例で言うと，$S_2$のみ．
+ \item[$\delta$] \mbox{} \\
+            遷移関数(transition fucntion)．数式でいうと，
+            \begin{equation}
+             \delta : \hspace{2ex} Q \times \Sigma \rightarrow Q
+              \label{eq:02transition_function}
+            \end{equation}
+            ここで，$\times$記号は直積\footnote{Wikipedia\cite{wikipedia}
+            が意外とわかりやすいので，興味があれば調べてみてください．}
+            を表す．すなわち，
+            \[
+             Q \times \Sigma = \{(q, s) | q \in Q, s \in \Sigma\}
+            \]
+            である．したがって，式\ref{eq:02transition_function}の表すと
+            ころは，「ある状態$q$において，次の入力記号が$s$であった場
+            合，次の状態は$Q$に含まれるいずれかである．\footnote{ここで
+            「いずれか」とはいえど，一意に定まっている．例えば，「状態
+            $q_1$で入力$a$を受け取ったら，状態$q_3$に移る．ただし，$q_i
+            \in Q, \, a \in S$」ということ．下記のNFAの話を読むと気になる
+            ところだと思うので．}といったもので
+            ある．
+\end{description}
+
+\subsection{オートマトンの動作} \label{オートマトンの動作}
+以下の動作は，FAのみならず，オートマトン一般に成り立つことに注意．
+
+\begin{itemize}
+ \item 初期状態$q_0$から初めて，入力1記号毎に状態遷移．
+ \item 「入力が終わったときに最終状態の1つにある」$\Leftrightarrow$ 「オー
+       トマトンは
+       入力を受理した」
+ \item オートマトンを定義すると，それが受理する入力列の集合(\mystrong{オー
+       トマトンの受理言語})が決まる．
+\end{itemize}
+
+特に，FAの受理言語を\mystrong{正則集合(regular set)}という．
+
+\section{FAと正規表現の関係}
+FAは計算機構であり，正規表現は文法であるが，どちらも言語を与える(前者は
+受理言語により)．両者の与える言語について，以下の定理が成り立つ．
+
+\begin{itemize}
+ \item FAの受理言語は，正規表現で表せる．
+ \item 正規表現が表す言語を受理するFAを構成できる．
+\end{itemize}
+
+この定理は授業中にも証明しておりません．気になる人は，「有限オートマトン
+正規表現 証明」とかでググると結構出てきます．気にならない人は「正規表現
+はFAと同程度の表現力なのか」と覚えておけば良いと思います．
+
+\section{非決定性有限オートマトン(Non-deterministic finite automaton, NFA)}
+\mystrong{非決定性有限オートマトン}(以下，\mystrong{NFA})は，同じ状態に
+あり，同じ入力記号を受け取る時でも，次の状態が一意には決まらないようなFA
+である．
+
+\subsection{NFAの定式化}
+基本的に，\ref{FAの定式化}でしたのと同じ定式化ができる．ただし，遷移関数
+は異なり，以下のように定式化される．
+\begin{equation}
+ \delta : \hspace{2ex} Q \times \Sigma \rightarrow 2^Q
+  \label{eq:NFA_transition_function}
+\end{equation}
+ここで，$2^X$は，冪集合(power set)を表す記号であ
+る．\footnote{\cite{power_set}にそう書いてありました．}
+$2^X$は，すべての「集合$X$の部分集合」を元として集めた集合系(集
+合族)のことである．\footnote{\cite{power_set}にそう書いてありました．}
+
+したがって，式\ref{eq:NFA_transition_function}の意味するところは，「$Q$
+中の状態にいるとき，$\Sigma$上の記号を受け取ると，$Q$上のいくつかの状態
+のうちの1つに移る」といったところだろうか．
+
+\subsection{NFAの動作}
+基本的には\ref{オートマトンの動作}に書いたオートマトンの動作と同様．ただ
+し，
+\[
+ 「NFAが受理する記号列」\Leftrightarrow「入力終了時にとり得る状態のうち
+ に，最終状態に含まれるものが存在する」
+\]
+という点が異なる．この定義は中々複雑に感じるので，以下で細かく説明す
+る．
+
+\begin{description}
+ \item[\mystrong{「入力終了時にとり得る状態」って??}] \mbox{} \\
+NFAは，入力を1個取
+            るごとに，何通りかの遷移の可能性を持つ．従って，入力終了時の
+            状態は，一意に定まらない．
+ \item[\mystrong{「最終状態に含まれるものが存在する」って??}] \mbox{} \\
+NFAの定義に
+            よると，最終状態は複数あって良い．繰り返しになるが，FAでも最
+            終状態は複数会って良い．
+\end{description}
+
+\myfigure[width=60truemm]{img/02NFA.jpg}{NFAを表す状態遷移図の例}
+
+\begin{myexample}{簡単なNFA} \myexamplelabel{02NFAex}
+ 図\ref{fig:img/02NFA.jpg}は，簡単なNFAの例を示している．\footnote{この図で
+ は，状態$B$において入力1をとった場合の動作などが明示されていません．そ
+ の時は状態遷移しない，すなわち，「同じ状態に遷移する」と考えて良いで
+ しょう．なにせネットから引っ張ってきた図ですので :-)}NFAならではの特徴を
+ 以下に指摘する．
+ \begin{itemize}
+  \item 状態と入力が決まっても，次状態が一意には決まらない場合がある．例
+        えば，状態$D$にいたとき，入力$1$を受け取った場合，次状態としては
+        $B$も$C$もあり得る．
+ \end{itemize}
+
+また，
+\begin{itemize}
+ \item 終了状態が複数ある．$C, D$が終了状態である．
+\end{itemize}
+ことにも注意．
+
+ このNFAが，入力$001$を受理するかを考えてみる．
+\begin{enumerate}
+ \item 開始状態は$A$．
+ \item 1ビット目の入力0をとると，$B$にも$C$にも移れる．いま，$B$に移るとする．
+       \label{02NFAex2}
+ \item 2ビット目の入力0をとり，$D$に移る．
+ \item 3ビット目の入力1をとると，$B$にも$C$にも移れる．いま，$B$に移ると
+       する． \label{02NFAex4}
+ \item 入力列を読み終わったが，最終状態の集合($C, D$)の元にいないので，
+       とりあえず失敗． \label{02NFAex5}
+ \item 気を取り直し，\ref{02NFAex4}で$B$でなく$C$に移る．
+ \item 入力列を読み終わり，最終状態の集合の元$C$にいるので，\mystrong{こ
+       のNFAは入力$001$を受理する}と言える．
+\end{enumerate}
+ もちろん，\ref{02NFAex5}で失敗が分かったとき，\ref{02NFAex4}でなく
+ \ref{02NFAex2}に戻っても良い．いずれにせよ，入力が読み終わった時点で
+ いずれかの最終状態にいられるようなパスを1つ見つけてしまえば，NFAは入力
+ を受理すると言える．
+\end{myexample}
+
+例\myexampleref{02NFAex}により，何となく掴みどころのなかったNFAを分かって頂けたかと思う．
+
+ちなみに，NFAの「失敗したら分かれ道に戻る」という動作は，プログラミング
+手法でいうbacktrackに対応する．さらにプログラミング的な話にすると，別に
+backtrackを使わずとも，分かれ道(=分岐)が発生した時点で，スレッドなりプロ
+セスなりを生成し，並列に入力を取っていってテストしても良い．
+
+\section{NFAとFAの等価性}
+ここでは，NFAとFAの等価性について説明する．もちろん「等価」といって
+も，NFAとFAは全く同じマシンであるということを主張しているわけではな
+い．\mystrong{NFAとFAの受理言語の集合が一致する}という点において等価とい
+うことだ．すなわち，
+\begin{mytheorem} \label{02fa_to_nfa}
+どんなFAについても，同じ受理集合を持つNFAが作れる．
+\end{mytheorem}
+
+\begin{mytheorem} \label{02nfa_to_fa}
+ どんなNFAについても，同じ受理集合を持つFAが作れる．
+\end{mytheorem}
+の両方が成り立つということだ．これを以下に示す．
+
+\begin{myproof}{定理\ref{02fa_to_nfa}の証明}
+これは，$FA \subset NFA$なので簡単．
+
+ まず，与えられたFA(given FA と表記す
+ る)と全く同じ遷移状態を，構成するNFA(obj NFA と表記する)に持
+ たせる．一般にはNFAがある状態にいてある入力を受けるとき，遷移状態は1つ
+ に定まらないが，今回はgiven FAと全く同じ遷移状態をobj NFAに持たせる．
+
+ 更に，obj NFAにはgiven FAと同
+ じ最終状態を持たせる．
+
+以上の手順により，obj NFAはgiven NFAと全く同じものになり，すなわち同じ受
+ 理集合を持つことが示された．
+\end{myproof}
+
+\begin{myproof}{定理\ref{02nfa_to_fa}の証明}
+ \footnotemark
+
+与えられたNFAを$M = (Q, \Sigma, \delta, q_0, F)$ \footnotemark
+ とするとき，対応するFAとして，$M' = (Q', \Sigma, \delta' , q_0, F')$を以下の
+ ように構成すれば良い．
+ \begin{eqnarray*}
+  Q' &=& 2^Q \hspace{2ex} (Qが有限だから2^Qも有限に納まる)\\
+  q_0 ' &=& q_0\\
+  F' &=& \{S \subset Q | F \cap S \neq \phi \} \footnotemark
+ \end{eqnarray*}
+ \[
+  \delta ' : 2^Q \times \Sigma \rightarrow 2^Q
+ \]
+ つまり，
+\[
+ \delta ' (\{q_1, q_2, \cdots , q_n\}, a) = \cup^{n}_{i = 1} \delta (q_i , a) 
+\]
+  ここで，$\{q_1, q_2, \cdots , q_n\}$は$2^Q$の部分集合, $a$は$\Sigma$ の元，$q_i$は$2^Q$
+   の元．
+
+ 以下略． \footnotemark
+\end{myproof}
+ % minipage環境中で脚注番号を自動振りするための知恵
+\setcounter{myfootnote}{\value{footnote}}
+\addtocounter{myfootnote}{-3}
+\footnotetext[\value{myfootnote}]{実は証明になってません．完全な証明を知りた
+ければ，\cite{John_Jeffrey_Rajeev_野崎_町田_高橋_山崎200304}のp.29あたり
+に載ってます．}
+\addtocounter{myfootnote}{1}
+\footnotetext[\value{myfootnote}]{引数は左から，状態集合，入力記号の集合，遷移関数，開始状態，終了状態の集合，でした．}
+\addtocounter{myfootnote}{1}
+\footnotetext[\value{myfootnote}]{ベン図で考えるとわ
+   かりやすい．構成するFAの最終状態の中に，与えられたNFAの最終状態である
+   ものが存在すれば良い．これも数式で書くと，$$\exists x (x \in F \wedge x
+   \in S)$$ってこと．}
+\addtocounter{myfootnote}{1}
+\footnotetext[\value{myfootnote}]{先生もそんなに厳密性を気にされる方じゃなさ
+そうです:-)}
+
+\section{FA，NFAの限界}
+ここでは，FAとNFAに共通する限界について説明する．
+
+どちらも状態$Q$は有限であり，それはつまり記憶が有限ということ．従って，
+有限の記憶で処理できない計算は，FAやNFAには処理できないということである．
+
+\myfigure{img/02limitsFA.eps}{入力列の0/1の個数が同数かを判定するFA}
+
+\begin{myexample}{入力列の0/1の個数が同数かを判定するFAは構成できない} \myexamplelabel{02FA01}
+ 図\ref{fig:img/02limitsFA.eps}は，入力列の0/1の個数が同数かを判定するFA
+ を表している．
+
+ 開始状態が$q_0$で，1を受け取ると$q_1$に，0を受け取ると
+ $q_{-1}$に移る．つまり，各状態は，
+ \[
+  q_{[受け取った1の個数] - [受け取った0の個数]}
+ \]
+ となる．
+
+ 終了状態も$q_0$であるので，受理言語は，「0,1の個数が同数である0/1の列」
+ となる．
+
+いま，遷移図の一番左の状態を$q_l$，一番右の状態を$q_r$としよう．FAにおい
+ て，状態数は有限なので，必ずこのような状態は存在する．
+
+もし，入力列がある程度短く，
+ \[
+  |入力列| \leq min\{-l, r\}
+ \]
+ であるとすると，この入力列を判定することはできるが，入力列が長く，
+ \[
+  |入力列| > min\{-l, r\}
+ \]
+ となるとき，状態が$q_l$もしくは$q_r$に達し，更に右か左に動くことができ
+ なくなる可能性がある(例: $q_{-1}, q_0, q_1$の3状態から成るFAに，入力列
+ $11$を与えたとき)．そのような長い入力列に対しては，FAが構成できていない
+ ことになる．
+
+そして，FAに与える入力の長さに制限はなく，無限長でも良いので，全ての入力
+ 列を判定できるFAは存在しない．
+
+ 例えば，入力列が$110110\cdots (無限に続く)$では，どれだけ(有限の範囲で)
+ 状態の多いFAでも対処できない．
+\end{myexample}
+

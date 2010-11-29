@@ -1,0 +1,272 @@
+%#!platex main.tex
+
+\section{文脈自由文法(Context-free grammar, CFG)}
+\mystrong{文脈自由文法}(以下，\mystrong{CFG})とは，1995年にAvram Noam
+Chomskyが提唱した，自然言語文法を記述するための枠組みであり，それは\mystrong{生成
+文法(Generative grammar)}\footnote{\mystrong{生成規則(Generative rule)}
+と呼ぶことも多い．}の形をしている．
+
+定式化は後でするとして，まずは具体例を見てみる．
+
+\begin{myexample}{CFGで書かれた単純な生成文法} 
+以下の規則(生成文法)があるとする．
+\begin{itemize}
+ \item ＜文＞ $\rightarrow$ ＜名詞句＞＜動詞句＞
+ \item ＜名詞句＞ $\rightarrow$ ＜名詞＞
+ \item ＜名詞句＞ $\rightarrow$ ＜形容詞＞＜名詞＞
+ \item ＜名詞＞ $\rightarrow$ birds
+ \item ＜形容詞＞ $\rightarrow$ big
+ \item ＜動詞＞ $\rightarrow$ fly
+\end{itemize}
+この文法から生成される言語は，\{'birds fly', 'big birds fly'\}である．
+
+ なお，＜〇〇＞を\mystrong{非終端記号}或いは\mystrong{変数}，＜＞で囲まれていない記号列を
+ \mystrong{終端記号}という． \footnotemark
+\end{myexample} 
+\footnotetext{終端，非終端という呼び方は，構文
+ 解析をした結果できる構文木の葉(leaf)にあるか，節(node)にあるかという，
+ 図的なイメージから来ている．}
+
+\subsection{CFGの定式化}
+CFGは，$G = (V, T, P, S)$で定式化される．
+\begin{description}
+ \item[$V$] \mbox{} \\
+            \mystrong{非終端記号(Non-terminal symbol)}の有限集合．非終端記
+            号は，\mystrong{変数(variable)}とも呼ぶ．非終端記号には，生
+            成規則の右辺にはに来ないという特徴がある． \footnote{非終端
+            記号は大文字で始まる記号で表すことが多い．$A, B, Expr$など．}
+
+ \item[$T$] \mbox{} \\
+            \mystrong{終端記号(Terminal symbol)}の有限集合．終端記号には，
+            必ず生成規則の右辺に来るという特徴がある． \footnote{終端記
+            号は小文字で始まる記号で表すことが多い．$a, b, if$など．}
+ \item[$P$] \mbox{} \\
+            \mystrong{生成規則(Production rule)}の集合．
+ \item[$S$] \mbox{} \\
+            \mystrong{開始記号(Start symbol)}．
+            \footnote{構文木の根(root)に来る．}
+            $S \in V$である．上述の例で
+            は，$S = ＜文＞$．
+\end{description}
+
+\subsection{CFGによる構文木(Syntacs tree)の生成}
+ある記号列が与えられたとき，それがCFGの生成規則に従っていれば，その記号
+列から\mystrong{構文木(Syntacs tree)}，或いは\mystrong{導出木(Derivation
+tree)}\footnote{下に続く例を見ると，導出木という名前がしっくりくるかもし
+れない．構文木という呼び方は，言語処理系(コンパイラ・インタプリタ)の理論
+で出てくることが多い．以後，特に理由がなければ構文木という言葉を使う．}をつくることができる．
+
+\begin{myexample}{記号列とCFGの生成規則から構文木をつくる} \myexamplelabel{03cfg_syntacs_tree}
+ 「$x$の加算と乗算から成る式」を表すCFGの生成規則を考えると，例えば以下
+ のようなものができる．
+\begin{itemize}
+ \item $V = \{S, Fact, Term, Expr\}$
+ \item $T = \{x, +, \times, (, )\}$
+ \item $S = Expr$ \footnotemark
+ \item $Fact \rightarrow x\, |\, (Expr)$ \footnotemark
+ \item $Term \rightarrow Fact\, |\, Term\, \times\, Fact$
+ \item $Expr \rightarrow Term\, |\, Expr\, +\, Term$
+\end{itemize}
+
+ こういう生成規則を考えるコツは，
+\begin{enumerate}
+ \item 小さいものから大きいものへ，ボトムアップで作っていく．
+ \item どんな部品(この例では，終端記号と$Fact, Term, Expr$)があるのかを
+       意識する．
+\end{enumerate}
+の2点かと思う．
+
+話が逸れたが，上記の生成規則と，
+\[
+ (x + x) \times x
+\]
+ という記号列から，構文木を生成してみる．これもボトムアップの方向性で，
+ 終端記号から上に伸ばしてつくっていくのが楽だろう．
+
+\begin{center}
+\input{03_1syntacs_tree}
+\end{center}
+
+これが生成された構文ツリーである．
+\end{myexample}
+
+\setcounter{myfootnote}{\value{footnote}}
+\addtocounter{myfootnote}{-1}
+\footnotetext[\value{myfootnote}]{略語を解説する．Expr: Expression(式)，Fact: Factor(因
+子)，Term: Term(項)．}
+\addtocounter{myfootnote}{1}
+\footnotetext[\value{myfootnote}]{$|$記号は，「または」を表す．つまり，
+\[
+ [A \rightarrow B, A \rightarrow x] \Leftrightarrow A \rightarrow B | x
+\]
+}
+
+
+\subsection{CFGの標準形}
+CFGは，その表記の自由さ故に使い勝手がよいが，あまり自由すぎると
+却って複雑な生成規則を作ることにもつながる．そこで，ある程度の制約を加え
+たCFG，すなわちCFGの標準形というものが以下のように定められている．
+
+もし$L$が空でない文脈自由言語(あるCFGによって生成することのできる言語)で
+あるならば，$L$は次の条件を満たすCFG $G$(これが標準形)で生成できる．
+\begin{enumerate}
+ \item $G$のどの非終端記号，どの終端記号も，$L$の中の何かの語の導出に現
+       れる．
+ \item $G$は，非終端記号$A$を非終端記号$B$に置き換える規則$A \rightarrow
+       B$を持たない．
+ \item もし$\epsilon$が$L$の中になければ，$G$は$A \rightarrow \epsilon$という
+       規則を持たない．
+\end{enumerate}
+この条件が意味するところを端的に言うならば，「標準形は無駄な(終端，非終
+端)記号を持っていない」ということになる．
+
+標準形については次の定理が成り立つ．
+
+\begin{mytheorem}
+ 任意のCFG $G$は，標準形に置き換えることができる．
+\end{mytheorem}
+
+この証明は授業で扱っていない．
+
+例\myexampleref{03cfg_syntacs_tree}で使用した生成規則を，標準形に変換する．
+
+\begin{myexample}{CFG生成規則の標準形への変換}
+ 例\myexampleref{03cfg_syntacs_tree}の規則は，例えば$Expr \rightarrow Term$などが
+ 標準形の条件を満たしていない．標準形に直すと，以下のようになる．
+
+\begin{itemize}
+ \item $V = \{S, Fact, Term, Expr\}$
+ \item $T = \{x, +, \times, (, )\}$
+ \item $S = Expr$
+ \item $Fact \rightarrow x\, |\, (Expr)$ 
+ \item $Term \rightarrow x\, |\, (Expr)\, |\, Term\, \times\, Fact$
+ \item $Expr \rightarrow x\, |\, (Expr)\, |\, Term\, \times\, Fact\, |\, Expr\, +\, Term$
+\end{itemize}
+\end{myexample}
+
+標準形の中でもある程度の自由度があり，標準形に更に制約を加えたのが，以下
+で述べるChomskyの標準形とGreibachの標準形である．
+
+\subsection{Chomskyの標準形}
+Chomskyの標準形は，実用性はあまりない．だが，CFGの創始者の考案した標準形
+なので，触れないわけにもいかないのだろう．
+
+Chomskyの標準形においては，全ての生成規則は以下のように表せる．
+\begin{itemize}
+ \item $A \rightarrow BC$
+ \item $A \rightarrow a$
+\end{itemize}
+ただし，大文字は非終端記号を，小文字は終端記号を表す．
+
+このように，非終端記号と終端記号が右辺で混ざることがないのが特徴である．
+
+Chomskyの標準形においても，以下の定理が成立する．
+\begin{mytheorem}
+ 任意のCFG $G$は，Chomskyの標準形に置き換えることができる．
+\end{mytheorem}
+
+この証明も授業では取り扱わなかったが，\cite{波雄1972}のp.128に掲載されて
+あることを指摘しておく．
+
+ここでも，例\myexampleref{03cfg_syntacs_tree}の生成規則を，Chomskyの標準形に変
+換してみる．
+\begin{myexample}{CFG生成規則のChomsky標準形への変換}
+ \begin{itemize}
+  \item $V = \{S, Fact, Term, Expr, LParen, RParen, Mult, Plus, Fact',
+        Term', Expr'\}$
+  \item $T = \{x, +, \times, (, )\}$
+  \item $S = Expr$
+  \item $LParen \rightarrow ($
+  \item $RParen \rightarrow )$
+  \item $Mult \rightarrow \times$
+  \item $Plus \rightarrow +$
+  \item $Fact' \rightarrow LParen\, Expr$
+  \item $Fact \rightarrow x\, |\, Fact'\, RParen$
+  \item $Term' \rightarrow Term\, Mult$
+  \item $Term \rightarrow x\, |\, Fact'\, RParen\, |\, Term'\, Fact$
+  \item $Expr' \rightarrow Expr\, Plus$
+  \item $Expr \rightarrow x\, |\, Fact'\, RParen\, |\, Term'\, Fact\, |\, Expr'\, Term$
+ \end{itemize}
+\end{myexample}
+
+\subsection{Greibachの標準形}
+\mystrong{Greibachの標準形}は，非常に実用的である．Greibachの標準形にお
+いては，すべての生成規則が
+\[
+ A \rightarrow a \alpha
+\]
+の形式になる．ここで，$a$は終端記号で，$\alpha$が長さ0以上の非終端記号の
+並び．
+
+生成規則の右辺が必ず終端記号で始まるというのが実用性を与えるポイントで，
+これにより，先読みが容易に行えるようになる．
+\footnote{コンパイラ実験をやっ
+た人はピンと来ると思います．ピンと来なくても，Greibachは実用的と頭の片隅
+に置いておけば全く問題ないかと思います．}
+
+やはり，Greibachの標準形についても以下の定理が成立する．
+\begin{mytheorem} \label{03greibach_standard_theorem}
+ 任意のCFG $G$は，Greibachの標準形に置き換えることができる．
+\end{mytheorem}
+またしても授業では取り扱わなかったが，\cite{波雄1972}のp.133に掲載されて
+いるので，興味のある方はどうぞ．
+
+では，例\myexampleref{03cfg_syntacs_tree}の生成規則
+を，Greibachの標準形に変換してみる．
+\begin{myexample}{CFG生成規則のChomsky標準形への変換}
+ \begin{itemize}
+  \item $V = \{S, Fact, Term, Expr, RParen, Mult, Plus\}$
+  \item $T = \{x, +, \times, (, )\}$
+  \item $S = Expr$
+  \item $RParen \rightarrow )$
+  \item $Fact \rightarrow x\, |\, (Expr\, RParen$
+  \item $Mult \rightarrow \times\, Fact$
+  \item $Term \rightarrow x\, |\, (Expr\, RParen\, |\, x\, Mult\, |\, (Expr\, RParen\, Mult$
+  \item $Plus \rightarrow +\, Term$
+  \item $Expr \rightarrow x\, |\, (Expr\, RParen\, |\, x\, Mult\, |\, (Expr\, RParen\, Mult$
+  \item $Expr \rightarrow x\, Plus\, |\, (Expr\, RParen\, Plus\, |\, x\, Mult\, Plus\, |
+       \, (Expr\, RParen\, Mult\, Plus$
+ \end{itemize}
+\end{myexample}
+
+\subsection{CFGの能力}
+CFGでは，FAやNFAが受理するか判定できないような言語も記述することができる．
+例\myexampleref{02FA01}では，0と1の個数が同じであるような記号列の集合(=言語)は
+FAでは処理しきれないということを述べたが，CFGではこのような言語を
+構成することができる．
+
+\begin{myexample}{CFGによる0/1が同数な言語の生成} \footnotemark
+ $E$ は0 と1 を同数含む2 進列を表すとする．文法の変数はこのように何
+らかの意味付けをして考えれば分かりやすい．
+ 
+空列は，同数の0と1から成る言語$L$に属するので，$E \rightarrow \epsilon$  という規則が考えられる．$E$ は$\epsilon$でなけ
+れば0 か1 から始まる．そこで$A$ を変数として，$E \rightarrow 0A$ という規則を作
+ると，$A$ は0 の個数が1 の個数より1 つ少ない2 進列ということになる．同
+様に，$E \rightarrow 1B$ という規則を作ると，$B$ は1 の個数が0 の個数より1 つ少
+ない2 進列ということになる．
+ 
+同じような規則を$A$ について作ってみる．$A$ は空列ではないので，0 か
+1 から始まる．1 から始まる場合は，残りの部分において0 と1 が同数現れ
+る．したがって，$A \rightarrow 1E$ という規則が作れる．$A$ の意味をもつ2 進列が
+0 から始まると，残りの部分で0 が1 より2 つ少ないということになる．ま
+た新しい変数がいるだろうか．0 の個数が1 の個数より2 つ少ないというこ
+とは，うまく分割すれば0 の個数が1 の個数より1 つ少ない列を2 つつな
+げたものになっている．これは$AA$ というパターンで表せる．したがって，
+$A \rightarrow 0AA$ という規則も作れる．
+
+$B$ について同様の考察をすると，$B \rightarrow 0E， B \rightarrow 1BB$ という規則が作
+れる． 
+
+ 以上により，以下のようなCFGを構成できる．
+ \begin{itemize}
+  \item $V = \{E, A, B\}$
+  \item $T = \{\epsilon, 0, 1\}$
+  \item $S = E$
+  \item $E \rightarrow \epsilon \, | \, 0A \, | \, 1B$
+  \item $A \rightarrow 0AA \, | \, 1E$
+  \item $B \rightarrow 0E \, | \, 1BB$
+ \end{itemize}
+\end{myexample}
+
+\footnotetext{この例は，一部表記を除いて\cite{桔梗宏孝2005}のp.15,16の引用である．}
+

@@ -1,0 +1,162 @@
+\chapter{帰納的関数論(Recursive function theory)}
+帰納的関数は，
+\[
+ \N ^n \rightarrow \N
+\]
+の写像であり，この章で述べていくような特徴がある．これは，次章の「計算可
+能性」を議論するための道具として用いられる．
+
+\section{Peanoの公理}
+Peanoの公理は，自然数を定義する公理である．
+\begin{itemize}
+ \item 0は自然数
+ \item 自然数の次は自然数
+ \item 以上で定義されるものだけが自然数
+\end{itemize}
+このように自然数が定義される．現代的には，自然数とはPeanoの公理を満たす
+ものとされるらしい．
+
+\section{原始帰納的関数(Primitive recursive function)}
+\mystrong{原始帰納的関数}は，以下のいずれかで定義される．
+\begin{description}
+ \item[ゼロ関数 (zero function)] \mbox{} \\
+            \[
+             zero(x) = 0
+            \]
+            Peano公理から0の存在は言えるので，このような関数は存在する．
+
+ \item[後者関数 (successor function)] \mbox{} \\
+            \[
+             succ(x) = x + 1
+            \]
+            Peanoの公理の1つ，「自然数の次は自然数」を反映した関数．
+
+ \item[射影関数 (projection function)] \mbox{} \\
+            \[
+             proj_k (x_1, \cdots , x_k , \cdots , x_n) = x_k
+            \hspace{2ex} (k \in \{1, \cdots , n\})
+            \]
+            これはPeanoの公理とは関係なく，「引数の中から1つを選ぶ関数」
+            を定義しただけ．
+
+ \item[関数合成] \mbox{} \\
+            \[
+            h(x_1 , \cdots , x_n) = g ( f_1 (x_1, \cdots , x_n), \cdots
+            , f_n (x_1 , \cdots, x_n))
+            \]
+            ただし，$g, f_k$は原始帰納的関数．
+
+ \item[原始帰納法 (primitive recursion)] \mbox{} \\
+            \begin{eqnarray*}
+            &h& ( x_1 \cdots , x_n , 0) = f ( x_1 , \cdots , x_n) \\
+             &h& (x_1, \cdots , x_n , y+1) = g(x_1, \cdots, x_n, y,
+              h(x_1 , \cdots, x_n , y))  \footnotemark
+            \end{eqnarray*}
+            ただし，$f, g$は原始帰納的関数．$h$の再帰呼出しは，最後の引
+            数が必ず小さくなるため，最後の引数が必ず$0$になり，それは1行
+            目の定義から計算できる．計算は有限ステップ．
+\end{description}
+\footnotetext{ここで$y+1$のような加算が出てくるが，加算は\ref{sec:06原始
+関数の例}で定義される．}
+
+\section{原始帰納的関数の例} \label{sec:06原始関数の例}
+\begin{description}
+ \item[定数関数] \mbox{} \\
+            任意の定数関数は，有限回の$succ$と$0$の合成で可能．
+            \begin{myexample}{'2'の定義}
+             \begin{eqnarray*}
+              two(x) &=& succ(one(x)) \\
+              one(x) &=& succ(zero(x))
+             \end{eqnarray*}
+            \end{myexample}
+            以降，定数が突然出てきても，それは定数関数で定義されたものと
+            思いましょう．
+
+ \item[引数の順序の変更] \mbox{} \\
+            \begin{myexample}{2引数の順序の変更}
+             \begin{eqnarray*}
+              f(x, y) &=& g(proj_2(x, y)), proj_1(x, y)) \\
+              &=& g(y, x)
+             \end{eqnarray*}
+            \end{myexample}
+
+ \item[加算] \mbox{} \\
+            \begin{eqnarray*}
+             &add&(x, 0) = proj_1(x) = x \\
+             &add&(x, y+1) = succ (add(x, y)) = \cdots = x + (y + 1) = x
+              + y ) + 1
+            \end{eqnarray*}
+
+ \item[乗算] \mbox{} \\
+            \begin{eqnarray*}
+             &mult&(x, 0) = 0 \\
+             &mult&(x, y+1) = add(x, mult(x, y)) = \cdots = x \times
+              (y+1) = x \times y + x
+            \end{eqnarray*}
+
+ \item[前者関数(predcessor)] \mbox{} \\
+            \begin{eqnarray*}
+             pred(0) &=& 0 \\
+             pred(x+1) &=& proj_1 (x, pred(x)) \hspace{3ex} (原始帰納法
+              と射影関数を用いた) \\ 
+             &=& x
+            \end{eqnarray*}
+ \item[減算] \mbox{} \\
+            ここでは，自然数の枠組みに収まるように減算を定義する．
+            \begin{eqnarray*}
+             &sub&(x, 0) = x \\
+             &sub&(x, y+1) = pred(sub(x, y)) = \cdots = x - (y+1) = (x-y)-1
+            \end{eqnarray*}
+\end{description}
+通常用いる関数のほとんどは原始帰納的である．
+
+\section{原始帰納的でない関数}
+原始帰納的でない関数の例として，Ackermann関数が有名．
+\begin{eqnarray*}
+ &Ack&(0, y) = y + 1 \\
+ &Ack&(x+1, 0) = Ack(x, 1) \\
+ &Ack&(x + 1, y + 1) = Ack(x, Ack(x+1, y))  \footnotemark
+\end{eqnarray*}
+\footnotetext{このような関数は\mystrong{多重帰納法}という．これは原始帰
+納関数の枠組みにはない方法．}
+定義の適用のたびに$x$か$y$の少なくとも一方は小さくなるので，この計算は有限ステップで終わる．
+
+しかし，これと同じことをする関数は，原始帰納関数の枠組みで作ることができ
+ない．
+
+\begin{table}
+ \caption{Ackermann関数を具体的に見た表}
+ \begin{center}
+  \begin{tabular}{c|c|c|c|c|c|c|c}
+   \hline
+   $x$ ＼ $y$ & 0 & 1 & 2 & 3&4&5&6 \\
+    \hline \hline
+   0&1&2&3&4&5&6&7\\ \hline
+   1&2&3&4&5&6&7&8\\ \hline
+   2&3&5&7&9&11&13&15\\ \hline
+   3&5&13&29&61&125&253&509\\ \hline
+   4&13&65533&$\cdots$&$\cdots$&$\cdots$&$\cdots$&\\ \hline
+  \end{tabular}
+  \label{tb:06Ackermann関数を具体的に見た表}
+ \end{center}
+\end{table}
+表\ref{tb:06Ackermann関数を具体的に見た表}から見て取れるように，Ackermann関数の値は，第1引数の増加に伴って急速に大きくなる．実は，原始帰
+納関数には以下のような定理が成り立つ．\footnote{これの証明は扱ってません．}
+\begin{mytheorem}
+どんな原始的帰納関数$g$についても，ある定数$c$に対して，
+\[
+ g(x_1, \cdots , x_n) < Ack(c, \max (x_1, \cdots , x_n))
+\]
+が成り立つ．
+\end{mytheorem}
+\therefore Ackermann関数は原始帰納的に定義できない．
+
+\section{原始帰納的述語}
+真偽値を返す原始的関数を，\mystrong{原始帰納的述語}という．
+
+\section{帰納的関数(Recursive function)}
+原始帰納的関数の定義形式に加えて，\mystrong{最小解関数}を許す．最小解関
+数とは，原始帰納的述語$p(n, x_1, \cdots , x_k)$が真となる最小の$n$を値と
+する関数．
+
+\mystrong{帰納的関数は，TMと同等の計算能力を持つ．}

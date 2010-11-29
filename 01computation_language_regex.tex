@@ -1,0 +1,198 @@
+%#!platex main.tex
+
+\chapter{オートマトンと言語理論}
+
+\section{計算とは}
+
+\subsection{計算の仕様}
+計算とは，以下のような仕様を持つものである．
+\[
+ 仕様S: \N \rightarrow \N
+\]
+つまり，「ある自然数をある自然数に対応させるのが計算」と言える．
+
+この講義の文脈では，「ある自然数」を0/1の有限列で表す(何進数かは本質的で
+はない)．
+
+この仕様の性質から，以下のことが言える．
+\begin{itemize}
+ \item 仕様も所詮自然数から自然数の対応なので，仕様自体も自然数で表現で
+       きる．\\
+       ex: 「000 $\rightarrow$ 011」という仕様を「1100」と表す(インデッ
+       クスをつける)
+ \item あらゆる仕様の集合は連続体濃度． \footnote{よく分からないけど$\R$の
+       濃度らしい \cite{wikipedia}}
+ \item プログラムは仕様に含まれるから，プログラムは加算集合．
+       \footnote{プログラムで記述できるのは，仕様の集合のごく一部}
+\end{itemize}
+
+\subsection{計算の能力} \label{sec:計算の能力}
+実は出力がNビットの計算も，出力1ビットの計算に帰着させることができる．例
+えば，
+\[
+ 計算A: 入力010, 出力110
+\]
+は，
+\begin{eqnarray*}
+ 計算B_1: 入力010, 出力1\\
+ 計算B_2: 入力010, 出力1\\
+ 計算B_3: 入力010, 出力0
+\end{eqnarray*}
+を逐次的に実行する計算Bに置き換えることができる．
+
+こうして，出力を1ビットにできるよというと，この先の講義でよく出てくるオー
+トマトンの話がちょっとありがたく思える．
+
+出力が1ビットということは，出力は真偽値をとると考えられる．
+
+オートマトンは，「入力を受理するかどうか」を判定する．この真偽の判定を，0を出力す
+るか1を出力するかに対応させると，オートマトンは(ある程度)どのような計算でもできる
+ということがわかる．
+
+\section{言語 (Language)}
+\mystrong{言語}とは，有限種の記号列の有限列の集合と定義できるが，その定義を理解する
+ために必要な用語をまず下に記す．
+
+\begin{description}
+ \item [$\Sigma$] \mbox{} \\
+ 用いる記号の有限集合．\mystrong{アルファベット}
+       \footnote{別に$abc\cdots zABC\cdots Z$以外でも，記号ならなんでもOK．「欝」を
+       記号に含むアルファベットも構成可}ともいう．
+             \begin{myexample}{英字と数字を記号とするアルファベット}
+              \[
+              \Sigma = \{a,b,c,\cdots z,A,B,C,\cdots Z,0,1,\cdots 9\}
+              \]
+             \end{myexample}
+
+ \item [\mystrong{記号列(string)}] \mbox{} \\
+ 記号の有限の並び． \footnote{言語論で
+             「並び」というと，順序に意味のある列という意味．「集合」
+             は，順序に意味のない列．}
+             \begin{myexample}{上の例での$\Sigma$上の記号列}
+              \[
+              \epsilon, a, b, c, \cdots , 9, aa, ab, \cdots  afbafe132, \cdots 
+              \]
+              空列$\epsilon$(下記)を含むことに注意．
+             \end{myexample}
+
+ \item[長さ(length)] \mbox{} \\
+            記号列中の記号の数．$|w|$が$w$の長さを表す．
+            \begin{myexample}{ある記号列の長さ}
+             \[
+              |afbafe132| = 9
+             \]
+            \end{myexample}
+
+ \item[空列(empty string)] \mbox{} \\
+長さ0の記号列．\mystrong{$\epsilon$}で表す．
+\end{description}
+
+ここにきて，\mystrong{言語}の定義，「有限種の記号列の有限列の集合」を見
+直すと，何となく分かるのではないかと思う．
+\begin{myexample}{ある記号列集合で定義される言語}
+ 以下のような，英字2文字で成り立つような記号列の集合を考える．
+ \[
+  aa, ab, ac, \cdots , ba, bb, bc, \cdots , zx, zz
+ \]
+ この記号列の集合によって定義される言語には，例えば以下のようなものがあ
+ る．
+ \[
+  \Sigma_1 = \{aa\}
+ \]
+ \[
+  \Sigma_2 = \{ex, gy\}
+ \]
+ \[
+  \Sigma_3 = \{an, ax, if, up\}
+ \]
+\end{myexample}
+
+ここで，今後の話でよく出てくる，$\Sigma^*$という言語を見てみる．
+\begin{description}
+ \item [\mystrong{$\Sigma^*$}] \mbox{} \\
+ $\Sigma$上の記号列全てを含む集合．これは，
+            言語になっている．
+            \begin{myexample}{アルファベット$\{a\}$で定義される言語}
+             いま，単純なアルファベット
+             \[
+              \Sigma = \{a\}
+             \]
+             を考える．このアルファベット上の記号列は，
+             \[
+              \epsilon, a, aa, \cdots 
+             \]
+             であるので，$\Sigma$に対しては
+             \[
+              \Sigma^* = \{\epsilon, a, aa, \cdots \}
+             \]
+             が定義される．
+            \end{myexample}
+\end{description}
+
+\subsection{言語で定義される言語}
+\begin{description}
+ \item [\mystrong{連接(concatenation)}] \mbox{} \\
+ 2つの言語$L_1$と$L_2$の連接は，
+            \[
+             L_1 L_2 = \{vw | v \in L_1 , w \in L_2\}
+            \]
+            で定義される．
+            \begin{myexample}{単純な連接}
+             \[
+              abc \in L_1 , \hspace{2ex} defg \in L_2
+             \]
+             であれば，
+             \[
+              abcdefg \in L_1 L_2
+             \]
+             である．ただし，$L_1 L_2$は$abc$や$defg$を含まないことに注
+             意．
+            \end{myexample}
+            
+ \item [\mystrong{閉包(closure)}] \mbox{} \\
+ $\Sigma$上の言語$L (\subset \Sigma^*) $の
+            要素をいくつでも並べたもの．
+            \[
+             L^0 = \{\epsilon\}, \hspace{2ex} L^1 = \{w | w \in L\}, \hspace{2ex} L^2 = \{vw
+            | v, w \in L\}, \hspace{2ex} \cdots 
+            \]
+            とするとき，閉包は
+            \[
+             L^* = L^0 \cup L^1 \cup L^2 \cup \cdots = \cup^{\infty}_{i
+            = 0} L^i
+            \]
+            と定義される．
+            \begin{myexample}{単純な閉包}
+             \[
+             L = \{abc, efg, hij\}
+             \]
+             であったとき，
+             \[
+              L^* = \{\epsilon, abc, abcabc, \cdots, abcefg, \cdots,
+             hijabcefg, \cdots\}
+             \]
+             などである．
+            \end{myexample}
+            
+ \item [\mystrong{正閉包(positive closure)}] \mbox{} \\
+            \[
+             L^+ = \cup^{\infty}_{i = 1} L^i
+            \]
+            で定義される．
+\end{description}
+
+\section{正規表現(Regular expression, RE)}
+$\Sigma$上の正規表現\footnote{言語論の業界ではREと
+ 略すようだが，コンピュータの業界ではregexとかregexpとか略すことも多い．}
+ とは，以下のいずれかである．
+\begin{enumerate}
+ \item $\phi$ : 表す言語(=記号列の集合)は空集合．
+ \item 空列$\epsilon$ : 表す言語は$\{\epsilon\}$
+ \item $\Sigma$の各要素$a$に対して$a$ : 表す言語は{a}
+ \item $r, s$がそれぞれ言語$R, S$を表す正規表現であるとき，
+       \begin{itemize}
+        \item $(r+s)$ : $R\cup S$を表す．
+        \item $(rs)$ : $RS$を表す．
+        \item $(r*)$ : $R*$を表す．
+       \end{itemize}
+\end{enumerate}
