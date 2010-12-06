@@ -1,0 +1,209 @@
+\chapter{$\lambda$計算(Lambda calculus)}
+\footnote{$\lambda$計算を実装したプログラミング言語としてはLispがとても有
+名です．この授業の勉強で使えとは当然言いません
+が，\cite{Gerald_Julie_Harold_和田200002}を読んでみると(プログラム的に)
+見える世界が変わってきます．個人的イチオシ．}
+
+\mystrong{$\lambda$計算(lambda calculus)}とは，帰納的関数を数と無関係に
+定義する枠組みである．
+
+\section{$\lambda$抽象化(Lambda abstraction)}
+計算の手続きに名前をつけることができる．例えば，
+\[
+ a \rightarrow 1+1
+\]
+など．ここで更に
+\[
+ b \rightarrow 1+1
+\]
+とすると，これらの手続きは名前は違えど，表す手続きの内容は同じである．こ
+のような手続きを一緒くたにまとめることを，\mystrong{$\lambda$抽象化(Lambda abstraction)}という．
+\footnote{$\lambda$抽象化については授業であまり説明がなく，この辺は自分の理
+解で書きました．もしかしたら間違ってるかもしれないので注意．}
+\footnote{$\lambda$抽象化を利用すれば，いちいち名前をつけずに手続きを定義で
+きます．これはプログラムでは無名関数という形で出てき
+て，Lisp，Javascript，その他最近の言語では無名関数が使えます．無名関数の
+概念は，次のような感じ($do\_anything\_to\_x$を呼び出す際の第1引数が無名関数
+になっています．)
+\begin{equation} \label{eq:08koukai}
+ do\_anything\_to\_x (\{ x * x \}, x); 
+\end{equation}
+}
+
+\section{$\lambda$式(Lambda expression)}
+\mystrong{$\lambda$式(lambda expression)}は，
+\[
+\lambda x. 定義
+\]
+と表記する．
+ \footnote{$\lambda x. 定義$の$x$は変数名}
+$\lambda x.定義$は，
+\[
+ 「ひとつの引数を取って定義の内容を返す関数」を表す式
+\]
+
+\begin{myexample}{$\lambda$式の例}
+\[
+ f(x) = 3x + 2 \hspace{2ex} g(x) = 3x + 2\hspace{2ex}\cdots 
+\]
+ などの，「1変数をとり，その変数を3倍した数に2を足した数を返す\mystrong{関数}」は，全て
+ \[
+  \lambda x. (3x+2)
+ \]
+ という\mystrong{式}で表せる．
+\end{myexample}
+
+\section{高階関数(Higher-order function)}
+\mystrong{高階関数(Higher-order function)}とか，関数を引数や結果とする関
+数である．\footnote{脚注に書いた$do\_anything\_to\_x$ (式\ref{eq:08koukai})も一種の高階
+関数です．}
+
+\begin{myexample}{ある関数を2回適用する関数を高階関数として記述する}
+ \[
+  g(x) = f(f(x))
+ \]
+ この$g$と同じ意味を持つ，
+ \[
+  twice(f)
+ \]
+ という関数を作りたい．これを$\lambda$式として書くと，
+ \[
+  twice = \lambda f . (\lambda x . fx)
+ \]
+ となる．\footnotemark
+\end{myexample}
+\footnotetext{$\lambda$式の表記法は勉強しておきましょ
+う．\mystrong{$\lambda$式で解答するような問題が試験にも出題され
+る模様です．}}
+
+\section{カリー化(Currying)}
+\mystrong{カリー化(Currying)}とは，複数引数の関数を単一引数で表現するこ
+とをいう．
+
+\begin{myexample}{簡単なカリー化}
+ \[
+  f(x, y, z) = x + y \times z
+ \]
+ という3変数関数を，
+ \[
+  f_{x,y} (z) = x + y \times z
+ \]
+ という風に1引数関数にすることもできる($x,y$を固定した)．これがカリー化．
+
+ この$f_{x,y}$は，$\lambda$式では
+ \[
+  \lambda x . (\lambda y . (\lambda z . (x + y \times z)))
+ \]
+ と表記できる．
+\end{myexample}
+
+\section{$\lambda$式について覚えておきたいこと}
+\subsection{$\lambda$式の略記法}
+$\lambda$式の基本形は$\lambda 変数名 . 定義$であるが，「概念的に複数引数
+を取る$\lambda$式」は，次のように表記できる．
+\[
+\lambda x_1 x_2 \cdots x_n . 定義 \equiv \lambda x_1 . (\lambda
+x_2  (\cdots . (\lambda x_n . 定義))) \footnote{カリー化の逆適用ですね．}
+\]
+
+\begin{myexample}{略記法の簡単な例}
+\[
+ \lambda xyz . (x+y \times z) \equiv  \lambda x . (\lambda y . (\lambda z . (x + y \times z))) 
+\]
+\end{myexample}
+
+
+\subsection{関数の適用順}
+関数を連続して適用するとき，その適用順は次のとおりである．
+\[
+ M_1 M_2 M_3 \cdots M_n \equiv (((\cdots (M_1M_2)M_3)\cdots)M_n)
+\]
+ただし，この適用順を明示的に変更したいときは，括弧を使う．
+
+\begin{myexample}{関数の適用順の例}
+\[
+ fffx \equiv (((ff)f)x) \footnote{「関数に対して関数を入力しているので変に思
+ うかもしれませんが，それが高階関数というものです．」}
+\]
+ 高校で習った「合成関数」を再現したいときは，
+ \[
+ f(f(fx))
+ \]
+ という風に括弧でくくります．
+\end{myexample}
+
+\subsection{基本的な関数}
+\[
+ I \equiv \lambda x . x\hspace{2ex};Identity
+\]
+\[
+ K \equiv \lambda xy . x\hspace{2ex};定数値を返す関数 
+\]
+
+
+\section{$\beta$変換($\beta$ reduction)}
+式$M$の中の全ての自由な \footnote{$\lambda$式の引数になっている引数
+は，$\lambda$式によって束縛されています．つまり，$\lambda$式によってロー
+カル変数が作れます．Lispのletですね．胸熱．}$x$を式$N$で置き換えた結果を，
+\[
+ M[x:=N]
+\]
+と書く．
+
+\begin{myexample}{略記法の例}
+\[
+ \lambda x . (x + (\lambda x . x) 5) = \lambda x .M 
+\]
+とすると，
+ \[
+ M[x:=3] = 3 + (\lambda x . x)5
+ \]
+\end{myexample}
+
+
+この略記法を用いて，以下のように\mystrong{$\beta$変換($\beta$
+reduction)}が定義される．\footnote{$\alpha$変換もある．それは，
+\[
+ \lambda x. x \underset{\alpha}{\longrightarrow} \lambda y . y
+\]
+のように定義される．}
+
+\begin{description}
+ \item[引数渡し]  \mbox{} \\
+            $(\lambda x . M) N \underset{\beta}{\longrightarrow} M[x:=N]$ 
+
+ \item[$M \underset{\beta}{\longrightarrow} N$ならば，] \mbox{} \\
+            \begin{description}
+             \item[定義の中での変換] \mbox{} \\
+                        $\lambda x . M \underset{\beta}{\longrightarrow} \lambda x . N$ 
+
+             \item[引数の変換]  \mbox{} \\
+                        $ PM \underset{\beta}{\longrightarrow} PN$ 
+             \item[関数の変換]  \mbox{} \\
+                        $MP \underset{\beta}{\longrightarrow} NP$
+            \end{description}
+\end{description}
+
+
+\begin{itemize}
+ \item $\beta$変換の対象となる式を$\beta$基($\beta$-redex)という．
+ \item 式$P$から有限回の$\beta$変換で，
+       \[
+        P = P_1 \underset{\beta}{\longrightarrow} P_2 \underset{\beta}{\longrightarrow} \cdots
+       \underset{\beta}{\longrightarrow} P_n = Q
+       \]
+       となるとき，この列$P_1 \cdots P_n$を$\beta$変換列といい，
+       \[
+        P \underset{\beta}{\longrightarrow} Q
+       \]
+       と表す．
+\end{itemize}
+
+\section{Church-Rosserの定理}
+同じ式から$\beta$変換列で導かれた二つの式からは，必ず$\beta$変換列によっ
+て同じ式を導くことができる．
+
+図(合流性(confluence))
+
+
+例の式
