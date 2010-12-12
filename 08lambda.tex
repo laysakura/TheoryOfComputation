@@ -200,10 +200,18 @@ reduction)}が定義される．\footnote{$\alpha$変換もある．それは，
 \end{itemize}
 
 \section{Church-Rosserの定理}
+\mystrong{Church-Rosserの定理}とは，次のものである．
+
+\begin{mytheorem}
 同じ式から$\beta$変換列で導かれた二つの式からは，必ず$\beta$変換列によっ
 て同じ式を導くことができる．
+\end{mytheorem}
+なお，この性質を合流性(Confluence)と呼ぶこともある．
 
-図(合流性(confluence))
+図
+\ref{fig:img/08beta_reduction.eps}は，合流性を表すものである．図中の矢印
+は全て$\beta$変換を表す．例えば，2つの黄色い式から，赤い式に「合流」して
+いることが見て取れる．
 
+\myfigure{img/08beta_reduction.eps}{$\beta$変換列の合流性}
 
-例の式
