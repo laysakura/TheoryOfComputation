@@ -1,10 +1,8 @@
 \chapter{$\lambda$計算(Lambda calculus)}
-\footnote{$\lambda$計算を実装したプログラミング言語としてはLispがとても有
+\mystrong{$\lambda$計算(lambda calculus)}\footnote{$\lambda$計算を実装したプログラミング言語としてはLispがとても有
 名です．この授業の勉強で使えとは当然言いません
 が，\cite{Gerald_Julie_Harold_和田200002}を読んでみると(プログラム的に)
-見える世界が変わってきます．個人的イチオシ．}
-
-\mystrong{$\lambda$計算(lambda calculus)}とは，帰納的関数を数と無関係に
+見える世界が変わってきます．個人的イチオシ．}とは，帰納的関数を数と無関係に
 定義する枠組みである．
 
 \section{$\lambda$抽象化(Lambda abstraction)}
@@ -140,10 +138,24 @@ x_2  (\cdots . (\lambda x_n . 定義))) \footnote{カリー化の逆適用です
  K \equiv \lambda xy . x\hspace{2ex};定数値を返す関数 
 \]
 
+\subsection{引数への適用} \footnote{勝手に付け加えました．}
+$\lambda$式の引数に値を適用するときは，
+\[
+ (\lambda 引数 . 定義) 適用する値
+\]
+と書く．
+\begin{myexample}{引数への値適用の例}
+ \begin{eqnarray*}
+  (\lambda x . x + 3) 5 &=& 5 + 3 \\
+  &=& 8
+ \end{eqnarray*}
+\end{myexample}
 
 \section{$\beta$変換($\beta$ reduction)}
 式$M$の中の全ての自由な \footnote{$\lambda$式の引数になっている引数
-は，$\lambda$式によって束縛されています．つまり，$\lambda$式によってロー
+は，$\lambda$式によって束縛されています．つまり，定義の部分の変数を自由
+な変数と言います．ところで，引数は$\lambda$式に束縛されることを利用し
+て，$\lambda$式によってロー
 カル変数が作れます．Lispのletですね．胸熱．}$x$を式$N$で置き換えた結果を，
 \[
  M[x:=N]
@@ -152,11 +164,19 @@ x_2  (\cdots . (\lambda x_n . 定義))) \footnote{カリー化の逆適用です
 
 \begin{myexample}{略記法の例}
 \[
- \lambda x . (x + (\lambda x . x) 5) = \lambda x .M 
+ \lambda x . (x + (\lambda x . x) 5)
+\]
+について，
+\[
+  M = x + (\lambda x . x) 5
+\]
+ とし，
+\[
+ \lambda x . (x + (\lambda x . x) 5) = \lambda x . M
 \]
 とすると，
  \[
- M[x:=3] = 3 + (\lambda x . x)5
+ M[x:=3] = 3 + (\lambda x . x)5 = 3 + 5 = 8
  \]
 \end{myexample}
 
@@ -215,3 +235,209 @@ reduction)}が定義される．\footnote{$\alpha$変換もある．それは，
 
 \myfigure{img/08beta_reduction.eps}{$\beta$変換列の合流性}
 
+
+\section{正規形(Normal form)}
+$\beta$基を含まない$\lambda$式，すなわち，それ以上$\beta$変換できない式を\mystrong{正規形(normal form)}であるとい
+う．
+
+\begin{myexample}{$\lambda$式の正規形への変換}
+\[
+ (\lambda x . x) (\lambda y . y) \underset{\beta}{\longrightarrow}
+ \lambda y . y 
+\]
+ この右辺は正規形である．
+\end{myexample}
+
+正規形にならない$\lambda$式もある．
+\begin{myexample}{正規形にならない$\lambda$式}
+ $X = \lambda x . (xx) x$のとき，
+ \[
+  XX \underset{\beta}{\longrightarrow} (XX)X
+ \underset{\beta}{\longrightarrow} ((XX)X)X
+ \underset{\beta}{\longrightarrow} \cdots
+ \]
+ どんどん式が長くなっていく方に変換されていく．
+\end{myexample}
+
+\section{$\lambda$式による論理の表現}
+以下，$[\alpha]$で概念$\alpha$を表す$\lambda$式を意味するものとする．
+
+\begin{eqnarray*}
+ \left[true\right] &\equiv& \lambda xy . x \equiv T \\
+ \left[false\right] &\equiv& \lambda xy . y \equiv F
+\end{eqnarray*}
+このように定義すれば，式$P$の真偽によって，
+\[
+PMN \underset{\beta}{\longrightarrow}
+  \left\{
+   \begin{array}{l}
+    M : Pが真 \\
+    N : Pが偽
+   \end{array}
+  \right.
+\]
+と，if-then-elseを表せる．更に，
+\begin{eqnarray*}
+ \left[not\right] &\equiv& \lambda pxy . pyx \footnotemark \\
+ \left[and\right] &\equiv& \lambda pq . pqp \footnotemark \\
+ \left[or\right] &\equiv& \lambda pq . ppq \footnotemark
+\end{eqnarray*}
+\setcounter{myfootnote}{\value{footnote}}
+\addtocounter{myfootnote}{-2}
+\footnotetext[\value{myfootnote}]{$p, q$は真偽値．引数の，「もし$p$が真
+なら$x$を，偽なら$y$を返すような式」というのを逆さまにして，「もし$p$が真
+なら$y$を，偽なら$x$を返すような式」としている．}
+\addtocounter{myfootnote}{1}
+\footnotetext[\value{myfootnote}]{もし$p$が真なら$q$の
+値．さもなくば$p$の値，すなわち偽．}
+\addtocounter{myfootnote}{1}
+\footnotetext[\value{myfootnote}]{もし$p$が真なら$p$(真)，さもなくば
+$q$($q$の真偽に委ねられる)．}
+
+\section{$\lambda$式による自然数の表現} \footnote{数を式で表すのですか
+ら，偉大な抽象化です．ロマンを感じましょう．}
+$\lambda$式による自然数の表現 \footnote{現代的には，自然数は集合によって
+定義するのが普通．
+\begin{eqnarray*}
+ \left[0\right] &\equiv& \{\} \\
+ \left[succ(x)\right] &\equiv& \{x\} \cup x
+\end{eqnarray*}
+$0$を含み$succ$について閉じている集合は存在(公理)．自然数は，「そのよう
+な集合の共通部分」と定義．
+}
+は色々知られているが，ここではChurch
+numeral \footnote{「数」はnumberだが，「数を表す表記法」はnumeralとい
+う．また，「数字」はdigit．}
+と呼ばれるものを扱う．その表記法では，自然数$n$を，次のような二引数の高階関数として表現
+する．
+\begin{description}
+ \item[第一引数] 何らかの関数$f$
+ \item[第二引数] その関数に渡す値$x$
+ \item[結果] $f$を$x$に$n$回適用したもの
+\end{description}
+すなわち，関数の適用回数で自然数を表していると言える．実際に，
+\begin{eqnarray*}
+ \left[0\right] &\equiv& \lambda fx . x \footnotemark \\
+ \left[1\right] &\equiv& \lambda fx . fx \\
+ \left[2\right] &\equiv& \lambda fx . f(fx) \\
+ &\cdots& \\
+ \left[n\right] &\equiv& \lambda fx . f(f(\cdots (fx) \cdots))
+  \hspace{2ex} ただしfはn回適用．
+\end{eqnarray*}
+\footnotetext{[0]の定義は，[false]の定義を満たすこ
+とに注意．すなわち，[0]はFである．これは，すぐ下の
+[iszero]の定義で必要になる考えである．}
+と表現できる．この表現を取ると，自然数$n$に対して次のような式が定義でき
+る．
+\begin{eqnarray*}
+ \left[iszero\right] &\equiv& \lambda n . n(\lambda x . F)T \footnotemark \\
+ \left[succ\right] &\equiv& \lambda nfx . f(nfx) \footnotemark \\
+ \left[plus\right] &\equiv& \lambda mnfx . mf(nfx) \footnotemark
+\end{eqnarray*}
+\setcounter{myfootnote}{\value{footnote}}
+\addtocounter{myfootnote}{-2}
+\footnotetext[\value{myfootnote}]{$n$が0，すなわち$n$が$F$を表すなら，適用は0回だから$T$を返す．0でなければ，1
+回以上適用するので$F$を返す}
+\addtocounter{myfootnote}{1}
+\footnotetext[\value{myfootnote}]{$f$をもう一度適用すれば，$n$
+  の次の数}
+\addtocounter{myfootnote}{1}
+\footnotetext[\value{myfootnote}]{$m+n$を表すには，xに$f$を$m+n$回適用す
+  ればよい．ここでは，$f$を$n$回$x$に適用した結果に，更に$f$を$m$回適用している．}
+
+\section{$\lambda$式によるデータ構造}
+$\lambda$式を使えば，あらゆるデータ構造が表現できる．まず，$\lambda$式に
+よる\mystrong{pair}の表現を見てみる．pairさえあれば，まずlistが「最初の
+要素と残り」という形で再帰的に定義でき，listがあればあらゆるデータ構造が
+表現可能である．\footnote{「listがあればあらゆるデータ構造が表現可能」っ
+ていうのはひょっとしたら嘘かもしれません(でも確かできたはず)．ご指摘大歓
+迎です．}
+
+\begin{eqnarray*}
+ \left[pair\right] &\equiv& \lambda fsb . bfs \footnotemark \\
+ \left[first\right] &\equiv& \lambda p . pT \\
+ \left[second\right] &\equiv& \lambda p . pF
+\end{eqnarray*}
+\footnotetext[\value{myfootnote}]{$f$はfirst，$s$はsecond，$b$は
+boolean．}
+少々分かりにくいが，次の例でこれが実際にpairを表せていることを確かめる．
+
+\begin{myexample}{データ構造の$\lambda$式による表現の例}
+ \[
+  \left[pair(A,B)\right] = (\lambda fsb . bfs) \left[A\right] \left[B\right]
+ \]
+ \begin{eqnarray*}
+  \left[first(pair(A,B))\right] &=& (\lambda p . pT) \{(\lambda fsb .bfs)
+   \left[A\right] \left[B\right] \} \\
+  &=& (\lambda fsb . bfs) \left[A\right] \left[B\right] T \\
+  &=& T \left[A\right] \left[B\right] \\
+  &=& \left[A\right]
+ \end{eqnarray*}
+ \begin{eqnarray*}
+  \left[second(pair(A,B))\right] &=& (\lambda p . pF) \{(\lambda fsb .bfs)
+   \left[A\right] \left[B\right] \} \\
+  &=& (\lambda fsb . bfs) \left[A\right] \left[B\right] F \\
+  &=& F \left[A\right] \left[B\right] \\
+  &=& \left[B\right]
+ \end{eqnarray*}
+\end{myexample}
+
+\section{再帰呼出し(Recursive call)}
+ここまでで，$\lambda$式で何でも表現できるような気がしてきたが，再帰呼出
+し(recursive call)は中々難しい．何故ならば，$\lambda$式では関数に名前をつけ
+ないので，関数の中からストレートに「自分」を呼出す再帰呼出しはできない．
+
+しかしながら，下の例で示す fixed-point operator というものを$\lambda$式
+で表現することにより，可能である．
+
+\begin{myexample}{階乗}
+ \[
+  f(0) = 1 , f(n+1)  = n \times f(n)
+ \]
+ で階乗は再帰的に定義できる．これを$\lambda$式で表そうとしてみる．まず，
+ 一旦引数にする．
+ \[
+  g = \lambda fn . \left[n = 0 なら1, さもなくば n \times f(n)\right]
+ \]
+ このような関数$g$は，$\lambda$式として定義可能．この$g$に$f$を引数とし
+ て渡したものが，定義したい$f$．
+
+ このように， $f = g(f)$となるような$f$を，$g$の不動点(fixed point)とい
+ う．
+
+ 従って，不動点を返すような関数が$\lambda$式で書ければよい．実際これは書
+ けて，
+ \[
+  Y \equiv \lambda f . ((\lambda x . f(xx)) (\lambda x . f(xx))) \footnotemark
+ \]
+ 
+ この$Y$が不動点を返すことを確かめてみると，\footnote{あまりにも分かりに
+ くいんで色付けしました．色付けも規則もへったくれもなく脳内でやったの
+ で，気に喰わない人は白黒と思って読んでください．}
+ \begin{eqnarray*}
+  Yg &=& (\lambda \textcolor{Green}f . ( \textcolor{red}{(\lambda x . \textcolor{Green}{f}(xx))}
+   \textcolor{blue}{(\lambda x . \textcolor{Green}{f}(xx))} )) \textcolor{Green}{g} \\
+  &=& \textcolor{red}{(\lambda \textcolor{blue}{x} . g(\textcolor{blue}{xx}))} \textcolor{blue}{(\lambda x . g(xx))} \\
+  &=& \underline{g\textcolor{DeepPink}{(\lambda \textcolor{Indigo}{x} . g(\textcolor{Indigo}{xx}))} \textcolor{Indigo}{(\lambda x . g(xx))}} \\
+  &=& g( \underline{g((\lambda x . g(xx))(\lambda x . g(xx)))}) \\ 
+  &=& g(Yg)
+ \end{eqnarray*}
+ となり，確かに．
+
+ これを用いて階乗を表すと，
+ \begin{eqnarray*}
+  \left[fact\right] &=& g(Yg) \\
+  \left[fact(5)\right] &=& g(Yg) 5 \\
+  &=& \left[5 = 0 なら1，さもなくば 5 \times (Yg) 4\right] \\
+  &=& 5 \times (Yg)4
+ \end{eqnarray*}
+\end{myexample}
+\footnotetext{これには名前がついていて，Y combinator, fixed-point operator,
+ paradoxical operatorとか呼ぶ．}
+
+\section{$\lambda$計算と，帰納的関数やTMは同じ計算能力}
+証明は省いてました．
+
+\section{同知性の決定不可能性(Undecidability of equivalence)}
+2つの$\lambda$式が同値か否かを決定するアルゴリズムは存在しない．
+従って(この論理は飛躍．来週の補完に期待)，正規形の存在は決定不能．
