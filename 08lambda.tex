@@ -411,9 +411,7 @@ boolean．}
   Y \equiv \lambda f . ((\lambda x . f(xx)) (\lambda x . f(xx))) \footnotemark
  \]
  
- この$Y$が不動点を返すことを確かめてみると，\footnote{あまりにも分かりに
- くいんで色付けしました．色付けも規則もへったくれもなく脳内でやったの
- で，気に喰わない人は白黒と思って読んでください．}
+ この$Y$が不動点を返すことを確かめてみると，
  \begin{eqnarray*}
   Yg &=& (\lambda \textcolor{Green}f . ( \textcolor{red}{(\lambda x . \textcolor{Green}{f}(xx))}
    \textcolor{blue}{(\lambda x . \textcolor{Green}{f}(xx))} )) \textcolor{Green}{g} \\
@@ -438,6 +436,6 @@ boolean．}
 \section{$\lambda$計算と，帰納的関数やTMは同じ計算能力}
 証明は省いてました．
 
-\section{同知性の決定不可能性(Undecidability of equivalence)}
+\section{同値性の決定不可能性(Undecidability of equivalence)}
 2つの$\lambda$式が同値か否かを決定するアルゴリズムは存在しない．
-従って(この論理は飛躍．来週の補完に期待)，正規形の存在は決定不能．
+従って，\footnote{正直分かりません}正規形の存在は決定不能．
