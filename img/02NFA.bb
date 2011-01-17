@@ -1,5 +1,5 @@
 %%Title: ./02NFA.jpg
-%%Creator: extractbb 20090506
+%%Creator: ebb Version 0.5.2
 %%BoundingBox: 0 0 193 153
-%%CreationDate: Fri Jan  7 10:02:43 2011
+%%CreationDate: Mon Jan 17 10:01:57 2011
 
