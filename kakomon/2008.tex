@@ -1,0 +1,92 @@
+\input{myheader_report}
+
+2008年「計算論」期末試験の解答です．合ってるかは知りません．
+
+\section*{【問1】以下の各問に...}
+\subsection*{解答}
+
+\subsubsection*{(1)}
+\mystrong{
+\[
+ A \cap B = \{x | \,\, x \in A \, かつ \, x \in B \}
+\]
+すなわち，$A$にも$B$にも含まれるアルファベットから構成される言語．
+}
+
+\subsubsection{(2)}
+\mystrong{
+現在の状態，入力記号，スタックポインタの指す値．
+}
+
+\subsubsection{(3)}
+\mystrong{
+決定的プッシュダウンオートマトン(DPDA)は，非決定的有限オートマトン(NFA)
+よりも，受理言語の範囲は広い．その理由を，
+\begin{enumerate}
+ \item DPDAに受理できてNFAに受理できない言語の例を示す
+ \item DPDAでNFAの動作がエミュレートできることを示す
+\end{enumerate}
+ことにより，説明する．}
+
+\mystrong{
+まず，DPDAは無限に大きなスタックを持
+つため，無限の長さの言語を受理する能力がある．一方，NFAは状態数が有限で
+あるため，その能力はない．
+}
+
+\mystrong{
+また，次のようにして，DPDAでNFAをエミュレートできる．まず，DPDAの有限制
+御部の状態として，エミュレートしたいNFAの状態をコピーする．NFAでは，同じ
+入力に対して異なる状
+態間の遷移が起こることがあるが，これをいかにしてDPDAでエミュレートするか
+を説明するため，次のような簡単な例を考える．いま，現状態が$S_0$であったと
+する．このとき，入力$x$を受け取ると，NFAでは$S_1, S_2$に状態遷移できるとし
+よう．これをDPDAでエミュレートするには，スタックに「$S_1$へ遷移するつもり」という
+情報を記憶しておいて，$S_1$に移動する．もし$S_1$へ遷移したせいで，言語を受
+理できるpathをたどれなかった場合，遷移を全く逆にたどり，現状態$S_0$まで
+戻ってくる．このときスタックポインタを見ると，「$S_1$に移動するつもり」
+という情報が残っているので，次は$S_2$をたどれば良い．この動作を再帰的に
+繰り返していくことで，DPDAでNFAをエミュレートすることができる．
+}
+
+(説明下手すぎワロエナイ)
+
+\section*{【問2】下記の一群の...}
+\subsection*{解答}
+\mystrong{
+\begin{eqnarray*}
+ &F& \rightarrow 0 \\
+ &F& \rightarrow 1 \\
+ &Op& \rightarrow + \\
+ &Op& \rightarrow - \\
+ &S& \rightarrow 0 \\
+ &S& \rightarrow 1 \\
+ &S& \rightarrow 0 \,\, Op \,\, S \\
+ &S& \rightarrow 1 \,\, Op \,\, S
+\end{eqnarray*}
+}
+
+\subsection*{ポイント}
+\begin{itemize}
+ \item 解答の順番で考えると少し楽な気がしないでもないです
+\end{itemize}
+
+\section*{【問4】アルファベットが...}
+\subsection*{解答}
+\myfigure[width=150truemm]{4.eps}{問4の解答}
+
+\mystrong{初期状態はS0，最終状態は，S0-S6．}
+
+\subsection*{ポイント}
+\begin{itemize}
+ \item 各状態から，すべてのアルファベット(a, b, c)の矢印が出ていることを
+       チェック
+ \item 問題文に「それ以外には制約がない」とわざわざ書いているので，与え
+       られた3条件のうちいずれかを満たさない様な言語だけが受理されないこ
+       とに注意．空列$\epsilon \hspace{1ex}$(S0で最終状態を迎える)も受理されることに
+       も注意．
+ \item 答案にはもう少しわかり易く矢印描く方が良いでしょうね
+\end{itemize}
+
+\input{myfooter_report}
+

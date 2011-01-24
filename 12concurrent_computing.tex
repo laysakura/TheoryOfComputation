@@ -1,0 +1,185 @@
+\chapter{並行計算のモデル}
+コンピュータで並行というと，次の2つの意味を指す場合がある．
+\begin{description}
+
+ \item[Concurrency] \mbox{} \\
+            論理的並列性を表す．前後関係が定義されていない2つの計算につ
+            いての言葉．論理的正当性に関係する
+ \item[Parallelism] \mbox{} \\
+            物理的並列性を表す．実際に並列に動作しているかどうか．性能に
+            関係する．
+\end{description}
+
+Concurrencyが保証されなければParallelismがあっても意味がないことに注意．
+本章では，前者のConcurrencyについて議論する．
+
+\section{ペトリネット(Petri Net)}
+\mystrong{ペトリネット(Petri Net)}は，並行システムの古典的モデル．並行シ
+ステムを有向二部グラフで表現する．Carl Adams Petriの提唱である．
+
+\subsection{構成要素}
+\myfigure{img/12petri.eps}{ペトリネットの構成要素}
+
+\begin{description}
+ \item[トークン(token)] \mbox{} \\
+            処理のアクティビティを表す．例えば，プロセスやスレッド．ペト
+            リネットの中をトークンが動き回る．
+
+ \item[場所(place)] \mbox{} \\
+            処理の状態を表す．
+
+ \item[遷移(transition)] \mbox{} \\
+            場所から場所へ移る際の中継点．
+
+ \item[辺] \mbox{} \\
+            「場所 $\rightarrow$ 遷移」，または「遷移 $\rightarrow$ 場所」
+            を表す繋ぎ目．「場所 $\rightarrow$ 場所」，或いは「遷移
+            $\rightarrow$ 遷移」がないのが有向''二部''グラフである所以．
+\end{description}
+
+\subsection{動作規則}
+
+\myfigure{img/12petri_join.eps}{待ち合わせ(join)}
+\myfigure{img/12petri_fork.eps}{分岐(fork)}
+\myfigure{img/12petri_nondeterministic.eps}{非決定性}
+
+\begin{enumerate}
+ \item ある遷移に入る全ての辺の視点にトークンがあれば，その遷移が発動可
+       能になる．(join) (図\ref{fig:img/12petri_join.eps})
+ \item 遷移が発動すると，遷移から出る辺の終点の場所全てにトークンがひと
+       つ増える．遷移に入る辺の視点のトークンはひとつ減る．(fork) (図
+       \ref{fig:img/12petri_fork.eps})
+ \item 可能な遷移が複数ある時，どの遷移が発動するかは非決定的．(図\ref{fig:img/12petri_nondeterministic.eps})
+\end{enumerate}
+
+\subsection{並行版の有限オートマトンとしての見方}
+ペトリネットは，有限状態オートマトンの並行版としても見られる．逐次の
+state machineは，次の特徴を持つペトリネットとモデル化できる．
+\begin{itemize}
+ \item 全ての遷移が単一の入出力
+ \item トークンが増減しない
+ \item 初期状態でトークンはひとつ
+\end{itemize}
+
+
+\section{プロセス計算(Process Calculus)} \footnote{この節については結構
+説明が浅かったです．残念．}
+並行計算を抽象化して代数的に扱う枠組みの総称．独立したプロセスがメッセー
+ジを交換して通信するようなモデル．プロセス計算は，プロセスの基本動作と組
+合せ方(通信)によって表現される．
+
+\subsection{並列合成(Parallel composition)}
+\[
+ P | Q
+\]
+で，プロセス$P, Q$は並行動作していることを表す．
+
+\subsection{通信と同期(Communication and Synchronization)}
+通信路を経由．通信できる相手は，通信路(channel)がつながっている先．
+
+\subsection{メッセージ通信・受信}
+\[
+ \bar{c}<x> \,\, c<x>
+\]
+オブジェクト指向のモデルだったりするらしい．
+
+\subsection{同期通信路(Synchronous channel)}
+メッセージが受信されるまで送信は終わらない．\footnote{Cとかの関数呼出し
+は同期通信です．}
+
+\subsection{非同期通信路(Asynchronous channel)}
+送信はすぐ終わり，受信は後で可能．\footnote{ABCLとかいう言語は非同期通信
+を実装した最初の言語だそうで
+す．\url{http://en.wikipedia.org/wiki/Actor-Based_Concurrent_Language}}
+
+\subsection{逐次合成(Sequential composition)}
+メッセージ送受の順序関係．例えば，「受信してから送信する」など．
+
+\subsection{簡約化規則(Reduction rules)}
+(記述なし)
+
+
+\section{パイ計算($\pi$ calculus)}
+プロセス計算の代表的枠組み．並行版の$\lambda$計算． \footnote{萌えます
+ね}
+
+\subsection{基本要素}
+\begin{description}
+ \item[$P|Q$] \mbox{}\\
+            並行動作
+
+ \item[$c(x) . P$] \mbox{}\\
+            $c$から$x$を受信してから$P$を実行
+
+ \item[$\bar{c}<x> . P$] \mbox{}\\
+            $c$に$x$を送信してから$P$を実行．$c?(x)$や$c!(x)$という表記
+            もある．
+
+ \item[$!P$] \mbox{}\\
+            $P$の無限の複製．つまり，$P$というプロセスを無限にforkする
+            (できる)ことを表す．
+
+ \item[$0$] \mbox{}\\
+            空のプロセス(nil process \footnote{nilってnihilの略から生ま
+            れたんですって．関係ないけど豆知識})
+
+ \item[$(\nu c)P$] \mbox{} \\
+            通信路$c$を生成して，それを使って$P$を実行．$new c . P$とい
+            う表記も．
+\end{description}
+
+\begin{myexample}{パイ計算の実例}
+ \[
+  (\nu z)  ( (\nu x) ( \textcolor{Green}{\bar{x}<z> . 0} | \textcolor{red}{x(y) . \bar{y} <x> . x(w) . 0}) |
+ \textcolor{blue}{z(v) . \bar{v}(v) . 0})
+ \]
+ 以下で，\textcolor{Green}{緑字を(1-1)}，\textcolor{red}{赤字を
+ (1-2)}，\textcolor{blue}{青字を(2)}と表記する．
+
+ この式で表される動作の概略は，次のようなものである．
+ \begin{enumerate}
+  \item 通信路$x$を作り，二つのプロセス(1-1)，(1-2)を動かす．
+        \begin{description}
+         \item[(1-1)] $x$に$z$を送る
+         \item[(1-2)] $x$から$y$を受信して，$y$に$x$を送り，$x$から$w$を
+                    受信
+        \end{description}
+        
+  \item (2)が通信路$z$から$v$を受信して，そこに$v$自身を送る
+ \end{enumerate}
+
+ より詳細に見てみる．
+ \begin{enumerate}
+  \item (1-1)から送った$z$を(1-2)は$y$に受信．
+        \[
+         (\nu z) ( (\nu x) (0 | \bar{z}<x> . x(w) . 0) | z(v)
+        . \bar{v}<v> . 0)
+        \]
+  \item (1-2)が$z$に$x$を送り，(2)は$v$に受信．
+        \[
+         (\nu z) ( (\nu x) (0 | x (w) . 0) | \bar{x} <x> . 0)
+        \]
+  \item (2)が$x$に$x$を送り，(1-2)が受信
+        \[
+         (\nu z) ((\nu x) (0 | 0) | 0)
+        \]
+  \item 終了
+ \end{enumerate}
+\end{myexample}
+
+\subsection{特徴}
+パイ計算には，次のような重要な特徴がある．
+\begin{itemize}
+ \item 通信路を通信できる．
+ \item それ自体でチューリング完全．つまり，パイ計算だけであらゆる計算を
+       表現可能．
+\end{itemize}
+
+\begin{myexample}{真偽値}
+ \begin{eqnarray*}
+ &T&rue  \hspace{2ex} c(t) . c(e) . c(x) . \bar{t} <x> \\
+ &F&alse  \hspace{2ex} c(t) . c(e) . c(x) . \bar{e} <x>
+\end{eqnarray*}
+ 2つの通信路とデータ$x$を受け取って，Trueは第1の通信路に，Falseは第2のデー
+ タ$x$を送る．
+\end{myexample}

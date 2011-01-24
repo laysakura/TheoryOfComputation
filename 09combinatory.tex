@@ -1,0 +1,198 @@
+\chapter{組合せ論理 (Combinatory Logic)}
+\mystrong{組合せ論理(Combinatory Logic)}は，計算モデルの一つであり，関数
+抽象化をせずに，\footnote{$\lambda$計算と対照的} 構造の変換だけで計算す
+る体系をもつ．
+
+\section{組合せ項(Combinatory Term)}
+\mystrong{組合せ項(Combinatory term)}は，以下のいずれかである．
+
+\begin{itemize}
+ \item 変数
+ \item プリミティブ: S, K, I combinator
+ \item 組 $(E_1 \, E_2)$
+\end{itemize}
+
+\section{演算規則}
+\subsection{プリミティブの役割}
+プリミティブS, K, Iは，\mystrong{簡約化(reduction)}を行う．
+それぞれの行う演算は，以下の通りである．
+
+\begin{itemize}
+ \item $(I \, x) \Rightarrow x$
+ \item $((S \, x) \, y) \Rightarrow x$ 
+ \item $(((S \, x) \, y) \, z) \Rightarrow ((x \, z)(y \, z))$
+\end{itemize}
+
+この規則は，二分木構造で見ると多少覚えやすい．
+
+\begin{center}
+\begin{minipage}{7ex}
+ \tree{}
+  \leaf{$I$}
+  \leaf{$x$}
+ \endtree
+\end{minipage}
+\begin{minipage}{5ex}
+ $\rightarrow x$
+\end{minipage}
+\end{center}
+
+\begin{center}
+\begin{minipage}{9ex}
+ \tree{}
+  \subtree{}
+   \leaf{$K$}
+   \leaf{$x$}
+  \endsubtree
+  \leaf{$y$}
+ \endtree
+\end{minipage}
+\begin{minipage}{5ex}
+ $\rightarrow x$
+\end{minipage}
+\end{center}
+
+\begin{center}
+\begin{minipage}{9ex}
+ \tree{}
+  \subtree{}
+   \subtree{}
+    \leaf{$S$}
+    \leaf{$x$}
+   \endsubtree
+   \leaf{$y$}
+  \endsubtree
+  \leaf{$z$}
+ \endtree
+\end{minipage}
+\begin{minipage}{4ex}
+ $\rightarrow$
+\end{minipage}
+\begin{minipage}{9ex}
+ \tree{}
+   \subtree{}
+     \leaf{$x$}
+     \leaf{$z$}
+   \endsubtree
+   \subtree{}
+     \leaf{$y$}
+     \leaf{$z$}
+   \endsubtree
+ \endtree
+\end{minipage}
+\end{center}
+
+\subsection{左方優先}
+左方優先性を持つ．
+\[
+ (A\, B \, C \, D) \rightarrow (((A \, B)C)D)
+\]
+
+\section{Iなんていらないわ}
+$I = SKK$なので，$I$がなくても体系が構築できる．\footnote{Emacs使いの皆
+さんにはお馴染みのskkは，ここから名前をもじったそうです．}
+実際，
+
+\begin{eqnarray*}
+ ((SKK) x) &\rightarrow& ((K x)(K x)) \footnotemark \\
+ &\rightarrow& (K \, x \, (K \, x)) \\
+ &\rightarrow& x
+\end{eqnarray*}
+\footnotetext{右側の$(K \, x)$は，$K$がオペレータを2個取らないからといって，別にilligalな訳ではない．あくまでも，$K$の
+持つ計算規則によって簡約化できないだけ．}
+
+なお，$I$を作るのは$SKK$だけでなく，例えば$I = SKS$でもある．
+
+\section{組合せ論理は$\lambda$計算と等価}
+組合せ論理は，以下の点で$\lambda$計算と等価である．
+\begin{itemize}
+ \item どんな$\lambda$式に対しても等価な組合せ項がある．
+ \item どんな組合せ項に対しても等価な$\lambda$式がある．
+\end{itemize}
+
+実際，次のように$\lambda$式と組合せ論理式を対応させると，任意の$\lambda$
+式を組合せ論理式に変換でき，またその逆もできることが分かる．
+
+($\lambda$式$L$から組合せ項$c$への変換を$T[L] \rightarrow c$という風に表記
+する．)
+
+\begin{enumerate}
+ \item $T[x] \rightarrow x$
+ \item $T[FX] \rightarrow (T[F] \, T[X])$ 
+ \item $T[\lambda x . E] \rightarrow (K \, T[E])$ \\
+       ただし，$E$の中に$x$が出現しないとき．
+ \item $T[\lambda x . x] \rightarrow I$
+ \item $T[\lambda x . \lambda y . E] \rightarrow T[\lambda x . T[\lambda
+       y . E]]$ \footnote{ここにも適用条件はあるはずですが，先生が忘れて
+       らっしゃいました．}
+ \item $T[\lambda x . (F \, Y)] \rightarrow (S \, T[\lambda x . F] \,
+       T[\lambda x . Y])$
+\end{enumerate}
+
+\begin{myexample}{変換規則適用の例}
+$\lambda x . \lambda y . (y \, x)$を，組合せ論理式に変換する．
+\begin{eqnarray*}
+  T[\lambda x . \lambda y . (y \, x)] &\rightarrow& T[\lambda x
+ . T[\lambda y . (y \, x)]] \hspace{2ex} \since 5 \\
+ &\rightarrow& T[\lambda x . (S \, T[\lambda y . y] \, T[\lambda y
+  . x])] \hspace{2ex} \since 6 \\
+ &\rightarrow& T[\lambda x . (S \, I \, (K \, T[x]))] \hspace{2ex} \since 3, 4 \\
+ &\rightarrow& T[\lambda x . (S \, I \, (K \, x))] \hspace{2ex} \since 1 \\
+ &\rightarrow& (S \, T[\lambda x . (S \, I)] \, T[\lambda x . (K x)])
+  \hspace{2ex} \since 6 \\
+ &\rightarrow& (S \, (K \, T[(S \, I)]) \, T[\lambda x . (K x)]) \hspace{2ex}
+ \since 3 \\
+ &\rightarrow& (S \, (K \, (S \, I)) \, (S \, T[\lambda x . K] \,
+ T[\lambda x . x])) \hspace{2ex}
+ \since 1, 6 \\
+ &\rightarrow& (S (K (S \, I)))(S \, (K \, K) \, I) \hspace{2ex} \since
+ 3, 4
+\end{eqnarray*}
+ 逆変換も見てみる．
+ \begin{eqnarray*}
+  (S (K (S \, I))) (S (K \, K) I )\, x\, y &\rightarrow& ((K (S\, I)) \,
+   x) ((S (K \, K)I) x) \, y \\
+  &\rightarrow& (S \, I) (((K \, K) x) (I \, x)) \, y \\
+  &\rightarrow& (S \, I)(K \, x) \, y \\
+  &\rightarrow& (I \, y)((K \, x) \, y) \\
+  &\rightarrow& y \, x
+ \end{eqnarray*}
+\end{myexample}
+
+\section{真偽値の表現}
+$P$を，$Pxy$が真なら$x$，偽なら$y$となるように作る．
+真を表す記号を$T$，偽を表す記号を$F$とすると，それぞれ以下のように組合せ
+論理で構成できる．
+\begin{eqnarray*}
+ &T& = K \\
+ &F& = (K \, I)
+\end{eqnarray*}
+
+\begin{myproof}{$T$，$F$が組合せ論理で構成できる証明}
+\begin{eqnarray*}
+ (T \, x \, y) &=& (K \, x \, y) = x \\
+ (F \, x \, y) &=& (K \, I \, x \, y) = (I \, y) = y
+\end{eqnarray*}
+\end{myproof}
+
+\section{組合せ論理の性質}
+$\lambda$式と組合せ論理は等価なので，組合せ論理は当然$\lambda$式と同様な
+性質を持つ．
+
+\begin{itemize}
+ \item これ以上簡約化できない項があれば，それを\mystrong{正規形}と呼ぶ．
+ \item 正規形の存在は決定不能．
+ \item 項のどの部分から簡約化しても，更に簡約化を進めると同じ項を得られ
+       る(\mystrong{合流性})．図\ref{fig:img/08beta_reduction.eps}を参照．
+\end{itemize}
+
+\begin{myexample}{正規形を持たない組合せ論理式}
+\begin{eqnarray*}
+ (S \, I \, I \, (S \, I \, I)) &\rightarrow& (I (S \, I \, I) (I \, (S \,
+  I \, I))) \\
+ &\rightarrow& (S \, I \, I \, (S \, I \, I))
+\end{eqnarray*}
+ この項は正規形を持たない．
+\end{myexample}
+
+

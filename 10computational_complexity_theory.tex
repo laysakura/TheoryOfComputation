@@ -1,0 +1,261 @@
+\chapter{計算量理論}
+\mystrong{計算量理論(Computational Complexity Theory)}は，特定のアルゴリ
+ズムの性能解析手法である．
+
+\section{漸近的計算量(Asymptotic complexity)}
+\mystrong{漸近的計算量(Asymptotic complexity)}とは，処理対象のデータ量が
+増えたときに，計算量はデータ量のどのような関数になるのかを扱う指標である．
+
+\since データ量小さいときは，どうせ計算量も小さいので気にする必要はない．
+
+問題サイズ(問題となるサイズ．例えば，処理対象のデータ量そのもの)を$n$と
+する．また，計算量を$T(n)$とする．
+通常$T(n)$は単調増加．
+
+\subsection{$\Omega$記法($\Omega$-notation)}
+\mystrong{$\Omega$記法($\Omega-notation$)}は，計
+算量の漸近的下界を示す．あるアルゴリズムが$\Omega(f(n))$という計算量を持
+つとは，
+\[
+ \exists c \exists n_0 \forall n \geq n_0 \hspace{2ex}(T(n) \geq c f(n))
+ \hspace{3ex} (cは定数)
+\]
+が成立するということである．(参考: 図\ref{fig:img/10omega.eps})
+
+\myfigure{img/10omega.eps}{$\Omega$記法の式のイメージ}
+
+\subsection{$O$記法(big-$O$ notation)}
+\mystrong{$O$記法(big-$O$ notation)}は，計算量の上界を示す．$O(f(n))$の計算量とは，
+\[
+ \exists c \exists n_0 \forall n \geq n_0 \hspace{2ex}(T(n) \leq c f(n))
+\]
+が成立するということである．
+
+\subsection{$\Theta$記法($\Theta$-notation)}
+\mystrong{$\Theta$記法($\Theta$-notation)}により，
+$f$と$g$の上界と下界の関数形が一致する(上界と下界が定数系の違い)とき，すなわち
+\[
+ f(n) = O(g(n)) \hspace{2ex} かつ \hspace{2ex} f(n) = \Omega (g(n))
+\]
+のとき，
+\[
+ f(n) = \Theta (g(n))
+\]
+と表記する．
+
+それぞれの$c, n_0$は別々に考えて良い．
+
+
+\section{入力データと計算量}
+単純でないアルゴリズムの計算量指標は，入力データの量だけでなく，質によっ
+て計算量が異なる場合がある．
+
+\begin{myexample}{クイックソート}
+ クイックソートは，ピボットの位置によって，計算量が最悪で$T(n) = c n^2$
+ になってしまう．
+\end{myexample}
+
+\subsection{最悪の場合の計算量(Worst-case complexity)}
+\mystrong{最悪の場合の計算量(Worst-case complexity)}は，「どんなデータに対
+しても，最悪でこの計算量を保証しますよ」というようなものである．計算資源
+に絶対的制約がある際には不可欠である．
+
+\begin{myexample}{リアルタイム制御}
+ 原子炉や証券取引を制御するプログラムを考えてみると，「この計算は普通1ms
+ で終わりますけど，ひょっとしたら1s掛かる時もあります．まぁ滅多にそんな
+ ことは起きませんけどね．」は通用しない．最悪の場合の計算量を見積る必要
+ がある．
+\end{myexample}
+
+\subsection{平均計算量(Average-case complexity)}
+\mystrong{平均計算量(Average-case complexity)}は，様々な入力データに要す
+る計算量の平均である．この「様々な入力データ」には，分布の仮定が必要．そ
+の仮定に対してのみ平均計算量が出せる．
+
+\subsection{償却計算量(Amortized complexity)}
+\mystrong{償却計算量(Amortized complexity)}は，複数操作\footnote{複数操
+作とは，例えば，AVN木での「木のバランスを方操作・挿入」をまとめたも
+の．AVN木は，木のバランスが前提のデータ構造なので，これらをまとめて考え
+る価値がある．}の系列の総計算
+量．\ref{sec:償却計算量}に詳細を記述する．
+
+
+\section{計算量クラス}
+\subsection{クラスP(Polymial time)}
+決定性チューリングマシン(やそれと等価なもの)によって，問題サイズの多項式関数で表すことのできる計
+算量のアルゴリズムが存在するような問題のクラスのことを，\mystrong{クラスP}と呼ぶ．
+
+\subsection{クラスNP(Non-deterministic polynomial time)}
+非決定性チューリングマシン(やそれと等価なもの)によって，問題サイズの多項式関数で表すことのできる計
+算量のアルゴリズムが存在するような問題のクラスのことを，\mystrong{クラスNP}と呼ぶ．
+
+決定性チューリングマシンは，非決定性チューリングマシンの特別な場合に過ぎ
+ないので，
+\[
+ NP \subseteq P
+\]
+である．
+
+\subsection{NP困難(NP-hard)}
+どんなNPの問題でも，多項式時間の計算量でその問題に帰着できるような問題の
+クラスのことを，\mystrong{NP困難}な問題のクラスと呼ぶ．
+
+\subsection{NP完全(NP-complete)}
+NPに属すNP-hardな問題のクラスは，\mystrong{NP完全(NP-complete)}な
+問題のクラスである．すなわち，
+\[
+ NP-complete = NP \cap NP-hard
+\]
+
+\subsection{P $\neq$ NP ?}
+P $\neq$ NPであるという予想が立っているが，これは未解決問題である．
+
+\subsection{Pに入るか否か不明の問題}
+P $\neq$ NP を仮定すると，NP-completeならPには入らない．一方で，
+\begin{itemize}
+ \item 素因数分解
+ \item グラフ同型問題
+\end{itemize}
+などは，Pに入るか否か不明の問題である．
+
+\subsection{Time-Hierarchy Theorem}
+どのような時間計算量の問題クラスに対しても，それより複雑な計算量の問題が
+存在する．
+
+\subsection{Space-Hierarchy Theorem}
+(板書なし)
+
+\section{多倍長カウンタの例}
+
+\begin{myexample}{多倍長カウンタ}
+1 word(通常32bit)で表現しきれない数値を整数の配列で表現することがある．整数の配列を
+ $a[i]$とすると，
+ \[
+  n = \Sigma^{n-1}_{k=0} \{a[k] \times 2^k\}
+ \]
+
+ これを用いた，下記のアルゴリズムincrementの計算量を考える．
+
+ \begin{description}
+ 
+  \item[worst-case] \mbox{} \\
+             carryはいくらでも出せるので，最悪ではビット数に比例．
+             例えば，0111から1000にカウントアップするときに最悪．
+  \item[average-case]\mbox{} \\
+             $2^n$までカウントすると，合計では$2^n$のオーダー1回あたりの
+             平均計算量は$O(1)$．ちゃんと計算すると，平均計算量は2と求め
+             られるらしい．
+ \end{description}
+
+\end{myexample}
+
+\begin{mypre}{アルゴリズムincrement}
+void increment(int a[])
+{
+    int k;
+    for (k = 0; a[k] == 1; k++)
+        a[k] = 0;
+    a[k] = 1;
+}
+\end{mypre}
+
+確かに最悪の場合ビット数に比例した計算量だが，最悪の場合はカウントアップ
+を初めてからかなり後にしか起きない．\mystrong{平均計算量では，各状態での操
+作の手間について何も保証できていない}ので，このようなミスマッチが生じる．
+
+最初の方の操作の手間は，ビット数$n$に依存しないことを表現できる枠組みが
+欲しい．それが下記の償却計算量である．
+
+
+\section{償却計算量(Amortized complexity)} \label{sec:償却計算量}
+「償却」に込められた意味は，「実質的に意味のある値」みたいな感じ．減価償
+却も同じ用法．\footnote{ただし，減価償却は前払いであるのに対し，カウント
+アップの例は後払い(値が0に近いうちはあまりコストが掛からない)．この点
+で，先生は「あまり良い訳ではない」と仰ってました．どうでもい(ry}
+
+この考えのもとで，先程のアルゴリズムincrementを見直してみる．
+
+\begin{enumerate}
+ \item たくさん繰り上げが生じると，その後しばらくは繰り上げが出にくい．
+ \item たくさんの繰り上げを「投資」と思えば，繰り上げにより生じる下位の
+       ビット0の連続は「資産」．コストはこの資産を利用するときに払う．
+\end{enumerate}
+
+また，「引当金」\footnote{気になったらググッてください}と同じ意味での引
+当ての考え方で見てみる．
+
+\begin{enumerate}
+ \item 実際の「コスト」は$0 \rightarrow 1, \, 1 \rightarrow 0$が単位．
+ \item 1のビットを作ると将来carryを生む原因になるので，$0 \rightarrow 1$
+       の反転のコストを2と考える．実際のコスト1に引当分の1を加えたという
+       計算．
+ \item $1 \rightarrow 0$は引当済み．つまり，コストは$0 \rightarrow 1$に
+       なったときに計上済みなので，$1 \rightarrow 0$のコストは0と考える．
+\end{enumerate}
+
+これによると，カウントアップ時に行う操作のコストは，
+\begin{itemize}
+ \item $[1 \rightarrow 0 のコスト] \times [キャリービット数] = 0$
+ \item $[0 \rightarrow 1 のコスト] \times [1ビットだけ] = 2$ 
+\end{itemize}
+(毎回のカウントアップで，$0 \rightarrow 1$になるビットはいつもひとつであ
+ることに注意．)従って，カウントアップのコストは常に2である．
+
+
+\begin{table}
+\begin{center}
+ \caption{カウントアップの計算量}
+% BEGIN RECEIVE ORGTBL table1
+\begin{tabular}{|l|r|r|r|r|r|}
+\hline
+操作 &  & 実際の手間 & コスト累計 & 引当(償却)計算量 & 残 \\
+\hline
+0 $\rightarrow$ 1 & 0001 & 1 & 1 & 2 & 1 \\
+1 $\rightarrow$ 2 & 0010 & 2 & 3 & 4 & 1 \\
+2 $\rightarrow$ 3 & 0011 & 1 & 4 & 6 & 2 \\
+3 $\rightarrow$ 4 & 0100 & 3 & 7 & 8 & 1 \\
+4 $\rightarrow$ 5 & 0101 & 1 & 8 & 10 & 2 \\
+5 $\rightarrow$ 6 & 0110 & 2 & 10 & 12 & 2 \\
+6 $\rightarrow$ 7 & 0111 & 1 & 11 & 14 & 3 \\
+7 $\rightarrow$ 8 & 1000 & 4 & 15 & 16 & 1 \\
+\end{tabular}
+% END RECEIVE ORGTBL table1
+\end{center}
+\end{table}
+
+\iffalse
+#+ORGTBL: SEND table1 orgtbl-to-latex
+|--------+------+------------+------------+------------------+----|
+| 操作   |      | 実際の手間 | コスト累計 | 引当(償却)計算量 | 残 |
+|--------+------+------------+------------+------------------+----|
+| 0 -> 1 | 0001 |          1 |          1 |                2 |  1 |
+| 1 -> 2 | 0010 |          2 |          3 |                4 |  1 |
+| 2 -> 3 | 0011 |          1 |          4 |                6 |  2 |
+| 3 -> 4 | 0100 |          3 |          7 |                8 |  1 |
+| 4 -> 5 | 0101 |          1 |          8 |               10 |  2 |
+| 5 -> 6 | 0110 |          2 |         10 |               12 |  2 |
+| 6 -> 7 | 0111 |          1 |         11 |               14 |  3 |
+| 7 -> 8 | 1000 |          4 |         15 |               16 |  1 |
+\fi
+
+\begin{myexample}{配列の拡張}
+ 配列は，予めサイズを決めるのが難しい．従って，最初は小さなサイズで確保
+ して，必要に応じて拡張していくことが多い．しかし，配列では連続領域が必
+ 要なので，拡張時に連続領域が足りなくなったら，別の連続領域をとれる場所
+ に現在の中身をコピーしなければならない．この計算量を考えてみる．
+
+ サイズが足りなくなったら倍に拡張するとする．
+ 拡張して$2^n$要素とした後，次の拡張までにまた$2^{n-1}$要素を追加できる．こ
+ の間に，次回の拡張に要する手間を引当てていると考えられる．
+
+定数$a, c$を使うと，拡張時の割付けの手間は$2^{n+1}a$，コピーの手間は$2^n
+ c$なので，引き当てるべき計算量は，
+\[
+ \frac{2^{n+1} a + 2^n c}{2^{n-1}} = 4a + 2c
+\]
+である．つまり，配列は拡張時には確かに計算量は大きくなるが，1回の操作あ
+ たりの手間は定数オーダであると言える．
+\end{myexample}
+
+
+
