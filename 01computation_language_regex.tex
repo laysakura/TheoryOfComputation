@@ -60,7 +60,7 @@
        記号に含むアルファベットも構成可}ともいう．
              \begin{myexample}{英字と数字を記号とするアルファベット}
               \[
-              \Sigma = \{a,b,c,\cdots z,A,B,C,\cdots Z,0,1,\cdots 9\}
+              \Sigma = \{a,b,c,\cdots ,z,A,B,C,\cdots ,Z,0,1,\cdots ,9\}
               \]
              \end{myexample}
 
@@ -70,7 +70,7 @@
              は，順序に意味のない列．}
              \begin{myexample}{上の例での$\Sigma$上の記号列}
               \[
-              \epsilon, a, b, c, \cdots , 9, aa, ab, \cdots  afbafe132, \cdots 
+              \varepsilon, a, b, c, \cdots , 9, aa, ab, \cdots  ,afbafe132, \cdots 
               \]
               空列$\epsilon$(下記)を含むことに注意．
              \end{myexample}
@@ -84,7 +84,7 @@
             \end{myexample}
 
  \item[空列(empty string)] \mbox{} \\
-長さ0の記号列．\mystrong{$\epsilon$}で表す．
+長さ0の記号列．\mystrong{$\varepsilon$}で表す．
 \end{description}
 
 ここにきて，\mystrong{言語}の定義，「有限種の記号列の有限列の集合」を見
@@ -119,11 +119,11 @@
              \]
              を考える．このアルファベット上の記号列は，
              \[
-              \epsilon, a, aa, \cdots 
+              \varepsilon, a, aa, \cdots 
              \]
              であるので，$\Sigma$に対しては
              \[
-              \Sigma^* = \{\epsilon, a, aa, \cdots \}
+              \Sigma^* = \{\varepsilon, a, aa, \cdots \}
              \]
              が定義される．
             \end{myexample}
@@ -158,6 +158,7 @@
             \]
             とするとき，閉包は
             \[
+            \displaystyle
              L^* = L^0 \cup L^1 \cup L^2 \cup \cdots = \cup^{\infty}_{i
             = 0} L^i
             \]
@@ -176,6 +177,7 @@
             
  \item [\mystrong{正閉包(positive closure)}] \mbox{} \\
             \[
+            \displaystyle
              L^+ = \cup^{\infty}_{i = 1} L^i
             \]
             で定義される．
@@ -187,12 +189,12 @@ $\Sigma$上の正規表現\footnote{言語論の業界ではREと
  とは，以下のいずれかである．
 \begin{enumerate}
  \item $\phi$ : 表す言語(=記号列の集合)は空集合．
- \item 空列$\epsilon$ : 表す言語は$\{\epsilon\}$
+ \item 空列$\varepsilon$ : 表す言語は$\{\varepsilon\}$
  \item $\Sigma$の各要素$a$に対して$a$ : 表す言語は{a}
  \item $r, s$がそれぞれ言語$R, S$を表す正規表現であるとき，
        \begin{itemize}
         \item $(r+s)$ : $R\cup S$を表す．
         \item $(rs)$ : $RS$を表す．
-        \item $(r*)$ : $R*$を表す．
+        \item $(r*)$ : $R^{*}$を表す．
        \end{itemize}
 \end{enumerate}
